@@ -35,7 +35,9 @@ Los perfiles de personajes conservan las estadísticas de tu archivo. No son cue
 
 ## Dónde se guardan los datos
 
-`data/xpedition.sqlite` contiene cuentas, sesiones, perfiles, seguidores, noticias y conversaciones. `data/uploads/` contiene imágenes y audios enviados. Esa carpeta no se publica como contenido estático. Las contraseñas se guardan como hashes scrypt con salt; las sesiones usan cookies HttpOnly; los endpoints de mensajes y adjuntos comprueban la pertenencia al chat. Los correos no aparecen en el directorio público de perfiles.
+**En el modo local**, `data/xpedition.sqlite` contiene cuentas, sesiones, perfiles, seguidores, noticias y conversaciones. `data/uploads/` contiene imágenes y audios enviados. Esa carpeta no se publica como contenido estático. Las contraseñas se guardan como hashes scrypt con salt; las sesiones usan cookies HttpOnly; los endpoints de mensajes y adjuntos comprueban la pertenencia al chat. Los correos no aparecen en el directorio público de perfiles.
+
+**En el modo gratuito público**, `database.mjs` guarda esos datos en el esquema privado `xpedition` de PostgreSQL y `storage.mjs` guarda los adjuntos en el depósito privado `xpedition-private` de Supabase. No se depende del disco temporal de Render. Las tablas tienen RLS y se revocan permisos públicos; nuestro servidor comprueba la sesión y los permisos de cada petición.
 
 Las conversaciones son privadas mediante control de acceso del servidor. No se implementa cifrado de extremo a extremo. Quien administra el servidor tiene acceso técnico a la base de datos.
 
@@ -43,23 +45,30 @@ No subas `data/` a GitHub. Para un respaldo local, detén el servidor y copia **
 
 ## Publicarla para que entren otras personas
 
-Abre **GUIA-PUBLICAR.html** para seguir los pasos con enlaces. Se incluye una configuración Node.js 24 para Render, un Dockerfile opcional y `render.yaml` con un disco persistente de 1 GB. El alojamiento no está contratado y todavía no existe un enlace público. El servicio y el disco pueden tener costo; debes revisar y aceptar el precio en la plataforma antes de crearlos.
+Abre **GUIA-PUBLICAR.html** o **PUBLICAR-GRATIS.md**. La plantilla actual usa **Render Free + Supabase Free**, sin disco de pago. El modo local sigue funcionando con SQLite. Para el despliegue remoto, Render instala las dependencias de PostgreSQL y Storage con `npm ci --omit=dev`.
 
-GitHub Pages sirve páginas estáticas y no ejecuta este servidor. Usa un servicio con Node.js 24 o Docker y almacenamiento persistente. Esta configuración usa un único servidor SQLite; no la escales a varias instancias que escriban sobre copias diferentes de la base.
+La web necesita un servidor Node.js 24; GitHub Pages no ejecuta este servidor. Mantén una sola instancia para los eventos de chat en tiempo real. Render Free puede dormir tras 15 minutos sin visitas y Supabase Free puede pausar el proyecto tras una semana sin actividad. Los planes gratuitos tienen cuotas; no se amplían automáticamente desde la aplicación.
 
 ### Variables de entorno
 
 | Variable | Uso |
 |---|---|
-| `PORT` | Puerto; localmente 3000. La plataforma puede asignarlo. |
-| `HOST` | `127.0.0.1` local. En hosting: `0.0.0.0`. |
-| `DATA_DIR` | Ruta persistente; en Render `/var/data`. |
-| `PUBLIC_URL` | URL pública exacta, por ejemplo `https://tu-servicio.onrender.com`, sin barra al final. Necesaria para validar el origen detrás de un proxy HTTPS. |
-| `SECURE_COOKIES` | `true` en producción con HTTPS. |
-| `TRUST_PROXY` | `true` solo detrás del proxy del hosting; identifica clientes para los límites de uso. La plantilla Render lo activa. |
-| `FIREBASE_API_KEY` | Opcional: clave pública web de tu proyecto Firebase si cambias de proyecto. |
-| `FIREBASE_AUTH_DOMAIN` | Opcional: dominio de autenticación Firebase. |
-| `FIREBASE_PROJECT_ID` | Opcional: identificador de proyecto Firebase. |
+| `DATABASE_URL` | URI de Supabase **Session pooler**, conservando `[YOUR-PASSWORD]` si usas el campo separado. Sin esta variable se usa SQLite local, salvo que se exija Supabase. |
+| `DATABASE_PASSWORD` | Contraseña de la base de datos; el servidor sustituye y codifica el marcador de la URI. |
+| `SUPABASE_URL` | URL HTTPS del proyecto Supabase. |
+| `SUPABASE_SECRET_KEY` | Clave privada de servidor `sb_secret_...`. Se admite también el alias heredado `SUPABASE_SERVICE_ROLE_KEY`. |
+| `PERSISTENCE_MODE` | `supabase` exige conexión externa y evita iniciar accidentalmente con SQLite temporal. |
+| `SUPABASE_STORAGE_BUCKET` | Opcional; predeterminado `xpedition-private`, siempre privado. |
+| `DATABASE_CA` | Opcional; certificado PEM del proyecto si el servidor SQL requiere una CA específica. Se verifica TLS para bases remotas. |
+| `PORT` | Puerto, asignado por Render; localmente 3000. |
+| `HOST` | `127.0.0.1` local; `0.0.0.0` en alojamiento. |
+| `DATA_DIR` | Carpeta local; no se usa para guardar datos en el modo Supabase. |
+| `PUBLIC_URL` | Opcional en Render, que proporciona `RENDER_EXTERNAL_URL`. Para un dominio propio usa su URL HTTPS exacta, sin barra final. |
+| `SECURE_COOKIES` | `true` con HTTPS. |
+| `TRUST_PROXY` | `true` detrás del proxy de Render para los límites de uso. |
+| `FIREBASE_API_KEY`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_PROJECT_ID` | Configuración pública web opcional si cambias el proyecto de Google/Firebase. |
+
+Las cuatro credenciales de conexión se pegan directamente en Render. No se incluyen en el HTML, la respuesta de `/api/config` ni GitHub. El servidor crea las tablas y el depósito privado al arrancar. La URL `/api/health` permite comprobar `database: postgres` y `storage: supabase`.
 
 Google requiere activar el proveedor en Firebase y autorizar el dominio del hosting. La configuración existente respondió a la consulta y permite `localhost`, `the-xpedition.firebaseapp.com` y `the-xpedition.web.app`. El acceso con Google se completó en la revisión local. Para el dominio público nuevo será necesario repetir la autorización de dominio en Firebase.
 

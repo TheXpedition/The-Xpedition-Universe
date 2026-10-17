@@ -1,6 +1,8 @@
 FROM node:24-bookworm-slim
 WORKDIR /app
-COPY --chown=node:node package.json server.mjs ./
+COPY --chown=node:node package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --chown=node:node server.mjs database.mjs storage.mjs ./
 COPY --chown=node:node public ./public
 RUN mkdir -p /var/data/uploads && chown -R node:node /var/data
 USER node

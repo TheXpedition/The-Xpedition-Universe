@@ -3,12 +3,16 @@
   "version": "2.0.0",
   "private": true,
   "type": "module",
-  "description": "The Xpedition: comunidad y mensajería con persistencia SQLite",
+  "description": "The Xpedition: comunidad y mensajería con SQLite local o Supabase",
   "engines": {
     "node": ">=24.0.0 <25.0.0"
   },
   "scripts": {
     "start": "node server.mjs",
     "test": "node --test tests/integration.test.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.118.0",
+    "pg": "8.23.1"
   }
 }

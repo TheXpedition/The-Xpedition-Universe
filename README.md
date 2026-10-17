@@ -1,44 +1,40 @@
 # The Xpedition Universe
 
-Sitio de temporadas, personajes y comunidad de The Xpedition, con perfiles y mensajería en tiempo real.
+Sitio de temporadas, personajes y comunidad, con perfiles y mensajería en tiempo real.
 
-## Ejecutar
+## Abrir en tu equipo
 
-Requiere **Node.js 24**. No necesita instalar dependencias.
+Requiere **Node.js 24**. El modo local usa SQLite y no necesita instalar dependencias:
 
 ```sh
 node server.mjs
 ```
 
-Abre `http://localhost:3000`. En Windows también puedes usar **ABRIR XPEDITION.cmd**.
+Abre `http://localhost:3000`. En Windows puedes usar **ABRIR XPEDITION.cmd**.
 
-## Contenido del proyecto
+## Publicar gratis
 
-- `public/`: la web completa, estilos, JavaScript, catálogo, noticias e imágenes.
-- `public/personajes/`: imágenes de los personajes e íconos de perfil.
-- `public/backdrops/`: fondos de temporadas y simuladores.
-- `public/transparent/`: logos de las temporadas.
-- `server.mjs`: cuentas, sesiones, perfiles, seguimiento y chats con SQLite.
-- `tests/`: pruebas de integración del servidor.
-- `render.yaml`: configuración de publicación con Node.js 24 y un disco persistente.
-- `LEEME.md` y `GUIA-PUBLICAR.html`: instrucciones de uso y publicación.
+La plantilla `render.yaml` usa **Render Free** y **Supabase Free** para conservar cuentas, sesiones, conversaciones y archivos fuera de la instancia temporal de Render. Consulta [PUBLICAR-GRATIS.md](PUBLICAR-GRATIS.md) o abre **GUIA-PUBLICAR.html**.
 
-La carpeta `data/` se crea al ejecutar el servidor. Contiene las cuentas, sesiones, conversaciones y adjuntos privados; está excluida de Git. El despliegue público utiliza su propia base de datos en un disco persistente.
+Configura en Render `DATABASE_URL` (Session pooler), `DATABASE_PASSWORD`, `SUPABASE_URL` y `SUPABASE_SECRET_KEY`. Nunca guardes contraseñas o claves privadas en este repositorio. Render instala las dependencias con `npm ci --omit=dev` y detectamos automáticamente su URL pública. Añade ese dominio a Firebase Authentication para usar Google.
+
+Los planes gratuitos tienen cuotas y períodos de suspensión por inactividad. La configuración no incluye recursos de pago. Supabase Free no incluye respaldos automáticos.
+
+## Archivos
+
+- `public/`: web completa, estilos, JavaScript, catálogo, noticias y todas las imágenes.
+- `public/personajes/`, `public/backdrops/` y `public/transparent/`: personajes, fondos y logos.
+- `server.mjs`: cuentas, perfiles, seguimiento, chat, grupos y permisos.
+- `database.mjs`: SQLite local o PostgreSQL en un esquema privado de Supabase.
+- `storage.mjs`: archivos locales o depósito privado de Supabase; el servidor comprueba la pertenencia al chat antes de entregarlos.
+- `tests/`: pruebas de integración.
+- `render.yaml`: servicio gratuito; `Dockerfile`: alternativa para otros alojamientos.
+
+La carpeta `data/` contiene los datos privados locales y está excluida de Git. El despliegue usa una base independiente hasta realizar una migración privada.
 
 ## Funciones
 
-- Registro, inicio de sesión, Google y perfiles editables.
-- Selector con 116 personajes, seguimiento y lista de favoritos.
-- Chats privados, grupos, estados de lectura, aviso de escritura y presencia.
-- Respuestas, reacciones, edición de mensajes, imágenes y notas de voz.
-- Administración de grupos, fotos, moderadores y permisos para escribir.
-- Catálogo con 24 temporadas y simuladores, y las 14 colecciones de tops originales.
-
-## Publicación
-
-La plantilla de Render incluye un servicio Node.js y un disco persistente en `/var/data`. Revisa el costo del servicio y del disco antes de crearlos. Configura `PUBLIC_URL` con la dirección HTTPS exacta del alojamiento y añade ese dominio a los dominios autorizados de Firebase Authentication para usar Google.
-
-Consulta [la guía de publicación](GUIA-PUBLICAR.html) y [la documentación de uso](LEEME.md).
+Registro, contraseña, Google, perfiles editables, 116 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
 
 ## Pruebas
 
@@ -46,4 +42,4 @@ Consulta [la guía de publicación](GUIA-PUBLICAR.html) y [la documentación de 
 node --test tests/integration.test.mjs
 ```
 
-Las pruebas usan una base de datos independiente en `work/`, también excluida de Git.
+Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se admite un PostgreSQL **local y aislado** mediante `TEST_DATABASE_URL` para comprobar la persistencia externa. Más detalles en [LEEME.md](LEEME.md).

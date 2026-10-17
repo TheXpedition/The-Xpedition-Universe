@@ -8,8 +8,13 @@ import { fileURLToPath } from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const data=path.resolve(process.env.TEST_DATA_DIR||path.join(root,'work','test-'+randomUUID()));
 fs.mkdirSync(data,{recursive:true});
-let child,base,alice,bob,outsider,chat,message,imageId,group;
-async function start(){child=spawn(process.execPath,[path.join(root,'server.mjs')],{env:{...process.env,PORT:'0',HOST:'127.0.0.1',DATA_DIR:data},stdio:['ignore','pipe','pipe']});await new Promise((resolve,reject)=>{let output='';const timer=setTimeout(()=>reject(new Error('Servidor no inició')),10000);child.stdout.on('data',chunk=>{output+=chunk;if(output.match(/localhost:(\d+)/)){base='http://127.0.0.1:'+output.match(/localhost:(\d+)/)[1];clearTimeout(timer);resolve();}});child.on('error',reject);child.once('exit',code=>{if(!base)reject(new Error('Servidor terminó: '+code));});});}
+let child,base,alice,bob,outsider,chat,message,imageId,group,keptImage,keptAudio,starts=0;
+async function start(){
+  if(process.env.TEST_DATABASE_URL&&!['127.0.0.1','localhost'].includes(new URL(process.env.TEST_DATABASE_URL).hostname))throw new Error('Las pruebas solo admiten PostgreSQL local y aislado.');
+  const instanceDir=process.env.TEST_DATABASE_URL?path.join(data,'instance-'+starts++):data;
+  child=spawn(process.execPath,[path.join(root,'server.mjs')],{env:{...process.env,DATABASE_URL:process.env.TEST_DATABASE_URL||'',PERSISTENCE_MODE:process.env.TEST_DATABASE_URL?'supabase':'local',PORT:'0',HOST:'127.0.0.1',DATA_DIR:instanceDir},stdio:['ignore','pipe','pipe']});
+  await new Promise((resolve,reject)=>{let output='',errors='';const timer=setTimeout(()=>reject(new Error('Servidor no inició: '+errors)),20000);child.stderr.on('data',chunk=>{errors+=chunk;});child.stdout.on('data',chunk=>{output+=chunk;if(output.match(/localhost:(\d+)/)){base='http://127.0.0.1:'+output.match(/localhost:(\d+)/)[1];clearTimeout(timer);resolve();}});child.on('error',reject);child.once('exit',code=>{if(!base){clearTimeout(timer);reject(new Error('Servidor terminó: '+code+' '+errors));}});});
+}
 async function stop(){const old=child;if(old&&!old.killed){old.kill();await new Promise(resolve=>old.once('exit',resolve));}}
 const client=()=>({cookie:'',user:null});
 async function request(c,p,method='GET',body){const response=await fetch(base+'/api'+p,{method,headers:{'Content-Type':'application/json',...(c?.cookie?{cookie:c.cookie}:{})},body:body===undefined?undefined:JSON.stringify(body)});if(response.headers.has('set-cookie')&&c)c.cookie=response.headers.get('set-cookie').split(';')[0];const value=await response.json();return {status:response.status,...value};}
@@ -21,7 +26,7 @@ test('registro, sesión, privacidad y contraseñas',async()=>{
   assert.equal((await request(client(),'/auth/login','POST',{login:'QA Alice',password:'incorrecta'})).status,401);
   const login=await request(client(),'/auth/login','POST',{login:'qa alice',password:'UnaClaveDePrueba-123'});assert.equal(login.user.id,alice.user.id);
   const profiles=await request(null,'/profiles');assert(profiles.profiles.length>=119);assert(!JSON.stringify(profiles).includes('@example.invalid'));assert(!JSON.stringify(profiles).includes('password'));
-  const db=await fs.promises.readFile(path.join(data,'xpedition.sqlite-wal'));assert(!db.includes(Buffer.from('UnaClaveDePrueba-123')));
+  if(!process.env.TEST_DATABASE_URL){const db=await fs.promises.readFile(path.join(data,'xpedition.sqlite-wal'));assert(!db.includes(Buffer.from('UnaClaveDePrueba-123')));}
   assert.equal((await request(client(),'/auth/register','POST',{name:'QA Alice',email:'new@example.invalid',password:'UnaClaveDePrueba-123'})).status,409);
   assert.equal((await request(client(),'/auth/register','POST',{name:'Dani',email:'dani@example.invalid',password:'UnaClaveDePrueba-123'})).status,409);
 });
@@ -56,6 +61,9 @@ test('imágenes privadas y archivos restringidos a miembros',async()=>{
   assert.equal((await fetch(base+result.message.url,{headers:{cookie:bob.cookie}})).status,200);assert.equal((await fetch(base+result.message.url,{headers:{cookie:outsider.cookie}})).status,404);assert.equal((await fetch(base+result.message.url)).status,401);
   assert.equal((await request(alice,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'image',mime:'image/svg+xml',data:'PHN2Zz4=',filename:'x.svg'})).status,400);
   assert.equal((await request(alice,'/messages/'+imageId,'DELETE',{})).message.type,'deleted');assert.equal((await fetch(base+'/api/files/'+imageId,{headers:{cookie:bob.cookie}})).status,404);
+  keptImage=(await request(alice,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'image',mime:'image/png',data:data64,filename:'conservar.png'})).message;
+  keptAudio=(await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'audio',mime:'audio/webm',data:Buffer.from('audio de prueba').toString('base64'),filename:'voz.webm'})).message;
+  assert(keptImage?.url);assert(keptAudio?.url);
 });
 test('grupos, permisos, nuevos miembros y salida',async()=>{
   const result=await request(alice,'/conversations','POST',{type:'group',title:'Exploradores QA',members:[bob.user.id]});group=result.conversation.id;
@@ -89,5 +97,9 @@ test('noticias, límites, CSRF y datos privados fuera del directorio público',a
 });
 test('persistencia tras reinicio y cierre de sesión',async()=>{
   await stop();base=undefined;await start();const me=await request(alice,'/me');assert.equal(me.user.bio,'Una biografía real.');assert.equal(me.user.avatar,'Violeta');assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages')).messages.some(m=>m.text==='Hola editado'));
+  const picture=await fetch(base+keptImage.url,{headers:{cookie:bob.cookie}});assert.equal(picture.status,200);assert.equal(Buffer.from(await picture.arrayBuffer()).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  const audio=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie}});assert.equal(audio.status,200);assert.equal(await audio.text(),'audio de prueba');
+  assert.equal((await fetch(base+'/api/group-icons/'+group,{headers:{cookie:bob.cookie}})).status,200);
+  if(process.env.TEST_DATABASE_URL){assert(!fs.existsSync(path.join(data,'instance-0')));assert(!fs.existsSync(path.join(data,'instance-1')));}
   const logout=await request(alice,'/auth/logout','POST',{});assert.equal(logout.status,200);assert.equal((await request(alice,'/me')).user,null);assert.equal((await request(alice,'/conversations')).status,401);
 });
