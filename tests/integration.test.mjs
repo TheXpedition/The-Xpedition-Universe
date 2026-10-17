@@ -19,6 +19,15 @@ async function stop(){const old=child;if(old&&!old.killed){old.kill();await new 
 const client=()=>({cookie:'',user:null});
 async function request(c,p,method='GET',body){const response=await fetch(base+'/api'+p,{method,headers:{'Content-Type':'application/json',...(c?.cookie?{cookie:c.cookie}:{})},body:body===undefined?undefined:JSON.stringify(body)});if(response.headers.has('set-cookie')&&c)c.cookie=response.headers.get('set-cookie').split(';')[0];const value=await response.json();return {status:response.status,...value};}
 before(start);after(stop);
+test('el avance de Japan permite reproducir y buscar por rangos',async()=>{
+  const url=base+'/media/japan-preview.mp4';
+  const head=await fetch(url,{method:'HEAD'});assert.equal(head.status,200);assert.equal(head.headers.get('content-type'),'video/mp4');
+  const size=Number(head.headers.get('content-length'));assert(size>1000);
+  const first=await fetch(url,{headers:{Range:'bytes=0-31'}});assert.equal(first.status,206);assert.equal(first.headers.get('content-range'),`bytes 0-31/${size}`);
+  const bytes=Buffer.from(await first.arrayBuffer());assert.equal(bytes.length,32);assert(bytes.includes(Buffer.from('ftyp')));
+  const tail=await fetch(url,{headers:{Range:'bytes=-16'}});assert.equal(tail.status,206);assert.equal((await tail.arrayBuffer()).byteLength,16);
+  const invalid=await fetch(url,{headers:{Range:`bytes=${size}-`}});assert.equal(invalid.status,416);assert.equal(invalid.headers.get('content-range'),`bytes */${size}`);
+});
 test('registro, sesión, privacidad y contraseñas',async()=>{
   alice=client();bob=client();outsider=client();
   for(const[c,name]of[[alice,'QA Alice'],[bob,'QA Bob'],[outsider,'QA Carol']]){const result=await request(c,'/auth/register','POST',{name,email:name.replace(' ','').toLowerCase()+'@example.invalid',password:'UnaClaveDePrueba-123'});assert.equal(result.status,201);c.user=result.user;}

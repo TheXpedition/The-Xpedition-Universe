@@ -1,0 +1,762 @@
+{
+  "antarctica": {
+    "previewCast": [
+      "Bonju",
+      "Dua Lingo",
+      "Dani",
+      "Andromeda",
+      "Bayron",
+      "Felix"
+    ],
+    "cast": [
+      "Bonju",
+      "Dua Lingo",
+      "Dani",
+      "Andromeda",
+      "Bayron",
+      "Felix",
+      "Peggy",
+      "Isabel",
+      "Eris Midnight",
+      "Emanuel",
+      "Ximena",
+      "Beto",
+      "Vita",
+      "Catalina",
+      "Eduardo",
+      "Daelly",
+      "Iñaella Rose",
+      "Ignacio Ricci",
+      "Ivan Serrano",
+      "Pier"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Aventura",
+      "Estrategia"
+    ]
+  },
+  "safari": {
+    "previewCast": [
+      "Bonju",
+      "Dua Lingo",
+      "Coronel",
+      "Peggy",
+      "Julián",
+      "Alexandro"
+    ],
+    "cast": [
+      "Bonju",
+      "Dua Lingo",
+      "Coronel",
+      "Peggy",
+      "Julián",
+      "Alexandro",
+      "Isabel",
+      "Pier",
+      "Bryan Montalvo",
+      "Daelly",
+      "Andromeda",
+      "Luciano",
+      "Iñaella Rose",
+      "Ximena",
+      "Ignacio Ricci",
+      "Lucas Mendez",
+      "Greg",
+      "Garnet",
+      "Elvin",
+      "Bayron",
+      "Oscar",
+      "Sandro",
+      "Esteban",
+      "Rafael",
+      "Emmy Mango",
+      "Lalamila",
+      "Cocomong",
+      "Azealia Midnight",
+      "Eris Midnight",
+      "Catalina"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Aventura",
+      "Supervivencia"
+    ]
+  },
+  "japan": {
+    "previewCast": [
+      "Bonju",
+      "Dios",
+      "Dua Lingo"
+    ],
+    "cast": [
+      "Bonju",
+      "Dios",
+      "Dua Lingo"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Aventura",
+      "Estrategia"
+    ]
+  },
+  "traitor": {
+    "previewCast": [
+      "Bonju",
+      "Xina Ro",
+      "Eduardo",
+      "Esteban",
+      "Carlos Harrington"
+    ],
+    "cast": [
+      "Bonju",
+      "Xina Ro",
+      "Eduardo",
+      "Esteban",
+      "Carlos Harrington",
+      "Felix",
+      "Stalin Mango",
+      "Alex Yohender",
+      "Plastique Doll",
+      "Daelly",
+      "Andromeda",
+      "Isabel",
+      "Jose Serna",
+      "Vita",
+      "Marcos JC",
+      "Ximena",
+      "Braulio",
+      "Marianito",
+      "Amanda Lewis",
+      "Bodega Bodeguita",
+      "Peggy",
+      "Antonio Ezequiel",
+      "Beto",
+      "Eris Midnight",
+      "Renzo",
+      "Bayron",
+      "Ocean Harmony",
+      "Julián",
+      "Mischa Bachinski",
+      "Azael",
+      "Cinthia Carral"
+    ],
+    "genres": [
+      "Misterio",
+      "Estrategia",
+      "Suspenso"
+    ]
+  },
+  "traitor2": {
+    "previewCast": [
+      "Bonju",
+      "Bruno Macri",
+      "Lucas Mendez",
+      "Ivy",
+      "Ari Salgado"
+    ],
+    "cast": [
+      "Bonju",
+      "Bruno Macri",
+      "Lucas Mendez",
+      "Ivy",
+      "Ari Salgado",
+      "Alice",
+      "Mary Hao",
+      "Coronel",
+      "Isabel",
+      "Gabriel Sab",
+      "Kim Camila",
+      "Adriana Pereira",
+      "Andromeda",
+      "Bayron",
+      "Renata",
+      "Renzo",
+      "Lalamila",
+      "Peggy",
+      "Daelly",
+      "Nahuee",
+      "Luciano",
+      "Pier",
+      "Leandro",
+      "Felix",
+      "Greg",
+      "Sophia Asdero",
+      "Marcos",
+      "Dani",
+      "Vita",
+      "Azael",
+      "Stalin Mango",
+      "Doppel",
+      "Paula Garcia",
+      "Paulis Queen",
+      "Alexandro",
+      "Eduard",
+      "Beto",
+      "Esteban",
+      "Marianito",
+      "Christopher",
+      "Ivan Serrano",
+      "Ian Esteban",
+      "Samuel Gamert",
+      "Anderson Moreno",
+      "Julián",
+      "Silvanya D'Lemberth",
+      "Elian",
+      "Catalina",
+      "Xina Ro",
+      "Iñaella Rose"
+    ],
+    "genres": [
+      "Misterio",
+      "Deducción social",
+      "Suspenso"
+    ]
+  },
+  "traitor3": {
+    "previewCast": [
+      "Bonju"
+    ],
+    "cast": [
+      "Bonju"
+    ],
+    "genres": [
+      "Misterio",
+      "Estrategia",
+      "Suspenso"
+    ]
+  },
+  "safari-showdown": {
+    "previewCast": [
+      "Bonju",
+      "Ignacio Ricci",
+      "Rafael",
+      "Eris Midnight",
+      "Oscar",
+      "Lucas Mendez"
+    ],
+    "cast": [
+      "Bonju",
+      "Ignacio Ricci",
+      "Rafael",
+      "Eris Midnight",
+      "Oscar",
+      "Lucas Mendez",
+      "Luciano",
+      "Lalamila",
+      "Alexandro",
+      "Esteban",
+      "Isabel",
+      "Bryan Montalvo",
+      "Catalina",
+      "Iñaella Rose",
+      "Andromeda",
+      "Pier",
+      "Bayron",
+      "Garnet",
+      "Greg"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Torneos",
+      "Estrategia"
+    ]
+  },
+  "traitor-showdown": {
+    "previewCast": [
+      "Bonju",
+      "Alice",
+      "Ivy",
+      "Luciano",
+      "Leandro",
+      "Eduard"
+    ],
+    "cast": [
+      "Bonju",
+      "Alice",
+      "Ivy",
+      "Luciano",
+      "Leandro",
+      "Eduard",
+      "Gabriel Sab",
+      "Marianito",
+      "Carlos Harrington",
+      "Sal Lua",
+      "Bayron",
+      "Bodega Bodeguita",
+      "Peggy",
+      "Elias",
+      "Christopher",
+      "Mary Hao",
+      "Catalina",
+      "Andromeda",
+      "Greg",
+      "Renzo",
+      "Felix",
+      "Isabel",
+      "Marcos",
+      "Coronel",
+      "Ari Salgado",
+      "Daelly",
+      "Esteban",
+      "Julián"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Torneos",
+      "Estrategia"
+    ]
+  },
+  "retroverse": {
+    "previewCast": [
+      "Maria Villegas",
+      "Sebas",
+      "Sadith",
+      "Renzo",
+      "Roal",
+      "Teseo",
+      "Renata"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Sebas",
+      "Sadith",
+      "Renzo",
+      "Roal",
+      "Teseo",
+      "Renata",
+      "Lucas Severo",
+      "Stephany",
+      "Gustavo",
+      "Cristian Julio",
+      "Nahuee",
+      "Gokuh Moreno",
+      "Luciano",
+      "Isaac",
+      "Agus",
+      "Carlos Harrington"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Estrategia",
+      "Drama"
+    ]
+  },
+  "popular": {
+    "previewCast": [
+      "Maria Villegas",
+      "Luis",
+      "Damian",
+      "Atneimip",
+      "Mati",
+      "Ivy",
+      "Pilar"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Luis",
+      "Damián",
+      "Atneimip",
+      "Mati",
+      "Ivy",
+      "Pilar",
+      "Javi",
+      "Stephany",
+      "Solf",
+      "Luciano",
+      "Nahuee",
+      "Jared",
+      "Lui Mclean",
+      "Marco",
+      "Sophie Bradley",
+      "Diego Berguñez",
+      "Marcos",
+      "Brave"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Rivalidades",
+      "Estrategia"
+    ]
+  },
+  "comeback": {
+    "previewCast": [
+      "Maria Villegas",
+      "Nacho",
+      "Luis",
+      "Luciano",
+      "Alexia",
+      "Mati",
+      "Nahuee"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Nacho",
+      "Luis",
+      "Luciano",
+      "Alexia",
+      "Mati",
+      "Nahuee",
+      "Javi",
+      "Felix",
+      "Miguel Lima",
+      "Mariano",
+      "Coronel",
+      "Violeta",
+      "Felipe",
+      "Joaquín",
+      "Susano",
+      "Johanna",
+      "Cristian Julio",
+      "Pilar",
+      "Damián",
+      "Dani",
+      "Gokuh Moreno",
+      "Iker"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Aventura",
+      "Estrategia"
+    ]
+  },
+  "golden": {
+    "previewCast": [
+      "Maria Villegas",
+      "Felix",
+      "Robin",
+      "Luis",
+      "Nidia Mirella",
+      "Pablo",
+      "Javi"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Felix",
+      "Robin",
+      "Luis",
+      "Nidia Mirella",
+      "Pablo",
+      "Javi",
+      "Luciano",
+      "Iker",
+      "Eduard",
+      "Jesus",
+      "Pier",
+      "Mariano",
+      "Alexandro",
+      "Renzo",
+      "Gokuh Moreno",
+      "Morty",
+      "Emanuel",
+      "Alexia",
+      "Aaron",
+      "Gonz"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Rivalidades",
+      "Drama"
+    ]
+  },
+  "money": {
+    "previewCast": [
+      "Maria Villegas",
+      "Edson",
+      "Katy",
+      "Pepi",
+      "Luis",
+      "Felix",
+      "Mati"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Edson",
+      "Katy",
+      "Pepi",
+      "Luis",
+      "Felix",
+      "Mati",
+      "Damián",
+      "Luciano",
+      "Jesus",
+      "Coronel",
+      "Joaquin",
+      "Eduard",
+      "Pablo"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Carreras",
+      "Aventura"
+    ]
+  },
+  "allstars": {
+    "previewCast": [
+      "Maria Villegas",
+      "Nahuee",
+      "Pepi",
+      "Luis",
+      "Robin",
+      "Luciano",
+      "Iker"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Nahuee",
+      "Pepi",
+      "Luis",
+      "Robin",
+      "Luciano",
+      "Iker",
+      "Felix",
+      "Renata",
+      "Nacho",
+      "Nidia Mirella",
+      "Damián",
+      "Coronel",
+      "Jesus",
+      "Katy",
+      "Eduard"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Estrategia",
+      "Reencuentros"
+    ]
+  },
+  "elements": {
+    "previewCast": [
+      "Maria Villegas",
+      "Amanda Lewis",
+      "Plastique Doll",
+      "Luciano",
+      "Alexandro",
+      "Felix",
+      "Ivy"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Amanda Lewis",
+      "Plastique Doll",
+      "Luciano",
+      "Alexandro",
+      "Felix",
+      "Ivy",
+      "Javier",
+      "Solf",
+      "Jose Julián",
+      "Coronel",
+      "Eduard",
+      "Miguel Antonio",
+      "Sebastián",
+      "Nacho",
+      "Sadith"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Estrategia",
+      "Drama"
+    ]
+  },
+  "andromeda": {
+    "previewCast": [
+      "Maria Villegas",
+      "Emanuel",
+      "Plastique Doll",
+      "Alexandro",
+      "Dani",
+      "Humberto",
+      "Imanol"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Emanuel",
+      "Plastique Doll",
+      "Alexandro",
+      "Dani",
+      "Humberto",
+      "Imanol",
+      "Pier",
+      "Azealia Midnight",
+      "Luciano",
+      "Edwin",
+      "Azael",
+      "Felix",
+      "Alex",
+      "Catalina",
+      "Mati",
+      "Javier"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Ciencia ficción",
+      "Estrategia"
+    ]
+  },
+  "apocalypse": {
+    "previewCast": [
+      "Maria Villegas",
+      "Plastique Doll",
+      "Alexandro",
+      "Luciano",
+      "Luis",
+      "Dani",
+      "Marcos"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Plastique Doll",
+      "Alexandro",
+      "Luciano",
+      "Luis",
+      "Dani",
+      "Marcos JC",
+      "Pier",
+      "Emanuel",
+      "Pablo",
+      "Nahuee",
+      "Eduard",
+      "Vita",
+      "Santi",
+      "Teseo",
+      "Maicol",
+      "Mati",
+      "Oscar",
+      "Sal Lua"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Supervivencia",
+      "Drama"
+    ]
+  },
+  "newera": {
+    "previewCast": [
+      "Maria Villegas",
+      "Isabel",
+      "Brave",
+      "Beto",
+      "Eduardo",
+      "Nacho",
+      "Daphne Blake"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Isabel",
+      "Brave",
+      "Beto",
+      "Eduardo",
+      "Nacho",
+      "Daphne Blake",
+      "Edd GT",
+      "Oscar",
+      "Damián",
+      "Carlos Rojas",
+      "Iker",
+      "Azael",
+      "Federico",
+      "Eduard",
+      "Gabriel"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Estrategia",
+      "Drama"
+    ]
+  },
+  "empire": {
+    "previewCast": [
+      "Maria Villegas",
+      "Vita",
+      "Carlos Harrington",
+      "Rodri",
+      "Eris Midnight",
+      "Lola Mugler",
+      "Jere"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Vita",
+      "Carlos Harrington",
+      "Rodri",
+      "Eris Midnight",
+      "Lola Mugler",
+      "Jere Mías",
+      "Santi",
+      "Oscar",
+      "Elvin",
+      "Alexander",
+      "Esteban",
+      "Azael",
+      "Edwin",
+      "Daphne Blake"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Drama",
+      "Estrategia"
+    ]
+  },
+  "allstars2": {
+    "previewCast": [
+      "Maria Villegas",
+      "Beto",
+      "Pablo",
+      "Amanda Lewis",
+      "Vita",
+      "Eduardo",
+      "Elvin"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Beto",
+      "Pablo",
+      "Amanda Lewis",
+      "Vita",
+      "Eduardo",
+      "Elvin",
+      "Javier",
+      "Maicol",
+      "Eris Midnight",
+      "Emanuel",
+      "Iker",
+      "Renzo",
+      "Azealia Midnight",
+      "Marcos"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Estrategia",
+      "Reencuentros"
+    ]
+  },
+  "simulator": {
+    "genres": [
+      "Simulación",
+      "Estrategia",
+      "Competencia"
+    ]
+  },
+  "traitorsim": {
+    "genres": [
+      "Deducción social",
+      "Misterio",
+      "Estrategia"
+    ]
+  },
+  "showdown": {
+    "genres": [
+      "Simulación",
+      "Torneos",
+      "Competencia"
+    ]
+  },
+  "house": {
+    "genres": [
+      "Simulación social",
+      "Convivencia",
+      "Estrategia"
+    ]
+  }
+}

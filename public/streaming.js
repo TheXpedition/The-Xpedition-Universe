@@ -1,6 +1,12 @@
 'use strict';
 state.filter='tops';
 state.featureIndex=0;
+state.previewMuted=true;
+state.previewPaused=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+icons.play='<path d="m9 5 11 7-11 7z" fill="currentColor" stroke="none"/>';
+icons.pause='<path d="M8 5v14M16 5v14" stroke-width="4"/>';
+icons.volume='<path d="M11 4 6 8H3v8h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>';
+icons.muted='<path d="M11 4 6 8H3v8h3l5 4zM16 9l5 6m0-6-5 6"/>';
 const streamNav=[['inicio','Inicio'],['explorar','Explorar'],['noticias','Noticias'],['comunidad','Comunidad'],['guardados','Mi lista'],['simuladores','Simuladores'],['universo','El universo']];
 renderChrome=function(){
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);document.body.dataset.view=state.route;
@@ -8,30 +14,77 @@ renderChrome=function(){
   $('#accountActions').innerHTML=state.user?`<button class="icon-button" data-action="go-messages" aria-label="Ver mensajes${unread?', '+unread+' sin leer':''}" style="position:relative">${icon('chat')}${unread?`<span style="position:absolute;right:-2px;top:-2px;background:#9570cd;color:white;font-size:8px;border-radius:4px;padding:0 4px">${unread}</span>`:''}</button><button data-action="account-menu" aria-label="Opciones de ${esc(state.user.name)}" aria-expanded="false">${avatar(state.user)}</button>`:`<button class="link-button" data-action="login">Iniciar sesión</button><button class="btn primary small" data-action="register">Regístrate</button>`;
   document.title=`${unread?'('+unread+') ':''}The Xpedition — ${streamNav.find(n=>n[0]===state.route)?.[1]||(state.route==='mensajes'?'Mensajes':'Universe')}`;
 };
-const featuredItems=()=>[state.catalog.content.xpedition[0],state.catalog.content.xpedition[1],state.catalog.content.spinoffs.find(c=>c.id==='traitor2'),state.catalog.content.xpedition[2],state.catalog.content.simulators.find(c=>c.id==='house')];
-function featureHero(){const items=featuredItems(),item=items[state.featureIndex%items.length];return `<section class="feature-hero" aria-label="Destacado: ${esc(item.name)}"><img class="feature-image" src="${esc(contentArt(item))}" alt="${esc(item.name)}"><div class="feature-copy"><div class="feature-kicker">${item.disabled?'EL PRÓXIMO CAPÍTULO':'THE XPEDITION ORIGINAL'}</div>${logoFor(item)?`<img class="feature-logo" src="${esc(logoFor(item))}" alt="${esc(item.name)}">`:`<h1>${item.id==='house'?'<small class="house-prefix">THE XPEDITION</small>HOUSE':esc(item.name)}</h1>`}<div class="feature-meta"><span>${esc(item.meta.replace('Season','Temporada'))}</span><span>•</span><span>${item.kind==='Simulador'?'Simulación interactiva':'Competencia virtual'}</span><span class="rating">TX</span></div><p>${esc(item.desc)} ${item.id==='antarctica'?'Revive los desafíos, conoce a sus protagonistas y descubre dónde comenzó esta historia.':item.id==='safari'?'La expedición vuelve a poner a prueba cada alianza. Solo uno llegará hasta el final.':''}</p><div class="feature-actions">${item.disabled?`<button class="btn secondary" data-action="content" data-id="${esc(item.id)}">Conocer la temporada ${icon('info')}</button>`:`<a class="btn primary" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${icon('arrow')} ${item.kind==='Simulador'?'Jugar ahora':'Ir a la temporada'}</a><button class="btn secondary" data-action="content" data-id="${esc(item.id)}">Más información</button>`}<button class="hero-save" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}">${icon(saved(item.id)?'check':'plus')}</button></div></div><div class="hero-editorial">EL UNIVERSO TE ESPERA<strong>Historias que se quedan contigo.</strong></div><div class="feature-dots">${items.map((c,i)=>`<button class="${i===state.featureIndex?'active':''}" data-stream="feature" data-index="${i}" aria-label="Ver destacado ${esc(c.name)}" aria-pressed="${i===state.featureIndex}"></button>`).join('')}</div><div class="feature-counter"><span>0${state.featureIndex+1} / 0${items.length}</span><div class="feature-controls"><button data-stream="feature-prev" aria-label="Anterior destacado">${icon('back')}</button><button data-stream="feature-next" aria-label="Siguiente destacado">${icon('arrow')}</button></div></div></section>`;}
-const controls=()=>`<div class="row-controls"><button data-stream="rail-prev" aria-label="Ver anteriores">${icon('back')}</button><button data-stream="rail-next" aria-label="Ver siguientes">${icon('arrow')}</button></div>`;
-function catalogRail(title,items,poster=false,subtitle=''){return `<section class="catalog-row"><div class="section-head"><h2>${title}</h2>${controls()}</div>${subtitle?`<p class="row-subtitle">${subtitle}</p>`:''}<div class="rail ${poster?'poster-rail':''}">${items.map(contentCard).join('')}</div></section>`;}
-function rankPoster(name,isSeason=false){
-  const item=isSeason?allContent().find(c=>norm(c.name)===norm(name)):null;
-  const profile=!item?state.profiles.find(p=>p.character&&norm(p.name)===norm(name)):null;
-  const action=item?'content':'profile',id=item?.id||profile?.id;
-  if(!id)return '';
-  return `<div class="rank-poster"><button data-action="${action}" data-id="${esc(id)}" ${item?`data-kind="${esc(item.kind)}"`:''} aria-label="Ver ${esc(item?.name||profile.name)}"><img src="${esc(item?contentArt(item):imageFor(name))}" alt="${esc(item?.name||profile.name)}" loading="lazy">${item&&logoFor(item)?`<img class="rank-season-logo" src="${esc(logoFor(item))}" alt="" loading="lazy">`:''}</button><span class="rank-name">${esc(item?.name||profile.name)}</span></div>`;
+const featuredItems=()=>[state.catalog.content.xpedition[2],state.catalog.content.xpedition[1],state.catalog.content.xpedition[0],state.catalog.content.spinoffs.find(c=>c.id==='traitor2'),state.catalog.content.simulators.find(c=>c.id==='house')];
+const japanPreview='media/japan-preview.mp4';
+function featureHero(){
+  const items=featuredItems(),item=items[state.featureIndex%items.length],japan=item.id==='japan';
+  return `<section class="feature-hero ${japan?'japan-feature':''}" aria-label="Destacado: ${esc(item.name)}"><img class="feature-image" src="${esc(contentArt(item))}" alt="" fetchpriority="high">${japan?`<video class="feature-video" id="japanPreview" muted loop playsinline preload="metadata" poster="backdrops/japan.png" aria-label="Previa de The Xpedition Japan"><source src="${japanPreview}" type="video/mp4"></video>`:''}<div class="feature-shade"></div><div class="feature-copy"><div class="feature-kicker"><span class="original-mark">X</span> THE XPEDITION ORIGINAL</div>${logoFor(item)?brandArt(item,'feature-logo'):`<h1>${item.id==='house'?'<small class="house-prefix">THE XPEDITION</small>HOUSE':esc(item.name)}</h1>`}<div class="feature-release">${japan?'<span class="release-dot"></span>Tercera temporada · Próximamente':esc(item.meta.replace('Season','Temporada'))}</div><div class="feature-meta">${japan?'2026 <span>•</span> Competencia virtual <span>•</span> Japan':esc(item.kind==='Simulador'?'Simulación interactiva':'Competencia virtual')+' <span>•</span> '+esc(item.name)}</div><p>${japan?'Un nuevo destino. Alianzas que se ponen a prueba y secretos que pueden cambiarlo todo. La próxima expedición comienza en Japón.':esc(item.desc)+' '+(item.id==='antarctica'?'Revive la expedición donde comenzó esta historia.':item.id==='safari'?'Cada alianza cuenta. Solo uno llegará hasta el final.':'')}</p><div class="feature-actions">${japan?`<button class="btn primary" data-stream="trailer">${icon('play')} Ver avance</button><button class="btn secondary" data-action="content" data-id="japan">${icon('info')} Más información</button>`:item.disabled?`<button class="btn secondary" data-action="content" data-id="${esc(item.id)}">Conocer la temporada ${icon('info')}</button>`:`<a class="btn primary" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${icon(item.kind==='Simulador'?'game':'play')} ${item.kind==='Simulador'?'Jugar ahora':'Ir a la temporada'}</a><button class="btn secondary" data-action="content" data-id="${esc(item.id)}">Más información</button>`}<button class="hero-save ${saved(item.id)?'saved':''}" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}" aria-pressed="${!!saved(item.id)}">${icon(saved(item.id)?'check':'plus')}</button></div></div><div class="feature-bottom"><div class="feature-dots" aria-label="Elegir destacado">${items.map((c,i)=>`<button class="${i===state.featureIndex?'active':''}" data-stream="feature" data-index="${i}" aria-label="Ver destacado ${esc(c.name)}" aria-pressed="${i===state.featureIndex}"><span>0${i+1}</span><i></i></button>`).join('')}</div><div class="feature-counter">${japan?`<div class="preview-controls"><button data-stream="preview-pause" aria-label="${state.previewPaused?'Reproducir':'Pausar'} previa">${icon(state.previewPaused?'play':'pause')}</button><button data-stream="preview-mute" aria-label="${state.previewMuted?'Activar':'Silenciar'} sonido" aria-pressed="${!state.previewMuted}">${icon(state.previewMuted?'muted':'volume')}</button></div>`:''}<div class="feature-controls"><button data-stream="feature-prev" aria-label="Anterior destacado">${icon('back')}</button><button data-stream="feature-next" aria-label="Siguiente destacado">${icon('arrow')}</button></div></div></div></section>`;
 }
-function rankRow(list,home=false){return `<section class="ranked-section ${home?'home-ranked':''}"><div class="section-head"><div><h2>${esc(list.title)}</h2></div>${controls()}</div><div class="ranked-track">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}"><svg class="rank-number ${index===9?'two':''}" viewBox="0 0 ${index===9?240:145} 240" aria-hidden="true"><text x="4" y="205">${index+1}</text></svg>${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'))}</div>`).join('')}</div></section>`;}
+const controls=()=>`<div class="row-controls"><button data-stream="rail-prev" aria-label="Ver anteriores">${icon('back')}</button><button data-stream="rail-next" aria-label="Ver siguientes">${icon('arrow')}</button></div>`;
+function catalogRail(title,items,poster=false,subtitle=''){return `<section class="catalog-row"><div class="section-head"><h2>${title}</h2>${controls()}</div>${subtitle?`<p class="row-subtitle">${subtitle}</p>`:''}<div class="rail ${poster?'poster-rail':''}" tabindex="0" aria-label="${esc(title)}">${items.map(contentCard).join('')}</div></section>`;}
+function rankPoster(name,isSeason=false,position=0){
+ const item=isSeason?allContent().find(c=>norm(c.name)===norm(name)):null;
+ const profile=!item?state.profiles.find(p=>p.character&&norm(p.name)===norm(name)):null;
+ const action=item?'content':'profile',id=item?.id||profile?.id;if(!id)return '';
+ return `<div class="rank-poster"><button data-action="${action}" data-id="${esc(id)}" ${item?`data-kind="${esc(item.kind)}"`:''} aria-label="${position?'Puesto '+position+': ':''}Ver ${esc(item?.name||profile.name)}"><img src="${esc(item?contentArt(item):imageFor(name))}" alt="${esc(item?.name||profile.name)}" loading="lazy" decoding="async">${item?brandArt(item,'rank-season-logo'):''}<span class="rank-poster-glow" aria-hidden="true"></span></button><span class="rank-name">${esc(item?.name||profile.name)}</span></div>`;
+}
+function rankNumeral(number){
+ const width=number===10?285:160;
+ return `<svg class="rank-number ${number===10?'two':''}" viewBox="0 0 ${width} 250" aria-hidden="true"><text class="rank-depth" x="11" y="225">${number}</text><text class="rank-metal" x="8" y="222">${number}</text><text class="rank-glint" x="8" y="222">${number}</text></svg>`;
+}
+function rankRow(list,home=false){
+ const match=list.title.match(/^TOP (\d+) (.+)$/),topic=match?.[2]||list.title;
+ return `<section class="ranked-section ${home?'home-ranked':''}"><div class="section-head"><h2 class="rank-heading" aria-label="${esc(list.title)}"><span class="rank-heading-metal">TOP ${match?.[1]||list.items.length}</span><span class="rank-heading-topic">${esc(topic)}<small>DEL UNIVERSO</small></span></h2>${controls()}</div><div class="ranked-track" tabindex="0" aria-label="${esc(list.title)}">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}">${rankNumeral(index+1)}${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name,false,index+1)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'),index+1)}</div>`).join('')}</div></section>`;
+}
 renderHome=function(){
   const c=state.catalog.content,rankings=state.catalog.rankings||[];
-  $('#main').innerHTML=`<div class="stream-home"><h1 class="sr-only">The Xpedition Universe</h1><div id="featuredArea">${featureHero()}</div><div class="catalog-body">${catalogRail('The Xpedition',c.xpedition,false,'Cada destino tiene una historia. Descubre la tuya.')}${rankings[0]?rankRow(rankings[0],true):''}<div class="franchise-logos"><a href="#explorar">THE XPEDITION<small>ORIGINALS</small></a><a href="#explorar">CAMPRIA<small>DONDE TODO COMENZÓ</small></a><a href="#explorar">THE TRAITOR<small>NO CONFÍES EN NADIE</small></a><a href="#simuladores">SIMULATORS<small>TÚ DECIDES</small></a></div>${catalogRail('Los spin-offs. La historia continúa.',c.spinoffs)}${catalogRail('Campria: el origen de un universo',c.campria,true)}${rankings[1]?rankRow(rankings[1],true):''}<section class="stream-banner"><div><div class="eyebrow">MÁS ALLÁ DE LA COMPETENCIA</div><h2>Los personajes son icónicos.<br>La comunidad la haces tú.</h2><p>Crea tu perfil, encuentra a otros participantes y lleva la conversación a tu propio chat.</p></div><a href="#comunidad" class="btn secondary">Entrar a la comunidad ${icon('arrow')}</a></section>${catalogRail('Ahora el juego lo escribes tú',c.simulators,false,'Simuladores oficiales. Tus participantes, tus alianzas, tus reglas.')}<section class="stream-news"><div class="section-head"><h2>Las historias detrás de la historia</h2><a href="#noticias" class="link-button">Todas las noticias ${icon('arrow')}</a></div><div class="news-grid">${state.catalog.news.slice(0,3).map(newsCard).join('')}</div></section></div></div>`;
+  $('#main').innerHTML=`<div class="stream-home"><h1 class="sr-only">The Xpedition Universe — temporadas, personajes y comunidad</h1><div id="featuredArea">${featureHero()}</div><div class="catalog-body"><nav class="universe-shortcuts" aria-label="Descubre el universo"><a href="#explorar"><span>01</span>Temporadas ${icon('arrow')}</a><a href="#comunidad"><span>02</span>Personajes y comunidad ${icon('arrow')}</a><a href="#simuladores"><span>03</span>Simuladores ${icon('arrow')}</a></nav>${catalogRail('The Xpedition',c.xpedition,false,'Cada destino tiene una historia. Descubre la tuya.')}${rankings[0]?rankRow(rankings[0],true):''}<div class="franchise-logos"><a href="#explorar">THE XPEDITION<small>ORIGINALS</small></a><a href="#explorar">CAMPRIA<small>DONDE TODO COMENZÓ</small></a><a href="#explorar">THE TRAITOR<small>NO CONFÍES EN NADIE</small></a><a href="#simuladores">SIMULATORS<small>TÚ DECIDES</small></a></div>${catalogRail('Los spin-offs. La historia continúa.',c.spinoffs)}${catalogRail('Campria: el origen de un universo',c.campria,true)}${rankings[1]?rankRow(rankings[1],true):''}<section class="stream-banner"><div><div class="eyebrow">MÁS ALLÁ DE LA COMPETENCIA</div><h2>Los personajes son icónicos.<br>La comunidad la haces tú.</h2><p>Crea tu perfil, encuentra a otros participantes y lleva la conversación a tu propio chat.</p></div><a href="#comunidad" class="btn secondary">Entrar a la comunidad ${icon('arrow')}</a></section>${catalogRail('Ahora el juego lo escribes tú',c.simulators,false,'Simuladores oficiales. Tus participantes, tus alianzas, tus reglas.')}<section class="stream-news"><div class="section-head"><h2>Las historias detrás de la historia</h2><a href="#noticias" class="link-button">Todas las noticias ${icon('arrow')}</a></div><div class="news-grid">${state.catalog.news.slice(0,3).map(newsCard).join('')}</div></section></div></div>`;
 };
 renderExplore=function(){
   const tops=state.filter==='tops';
   $('#main').innerHTML=`<section class="explore-cover"><div class="eyebrow">LAS CARAS. LOS MOMENTOS. EL LEGADO.</div><h1>Los que dejaron huella.</h1><p>Ganadores, amistades, rivalidades y participantes inolvidables. Explora todas las colecciones del universo.</p><div class="explore-tabs"><button data-stream="explore-tab" data-id="tops" class="${tops?'active':''}">Los tops del universo</button><button data-stream="explore-tab" data-id="todos" class="${!tops?'active':''}">Todas las temporadas</button></div></section>${tops?`<p class="rank-note" style="margin-bottom:30px">Selecciones del universo. El orden de estas listas no representa un ranking oficial.</p>${(state.catalog.rankings||[]).map(list=>rankRow(list)).join('')}`:`<div class="chips">${[['todos','Todas'],['xpedition','The Xpedition'],['spinoffs','Spin-offs'],['campria','Campria']].map(([id,label])=>`<button class="chip ${state.filter===id?'active':''}" data-action="explore-filter" data-id="${id}">${label}</button>`).join('')}</div><label class="search-field">${icon('search')}<input id="exploreSearch" placeholder="Busca tu temporada…" aria-label="Buscar temporada" value="${esc(state.query)}"></label><div class="content-grid catalog-results" id="exploreResults">${(state.filter==='todos'?[...state.catalog.content.xpedition,...state.catalog.content.spinoffs,...state.catalog.content.campria]:(state.catalog.content[state.filter]||[])).filter(c=>norm(c.name).includes(norm(state.query))).map(contentCard).join('')}</div>`}`;
 };
-contentModal=function(id,kind){const item=allContent().find(c=>c.id===id&&(!kind||c.kind===kind));if(!item)return;modal(`<div class="content-modal-art"><img src="${esc(contentArt(item))}" alt="${esc(item.name)}">${logoFor(item)?`<img class="content-modal-logo" src="${esc(logoFor(item))}" alt="">`:''}</div><div class="modal-kicker">${esc(item.kind)} · ${esc(item.meta)}</div><h2 id="modalTitle">${esc(item.name)}</h2><p class="modal-intro">${esc(item.desc)}</p>${item.disabled||!item.url?'<div class="notice">El próximo capítulo está en camino. Esta temporada aún no tiene enlace disponible.</div>':`<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="btn primary full">${esc(item.actionLabel||'Ir a la temporada')} ${icon('external')}</a>`}`,true,'content');};
+renderSimulators=function(){
+ $('#main').innerHTML=`<section class="simulator-intro"><div class="eyebrow">TU PRÓXIMA PARTIDA EMPIEZA AQUÍ</div><h1>Tu temporada.<br><span>Tus reglas.</span></h1><p>Elige el escenario. Reúne a tus participantes.<br>El resto de la historia lo escribes tú.</p><div class="simulator-intro-meta">${icon('game')} ${state.catalog.content.simulators.length} experiencias del universo</div></section><div class="simulator-grid">${state.catalog.content.simulators.map(contentCard).join('')}</div>`;
+};
+const castProfileAliases={'mariavillegas':'Maria','marcosjc':'Marcos','jeremias':'Jere','javier':'Javi','felipe':'Felipe Vicente'};
+const castKey=name=>norm(name).replace(/[^a-z0-9]/g,'');
+function castProfile(name){
+ const key=castKey(name),alias=castProfileAliases[key];
+ return state.profiles.find(p=>p.character&&castKey(p.name)===key)||(alias?state.profiles.find(p=>p.character&&p.name===alias):null);
+}
+function castNames(names){return names.map(name=>{
+ const profile=castProfile(name);
+ return profile?`<button class="cast-person" data-action="profile" data-id="${esc(profile.id)}" aria-label="Ver perfil de ${esc(name)}">${esc(name)}</button>`:`<span class="cast-no-profile">${esc(name)}</span>`;
+}).join('<span class="cast-comma">, </span>');}
+function relatedContent(item){
+ const c=state.catalog.content;
+ if(item.kind==='Simulador')return c.simulators.filter(x=>x.id!==item.id).slice(0,3);
+ if(item.kind==='Campria'){
+  const index=c.campria.findIndex(x=>x.id===item.id);
+  return c.campria.map((entry,i)=>({entry,distance:Math.abs(i-index)})).filter(x=>x.entry.id!==item.id).sort((a,b)=>a.distance-b.distance).slice(0,3).map(x=>x.entry);
+ }
+ const groups=[['antarctica','safari','japan','safari-showdown'],['traitor','traitor2','traitor3','traitor-showdown']];
+ const group=groups.find(g=>g.includes(item.id));
+ return (group?group.map(id=>allContent().find(x=>x.id===id)):c.spinoffs).filter(x=>x&&x.id!==item.id).slice(0,3);
+}
+contentModal=function(id,kind){
+ const item=allContent().find(c=>c.id===id&&(!kind||c.kind===kind));if(!item)return;
+ const detail=state.catalog.details[item.id]||{},simulator=item.kind==='Simulador',japan=item.id==='japan';
+ const hasCast=!simulator&&detail.cast?.length;
+ const moreCast=hasCast&&detail.cast.length>detail.previewCast.length;
+ const action=japan?`<button class="btn primary" data-stream="trailer">${icon('play')} Ver avance</button>`:item.disabled||!item.url?'<span class="detail-upcoming">Próximamente</span>':`<a class="btn primary" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${icon(simulator?'game':'play')} ${simulator?'Jugar ahora':'Ir a la temporada'}</a>`;
+ const recommendations=relatedContent(item);
+ modal(`<div class="detail-hero ${simulator?'detail-game-hero':item.kind==='Campria'?'detail-campria-hero':''}" data-content-id="${esc(item.id)}"><img class="detail-hero-image" src="${esc(contentArt(item))}" alt="" loading="eager"><div class="detail-hero-shade"></div>${brandArt(item,'detail-logo')}<div class="detail-hero-actions">${action}<button class="detail-save ${saved(item.id)?'saved':''}" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}" aria-pressed="${!!saved(item.id)}">${icon(saved(item.id)?'check':'plus')}</button></div></div><div class="detail-body"><div class="detail-summary"><div class="detail-main-copy"><div class="detail-meta"><span>${esc(item.meta.replace('Season','Temporada'))}</span><span class="detail-format">${esc(simulator?'INTERACTIVO':item.kind==='Campria'?'CAMPRIA':'ORIGINAL')}</span></div><h2 id="modalTitle" tabindex="-1">${esc(item.name)}</h2>${item.disabled?`<div class="detail-release">${japan?'Tercera temporada · Próximamente':'Próximamente en The Xpedition Universe'}</div>`:''}<p class="detail-description">${esc(japan?'Honor, tradición y traición. Un nuevo destino pone a prueba cada alianza. La tercera temporada de The Xpedition está por comenzar.':item.desc)}</p></div><div class="detail-credits">${hasCast?`<p><span class="credit-label">Elenco:</span> ${castNames(detail.previewCast)}${moreCast?'<span class="cast-comma">, </span><button class="cast-more" data-stream="cast-expand">Ver más</button>':''}</p>`:''}<p><span class="credit-label">Géneros:</span> ${detail.genres.map(esc).join(', ')}</p><p><span class="credit-label">Universo:</span> ${esc(simulator?'Simuladores':item.kind==='Campria'?'Campria':item.id.startsWith('traitor')?'The Traitor':'The Xpedition')}</p></div></div><section class="detail-related" aria-labelledby="relatedTitle"><div class="detail-section-heading"><h3 id="relatedTitle">Más títulos similares</h3><span>Explora la misma saga</span></div><div class="detail-recommendations">${recommendations.map(contentCard).join('')}</div></section><section class="detail-full" id="fullCast" tabindex="-1" aria-labelledby="fullCastHeading"><h3 id="fullCastHeading">Acerca de <strong>${esc(item.name)}</strong></h3><dl><div><dt>Temporada:</dt><dd>${esc(item.meta.replace('Season','Temporada'))}</dd></div>${hasCast?`<div class="full-cast-line"><dt>Elenco completo:</dt><dd>${castNames(detail.cast)}</dd></div>`:''}<div><dt>Géneros:</dt><dd>${detail.genres.map(esc).join(', ')}</dd></div><div><dt>Formato:</dt><dd>${esc(simulator?'Simulador interactivo':item.kind==='Campria'?'Temporada de Campria':item.kind==='Spin Off'?'Spin-off del universo The Xpedition':'Temporada de The Xpedition')}</dd></div>${item.disabled?'<div><dt>Disponibilidad:</dt><dd>Próximamente</dd></div>':''}</dl></section></div>`,true,'content');
+ $('#modalTitle').focus({preventScroll:true});
+};
+document.addEventListener('click',event=>{
+ const button=event.target.closest('[data-stream="cast-expand"]');if(!button)return;
+ const section=$('#fullCast');if(section){section.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});section.focus({preventScroll:true});}
+});
 document.addEventListener('click',event=>{
   const button=event.target.closest('[data-stream]');if(!button)return;const action=button.dataset.stream;
-  if(action.startsWith('feature')){const n=featuredItems().length;state.featureIndex=action==='feature'?Number(button.dataset.index):action==='feature-next'?(state.featureIndex+1)%n:(state.featureIndex-1+n)%n;$('#featuredArea').innerHTML=featureHero();}
+  if(action.startsWith('feature')){const n=featuredItems().length;state.featureIndex=action==='feature'?Number(button.dataset.index):action==='feature-next'?(state.featureIndex+1)%n:(state.featureIndex-1+n)%n;$('#featuredArea').innerHTML=featureHero();setupPreview();}
   if(action==='rail-prev'||action==='rail-next'){const rail=button.closest('.catalog-row,.ranked-section')?.querySelector('.rail,.ranked-track');if(rail)rail.scrollBy({left:(action==='rail-prev'?-1:1)*rail.clientWidth*.78,behavior:'smooth'});}
   if(action==='explore-tab'){state.filter=button.dataset.id;state.query='';renderExplore();}
 });
@@ -74,17 +127,63 @@ document.addEventListener('click',async event=>{
   }
 });
 
-const observedRails=new WeakSet();
+// Each rail updates only its own controls, once per animation frame.
+const trackedRails=new Map(),pendingRails=new Set();let railFrame=0,scanFrame=0;
+function queueRail(rail){pendingRails.add(rail);if(!railFrame)railFrame=requestAnimationFrame(()=>{
+ railFrame=0;const changes=[...pendingRails].filter(r=>r.isConnected).map(rail=>({rail,scrollable:rail.scrollWidth>rail.clientWidth+3,atStart:rail.scrollLeft<3,atEnd:rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-3}));pendingRails.clear();
+ for(const {rail,scrollable,atStart,atEnd}of changes){const controls=trackedRails.get(rail)?.controls;if(!controls)continue;controls.hidden=!scrollable;const buttons=$$('button',controls);buttons[0].disabled=atStart;buttons[1].disabled=atEnd;rail.classList.toggle('can-scroll-right',scrollable&&!atEnd);}
+ });}
+const railResize=new ResizeObserver(entries=>entries.forEach(entry=>queueRail(entry.target)));
 function syncRailControls(){
-  $$('.catalog-row,.ranked-section').forEach(section=>{
-    const rail=$('.rail,.ranked-track',section),controls=$('.row-controls',section);if(!rail||!controls)return;
-    const buttons=$$('button',controls),scrollable=rail.scrollWidth>rail.clientWidth+3;
-    controls.hidden=!scrollable;buttons[0].disabled=rail.scrollLeft<3;buttons[1].disabled=rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-3;
-    if(!observedRails.has(rail)){observedRails.add(rail);rail.addEventListener('scroll',syncRailControls,{passive:true});}
-  });
+ for(const [rail]of trackedRails)if(!rail.isConnected){railResize.unobserve(rail);trackedRails.delete(rail);}
+ $$('.catalog-row,.ranked-section').forEach(section=>{
+  const rail=$('.rail,.ranked-track',section),controls=$('.row-controls',section);if(!rail||!controls)return;
+  if(!trackedRails.has(rail)){trackedRails.set(rail,{controls});railResize.observe(rail);rail.addEventListener('scroll',()=>queueRail(rail),{passive:true});rail.addEventListener('keydown',event=>{if(event.target!==rail||!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();rail.scrollBy({left:(event.key==='ArrowLeft'?-1:1)*rail.clientWidth*.78,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});});}
+  queueRail(rail);
+ });
 }
-new MutationObserver(()=>requestAnimationFrame(syncRailControls)).observe($('#main'),{childList:true,subtree:true});
+new MutationObserver(()=>{if(!scanFrame)scanFrame=requestAnimationFrame(()=>{scanFrame=0;syncRailControls();setupPreview();});}).observe($('#main'),{childList:true,subtree:true});
 window.addEventListener('resize',syncRailControls);document.fonts?.ready.then(syncRailControls);
+
+let currentPreview=null,previewOnscreen=true;
+const previewObserver=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.target===currentPreview){previewOnscreen=entry.isIntersecting;updatePreviewPlayback();}},{threshold:.1});
+function updatePreviewPlayback(){
+ const video=currentPreview;if(!video)return;
+ if(!previewOnscreen||document.hidden||state.previewPaused||$('#modal').open){video.pause();return;}
+ video.play().catch(()=>{state.previewPaused=true;updatePreviewButtons();});
+}
+function updatePreviewButtons(){
+ const mute=$('[data-stream="preview-mute"]'),pause=$('[data-stream="preview-pause"]');
+ if(mute){mute.innerHTML=icon(state.previewMuted?'muted':'volume');mute.setAttribute('aria-label',state.previewMuted?'Activar sonido':'Silenciar sonido');mute.setAttribute('aria-pressed',String(!state.previewMuted));}
+ if(pause){pause.innerHTML=icon(state.previewPaused?'play':'pause');pause.setAttribute('aria-label',state.previewPaused?'Reproducir previa':'Pausar previa');}
+}
+function setupPreview(){
+ const video=$('#japanPreview');if(video===currentPreview)return;
+ if(currentPreview){currentPreview.pause();previewObserver.unobserve(currentPreview);}
+ currentPreview=video;if(!video)return;
+ video.muted=state.previewMuted;previewOnscreen=true;
+ video.addEventListener('playing',()=>video.classList.add('is-playing'));
+ video.addEventListener('error',()=>video.classList.remove('is-playing'));
+ previewObserver.observe(video);updatePreviewPlayback();
+}
+document.addEventListener('visibilitychange',updatePreviewPlayback);
+const cinemaBaseModal=modal;
+modal=function(...args){
+ currentPreview?.pause();$$('video',$('#modal')).forEach(v=>v.pause());
+ const value=cinemaBaseModal(...args);$('#modal').dataset.kind=args[2]||'generic';$('#modal').scrollTop=0;return value;
+};
+$('#modal').addEventListener('close',()=>{$$('video',$('#modal')).forEach(v=>{v.pause();v.removeAttribute('autoplay');v.removeAttribute('src');$$('source',v).forEach(s=>s.removeAttribute('src'));v.load();});updatePreviewPlayback();});
+document.addEventListener('click',event=>{
+ const button=event.target.closest('[data-stream]');if(!button)return;
+ if(button.dataset.stream==='preview-mute'){state.previewMuted=!state.previewMuted;if(currentPreview)currentPreview.muted=state.previewMuted;updatePreviewButtons();}
+ if(button.dataset.stream==='preview-pause'){state.previewPaused=!state.previewPaused;updatePreviewButtons();updatePreviewPlayback();}
+ if(button.dataset.stream==='trailer'){
+  modal(`<div class="trailer-topline"><span class="eyebrow">THE XPEDITION ORIGINAL</span><span>TERCERA TEMPORADA</span></div><h2 id="modalTitle">Japan · Avance oficial</h2><video class="trailer-player" controls autoplay playsinline preload="metadata" poster="backdrops/japan.png" aria-label="Avance de The Xpedition Japan"><source src="${japanPreview}" type="video/mp4"></video><p class="release-note">Tercera temporada · Próximamente</p>`,true,'trailer');
+  $('#modal .trailer-player').play().catch(()=>{});
+ }
+});
+let headerFrame=0;
+window.addEventListener('scroll',()=>{if(!headerFrame)headerFrame=requestAnimationFrame(()=>{headerFrame=0;$('.topbar').classList.toggle('is-scrolled',window.scrollY>24);});},{passive:true});
 
 const baseNewsCard=newsCard;
 newsCard=function(n){return baseNewsCard(n).replace('<div class="news-actions">',`<button class="link-button news-read-link" data-stream="news-read" data-id="${esc(n.id)}">Leer la historia ${icon('arrow')}</button><div class="news-actions">`);};
