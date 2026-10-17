@@ -6,7 +6,7 @@ Sitio de temporadas, personajes y comunidad, con perfiles y mensajería en tiemp
 
 [Abrir The Xpedition Universe](https://thexpedition.github.io/The-Xpedition-Universe/).
 
-El `index.html` de la raíz abre la web de `public/`; `.nojekyll` conserva sus archivos originales. En GitHub Pages se pueden explorar el diseño completo, videos, catálogo, tops, fichas, personajes, noticias y enlaces a simuladores. Esta vista no solicita contraseñas ni simula cuentas o mensajes: las funciones de comunidad necesitan completar el despliegue del servidor en Render y Supabase. Al abrir la URL del servidor se activan las funciones completas automáticamente.
+El enlace de GitHub Pages y sus rutas antiguas de `public/` envían a [la web completa en Render](https://the-xpedition-universe.onrender.com/), conservando la sección abierta. El servidor guarda las cuentas y conversaciones en PostgreSQL y los adjuntos privados en Supabase. `.nojekyll` conserva los archivos originales. Las copias sin servidor pueden mostrar el catálogo público y explican que la comunidad no está disponible.
 
 ## Abrir en tu equipo
 
@@ -43,6 +43,8 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 Registro, contraseña, Google, perfiles editables, 116 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
 
 Portada con las previas de Japan, Safari, Antarctica, The Traitor 2 y Showdown 2, controles de sonido y reproducción, enlaces originales a las temporadas, logos completos y tops con números metálicos. Las fichas incluyen elencos enlazados a perfiles, géneros, tres títulos similares y reparto completo; los simuladores conservan su arte original con relleno lateral del mismo color.
+
+Las cinco previas tienen una versión ligera para móvil en H.264/AAC, con inicio progresivo y fotogramas clave cada dos segundos. La portada admite deslizamiento horizontal y conserva el desplazamiento vertical. Un bloqueo de reproducción del navegador no pausa las otras previas; el control de reproducción permite reintentarlo. Las tarjetas del catálogo mantienen el mismo formato en todos los filtros y no muestran un borde blanco al pasar el mouse.
 
 Los accesos de las sagas abren sus catálogos con enlaces directos. Los carruseles tienen flechas laterales al pasar el mouse, navegación por teclado y desplazamiento táctil en móvil. Los botones de las fichas se alinean a la izquierda, con los logos centrados.
 

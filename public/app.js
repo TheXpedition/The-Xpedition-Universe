@@ -340,6 +340,7 @@ function openPublicCatalog(){
 async function init(){
   try{
     if(location.protocol==='file:')throw new Error('Esta versión necesita el servidor para crear cuentas y compartir mensajes. Cierra este archivo y abre ABRIR XPEDITION.cmd.');
+    if(location.hostname==='thexpedition.github.io'){const destination=new URL('https://the-xpedition-universe.onrender.com/');destination.hash=location.hash||'#inicio';destination.search=location.search;location.replace(destination.href);return;}
     state.publicOnly=false;
     const [catalog,details]=await Promise.all([fetch('catalog.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar el catálogo.');return r.json();}),fetch('content-details.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar la información de las temporadas.');return r.json();})]);catalog.details=details;state.catalog=catalog;
     if(location.hostname.endsWith('.github.io')){openPublicCatalog();return;}

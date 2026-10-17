@@ -23,7 +23,9 @@ main{max-width:1920px;padding:44px var(--gutter) 58px}.stream-home{margin-inline
 
 /* A full frame for every original mark; the SVG viewBox ignores only empty canvas. */
 .brand-art{display:block;stroke:none;fill:none;overflow:visible;max-width:none;pointer-events:none}
-.feature-hero{height:clamp(690px,90svh,790px);margin-top:-128px;padding:145px 6vw 148px;isolation:isolate;background:#08090d;align-items:center;overflow:hidden}
+.feature-hero{height:clamp(690px,90svh,790px);margin-top:-128px;padding:145px 6vw 148px;isolation:isolate;background:#08090d;align-items:center;overflow:hidden;touch-action:pan-y pinch-zoom}
+.feature-hero.is-swiping{user-select:none;cursor:grabbing}.feature-image,.feature-video{pointer-events:none}
+.preview-status{position:absolute;right:var(--gutter);bottom:94px;z-index:4;background:#0b0915dc;padding:8px 12px;border-radius:7px;font-size:11px;color:#e3dcef;pointer-events:none}.preview-status[hidden]{display:none}
 .feature-image,.feature-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:65% 38%;z-index:-5}
 .feature-image{filter:saturate(.92);transition:none}.feature-video{z-index:-4;opacity:0;transition:opacity 1.2s var(--ease)}.feature-video.is-playing{opacity:1}
 .feature-hero:before{z-index:-2;background:linear-gradient(90deg,#08090df5 0%,#08090dc7 28%,#08090d52 55%,#08090d0a 88%)}
@@ -56,10 +58,10 @@ main{max-width:1920px;padding:44px var(--gutter) 58px}.stream-home{margin-inline
 .rail{gap:18px;padding:6px var(--gutter) 24px;scroll-padding-inline:var(--gutter);overscroll-behavior-x:contain;scrollbar-width:none;scroll-snap-type:x proximity}
 .rail>.season-card{flex-basis:clamp(270px,27vw,390px);scroll-snap-align:start}.rail>.season-card .season-art{aspect-ratio:1.56}
 .season-card{border:0;background:none;overflow:visible;border-radius:10px;transition:transform .28s var(--ease)}.season-card:hover{transform:translateY(-3px);border:0}
-.season-art{border-radius:9px;outline:1px solid #ffffff14;outline-offset:-1px;isolation:isolate;aspect-ratio:1.56;overflow:hidden;background:#15141c;transition:box-shadow .25s var(--ease),outline-color .25s}
+.season-art{border:0;border-radius:9px;outline:0;isolation:isolate;aspect-ratio:1.56;overflow:hidden;background:#15141c;transition:box-shadow .25s var(--ease)}
 .season-art:after{z-index:0;pointer-events:none;background:linear-gradient(0deg,#06070b5c,transparent 75%)}
 .season-art>img.season-background{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 35%;transition:transform .65s var(--ease),filter .3s}
-.season-card:hover .season-art>img.season-background{transform:scale(1.025)}.season-card:hover .season-art,.season-card:focus-within .season-art{outline:2px solid #c9c5d7;outline-offset:3px;box-shadow:0 16px 35px #0005}
+.season-card:hover .season-art>img.season-background{transform:scale(1.025)}.season-card:hover .season-art{box-shadow:0 16px 35px #0005}.season-art:focus-visible{outline:0;box-shadow:0 0 0 3px #9470d080,0 16px 35px #0005}
 .season-art .brand-art.season-logo{position:absolute;left:11%;top:21%;width:78%;height:69%;max-width:none;max-height:none;transform:none;z-index:1;filter:drop-shadow(0 4px 9px #0009);object-fit:contain}
 .season-art .brand-art[data-brand=japan]{top:16%;height:76%;left:13%;width:74%}
 .season-label{z-index:3;font-size:8px;top:12px;left:12px;letter-spacing:1.1px;padding:4px 7px;background:#0b0914b3;border:1px solid #ffffff0b;border-radius:3px;backdrop-filter:blur(8px)}

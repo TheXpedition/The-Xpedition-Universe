@@ -29,7 +29,7 @@ function featureHero(){
   const primary=item.disabled||!item.url?'<button class="btn primary" disabled>Próximamente</button>':`<a class="btn primary" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${icon('play')} ${esc(item.actionLabel||'Ir a la temporada')}</a>`;
   return `<section class="feature-hero" data-content-id="${esc(item.id)}" aria-label="Destacado: ${esc(item.name)}">
     <img class="feature-image" src="${esc(contentArt(item))}" alt="" fetchpriority="high">
-    ${preview?`<video class="feature-video" id="featurePreview" muted loop playsinline preload="metadata" poster="${esc(contentArt(item))}" aria-label="Previa de ${esc(preview.title)}"><source src="${esc(preview.src)}" type="video/mp4"></video>`:''}
+    ${preview?`<video class="feature-video" id="featurePreview" src="${esc(window.matchMedia('(max-width:750px)').matches?preview.src.replace('.mp4','-mobile.mp4'):preview.src)}" data-fallback-src="${esc(preview.src)}" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="${esc(contentArt(item))}" aria-label="Previa de ${esc(preview.title)}"></video>`:''}
     <div class="feature-shade"></div>
     <div class="feature-copy">
       <div class="feature-kicker"><span class="original-mark">X</span> THE XPEDITION ORIGINAL</div>
@@ -43,7 +43,12 @@ function featureHero(){
       <div class="feature-dots" aria-label="Elegir destacado">${items.map((c,i)=>`<button class="${i===state.featureIndex?'active':''}" data-stream="feature" data-index="${i}" aria-label="Ver destacado ${esc(c.name)}" aria-pressed="${i===state.featureIndex}"><span>0${i+1}</span><i></i></button>`).join('')}</div>
       <div class="feature-counter">${preview?`<div class="preview-controls"><button data-stream="preview-pause" aria-label="${state.previewPaused?'Reproducir':'Pausar'} previa">${icon(state.previewPaused?'play':'pause')}</button><button data-stream="preview-mute" aria-label="${state.previewMuted?'Activar':'Silenciar'} sonido" aria-pressed="${!state.previewMuted}">${icon(state.previewMuted?'muted':'volume')}</button></div>`:''}<div class="feature-controls"><button data-stream="feature-prev" aria-label="Anterior destacado">${icon('back')}</button><button data-stream="feature-next" aria-label="Siguiente destacado">${icon('arrow')}</button></div></div>
     </div>
+    <span class="preview-status" id="previewStatus" role="status" aria-live="polite" hidden></span>
   </section>`;
+}
+function selectFeature(index){
+ const items=featuredItems();state.featureIndex=(index+items.length)%items.length;
+ $('#featuredArea').innerHTML=featureHero();setupPreview(true);
 }
 icons.chevronLeft='<path d="m15 5-7 7 7 7"/>';
 icons.chevronRight='<path d="m9 5 7 7-7 7"/>';
@@ -138,7 +143,7 @@ document.addEventListener('click',event=>{
 });
 document.addEventListener('click',event=>{
   const button=event.target.closest('[data-stream]');if(!button)return;const action=button.dataset.stream;
-  if(action.startsWith('feature')){const n=featuredItems().length;state.featureIndex=action==='feature'?Number(button.dataset.index):action==='feature-next'?(state.featureIndex+1)%n:(state.featureIndex-1+n)%n;$('#featuredArea').innerHTML=featureHero();setupPreview();}
+  if(action.startsWith('feature'))selectFeature(action==='feature'?Number(button.dataset.index):state.featureIndex+(action==='feature-next'?1:-1));
   if(action==='rail-prev'||action==='rail-next'){const rail=button.closest('.catalog-row,.ranked-section')?.querySelector('.rail,.ranked-track');if(rail)rail.scrollBy({left:(action==='rail-prev'?-1:1)*rail.clientWidth*.78,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
   if(action==='explore-tab')go('explorar/'+button.dataset.id);
 });
@@ -208,27 +213,81 @@ new MutationObserver(()=>{if(!scanFrame)scanFrame=requestAnimationFrame(()=>{sca
 window.addEventListener('resize',syncRailControls);document.fonts?.ready.then(syncRailControls);
 
 let currentPreview=null,previewOnscreen=true;
+const previewStates=new WeakMap();
 const previewObserver=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.target===currentPreview){previewOnscreen=entry.isIntersecting;updatePreviewPlayback();}},{threshold:.1});
-function updatePreviewPlayback(){
+function previewCanPlay(video){return video===currentPreview&&video.isConnected&&previewOnscreen&&!document.hidden&&!state.previewPaused&&!$('#modal').open;}
+function previewHint(text=''){const hint=$('#previewStatus');if(hint){hint.textContent=text;hint.hidden=!text;}}
+function watchPreview(video){
+ const status=previewStates.get(video);if(!status||status.timer||!previewCanPlay(video)||status.blocked)return;
+ const startTime=video.currentTime;
+ status.timer=setTimeout(()=>{
+  status.timer=null;if(!previewCanPlay(video)||status.blocked||video.currentTime>startTime+.2)return;
+  previewHint('Cargando previa…');
+  if(Date.now()-status.lastProgress>12000&&status.retries<2){status.retries++;video.load();updatePreviewPlayback();}
+  watchPreview(video);
+ },14000);
+}
+function updatePreviewPlayback(userGesture=false){
  const video=currentPreview;if(!video)return;
- if(!previewOnscreen||document.hidden||state.previewPaused||$('#modal').open){video.pause();return;}
- video.play().catch(error=>{if(video!==currentPreview||!video.isConnected||error.name==='AbortError')return;state.previewPaused=true;updatePreviewButtons();});
+ const status=previewStates.get(video);if(!status)return;
+ if(!previewCanPlay(video)){video.pause();clearTimeout(status.timer);status.timer=null;return;}
+ if(userGesture)status.blocked=false;
+ if(status.pending||status.blocked&&!userGesture)return;
+ status.pending=true;
+ video.play().then(()=>{if(video!==currentPreview)return;status.blocked=false;updatePreviewButtons();}).catch(error=>{
+  if(video!==currentPreview||!video.isConnected||error.name==='AbortError')return;
+  status.blocked=true;clearTimeout(status.timer);status.timer=null;previewHint('Toca ▶ para reproducir la previa');updatePreviewButtons();
+ }).finally(()=>{status.pending=false;});
+ watchPreview(video);
 }
 function updatePreviewButtons(){
  const mute=$('[data-stream="preview-mute"]'),pause=$('[data-stream="preview-pause"]');
  if(mute){mute.innerHTML=icon(state.previewMuted?'muted':'volume');mute.setAttribute('aria-label',state.previewMuted?'Activar sonido':'Silenciar sonido');mute.setAttribute('aria-pressed',String(!state.previewMuted));}
- if(pause){pause.innerHTML=icon(state.previewPaused?'play':'pause');pause.setAttribute('aria-label',state.previewPaused?'Reproducir previa':'Pausar previa');}
+ const paused=state.previewPaused||previewStates.get(currentPreview)?.blocked;
+ if(pause){pause.innerHTML=icon(paused?'play':'pause');pause.setAttribute('aria-label',paused?'Reproducir previa':'Pausar previa');}
 }
-function setupPreview(){
+function setupPreview(userGesture=false){
  const video=$('#featurePreview');if(video===currentPreview)return;
- if(currentPreview){currentPreview.pause();previewObserver.unobserve(currentPreview);}
+ if(currentPreview){
+  const previous=currentPreview;previous.pause();previewObserver.unobserve(previous);
+  clearTimeout(previewStates.get(previous)?.timer);previous.removeAttribute('src');previous.load();
+ }
  currentPreview=video;if(!video)return;
- video.muted=state.previewMuted;previewOnscreen=true;
- video.addEventListener('playing',()=>video.classList.add('is-playing'));
- video.addEventListener('error',()=>video.classList.remove('is-playing'));
- previewObserver.observe(video);updatePreviewPlayback();
+ const status={pending:false,blocked:false,retries:0,fallback:false,lastProgress:Date.now(),timer:null};previewStates.set(video,status);
+ video.defaultMuted=true;video.muted=state.previewMuted;video.playsInline=true;previewOnscreen=true;
+ video.addEventListener('progress',()=>{status.lastProgress=Date.now();});
+ video.addEventListener('playing',()=>{if(video!==currentPreview)return;video.classList.add('is-playing');status.blocked=false;clearTimeout(status.timer);status.timer=null;previewHint();updatePreviewButtons();});
+ video.addEventListener('canplay',()=>{if(!status.blocked)updatePreviewPlayback();});
+ video.addEventListener('waiting',()=>watchPreview(video));video.addEventListener('stalled',()=>watchPreview(video));
+ video.addEventListener('error',()=>{
+  if(video!==currentPreview)return;
+  if(!status.fallback&&video.getAttribute('src')!==video.dataset.fallbackSrc){status.fallback=true;video.src=video.dataset.fallbackSrc;video.load();updatePreviewPlayback();return;}
+  video.classList.remove('is-playing');status.blocked=true;previewHint('Toca ▶ para volver a cargar la previa');updatePreviewButtons();
+ });
+ previewObserver.observe(video);updatePreviewButtons();updatePreviewPlayback(userGesture);
 }
-document.addEventListener('visibilitychange',updatePreviewPlayback);
+document.addEventListener('visibilitychange',()=>updatePreviewPlayback());
+window.addEventListener('online',()=>{if(currentPreview&&!state.previewPaused){const status=previewStates.get(currentPreview);status.blocked=false;status.retries=0;updatePreviewPlayback();}});
+let featureGesture=null;
+document.addEventListener('pointerdown',event=>{
+ const hero=event.target.closest('.feature-hero');if(!hero||event.button!==0||event.target.closest('button,a,input,textarea'))return;
+ featureGesture={id:event.pointerId,x:event.clientX,y:event.clientY,hero,horizontal:false};hero.setPointerCapture?.(event.pointerId);
+});
+document.addEventListener('pointermove',event=>{
+ const gesture=featureGesture;if(!gesture||event.pointerId!==gesture.id)return;
+ const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+ if(Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>14){gesture.hero.classList.remove('is-swiping');if(gesture.hero.hasPointerCapture?.(gesture.id))gesture.hero.releasePointerCapture(gesture.id);featureGesture=null;return;}
+ if(Math.abs(dx)>14&&Math.abs(dx)>Math.abs(dy)*1.3){gesture.horizontal=true;gesture.hero.classList.add('is-swiping');if(event.cancelable)event.preventDefault();}
+},{passive:false});
+document.addEventListener('pointerup',event=>{
+ const gesture=featureGesture;if(!gesture||event.pointerId!==gesture.id)return;featureGesture=null;gesture.hero.classList.remove('is-swiping');
+ const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
+ if(gesture.horizontal&&Math.abs(dx)>=Math.min(64,gesture.hero.clientWidth*.14)&&Math.abs(dx)>Math.abs(dy)*1.3)selectFeature(state.featureIndex+(dx<0?1:-1));
+ else if(!state.previewPaused)updatePreviewPlayback(true);
+});
+document.addEventListener('pointercancel',()=>{featureGesture?.hero.classList.remove('is-swiping');featureGesture=null;});
+document.addEventListener('dragstart',event=>{if(event.target.closest('.feature-hero'))event.preventDefault();});
+
 const cinemaBaseModal=modal;
 modal=function(...args){
  currentPreview?.pause();$$('video',$('#modal')).forEach(v=>v.pause());
@@ -237,8 +296,8 @@ modal=function(...args){
 $('#modal').addEventListener('close',()=>{$$('video',$('#modal')).forEach(v=>{v.pause();v.removeAttribute('autoplay');v.removeAttribute('src');$$('source',v).forEach(s=>s.removeAttribute('src'));v.load();});updatePreviewPlayback();});
 document.addEventListener('click',event=>{
  const button=event.target.closest('[data-stream]');if(!button)return;
- if(button.dataset.stream==='preview-mute'){state.previewMuted=!state.previewMuted;if(currentPreview)currentPreview.muted=state.previewMuted;updatePreviewButtons();}
- if(button.dataset.stream==='preview-pause'){state.previewPaused=!state.previewPaused;updatePreviewButtons();updatePreviewPlayback();}
+ if(button.dataset.stream==='preview-mute'){state.previewMuted=!state.previewMuted;if(currentPreview)currentPreview.muted=state.previewMuted;updatePreviewButtons();updatePreviewPlayback(true);}
+ if(button.dataset.stream==='preview-pause'){const video=currentPreview,status=previewStates.get(video);state.previewPaused=status?.blocked||video?.error?false:!state.previewPaused;if(status?.blocked){status.blocked=false;if(video.error)video.load();}previewHint();updatePreviewButtons();updatePreviewPlayback(true);}
 });
 let headerFrame=0;
 window.addEventListener('scroll',()=>{if(!headerFrame)headerFrame=requestAnimationFrame(()=>{headerFrame=0;$('.topbar').classList.toggle('is-scrolled',window.scrollY>24);});},{passive:true});
