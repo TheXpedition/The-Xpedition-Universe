@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#08090d">
+  <title>The Xpedition Universe</title>
+  <style>html{background:#08090d;color:#f5f1ff;font:16px system-ui}body{min-height:90vh;display:grid;place-items:center;margin:0}a{color:inherit}</style>
+  <script>
+    const destination = new URL('./public/', location.href);
+    destination.search = location.search;
+    destination.hash = location.hash || '#inicio';
+    location.replace(destination.href);
+  </script>
+</head>
+<body><a href="./public/#inicio">Entrar a The Xpedition Universe</a></body>
+</html>

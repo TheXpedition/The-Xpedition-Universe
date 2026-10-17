@@ -19,10 +19,12 @@ const allContent = () => Object.values(state.catalog.content).flat();
 const saved = id => state.user?.saved.includes(id);
 const toast = (message,error=false) => {const el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=message;$('#toasts').append(el);setTimeout(()=>el.remove(),5500);};
 async function api(url, options={}) {
+  if(state.publicOnly)throw new Error('La comunidad todavía no está disponible. Puedes seguir explorando las temporadas, los personajes y los simuladores.');
   let response;
   try {response=await fetch('/api'+url,{...options,headers:{'Content-Type':'application/json',...options.headers},body:options.body===undefined?undefined:JSON.stringify(options.body)});}catch{setConnection(false);throw new Error('No hay conexión con el servidor. Tu borrador sigue aquí; vuelve a intentar.');}
-  const result=await response.json();
-  if(!response.ok){if(response.status===401&&state.user){state.user=null;stopStream();renderChrome();}throw new Error(result.error||'No se pudo completar la operación.');}
+  let result;
+  try{result=await response.json();}catch{const error=new Error('El servidor de la comunidad no está disponible en esta dirección.');error.status=response.status;throw error;}
+  if(!response.ok){if(response.status===401&&state.user){state.user=null;stopStream();renderChrome();}const error=new Error(result.error||'No se pudo completar la operación.');error.status=response.status;throw error;}
   return result;
 }
 function setConnection(online){const el=$('#connection');el.classList.toggle('offline',!online);el.innerHTML=`<i></i><span>${online?'En línea':'Sin conexión'}</span>`;}
@@ -67,6 +69,10 @@ function renderExplore(){
 function memberCard(p){const following=state.user?.follows.includes(p.id);return `<article class="member-card"><button data-action="profile" data-id="${esc(p.id)}">${avatar(p)}<h3>${esc(p.name)}</h3></button><p>${p.character?'Personaje del universo':p.online?'En línea ahora':'Miembro de la comunidad'} · ${p.followers} seguidores</p><div class="member-buttons"><button class="btn ${following?'secondary':'primary'} small" data-action="follow" data-id="${esc(p.id)}" ${p.id===state.user?.id?'disabled':''}>${p.id===state.user?.id?'Tu perfil':following?'Siguiendo':'+ Seguir'}</button>${!p.character&&p.id!==state.user?.id?`<button class="btn ghost small" data-action="start-dm" data-id="${esc(p.id)}" aria-label="Escribir a ${esc(p.name)}">${icon('chat')}</button>`:''}</div></article>`;}
 function communityResults(){const list=state.profiles.filter(p=>(state.communityTab==='personajes'?p.character:state.communityTab==='siguiendo'?state.user?.follows.includes(p.id):!p.character)&&norm(p.name).includes(norm(state.query)));$('#communityResults').innerHTML=list.map(memberCard).join('')||empty(state.communityTab==='cuentas'?'La comunidad empieza contigo.':'No hay perfiles aquí todavía.','Invita a tus amigos a crear sus cuentas y a formar parte de la próxima aventura.',!state.user?'register':'new-chat',!state.user?'Crear mi perfil':'Iniciar conversación','users');$('#communityCount').textContent=list.length+' perfiles';}
 function renderCommunity(){
+  if(state.publicOnly){
+    state.communityTab='personajes';
+    $('#main').innerHTML=heading('Los rostros del universo.','Explora las historias y los logros de los personajes de cada temporada.')+`<div class="notice" style="margin-bottom:24px">Los perfiles personales, el seguimiento y los mensajes estarán disponibles al abrir la comunidad.</div><label class="search-field">${icon('search')}<input id="communitySearch" aria-label="Buscar perfiles" placeholder="Busca un personaje…" value="${esc(state.query)}"></label><div class="section-head" style="margin-top:16px"><h2>Personajes</h2><span class="pill" id="communityCount"></span></div><div class="members-grid" id="communityResults"></div>`;communityResults();return;
+  }
   $('#main').innerHTML=heading('Encuentra a tu gente.','Perfiles, participantes y conversaciones que se convierten en historias.')+`<div class="chips"><button class="chip ${state.communityTab==='cuentas'?'active':''}" data-action="community-tab" data-id="cuentas">Comunidad</button><button class="chip ${state.communityTab==='personajes'?'active':''}" data-action="community-tab" data-id="personajes">Personajes · ${state.catalog.characters.length}</button><button class="chip ${state.communityTab==='siguiendo'?'active':''}" data-action="community-tab" data-id="siguiendo">Siguiendo</button></div><label class="search-field">${icon('search')}<input id="communitySearch" aria-label="Buscar perfiles" placeholder="Busca un nombre, encuentra una historia…" value="${esc(state.query)}"></label><div class="section-head" style="margin-top:16px"><h2>${state.communityTab==='personajes'?'Los rostros del universo':'Exploradores'}</h2><span class="pill" id="communityCount"></span></div><div class="members-grid" id="communityResults"></div>`;communityResults();
 }
 function newsImage(n){const map={'simuladores-mejoras-2025':['backdrops/house.png','Simuladores'],'traitor-2-pagina-oficial':['backdrops/traitor2.png','The Traitor'],'bonju-camp-awards':[imageFor('Bonju'),'Comunidad',true],'xpedition-japan-location':['backdrops/japan.png','Nueva temporada'],'ignacio-ricci-showdown-2-winner':[imageFor('Ignacio Ricci'),'Participantes',true],'julian-fuera-final-safari':[imageFor('Julián'),'Safari',true],'safari-regreso-2025':['backdrops/safari.jpg','Safari'],'dani-ganadora-antarctica':[imageFor('Dani'),'Antarctica',true]};return map[n.id]||['backdrops/antarctica.jpg','Universo'];}
@@ -96,6 +102,9 @@ function closeModal(){$('#modal').close();state.modal=null;}
 function requireAuth(){if(state.user)return true;openAuth('login');return false;}
 function field(label,id,type='text',placeholder='',value=''){return `<label class="form-field" for="${id}">${label}<${type==='textarea'?'textarea':'input'} id="${id}" name="${id}" ${type==='textarea'?'':`type="${type}"`} placeholder="${esc(placeholder)}" ${type==='password'?'minlength="8" maxlength="128"':type==='email'?'autocomplete="email"':`maxlength="${type==='textarea'?600:40}"`} ${type==='textarea'?'':`value="${esc(value)}"`}>${type==='textarea'?esc(value)+'</textarea>':''}</label>`;}
 function openAuth(mode='login'){
+  if(state.publicOnly){
+    modal(`<div class="modal-kicker">THE XPEDITION UNIVERSE</div><h2 id="modalTitle">La comunidad está por abrir.</h2><p class="modal-intro">Ya puedes explorar temporadas, videos, tops, personajes y simuladores. El registro, el acceso con Google, el seguimiento y los mensajes estarán disponibles cuando activemos la comunidad.</p><button class="btn primary full" data-action="close-modal">Seguir explorando ${icon('arrow')}</button>`);return;
+  }
   state.authMode=mode;
   modal(`<div class="modal-kicker">TU PRÓXIMA AVENTURA</div><h2 id="modalTitle">${mode==='register'?'Hay un lugar para ti.':'Qué bueno verte de nuevo.'}</h2><p class="modal-intro">${mode==='register'?'Tu perfil, tus alianzas y todas las historias por venir.':'Entra al universo y continúa tu historia.'}</p><div class="auth-tabs"><button data-action="login" class="${mode==='login'?'active':''}">Iniciar sesión</button><button data-action="register" class="${mode==='register'?'active':''}">Crear una cuenta</button></div><form id="authForm">${mode==='register'?field('Tu nombre de usuario','authName','text','¿Cómo te conocerá la comunidad?')+field('Correo electrónico','authEmail','email','tu@correo.com'):field('Usuario o correo','authLogin','text','Tu usuario o tu correo')}<label class="form-field" for="authPassword">Contraseña<span class="password-field"><input id="authPassword" name="password" type="password" autocomplete="${mode==='register'?'new-password':'current-password'}" minlength="${mode==='register'?8:1}" maxlength="128" placeholder="${mode==='register'?'Mínimo 8 caracteres':'Tu contraseña'}" required><button class="icon-button" type="button" data-action="toggle-password" data-id="authPassword" aria-label="Mostrar contraseña">${icon('eye')}</button></span></label>${mode==='register'?field('Repite tu contraseña','authConfirm','password','Escríbela una vez más'):''}<p class="form-error" id="authError" role="alert"></p><button class="btn primary full" id="authSubmit" type="submit">${mode==='register'?'Crear mi cuenta':'Entrar a mi universo'} ${icon('arrow')}</button></form><div class="divider">o continúa con</div><button class="btn secondary full" id="googleButton" data-action="google" ${state.firebase?'':'disabled'}><span class="google-mark">G</span> Continuar con Google</button><p class="form-hint" style="margin:17px 0 0">${mode==='register'?'Después podrás elegir entre los '+state.catalog.characters.length+' personajes para tu ícono. Tus datos se guardan en el servidor.':'Si ya tenías una cuenta en Firebase, usa tu correo completo o continúa con Google.'}</p>`,false,'auth');
   $$('#authForm input').forEach(el=>el.required=true);if(mode==='register')$('#authEmail').autocomplete='email';else $('#authLogin').autocomplete='username';
@@ -111,6 +120,7 @@ async function submitAuth(e){
   }catch(error){if($('#authError'))$('#authError').textContent=error.message;}finally{if(button.isConnected)button.disabled=false;}
 }
 async function loadFirebase(){
+  if(state.publicOnly)return;
   try{
     const [appModule,authModule]=await Promise.all([import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js'),import('https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js')]);
     const auth=authModule.getAuth(appModule.initializeApp(state.config.firebase));const provider=new authModule.GoogleAuthProvider();provider.setCustomParameters({prompt:'select_account'});
@@ -322,10 +332,19 @@ $('#modal').addEventListener('click',event=>{if(event.target===$('#modal'))close
 $('#modal').addEventListener('close',()=>{state.modal=null;});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&state.user&&state.active)markRead(state.active).catch(()=>{});});
 window.addEventListener('hashchange',route);window.addEventListener('offline',()=>setConnection(false));window.addEventListener('online',()=>{setConnection(true);if(state.user)startStream();});window.addEventListener('beforeunload',cancelRecording);
+function openPublicCatalog(){
+  state.publicOnly=true;state.user=null;state.config={};state.news=[];state.communityTab='personajes';
+  state.profiles=state.catalog.characters.map(c=>({id:'char:'+c.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,''),name:c.name,avatar:c.name,bio:'Personaje del universo The Xpedition.',stats:state.catalog.stats[c.name]||{},character:true,followers:'—',following:'—',online:false}));
+  setConnection(false);route();
+}
 async function init(){
   try{
     if(location.protocol==='file:')throw new Error('Esta versión necesita el servidor para crear cuentas y compartir mensajes. Cierra este archivo y abre ABRIR XPEDITION.cmd.');
-    const [catalog,config,me,details]=await Promise.all([fetch('catalog.json').then(r=>r.json()),api('/config'),api('/me'),fetch('content-details.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar la información de las temporadas.');return r.json();})]);catalog.details=details;state.catalog=catalog;state.config=config;state.user=me.user;
+    state.publicOnly=false;
+    const [catalog,details]=await Promise.all([fetch('catalog.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar el catálogo.');return r.json();}),fetch('content-details.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar la información de las temporadas.');return r.json();})]);catalog.details=details;state.catalog=catalog;
+    if(location.hostname.endsWith('.github.io')){openPublicCatalog();return;}
+    try{state.config=await api('/config');}catch(error){if(error.status===404){openPublicCatalog();return;}throw error;}
+    const me=await api('/me');state.user=me.user;
     await Promise.all([refreshProfiles(),refreshNews(),state.user?refreshConversations():Promise.resolve()]);setConnection(true);route();loadFirebase();if(state.user)startStream();
   }catch(error){errorView(error);}
 }

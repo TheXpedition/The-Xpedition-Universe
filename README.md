@@ -2,6 +2,12 @@
 
 Sitio de temporadas, personajes y comunidad, con perfiles y mensajería en tiempo real.
 
+## Web pública en GitHub Pages
+
+[Abrir The Xpedition Universe](https://thexpedition.github.io/The-Xpedition-Universe/).
+
+El `index.html` de la raíz abre la web de `public/`; `.nojekyll` conserva sus archivos originales. En GitHub Pages se pueden explorar el diseño completo, videos, catálogo, tops, fichas, personajes, noticias y enlaces a simuladores. Esta vista no solicita contraseñas ni simula cuentas o mensajes: las funciones de comunidad necesitan completar el despliegue del servidor en Render y Supabase. Al abrir la URL del servidor se activan las funciones completas automáticamente.
+
 ## Abrir en tu equipo
 
 Requiere **Node.js 24**. El modo local usa SQLite y no necesita instalar dependencias:
