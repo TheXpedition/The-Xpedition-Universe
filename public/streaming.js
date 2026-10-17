@@ -16,13 +16,14 @@ renderChrome=function(){
 };
 const featuredItems=()=>['japan','safari','antarctica','traitor2','traitor-showdown'].map(id=>allContent().find(item=>item.id===id));
 const contentPreviews={
-  safari:{src:'media/safari-preview.mp4',title:'The Xpedition Safari',season:'Segunda temporada',note:'Segunda temporada · Safari',description:'Cada alianza cuenta. Solo uno llegará hasta el final. Adéntrate en una expedición de desafíos, estrategia y supervivencia.'},
+  safari:{src:'media/safari-preview.mp4',title:'The Xpedition Safari',season:'Segunda temporada',note:'Segunda temporada · 2023 - 2025',description:'Cada alianza cuenta. Solo uno llegará hasta el final. Adéntrate en una expedición de desafíos, estrategia y supervivencia.'},
   japan:{src:'media/japan-preview.mp4',title:'The Xpedition Japan',season:'Tercera temporada',note:'Tercera temporada · Próximamente',description:'Un nuevo destino. Alianzas que se ponen a prueba y secretos que pueden cambiarlo todo. La próxima expedición comienza en Japón.'},
   traitor2:{src:'media/traitor-2-preview.mp4',title:'The Traitor 2',season:'Segunda temporada',note:'Segunda temporada · 2025',description:'Rostros ocultos, juego de azar. Secretos, sospechas y alianzas que ponen a prueba la confianza.'},
-  'traitor-showdown':{src:'media/showdown-2-preview.mp4',title:'Showdown 2',season:'Segunda edición',note:'Segunda edición · Torneo de estrellas',description:'Las estrellas de The Traitor regresan para un nuevo duelo. Estrategia, rivalidades y una sola meta: llegar hasta el final.'}
+  'traitor-showdown':{src:'media/showdown-2-preview.mp4',title:'Showdown 2',season:'Segunda temporada',note:'Segunda temporada · 2026',description:'Las estrellas de The Traitor regresan para un nuevo duelo. Estrategia, rivalidades y una sola meta: llegar hasta el final.'}
 };
 function featureHero(){
   const items=featuredItems(),item=items[state.featureIndex%items.length],preview=contentPreviews[item.id],japan=item.id==='japan';
+  const release=preview?.note||(item.id==='antarctica'?'Primera temporada · 2022':item.meta.replace('Season','Temporada'));
   const description=preview?.description||item.desc+' '+(item.id==='antarctica'?'Revive la expedición donde comenzó esta historia.':item.id==='safari'?'Cada alianza cuenta. Solo uno llegará hasta el final.':'');
   const primary=preview?`<button class="btn primary" data-stream="trailer" data-id="${esc(item.id)}">${icon('play')} Ver avance</button>`:item.disabled?`<button class="btn primary" data-action="content" data-id="${esc(item.id)}">Conocer la temporada ${icon('info')}</button>`:`<a class="btn primary" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">${icon('play')} Ir a la temporada</a>`;
   return `<section class="feature-hero" data-content-id="${esc(item.id)}" aria-label="Destacado: ${esc(item.name)}">
@@ -32,7 +33,7 @@ function featureHero(){
     <div class="feature-copy">
       <div class="feature-kicker"><span class="original-mark">X</span> THE XPEDITION ORIGINAL</div>
       ${logoFor(item)?brandArt(item,'feature-logo'):`<h1>${esc(item.name)}</h1>`}
-      <div class="feature-release">${japan?'<span class="release-dot"></span>':''}${esc(preview?.note||item.meta.replace('Season','Temporada'))}</div>
+      <div class="feature-release"><span class="release-dot" aria-hidden="true"></span>${esc(release)}</div>
       <div class="feature-meta">${japan?'2026 <span>•</span> Competencia virtual <span>•</span> Japan':'Competencia virtual <span>•</span> '+esc(item.name)}</div>
       <p>${esc(description)}</p>
       <div class="feature-actions">${primary}<button class="btn secondary" data-action="content" data-id="${esc(item.id)}">${icon('info')} Más información</button><button class="hero-save ${saved(item.id)?'saved':''}" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}" aria-pressed="${!!saved(item.id)}">${icon(saved(item.id)?'check':'plus')}</button></div>
