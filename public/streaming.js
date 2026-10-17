@@ -51,11 +51,16 @@ function catalogRail(title,items,poster=false,subtitle=''){
  return `<section class="catalog-row"><div class="section-head"><h2>${title}</h2></div>${subtitle?`<p class="row-subtitle">${subtitle}</p>`:''}<div class="rail-shell">${controls(title)}<div class="rail ${poster?'poster-rail':''}" tabindex="0" aria-label="${esc(title)}">${items.map(contentCard).join('')}</div></div></section>`;
 }
 
-function rankPoster(name,isSeason=false,position=0){
+function rankPoster(entry,isSeason=false,position=0){
+ const record=typeof entry==='string'?{name:entry}:entry,name=record.name;
  const item=isSeason?allContent().find(c=>norm(c.name)===norm(name)):null;
  const profile=!item?state.profiles.find(p=>p.character&&norm(p.name)===norm(name)):null;
- const action=item?'content':'profile',id=item?.id||profile?.id;if(!id)return '';
- return `<div class="rank-poster"><button data-action="${action}" data-id="${esc(id)}" ${item?`data-kind="${esc(item.kind)}"`:''} aria-label="${position?'Puesto '+position+': ':''}Ver ${esc(item?.name||profile.name)}"><img src="${esc(item?contentArt(item):imageFor(name))}" alt="${esc(item?.name||profile.name)}" loading="lazy" decoding="async">${item?brandArt(item,'rank-season-logo'):''}<span class="rank-poster-glow" aria-hidden="true"></span></button><span class="rank-name">${esc(item?.name||profile.name)}</span></div>`;
+ const portrait=state.catalog.characters.find(c=>norm(c.name)===norm(record.imageName||name));
+ if(!item&&!portrait)return '';
+ const action=item?'content':'profile',id=item?.id||profile?.id,label=item?.name||name;
+ const caption=label+(record.context?' - '+record.context:'');
+ const cover=id?`<button class="rank-cover" data-action="${action}" data-id="${esc(id)}" ${item?`data-kind="${esc(item.kind)}"`:''} aria-label="${position?'Puesto '+position+': ':''}Ver ${esc(label)}">`:'<div class="rank-cover">';
+ return `<div class="rank-poster">${cover}<img src="${esc(item?contentArt(item):portrait.image)}" alt="${esc(label)}" loading="lazy" decoding="async">${item?brandArt(item,'rank-season-logo'):''}<span class="rank-poster-glow" aria-hidden="true"></span>${id?'</button>':'</div>'}<span class="rank-name" title="${esc(caption)}"><span class="rank-person">${esc(label)}</span>${record.context?`<span class="rank-context"> - ${esc(record.context)}</span>`:''}</span></div>`;
 }
 function rankNumeral(number){
  const width=number===10?285:160;
@@ -63,7 +68,8 @@ function rankNumeral(number){
 }
 function rankRow(list,home=false){
  const match=list.title.match(/^TOP (\d+) (.+)$/),topic=match?.[2]||list.title;
- return `<section class="ranked-section ${home?'home-ranked':''}"><div class="section-head"><h2 class="rank-heading" aria-label="${esc(list.title)}"><span class="rank-heading-metal">TOP ${match?.[1]||list.items.length}</span><span class="rank-heading-topic">${esc(topic)}<small>DEL UNIVERSO</small></span></h2></div><div class="rail-shell rank-shell">${controls(list.title)}<div class="ranked-track" tabindex="0" aria-label="${esc(list.title)}">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}">${rankNumeral(index+1)}${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name,false,index+1)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'),index+1)}</div>`).join('')}</div></div></section>`;
+ const annotated=list.items.some(entry=>entry?.context);
+ return `<section class="ranked-section ${home?'home-ranked':''} ${annotated?'annotated-ranking':''}"><div class="section-head"><h2 class="rank-heading" aria-label="${esc(list.title)}"><span class="rank-heading-metal">TOP ${match?.[1]||list.items.length}</span><span class="rank-heading-topic">${esc(topic)}<small>DEL UNIVERSO</small></span></h2></div><div class="rail-shell rank-shell">${controls(list.title)}<div class="ranked-track" tabindex="0" aria-label="${esc(list.title)}">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}">${rankNumeral(index+1)}${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name,false,index+1)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'),index+1)}</div>`).join('')}</div></div></section>`;
 }
 renderHome=function(){
   const c=state.catalog.content,rankings=state.catalog.rankings||[];
@@ -177,7 +183,7 @@ document.addEventListener('click',async event=>{
 const trackedRails=new Map(),pendingRails=new Set();let railFrame=0,scanFrame=0;
 function queueRail(rail){pendingRails.add(rail);if(!railFrame)railFrame=requestAnimationFrame(()=>{
  railFrame=0;const changes=[...pendingRails].filter(r=>r.isConnected).map(rail=>{
-  const visual=$('.season-art,.rank-poster>button',rail),shell=rail.parentElement,art=visual?.getBoundingClientRect(),bounds=shell.getBoundingClientRect();
+  const visual=$('.season-art,.rank-cover',rail),shell=rail.parentElement,art=visual?.getBoundingClientRect(),bounds=shell.getBoundingClientRect();
   return {rail,shell,artTop:art?art.top-bounds.top:0,artHeight:art?.height||rail.clientHeight,scrollable:rail.scrollWidth>rail.clientWidth+3,atStart:rail.scrollLeft<3,atEnd:rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-3};
  });pendingRails.clear();
  for(const {rail,shell,artTop,artHeight,scrollable,atStart,atEnd}of changes){

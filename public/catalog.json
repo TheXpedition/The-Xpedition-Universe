@@ -1369,86 +1369,236 @@
     {
       "title": "TOP 10 Ganadores",
       "items": [
-        "Dani",
-        "Luis",
-        "Plastique Doll",
-        "Felix",
-        "Isabel",
-        "Nahuee",
-        "Emanuel",
-        "Nacho",
-        "Vita",
-        "Amanda Lewis"
+        {
+          "name": "Dani",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Luis",
+          "context": "Popular vs Fan"
+        },
+        {
+          "name": "Plastique Doll",
+          "context": "Apocalypse"
+        },
+        {
+          "name": "Felix",
+          "context": "Golden vs Platinum"
+        },
+        {
+          "name": "Isabel",
+          "context": "New Era"
+        },
+        {
+          "name": "Nahuee",
+          "context": "All Stars"
+        },
+        {
+          "name": "Bruno Macri",
+          "context": "The Traitor 2"
+        },
+        {
+          "name": "Lucas Mendez",
+          "context": "The Traitor 2"
+        },
+        {
+          "name": "Emanuel",
+          "context": "Andrómeda"
+        },
+        {
+          "name": "Vita",
+          "context": "Empire of Blood"
+        }
       ]
     },
     {
       "title": "TOP 10 Finalistas",
       "items": [
-        "Andromeda",
-        "Alexandro",
-        "Robin",
-        "Beto",
-        "Katy",
-        "Pepi",
-        "Bayron",
-        "Julián",
-        "Coronel",
-        "Peggy"
+        {
+          "name": "Andromeda",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Alexandro",
+          "context": "Apocalypse"
+        },
+        {
+          "name": "Beto",
+          "context": "New Era"
+        },
+        {
+          "name": "Coronel",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Peggy",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Alice",
+          "context": "Showdown 2"
+        },
+        {
+          "name": "Ivy",
+          "context": "Showdown 2"
+        },
+        {
+          "name": "Robin",
+          "context": "Golden vs Platinum"
+        },
+        {
+          "name": "Bayron",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Julián",
+          "context": "The Xpedition Safari"
+        }
       ]
     },
     {
       "title": "TOP 10 Titanes de Eliminación",
       "items": [
-        "Peggy",
-        "Isabel",
-        "Pablo",
-        "Marcos",
-        "Pier",
-        "Andromeda",
-        "Bryan Montalvo",
-        "Julián",
-        "Eris Midnight",
-        "Bayron"
+        {
+          "name": "Peggy",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Isabel",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Pablo",
+          "context": "Apocalypse"
+        },
+        {
+          "name": "Marcos",
+          "context": "Apocalypse"
+        },
+        {
+          "name": "Andromeda",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Bryan Montalvo",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Julián",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Eris Midnight",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Bayron",
+          "context": "The Xpedition Antarctica"
+        }
       ]
     },
     {
       "title": "TOP 5 Fan Favorites",
       "items": [
-        "Renata",
-        "Ximena",
-        "Renzo",
-        "Iker",
-        "Mati"
+        {
+          "name": "Ximena",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Renata",
+          "context": "The Traitor 2"
+        },
+        {
+          "name": "Luciano",
+          "context": "Showdown 2"
+        },
+        {
+          "name": "Alexandro",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Mary Hao",
+          "context": "The Traitor 2"
+        }
       ]
     },
     {
       "title": "TOP 5 Villanos",
       "items": [
-        "Nacho",
-        "Emanuel",
-        "Felix",
-        "Pier",
-        "Lucas Mendez"
+        {
+          "name": "Emanuel",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Nacho",
+          "context": "Campria"
+        },
+        {
+          "name": "Lucas Mendez",
+          "context": "The Traitor 2"
+        },
+        {
+          "name": "Felix",
+          "context": "Campria"
+        },
+        {
+          "name": "Leandro",
+          "context": "Showdown 2"
+        }
       ]
     },
     {
       "title": "TOP 5 Estrategas",
       "items": [
-        "Coronel",
-        "Dani",
-        "Alexandro",
-        "Ignacio Ricci",
-        "Andromeda"
+        {
+          "name": "Coronel",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Dani",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Alexandro",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Andromeda",
+          "context": "The Xpedition Antarctica"
+        }
       ]
     },
     {
       "title": "TOP 5 Arcos de Redención",
       "items": [
-        "Catalina",
-        "Daelly",
-        "Rafael",
-        "Oscar",
-        "Carlos Harrington"
+        {
+          "name": "Daelly",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Catalina",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Rafael",
+          "context": "Showdown"
+        },
+        {
+          "name": "Oscar",
+          "context": "Showdown"
+        },
+        {
+          "name": "Carlos Harrington",
+          "context": "Showdown 2"
+        }
       ]
     },
     {
@@ -1509,41 +1659,102 @@
     {
       "title": "TOP 5 Iconos de Campria",
       "items": [
-        "Luciano",
-        "Luis",
-        "Felix",
-        "Plastique Doll",
-        "Nahuee"
+        {
+          "name": "Luciano",
+          "context": "9 Temporadas"
+        },
+        {
+          "name": "Luis",
+          "context": "6 Temporadas"
+        },
+        {
+          "name": "Felix",
+          "context": "6 Temporadas"
+        },
+        {
+          "name": "Plastique Doll",
+          "context": "3 Temporadas"
+        },
+        {
+          "name": "Nahuee",
+          "context": "5 Temporadas"
+        }
       ]
     },
     {
       "title": "TOP 5 Iconos de Xpedition",
       "items": [
-        "Isabel",
-        "Andromeda",
-        "Peggy",
-        "Iñaella Rose",
-        "Dani"
+        {
+          "name": "Isabel",
+          "context": "2 Temporadas"
+        },
+        {
+          "name": "Peggy",
+          "context": "2 Temporadas"
+        },
+        {
+          "name": "Andromeda",
+          "context": "2 Temporadas"
+        },
+        {
+          "name": "Iñaella Rose",
+          "context": "2 Temporadas"
+        },
+        {
+          "name": "Dani",
+          "context": "1 Temporada"
+        }
       ]
     },
     {
       "title": "TOP 5 Iconos de The Traitor",
       "items": [
-        "Xina Ro",
-        "Ivy",
-        "Renata",
-        "Daelly",
-        "Stalin Mango"
+        {
+          "name": "Sal Lua",
+          "context": "2 Temporadas",
+          "imageName": "Xina Ro"
+        },
+        {
+          "name": "Ivy",
+          "context": "1 Temporada"
+        },
+        {
+          "name": "Daelly",
+          "context": "2 Temporadas"
+        },
+        {
+          "name": "Ari Salgado",
+          "context": "1 Temporada"
+        },
+        {
+          "name": "Stalin Mango",
+          "context": "2 Temporadas"
+        }
       ]
     },
     {
       "title": "TOP 5 Inolvidables",
       "items": [
-        "Catalina",
-        "Iñaella Rose",
-        "Lalamila",
-        "Daphne Blake",
-        "Cocomong"
+        {
+          "name": "Catalina",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Iñaella Rose",
+          "context": "The Xpedition Antarctica"
+        },
+        {
+          "name": "Lalamila",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Cocomong",
+          "context": "The Xpedition Safari"
+        },
+        {
+          "name": "Greg",
+          "context": "The Xpedition Safari"
+        }
       ]
     }
   ]

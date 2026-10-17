@@ -209,3 +209,10 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .rail-nav:hover svg,.rail-nav:focus-visible svg{transform:scale(1.18)}
 .rail-nav:disabled{visibility:hidden;opacity:0;pointer-events:none}
 @media(max-width:750px),(hover:none) and (pointer:coarse){.rail-controls{display:none}}
+/* Season labels stay beside the name and share a consistent caption area. */
+.rank-cover{display:block;position:relative;isolation:isolate;width:100%;padding:0;border-radius:7px}
+.annotated-ranking .rank-name{height:42px;line-height:1.65;white-space:normal;overflow:visible;overflow-wrap:anywhere}
+.annotated-ranking .rank-person{color:#eee8f5;font-weight:700}
+.rank-context{color:#aaa0b8;font-weight:500}
+.annotated-ranking .rank-number{margin-bottom:53px}
+@media(max-width:750px){.annotated-ranking .rank-name{height:54px}.annotated-ranking .rank-number{margin-bottom:64px}}
