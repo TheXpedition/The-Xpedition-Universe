@@ -80,11 +80,12 @@ const sagaSections={
  xpedition:{title:'The Xpedition',eyebrow:'THE XPEDITION ORIGINALS',description:'De Antarctica a Japan. Cada destino tiene una historia y cada alianza puede cambiarlo todo.'},
  campria:{title:'Campria',eyebrow:'DONDE TODO COMENZÓ',description:'Doce temporadas que dieron origen al universo. Regresa a sus desafíos y protagonistas.'},
  traitor:{title:'The Traitor',eyebrow:'NO CONFÍES EN NADIE',description:'Secretos, sospechas y decisiones que cambian el juego. Explora The Traitor y su especial de estrellas.'},
- spinoffs:{title:'Las historias continúan.',eyebrow:'LOS SPIN-OFFS DEL UNIVERSO',description:'Descubre The Traitor, Showdown y nuevas formas de vivir la competencia.'}
+ showdown:{title:'Showdown',eyebrow:'EL TORNEO DE ESTRELLAS',description:'Las estrellas del universo vuelven a competir. Explora Showdown y Showdown 2.'}
 };
 function exploreContent(){
  const c=state.catalog.content;
- if(state.filter==='traitor')return c.spinoffs.filter(item=>item.id.startsWith('traitor'));
+ if(state.filter==='traitor')return c.spinoffs.filter(item=>item.id.startsWith('traitor')&&!item.id.endsWith('-showdown'));
+ if(state.filter==='showdown')return c.spinoffs.filter(item=>item.id.endsWith('-showdown'));
  if(state.filter==='todos')return [...c.xpedition,...c.spinoffs,...c.campria];
  return c[state.filter]||[];
 }
@@ -92,7 +93,7 @@ renderExplore=function(){
  const tops=state.filter==='tops',section=sagaSections[state.filter]||sagaSections.todos;
  const title=tops?'Los que dejaron huella.':section.title;
  const description=tops?'Ganadores, amistades, rivalidades y participantes inolvidables. Explora todas las colecciones del universo.':section.description;
- const chips=[['todos','Todas'],['xpedition','The Xpedition'],['traitor','The Traitor'],['campria','Campria'],['spinoffs','Spin-offs']];
+ const chips=[['todos','Todas'],['xpedition','The Xpedition'],['traitor','The Traitor'],['showdown','Showdown'],['campria','Campria']];
  $('#main').innerHTML=`<section class="explore-cover"><div class="eyebrow">${esc(tops?'LAS CARAS. LOS MOMENTOS. EL LEGADO.':section.eyebrow)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="explore-tabs"><button data-stream="explore-tab" data-id="tops" class="${tops?'active':''}">Los tops del universo</button><button data-stream="explore-tab" data-id="todos" class="${!tops?'active':''}">Todas las temporadas</button></div></section>${tops?`<p class="rank-note" style="margin-bottom:30px">Selecciones del universo. El orden de estas listas no representa un ranking oficial.</p>${(state.catalog.rankings||[]).map(list=>rankRow(list)).join('')}`:`<div class="chips">${chips.map(([id,label])=>`<button class="chip ${state.filter===id?'active':''}" data-action="explore-filter" data-id="${id}">${label}</button>`).join('')}</div><label class="search-field">${icon('search')}<input id="exploreSearch" placeholder="Busca tu temporada…" aria-label="Buscar temporada" value="${esc(state.query)}"></label><div class="content-grid catalog-results" id="exploreResults">${exploreContent().filter(c=>norm(c.name).includes(norm(state.query))).map(contentCard).join('')}</div>`}`;
 };
 

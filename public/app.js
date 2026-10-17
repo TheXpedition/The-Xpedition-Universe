@@ -86,7 +86,7 @@ function searchResults(q){const profiles=state.profiles.filter(p=>norm(p.name).i
 function route(){
   if(!state.catalog)return;cancelRecording();
   const [view,id]=location.hash.slice(1).split('/');state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
-  if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','spinoffs'].includes(id))state.filter=id;
+  if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
   const routes={inicio:renderHome,explorar:renderExplore,comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   (routes[state.route]||renderHome)();window.scrollTo({top:0,behavior:'instant'});
 }
