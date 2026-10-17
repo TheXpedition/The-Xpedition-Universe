@@ -148,6 +148,7 @@ dialog{border-radius:16px;background:#12101b;box-shadow:0 30px 100px #000b;borde
  .messenger{height:calc(100dvh - 226px);border-radius:12px}.chat-history{padding:18px 15px}.bubble{font-size:13px}.composer-caption{font-size:8px}.composer-area{padding:11px}.composer textarea{font-size:13px}.messages-heading h1{font-size:27px}
 }
 @media(max-width:380px){.feature-hero{height:670px}.feature-actions .btn{font-size:10px;padding:11px 10px}.feature-actions{gap:7px}.feature-dots{gap:6px}.feature-dots button,.feature-dots button.active{width:19px}.feature-counter{gap:8px}.feature-controls button,.preview-controls button{width:27px;height:27px}.preview-controls{padding-right:8px;gap:5px}.rank-heading-metal{font-size:40px}.rank-heading{gap:11px}.rank-heading-topic{font-size:9px}.catalog-results{grid-template-columns:repeat(2,minmax(0,1fr))}.stream-brand{font-size:18px}}
+@media(max-width:380px){.feature-actions .btn{white-space:nowrap;gap:6px}.feature-actions .btn svg{width:14px;height:14px}.feature-actions .btn.secondary svg{display:none}}
 @media(hover:none){.save-button{opacity:1}.card-reveal{display:none}}
 /* The title sheet has its own scroll area and a complete, linked cast below. */
 dialog[data-kind=content]{width:950px;background:#151419;border-color:#ffffff1a;max-height:92dvh;scrollbar-width:thin;scrollbar-color:#5c5367 transparent}
