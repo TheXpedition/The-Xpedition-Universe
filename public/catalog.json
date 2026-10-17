@@ -1,0 +1,1550 @@
+{
+  "roster": [
+    "Adriana Pereira",
+    "Alexandro",
+    "Alexia",
+    "Alice",
+    "Amanda Lewis",
+    "Anderson Moreno",
+    "Andromeda",
+    "Ari Salgado",
+    "Atneimip",
+    "Azael",
+    "Azealia Midnight",
+    "Bayron",
+    "Beto",
+    "Bonju",
+    "Brave",
+    "Bruno Macri",
+    "Bryan Montalvo",
+    "Carlos Harrington",
+    "Catalina",
+    "Christopher",
+    "Cocomong",
+    "Coronel",
+    "Daelly",
+    "Dani",
+    "Daphne Blake",
+    "Dios",
+    "Doppel",
+    "Dua Lingo",
+    "Edna Droga",
+    "Eduard",
+    "Eduardo",
+    "Elian",
+    "Elvin",
+    "Emanuel",
+    "Emmy Mango",
+    "Eris Midnight",
+    "Esteban",
+    "Felix",
+    "Gabriel Sab",
+    "Garnet",
+    "Gokuh Moreno",
+    "Greg",
+    "Ian Esteban",
+    "Ignacio Ricci",
+    "Isabel",
+    "Ivan Serrano",
+    "Ivy",
+    "Iñaella Rose",
+    "Julián",
+    "Katy",
+    "Kim Camila",
+    "Lalamila",
+    "Leandro",
+    "Lola Mugler",
+    "Lucas Mendez",
+    "Luciano",
+    "Luis",
+    "Marcos",
+    "Maria",
+    "Marianito",
+    "Mary Hao",
+    "Mati",
+    "Nahuee",
+    "Nicki Gorilaj",
+    "Nidia Mirella",
+    "Ocean Harmony",
+    "Oscar",
+    "Pablo",
+    "Paula Garcia",
+    "Paulis Queen",
+    "Peggy",
+    "Pepi",
+    "Pier",
+    "Plastique Doll",
+    "Rafael",
+    "Renata",
+    "Renzo",
+    "Robin",
+    "Samuel Gamert",
+    "Sandro",
+    "Silvanya D'Lemberth",
+    "Sophia Asdero",
+    "Sophie Bradley",
+    "Stalin Mango",
+    "Vita",
+    "Vitany Glambert",
+    "Ximena",
+    "Xina Ro",
+    "Alexander",
+    "Alex Yo Hender",
+    "Cassandra Louvre",
+    "Chad Gil Pete",
+    "Cristian Julio",
+    "Damián",
+    "Edson",
+    "Felipe Vicente",
+    "Humberto",
+    "Iker",
+    "Imanol",
+    "Javi",
+    "Jere",
+    "Jesús",
+    "Lucas Severo",
+    "Maicol",
+    "Miguel Lima",
+    "Nacho",
+    "Pilar",
+    "Roal",
+    "Rodri",
+    "Sadith",
+    "Santi",
+    "Sebas",
+    "Solf",
+    "Stephany",
+    "Teseo",
+    "Violeta"
+  ],
+  "content": {
+    "xpedition": [
+      {
+        "id": "antarctica",
+        "name": "Antarctica",
+        "meta": "Season 1 · 2022",
+        "desc": "Un destino extremo. Una expedición que lo cambió todo.",
+        "accent": "var(--txa)",
+        "kind": "Temporada",
+        "url": "https://thexpedition.github.io/The-Xpedition-Antarctica/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "safari",
+        "name": "Safari",
+        "meta": "Season 2 · 2023 / 2025",
+        "desc": "El instinto animal se despierta. Sobrevivir es la única regla.",
+        "accent": "var(--txs)",
+        "kind": "Temporada",
+        "url": "https://thexpedition.github.io/The-Xpedition-Safari/",
+        "actionLabel": "Ir a la temporada",
+        "logo": "The Traitor Simulator Logo Color .png",
+        "transparent": ""
+      },
+      {
+        "id": "japan",
+        "name": "Japan",
+        "meta": "Season 3 · 2026",
+        "desc": "Honor, tradición y traición.",
+        "accent": "var(--txj)",
+        "kind": "Temporada",
+        "url": null,
+        "actionLabel": "Próximamente",
+        "disabled": true
+      }
+    ],
+    "spinoffs": [
+      {
+        "id": "traitor",
+        "name": "The Traitor",
+        "meta": "Season 1 · 2023",
+        "desc": "Confianza y engaño.",
+        "accent": "var(--tr)",
+        "kind": "Spin Off",
+        "url": "https://thexpedition.github.io/The-Traitor/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "traitor2",
+        "name": "The Traitor 2",
+        "meta": "Season 2 · 2025",
+        "desc": "Rostros ocultos, juego de azar.",
+        "accent": "var(--tr)",
+        "kind": "Spin Off",
+        "url": "https://thexpedition.github.io/The-Traitor-2/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "traitor3",
+        "name": "The Traitor 3",
+        "meta": "Season 3 · 2026",
+        "desc": "Mentiras bajo llave.",
+        "accent": "var(--tr)",
+        "kind": "Spin Off",
+        "url": "https://thexpedition.github.io/The-Traitor-3/",
+        "actionLabel": "Ver Formato de Temporada"
+      },
+      {
+        "id": "safari-showdown",
+        "name": "Showdown",
+        "meta": "Season 1 · 2025",
+        "desc": "Especial que reúne a los participantes de The Xpedition Safari para un Torneo de Estrellas.",
+        "accent": "var(--tr)",
+        "kind": "Spin Off",
+        "url": "https://thexpedition.github.io/The-Xpedition-Safari/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "traitor-showdown",
+        "name": "Showdown 2",
+        "meta": "Season 2 · 2026",
+        "desc": "El regreso del especial de estrellas, está vez reúne a los estelares de la saga The Traitor.",
+        "accent": "var(--tr)",
+        "kind": "Spin Off",
+        "url": "https://thexpedition.github.io/The-Traitor-2/",
+        "actionLabel": "Ir a la temporada"
+      }
+    ],
+    "campria": [
+      {
+        "id": "retroverse",
+        "name": "Retroverse",
+        "meta": "S1 · 2015",
+        "season": "S1",
+        "desc": "El inicio de una historia.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Retroverse/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "popular",
+        "name": "Popular vs Fan",
+        "meta": "S2 · 2016",
+        "season": "S2",
+        "desc": "Guerra de poder y egos.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Popular-vs-Fan/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "comeback",
+        "name": "Comeback",
+        "meta": "S3 · 2016",
+        "season": "S3",
+        "desc": "En un viaje por todo el mundo, cualquier cosa puede pasar.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Comeback/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "golden",
+        "name": "Golden vs Platinum",
+        "meta": "S4 · 2017",
+        "season": "S4",
+        "desc": "Duelo de jerarquías, guerra declarada.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Golden-vs-Platinum/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "money",
+        "name": "Money Race",
+        "meta": "S5 · 2017",
+        "season": "S5",
+        "desc": "1, 2 , 3 ¡Carrera por la victoria!",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Money-Race/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "allstars",
+        "name": "All Stars",
+        "meta": "S6 · 2018",
+        "season": "S6",
+        "desc": "El reencuentro de las caras más destacadas de la saga.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/All-Stars/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "elements",
+        "name": "Elements",
+        "meta": "S7 · 2019",
+        "season": "S7",
+        "desc": "Un reinicio prometido, reglas nuevas pero misma ambición.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Elements/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "andromeda",
+        "name": "Andromeda",
+        "meta": "S8 · 2019",
+        "season": "S8",
+        "desc": "El futuro es hoy, nuevas mecánicas de juego.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Andromeda/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "apocalypse",
+        "name": "Apocalypse",
+        "meta": "S9 · 2020",
+        "season": "S9",
+        "desc": "El fin que marcó todo, estelares, drama y twists en todos lados.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Apocalypse/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "newera",
+        "name": "New Era",
+        "meta": "S10 · 2020",
+        "season": "S10",
+        "desc": "El reinicio de una saga, nuevas caras pero el mismo deseo por ganar.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/New-Era/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "empire",
+        "name": "Empire of Blood",
+        "meta": "S11 · 2021",
+        "season": "S11",
+        "desc": "Sangre nueva, ¿quien quedará con vida al final de la historia?",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/Empire-Of-Blood/",
+        "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "allstars2",
+        "name": "All Stars 2",
+        "meta": "S12 · 2021",
+        "season": "S12",
+        "desc": "Los estelares de las ultimas entregan se reencuentran por ultima vez para está caótica entrega.",
+        "accent": "var(--c1)",
+        "kind": "Campria",
+        "url": "https://thexpedition.github.io/All-Stars-2/",
+        "actionLabel": "Ir a la temporada"
+      }
+    ],
+    "simulators": [
+      {
+        "id": "simulator",
+        "name": "Simulator",
+        "meta": "Juego Interactivo",
+        "desc": "Simula tus propias temporadas.",
+        "accent": "var(--sim)",
+        "kind": "Simulador",
+        "url": "https://thexpedition.github.io/The-Xpedition-Simulator/",
+        "actionLabel": "Jugar",
+        "logo": "TXSimulator Logo Color .png",
+        "transparent": "simulator"
+      },
+      {
+        "id": "traitorsim",
+        "name": "The Traitor Simulator",
+        "meta": "Juego Interactivo",
+        "desc": "Experimenta la tensión y el drama causado por las mentiras.",
+        "accent": "var(--tr)",
+        "kind": "Simulador",
+        "url": "https://thexpedition.github.io/The-Traitor-Simulator/",
+        "actionLabel": "Jugar",
+        "logo": "The Traitor Simulator Logo Color .png",
+        "transparent": "traitorsim"
+      },
+      {
+        "id": "showdown",
+        "name": "Showdown",
+        "meta": "Juego Interactivo",
+        "desc": "Torneo de eliminación.",
+        "accent": "var(--shw)",
+        "kind": "Simulador",
+        "url": "https://thexpedition.github.io/The-Xpedition-Showdown-Simulator/",
+        "actionLabel": "Jugar"
+      },
+      {
+        "id": "house",
+        "name": "The Xpedition House",
+        "meta": "Juego Interactivo",
+        "desc": "Un simulador social inspirado en la convivencia, los secretos y la presión de una casa al estilo Big Brother.",
+        "accent": "var(--txj)",
+        "kind": "Simulador",
+        "url": "https://thexpedition.github.io/The-Xpedition-House/",
+        "actionLabel": "Jugar",
+        "disabled": false
+      }
+    ]
+  },
+  "news": [
+    {
+      "id": "simuladores-mejoras-2025",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "Nuevos Simuladores & Mejoras en Antiguos",
+      "text": "La familia de simuladores crece con The Traitor Simulator y The Xpedition House. El primero toma la tensión del spin off The Traitor y la convierte en una experiencia de sospechas, pactos y traiciones; el segundo se inspira en la convivencia tipo Big Brother, con alianzas, drama social y momentos impredecibles. Además, los simuladores antiguos reciben ajustes visuales, fondos mejor integrados y una navegación más clara.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "traitor-2-pagina-oficial",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "¡The Traitor 2 ya tiene página oficial!",
+      "text": "The Traitor 2 abre oficialmente su espacio dentro del universo The Xpedition. La nueva página reunirá noticias, participantes, momentos clave y todo lo necesario para seguir una temporada cargada de secretos, sospechas y decisiones capaces de cambiar el juego en segundos.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "bonju-camp-awards",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "Bonju fue galardonada como Mejor Host virtual",
+      "text": "Bonju fue galardonada como Mejor Host virtual en los Camp Awards, reforzando su lugar como una de las figuras más queridas y reconocibles del universo The Xpedition. El reconocimiento celebra su presencia, su estilo para conducir la competencia y la forma en que acompaña cada giro importante de la franquicia.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "xpedition-japan-location",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "La próxima temporada de The Xpedition ya tiene locación",
+      "text": "La próxima temporada viajará a Japón, un destino conocido por su mezcla de tradición, tecnología, disciplina, cultura pop, gastronomía y paisajes icónicos. Esta nueva etapa promete retos con identidad propia, twists más intensos, drama estratégico y una atmósfera donde cada decisión puede sentirse como un choque entre honor, ambición y supervivencia.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "ignacio-ricci-showdown-2-winner",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "Ignacio Ricci se consagró como el ganador de Safari Showdown 2",
+      "text": "Ignacio Ricci ganó el especial de reunión de Safari Showdown 2 y cerró la noche con una victoria contundente. Además del premio de 20 dólares, obtuvo un pase directo a la próxima temporada, convirtiéndose en una de las figuras a seguir para lo que viene.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "julian-fuera-final-safari",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "¡Julián queda fuera de la final de Safari!",
+      "text": "Después de un reto cargado de tensión, presión y decisiones al límite, Julián quedó fuera de la final de Safari. Con su eliminación, Peggy y Coronel se consolidan como el top 2 de una recta final marcada por rivalidad, resistencia y mucho nervio competitivo.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "safari-regreso-2025",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "Safari regresó en 2025",
+      "text": "Después de dos años, Safari regresó para una segunda parte de 15 episodios con participantes nuevos, mecánicas renovadas, twists más agresivos y una dosis fresca de drama. La temporada reactivó el espíritu salvaje de la saga y volvió a poner a prueba el instinto de quienes entraron por la victoria.",
+      "imageName": "Bonju"
+    },
+    {
+      "id": "dani-ganadora-antarctica",
+      "author": "Bonju",
+      "role": "The Xpedition Host",
+      "title": "Dani es la ganadora de The Xpedition Antarctica",
+      "text": "Después de 18 episodios, 4 fases y una ruta llena de retos, drama, sorpresas y decisiones difíciles, Dani se convirtió en la ganadora de The Xpedition Antarctica. Su recorrido combinó resistencia, lectura social y momentos clave que la llevaron a cerrar la primera temporada con una victoria histórica.",
+      "imageName": "Bonju"
+    }
+  ],
+  "stats": {
+    "Dani": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 0,
+      "finalsReached": 1,
+      "seasonsWon": 1,
+      "retosGanados": 9,
+      "apariciones": "18 Episodios",
+      "bestPlacement": "Ganadora"
+    },
+    "Felix": {
+      "seasonsPlayed": 1,
+      "duelWins": 3,
+      "duelLosses": 1,
+      "finalsReached": 1,
+      "seasonsWon": 0,
+      "retosGanados": 6,
+      "apariciones": "18 Episodios",
+      "bestPlacement": "4° Lugar"
+    },
+    "Emanuel": {
+      "seasonsPlayed": 1,
+      "duelWins": 4,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 6,
+      "apariciones": "15 Episodios",
+      "bestPlacement": "8° Lugar"
+    },
+    "Beto": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 4,
+      "apariciones": "13 Episodios",
+      "bestPlacement": "10° Lugar"
+    },
+    "Vita": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 5,
+      "apariciones": "12 Episodios",
+      "bestPlacement": "11° Lugar"
+    },
+    "Eduardo": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 3,
+      "apariciones": "10 Episodios",
+      "bestPlacement": "13° Lugar"
+    },
+    "Ivan Serrano": {
+      "seasonsPlayed": 0,
+      "duelWins": 0,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "5 Episodios",
+      "bestPlacement": "17° Lugar"
+    },
+    "Coronel": {
+      "seasonsPlayed": 1,
+      "duelWins": 3,
+      "duelLosses": 0,
+      "finalsReached": 1,
+      "seasonsWon": "TBA",
+      "retosGanados": 10,
+      "apariciones": "30 Episodios",
+      "bestPlacement": "Finalista"
+    },
+    "Peggy": {
+      "seasonsPlayed": 2,
+      "duelWins": 7,
+      "duelLosses": 0,
+      "finalsReached": 1,
+      "seasonsWon": "TBA",
+      "retosGanados": 13,
+      "apariciones": "48 Episodios",
+      "bestPlacement": "Finalista"
+    },
+    "Julián": {
+      "seasonsPlayed": 1,
+      "duelWins": 7,
+      "duelLosses": 0,
+      "finalsReached": 1,
+      "seasonsWon": 0,
+      "retosGanados": 9,
+      "apariciones": "30 Episodios",
+      "bestPlacement": "3° Lugar"
+    },
+    "Alexandro": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 2,
+      "apariciones": "15 Episodios",
+      "bestPlacement": "4° Lugar"
+    },
+    "Isabel": {
+      "seasonsPlayed": 2,
+      "duelWins": 10,
+      "duelLosses": 0,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 14,
+      "apariciones": "48 Episodios",
+      "bestPlacement": "5/6° Lugar"
+    },
+    "Pier": {
+      "seasonsPlayed": 2,
+      "duelWins": 1,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 2,
+      "apariciones": "15 Episodios",
+      "bestPlacement": "5/6° Lugar"
+    },
+    "Bryan Montalvo": {
+      "seasonsPlayed": 1,
+      "duelWins": 6,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 7,
+      "apariciones": "29 Episodios",
+      "bestPlacement": "7° Lugar"
+    },
+    "Daelly": {
+      "seasonsPlayed": 2,
+      "duelWins": 2,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 4,
+      "apariciones": "21 Episodios",
+      "bestPlacement": "8° Lugar"
+    },
+    "Andromeda": {
+      "seasonsPlayed": 2,
+      "duelWins": 7,
+      "duelLosses": 2,
+      "finalsReached": 1,
+      "seasonsWon": 0,
+      "retosGanados": 10,
+      "apariciones": "43 Episodios",
+      "bestPlacement": "2° Lugar"
+    },
+    "Luciano": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 2,
+      "apariciones": "11 Episodios",
+      "bestPlacement": "10° Lugar"
+    },
+    "Iñaella Rose": {
+      "seasonsPlayed": 2,
+      "duelWins": 3,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "17 Episodios",
+      "bestPlacement": "11° Lugar"
+    },
+    "Ximena": {
+      "seasonsPlayed": 2,
+      "duelWins": 4,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 8,
+      "apariciones": "37 Episodios",
+      "bestPlacement": "9° Lugar"
+    },
+    "Ignacio Ricci": {
+      "seasonsPlayed": 2,
+      "duelWins": 5,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 7,
+      "apariciones": "29 Episodios",
+      "bestPlacement": "13° Lugar"
+    },
+    "Lucas Mendez": {
+      "seasonsPlayed": 1,
+      "duelWins": 0,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "7 Episodios",
+      "bestPlacement": "14° Lugar"
+    },
+    "Greg": {
+      "seasonsPlayed": 1,
+      "duelWins": 0,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 0,
+      "apariciones": "6 Episodios",
+      "bestPlacement": "15° Lugar"
+    },
+    "Garnet": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "12 Episodios",
+      "bestPlacement": "16° Lugar"
+    },
+    "Elvin": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 5,
+      "apariciones": "15 Episodios",
+      "bestPlacement": "17° Lugar"
+    },
+    "Bayron": {
+      "seasonsPlayed": 2,
+      "duelWins": 6,
+      "duelLosses": 1,
+      "finalsReached": 1,
+      "seasonsWon": 0,
+      "retosGanados": 10,
+      "apariciones": "32 Episodios",
+      "bestPlacement": "3° Lugar"
+    },
+    "Oscar": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 6,
+      "apariciones": "14 Episodios",
+      "bestPlacement": "19° Lugar"
+    },
+    "Sandro": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "11 Episodios",
+      "bestPlacement": "20° Lugar"
+    },
+    "Esteban": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 5,
+      "apariciones": "12 Episodios",
+      "bestPlacement": "21° Lugar"
+    },
+    "Rafael": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 0,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 1,
+      "apariciones": "11 Episodios",
+      "bestPlacement": "22° Lugar"
+    },
+    "Emmy Mango": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 0,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 4,
+      "apariciones": "8 Episodios",
+      "bestPlacement": "23° Lugar"
+    },
+    "Lalamila": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 3,
+      "apariciones": "10 Episodios",
+      "bestPlacement": "24° Lugar"
+    },
+    "Cocomong": {
+      "seasonsPlayed": 1,
+      "duelWins": 2,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 0,
+      "apariciones": "4 Episodios",
+      "bestPlacement": "25° Lugar"
+    },
+    "Azealia Midnight": {
+      "seasonsPlayed": 1,
+      "duelWins": 1,
+      "duelLosses": 1,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 0,
+      "apariciones": "4 Episodios",
+      "bestPlacement": "26° Lugar"
+    },
+    "Eris Midnight": {
+      "seasonsPlayed": 2,
+      "duelWins": 4,
+      "duelLosses": 3,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 4,
+      "apariciones": "22 Episodios",
+      "bestPlacement": "7° Lugar"
+    },
+    "Catalina": {
+      "seasonsPlayed": 2,
+      "duelWins": 0,
+      "duelLosses": 2,
+      "finalsReached": 0,
+      "seasonsWon": 0,
+      "retosGanados": 0,
+      "apariciones": "9 Episodios",
+      "bestPlacement": "12° Lugar"
+    }
+  },
+  "achievements": {
+    "Poop of the Year": [
+      "Eris Midnight"
+    ],
+    "Fan Favorite": [
+      "Ximena",
+      "Alexandro"
+    ],
+    "Titán de Eliminación": [
+      "Andromeda",
+      "Peggy",
+      "Isabel",
+      "Eris Midnight",
+      "Emanuel",
+      "Julián",
+      "Bryan Montalvo",
+      "Ignacio Ricci",
+      "Bayron"
+    ],
+    "Cerebro": [
+      "Peggy",
+      "Eduardo",
+      "Ignacio Ricci",
+      "Alexandro",
+      "Julián"
+    ],
+    "Social": [
+      "Dani",
+      "Andromeda",
+      "Ximena",
+      "Vita",
+      "Beto",
+      "Eris Midnight",
+      "Daelly",
+      "Coronel",
+      "Alexandro",
+      "Luciano",
+      "Iñaella Rose",
+      "Lalamila",
+      "Oscar"
+    ],
+    "Rendimiento": [
+      "Bayron",
+      "Felix",
+      "Isabel",
+      "Peggy",
+      "Emanuel",
+      "Beto",
+      "Coronel",
+      "Julián",
+      "Alexandro",
+      "Pier",
+      "Luciano",
+      "Lucas Mendez",
+      "Oscar",
+      "Rafael"
+    ],
+    "Liderazgo": [
+      "Dani",
+      "Eduardo",
+      "Alexandro",
+      "Luciano",
+      "Lucas Mendez",
+      "Bryan Montalvo",
+      "Peggy"
+    ],
+    "Creativo": [
+      "Dani",
+      "Bayron",
+      "Felix",
+      "Andromeda",
+      "Isabel",
+      "Ximena",
+      "Vita",
+      "Daelly",
+      "Ignacio Ricci",
+      "Pier",
+      "Iñaella Rose",
+      "Bryan Montalvo",
+      "Emmy Mango",
+      "Rafael",
+      "Elvin"
+    ]
+  },
+  "characters": [
+    {
+      "name": "Adriana Pereira",
+      "image": "personajes/adrianapereira.png"
+    },
+    {
+      "name": "Alexander",
+      "image": "personajes/alexander.png"
+    },
+    {
+      "name": "Alexandro",
+      "image": "personajes/alexandro.png"
+    },
+    {
+      "name": "Alexia",
+      "image": "personajes/alexia.png"
+    },
+    {
+      "name": "Alex Yo Hender",
+      "image": "personajes/alexyohender.png"
+    },
+    {
+      "name": "Alice",
+      "image": "personajes/alice.png"
+    },
+    {
+      "name": "Amanda Lewis",
+      "image": "personajes/amandalewis.png"
+    },
+    {
+      "name": "Anderson Moreno",
+      "image": "personajes/andersonmoreno.png"
+    },
+    {
+      "name": "Andromeda",
+      "image": "personajes/andromeda.png"
+    },
+    {
+      "name": "Ari Salgado",
+      "image": "personajes/arisalgado.png"
+    },
+    {
+      "name": "Atneimip",
+      "image": "personajes/atneimip.png"
+    },
+    {
+      "name": "Azael",
+      "image": "personajes/azael.png"
+    },
+    {
+      "name": "Azealia Midnight",
+      "image": "personajes/azealiamidnight.png"
+    },
+    {
+      "name": "Bayron",
+      "image": "personajes/bayron.png"
+    },
+    {
+      "name": "Beto",
+      "image": "personajes/beto.png"
+    },
+    {
+      "name": "Bonju",
+      "image": "personajes/bonju.png"
+    },
+    {
+      "name": "Brave",
+      "image": "personajes/brave.png"
+    },
+    {
+      "name": "Bruno Macri",
+      "image": "personajes/brunomacri.png"
+    },
+    {
+      "name": "Bryan Montalvo",
+      "image": "personajes/bryanmontalvo.png"
+    },
+    {
+      "name": "Carlos Harrington",
+      "image": "personajes/carlosharrington.png"
+    },
+    {
+      "name": "Cassandra Louvre",
+      "image": "personajes/cassandralouvre.png"
+    },
+    {
+      "name": "Catalina",
+      "image": "personajes/catalina.png"
+    },
+    {
+      "name": "Chad Gil Pete",
+      "image": "personajes/chadgilpete.png"
+    },
+    {
+      "name": "Christopher",
+      "image": "personajes/christopher.png"
+    },
+    {
+      "name": "Cocomong",
+      "image": "personajes/cocomong.png"
+    },
+    {
+      "name": "Coronel",
+      "image": "personajes/coronel.png"
+    },
+    {
+      "name": "Cristian Julio",
+      "image": "personajes/cristianjulio.png"
+    },
+    {
+      "name": "Daelly",
+      "image": "personajes/daelly.png"
+    },
+    {
+      "name": "Damián",
+      "image": "personajes/damian.png"
+    },
+    {
+      "name": "Dani",
+      "image": "personajes/dani.png"
+    },
+    {
+      "name": "Daphne Blake",
+      "image": "personajes/daphneblake.png"
+    },
+    {
+      "name": "Dios",
+      "image": "personajes/dios.png"
+    },
+    {
+      "name": "Doppel",
+      "image": "personajes/doppel.png"
+    },
+    {
+      "name": "Dua Lingo",
+      "image": "personajes/dualingo.png"
+    },
+    {
+      "name": "Edna Droga",
+      "image": "personajes/ednadroga.png"
+    },
+    {
+      "name": "Edson",
+      "image": "personajes/edson.png"
+    },
+    {
+      "name": "Eduard",
+      "image": "personajes/eduard.png"
+    },
+    {
+      "name": "Eduardo",
+      "image": "personajes/eduardo.png"
+    },
+    {
+      "name": "Elian",
+      "image": "personajes/elian.png"
+    },
+    {
+      "name": "Elvin",
+      "image": "personajes/elvin.png"
+    },
+    {
+      "name": "Emanuel",
+      "image": "personajes/emanuel.png"
+    },
+    {
+      "name": "Emmy Mango",
+      "image": "personajes/emmymango.png"
+    },
+    {
+      "name": "Eris Midnight",
+      "image": "personajes/erismidnight.png"
+    },
+    {
+      "name": "Esteban",
+      "image": "personajes/esteban.png"
+    },
+    {
+      "name": "Felipe Vicente",
+      "image": "personajes/felipevicente.png"
+    },
+    {
+      "name": "Felix",
+      "image": "personajes/felix.png"
+    },
+    {
+      "name": "Gabriel Sab",
+      "image": "personajes/gabrielsab.png"
+    },
+    {
+      "name": "Garnet",
+      "image": "personajes/garnet.png"
+    },
+    {
+      "name": "Gokuh Moreno",
+      "image": "personajes/gokuhmoreno.png"
+    },
+    {
+      "name": "Greg",
+      "image": "personajes/greg.png"
+    },
+    {
+      "name": "Humberto",
+      "image": "personajes/humberto.png"
+    },
+    {
+      "name": "Ian Esteban",
+      "image": "personajes/ianesteban.png"
+    },
+    {
+      "name": "Ignacio Ricci",
+      "image": "personajes/ignacioricci.png"
+    },
+    {
+      "name": "Iker",
+      "image": "personajes/iker.png"
+    },
+    {
+      "name": "Imanol",
+      "image": "personajes/imanol.png"
+    },
+    {
+      "name": "Iñaella Rose",
+      "image": "personajes/inaellarose.png"
+    },
+    {
+      "name": "Isabel",
+      "image": "personajes/isabel.png"
+    },
+    {
+      "name": "Ivan Serrano",
+      "image": "personajes/ivanserrano.png"
+    },
+    {
+      "name": "Ivy",
+      "image": "personajes/ivy.png"
+    },
+    {
+      "name": "Javi",
+      "image": "personajes/javi.png"
+    },
+    {
+      "name": "Jere",
+      "image": "personajes/jere.png"
+    },
+    {
+      "name": "Jesús",
+      "image": "personajes/jesus.png"
+    },
+    {
+      "name": "Julián",
+      "image": "personajes/julian.png"
+    },
+    {
+      "name": "Katy",
+      "image": "personajes/katy.png"
+    },
+    {
+      "name": "Kim Camila",
+      "image": "personajes/kimcamila.png"
+    },
+    {
+      "name": "Lalamila",
+      "image": "personajes/lalamila.png"
+    },
+    {
+      "name": "Leandro",
+      "image": "personajes/leandro.png"
+    },
+    {
+      "name": "Lola Mugler",
+      "image": "personajes/lolamugler.png"
+    },
+    {
+      "name": "Lucas Mendez",
+      "image": "personajes/lucasmendez.png"
+    },
+    {
+      "name": "Lucas Severo",
+      "image": "personajes/lucassevero.png"
+    },
+    {
+      "name": "Luciano",
+      "image": "personajes/luciano.png"
+    },
+    {
+      "name": "Luis",
+      "image": "personajes/luis.png"
+    },
+    {
+      "name": "Maicol",
+      "image": "personajes/maicol.png"
+    },
+    {
+      "name": "Marcos",
+      "image": "personajes/marcos.png"
+    },
+    {
+      "name": "Maria",
+      "image": "personajes/maria.png"
+    },
+    {
+      "name": "Marianito",
+      "image": "personajes/marianito.png"
+    },
+    {
+      "name": "Mary Hao",
+      "image": "personajes/maryhao.png"
+    },
+    {
+      "name": "Mati",
+      "image": "personajes/mati.png"
+    },
+    {
+      "name": "Miguel Lima",
+      "image": "personajes/miguellima.png"
+    },
+    {
+      "name": "Nacho",
+      "image": "personajes/nacho.png"
+    },
+    {
+      "name": "Nahuee",
+      "image": "personajes/nahuee.png"
+    },
+    {
+      "name": "Nicki Gorilaj",
+      "image": "personajes/nickigorilaj.png"
+    },
+    {
+      "name": "Nidia Mirella",
+      "image": "personajes/nidiamirella.png"
+    },
+    {
+      "name": "Ocean Harmony",
+      "image": "personajes/oceanharmony.png"
+    },
+    {
+      "name": "Oscar",
+      "image": "personajes/oscar.png"
+    },
+    {
+      "name": "Pablo",
+      "image": "personajes/pablo.png"
+    },
+    {
+      "name": "Paula Garcia",
+      "image": "personajes/paulagarcia.png"
+    },
+    {
+      "name": "Paulis Queen",
+      "image": "personajes/paulisqueen.png"
+    },
+    {
+      "name": "Peggy",
+      "image": "personajes/peggy.png"
+    },
+    {
+      "name": "Pepi",
+      "image": "personajes/pepi.png"
+    },
+    {
+      "name": "Pier",
+      "image": "personajes/pier.png"
+    },
+    {
+      "name": "Pilar",
+      "image": "personajes/pilar.png"
+    },
+    {
+      "name": "Plastique Doll",
+      "image": "personajes/plastiquedoll.png"
+    },
+    {
+      "name": "Rafael",
+      "image": "personajes/rafael.png"
+    },
+    {
+      "name": "Renata",
+      "image": "personajes/renata.png"
+    },
+    {
+      "name": "Renzo",
+      "image": "personajes/renzo.png"
+    },
+    {
+      "name": "Roal",
+      "image": "personajes/roal.png"
+    },
+    {
+      "name": "Robin",
+      "image": "personajes/robin.png"
+    },
+    {
+      "name": "Rodri",
+      "image": "personajes/rodri.png"
+    },
+    {
+      "name": "Sadith",
+      "image": "personajes/sadith.png"
+    },
+    {
+      "name": "Samuel Gamert",
+      "image": "personajes/samuelgamert.png"
+    },
+    {
+      "name": "Sandro",
+      "image": "personajes/sandro.png"
+    },
+    {
+      "name": "Santi",
+      "image": "personajes/santi.png"
+    },
+    {
+      "name": "Sebas",
+      "image": "personajes/sebas.png"
+    },
+    {
+      "name": "Silvanya D'Lemberth",
+      "image": "personajes/silvanyadlemberth.png"
+    },
+    {
+      "name": "Solf",
+      "image": "personajes/solf.png"
+    },
+    {
+      "name": "Sophia Asdero",
+      "image": "personajes/sophiaasdero.png"
+    },
+    {
+      "name": "Sophie Bradley",
+      "image": "personajes/sophiebradley.png"
+    },
+    {
+      "name": "Stalin Mango",
+      "image": "personajes/stalinmango.png"
+    },
+    {
+      "name": "Stephany",
+      "image": "personajes/stephany.png"
+    },
+    {
+      "name": "Teseo",
+      "image": "personajes/teseo.png"
+    },
+    {
+      "name": "Violeta",
+      "image": "personajes/violeta.png"
+    },
+    {
+      "name": "Vita",
+      "image": "personajes/vita.png"
+    },
+    {
+      "name": "Vitany Glambert",
+      "image": "personajes/vitanyglambert.png"
+    },
+    {
+      "name": "Ximena",
+      "image": "personajes/ximena.png"
+    },
+    {
+      "name": "Xina Ro",
+      "image": "personajes/xinaro.png"
+    }
+  ],
+  "rankings": [
+    {
+      "title": "TOP 5 Temporadas",
+      "items": [
+        "safari",
+        "antarctica",
+        "the traitor 2",
+        "apocalypse",
+        "all stars"
+      ]
+    },
+    {
+      "title": "TOP 10 Ganadores",
+      "items": [
+        "Dani",
+        "Luis",
+        "Plastique Doll",
+        "Felix",
+        "Isabel",
+        "Nahuee",
+        "Emanuel",
+        "Nacho",
+        "Vita",
+        "Amanda Lewis"
+      ]
+    },
+    {
+      "title": "TOP 10 Finalistas",
+      "items": [
+        "Andromeda",
+        "Alexandro",
+        "Robin",
+        "Beto",
+        "Katy",
+        "Pepi",
+        "Bayron",
+        "Julián",
+        "Coronel",
+        "Peggy"
+      ]
+    },
+    {
+      "title": "TOP 10 Titanes de Eliminación",
+      "items": [
+        "Peggy",
+        "Isabel",
+        "Pablo",
+        "Marcos",
+        "Pier",
+        "Andromeda",
+        "Bryan Montalvo",
+        "Julián",
+        "Eris Midnight",
+        "Bayron"
+      ]
+    },
+    {
+      "title": "TOP 5 Fan Favorites",
+      "items": [
+        "Renata",
+        "Ximena",
+        "Renzo",
+        "Iker",
+        "Mati"
+      ]
+    },
+    {
+      "title": "TOP 5 Villanos",
+      "items": [
+        "Nacho",
+        "Emanuel",
+        "Felix",
+        "Pier",
+        "Lucas Mendez"
+      ]
+    },
+    {
+      "title": "TOP 5 Estrategas",
+      "items": [
+        "Coronel",
+        "Dani",
+        "Alexandro",
+        "Ignacio Ricci",
+        "Andromeda"
+      ]
+    },
+    {
+      "title": "TOP 5 Arcos de Redención",
+      "items": [
+        "Catalina",
+        "Daelly",
+        "Rafael",
+        "Oscar",
+        "Carlos Harrington"
+      ]
+    },
+    {
+      "title": "TOP 5 Amistades",
+      "isGroup": true,
+      "items": [
+        [
+          "Andromeda",
+          "Peggy"
+        ],
+        [
+          "Julián",
+          "Bryan Montalvo",
+          "Ximena"
+        ],
+        [
+          "Luciano",
+          "Dani"
+        ],
+        [
+          "Isabel",
+          "Coronel"
+        ],
+        [
+          "Adriana Pereira",
+          "Lucas Mendez"
+        ]
+      ]
+    },
+    {
+      "title": "TOP 5 Rivalidades",
+      "isGroup": true,
+      "items": [
+        [
+          "Daelly",
+          "Iñaella Rose",
+          "Lucas Mendez"
+        ],
+        [
+          "Felix",
+          "Javi"
+        ],
+        [
+          "Dani",
+          "Andromeda"
+        ],
+        [
+          "Peggy",
+          "Alexandro"
+        ],
+        [
+          "Julián",
+          "Bryan Montalvo",
+          "Ignacio Ricci"
+        ]
+      ]
+    },
+    {
+      "title": "TOP 5 Iconos de Campria",
+      "items": [
+        "Luciano",
+        "Luis",
+        "Felix",
+        "Plastique Doll",
+        "Nahuee"
+      ]
+    },
+    {
+      "title": "TOP 5 Iconos de Xpedition",
+      "items": [
+        "Isabel",
+        "Andromeda",
+        "Peggy",
+        "Iñaella Rose",
+        "Dani"
+      ]
+    },
+    {
+      "title": "TOP 5 Iconos de The Traitor",
+      "items": [
+        "Xina Ro",
+        "Ivy",
+        "Renata",
+        "Daelly",
+        "Stalin Mango"
+      ]
+    },
+    {
+      "title": "TOP 5 Inolvidables",
+      "items": [
+        "Catalina",
+        "Iñaella Rose",
+        "Lalamila",
+        "Daphne Blake",
+        "Cocomong"
+      ]
+    }
+  ]
+}
