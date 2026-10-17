@@ -12,7 +12,8 @@ const time = ts => new Date(ts).toLocaleTimeString('es-CO',{hour:'2-digit',minut
 const date = ts => new Date(ts).toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'});
 const shortDate = ts => new Date(ts).toDateString()===new Date().toDateString()?time(ts):new Date(ts).toLocaleDateString('es-CO',{day:'2-digit',month:'short'});
 const character = name => state.catalog.characters.find(c=>c.name===name);
-const imageFor = name => character(name)?.image || 'personajes/dani.png';
+const refreshedAsset = src => src+'?v=20261017';
+const imageFor = name => refreshedAsset(character(name)?.image || 'personajes/dani.png');
 const avatar = (p,cls='') => `<span class="avatar-wrap"><img class="avatar ${cls}" src="${esc(imageFor(p.avatar||p.name))}" alt="${esc(p.name)}" loading="lazy">${p.online?'<i class="online-dot" title="En línea"></i>':''}</span>`;
 const getProfile = id => state.profiles.find(p=>p.id===id);
 const allContent = () => Object.values(state.catalog.content).flat();
@@ -38,13 +39,13 @@ function renderChrome(){
   $('#sidebarBottom').innerHTML=state.user?`<div class="join-card"><span class="eyebrow">TU EXPEDICIÓN</span><h3>${esc(state.user.name)}</h3><p>Tu perfil, tus conversaciones y las historias que sigues.</p><button class="btn secondary full small" data-action="my-profile">Ver mi perfil ${icon('arrow')}</button></div>`:`<div class="join-card"><span class="orbit">✳</span><h3>Hay un lugar para ti.</h3><p>Crea tu perfil. Encuentra a tu gente. Vive el universo desde dentro.</p><button class="btn primary full small" data-action="register">Crear mi perfil ${icon('arrow')}</button></div>`;
   document.title=`${unread?'('+unread+') ':''}The Xpedition — ${navItems.find(n=>n[0]===state.route)?.[2]||'Perfil'}`;
 }
-const contentArt = item => item.kind==='Campria'?`${item.season} Portada.png`:`backdrops/${({antarctica:'antarctica.jpg',safari:'safari.jpg',japan:'japan.png',showdown2:'showdown.png','safari-showdown':'safari.jpg','traitor-showdown':'traitor2.png'})[item.id]||item.id+'.png'}`;
-const logoFor = item => item.kind==='Simulador'||item.kind==='Campria'?null:({antarctica:'transparent/antarctica.png',safari:'transparent/safari.png',japan:'transparent/japan.png',traitor:'transparent/traitor.png',traitor2:'transparent/traitor2.png',traitor3:'transparent/traitor3.png','safari-showdown':'transparent/showdown.png','traitor-showdown':'transparent/showdown.png'})[item.id];
-const logoFrames={antarctica:[254,432,1341,694],safari:[328,431,1268,700],japan:[262,252,1333,1097],traitor:[139,299,1508,871],traitor2:[146,297,1497,1078],traitor3:[146,297,1497,1126],showdown:[131,439,1565,684]};
+const contentArt = item => item.kind==='Campria'?`${item.season} Portada.png`:`backdrops/${({antarctica:'antarctica.jpg',safari:'safari.jpg',japan:'japan.png',showdown2:'showdown.png','safari-showdown':'showdown-season-1.png','traitor-showdown':'showdown-season-2.png'})[item.id]||item.id+'.png'}`;
+const logoFor = item => item.kind==='Simulador'||item.kind==='Campria'?null:({antarctica:'transparent/antarctica.png',safari:'transparent/safari.png',japan:'transparent/japan.png',traitor:'transparent/traitor.png',traitor2:'transparent/traitor2.png',traitor3:'transparent/traitor3.png','safari-showdown':'transparent/showdown.png','traitor-showdown':'transparent/showdown2.png'})[item.id];
+const logoFrames={antarctica:[254,432,1341,694],safari:[328,431,1268,700],japan:[262,252,1333,1097],traitor:[139,299,1508,871],traitor2:[146,297,1497,1078],traitor3:[146,297,1497,1126],showdown:[165,433,1466,658],showdown2:[66,435,1711,665]};
 function brandArt(item,cls='season-logo'){
   const src=logoFor(item);if(!src)return '';
   const key=src.split('/').pop().replace('.png',''),frame=logoFrames[key]||[0,0,1800,1600];
-  return `<svg class="brand-art ${cls}" data-brand="${key}" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(item.name)}"><image href="${esc(src)}" width="1800" height="1600"/></svg>`;
+  return `<svg class="brand-art ${cls}" data-brand="${key}" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(item.name)}"><image href="${esc(refreshedAsset(src))}" width="1800" height="1600"/></svg>`;
 }
 function contentCard(item){
   const simulator=item.kind==='Simulador';

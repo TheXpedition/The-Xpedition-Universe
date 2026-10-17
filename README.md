@@ -40,7 +40,7 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 ## Funciones
 
-Registro, contraseña, Google, perfiles editables, 116 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
+Registro, contraseña, Google, perfiles editables, 133 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
 
 Portada con las previas de Japan, Safari, Antarctica, The Traitor 2 y Showdown 2, controles de sonido y reproducción, enlaces originales a las temporadas, logos completos y tops con números metálicos. Las fichas incluyen elencos enlazados a perfiles, géneros, tres títulos similares y reparto completo; los simuladores conservan su arte original con relleno lateral del mismo color.
 

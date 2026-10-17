@@ -1,6 +1,9 @@
 {
   "roster": [
     "Adriana Pereira",
+    "Agus",
+    "Alex Yo Hender",
+    "Alexander",
     "Alexandro",
     "Alexia",
     "Alice",
@@ -8,60 +11,91 @@
     "Anderson Moreno",
     "Andromeda",
     "Ari Salgado",
+    "Ariana Glande",
     "Atneimip",
     "Azael",
     "Azealia Midnight",
     "Bayron",
     "Beto",
+    "Bodega Bodeguita",
     "Bonju",
     "Brave",
     "Bruno Macri",
     "Bryan Montalvo",
     "Carlos Harrington",
+    "Carlos Rojas",
+    "Carmine",
+    "Cassandra Louvre",
+    "Cassie Casu",
     "Catalina",
+    "Chad Gil Pete",
     "Christopher",
     "Cocomong",
     "Coronel",
+    "Cristian Julio",
     "Daelly",
+    "Damián",
     "Dani",
+    "Daniel Sims",
     "Daphne Blake",
     "Dios",
     "Doppel",
     "Dua Lingo",
     "Edna Droga",
+    "Edson",
     "Eduard",
     "Eduardo",
     "Elian",
+    "Elias",
     "Elvin",
     "Emanuel",
     "Emmy Mango",
     "Eris Midnight",
     "Esteban",
+    "Felipe Vicente",
     "Felix",
     "Gabriel Sab",
     "Garnet",
     "Gokuh Moreno",
     "Greg",
+    "Heidi Cum",
+    "Humberto",
     "Ian Esteban",
     "Ignacio Ricci",
+    "Iker",
+    "Imanol",
+    "Iñaella Rose",
     "Isabel",
     "Ivan Serrano",
     "Ivy",
-    "Iñaella Rose",
+    "Javi",
+    "Jere",
+    "Jesús",
     "Julián",
+    "Julie",
+    "Kareli",
     "Katy",
     "Kim Camila",
     "Lalamila",
     "Leandro",
+    "Lily Louvre",
     "Lola Mugler",
     "Lucas Mendez",
+    "Lucas Severo",
     "Luciano",
+    "Lui Mclean",
     "Luis",
+    "Maicol",
     "Marcos",
     "Maria",
+    "Maria Isabel",
     "Marianito",
     "Mary Hao",
     "Mati",
+    "Mel Rz",
+    "Miguel Lima",
+    "Miss Kopp",
+    "Nacho",
     "Nahuee",
     "Nicki Gorilaj",
     "Nidia Mirella",
@@ -73,49 +107,32 @@
     "Peggy",
     "Pepi",
     "Pier",
+    "Pilar",
     "Plastique Doll",
     "Rafael",
     "Renata",
     "Renzo",
+    "Roal",
     "Robin",
+    "Rodri",
+    "Sadith",
+    "Sal Lua",
     "Samuel Gamert",
     "Sandro",
+    "Santi",
+    "Sebas",
     "Silvanya D'Lemberth",
+    "Solf",
     "Sophia Asdero",
     "Sophie Bradley",
     "Stalin Mango",
+    "Stephany",
+    "Teseo",
+    "Violeta",
     "Vita",
     "Vitany Glambert",
     "Ximena",
-    "Xina Ro",
-    "Alexander",
-    "Alex Yo Hender",
-    "Cassandra Louvre",
-    "Chad Gil Pete",
-    "Cristian Julio",
-    "Damián",
-    "Edson",
-    "Felipe Vicente",
-    "Humberto",
-    "Iker",
-    "Imanol",
-    "Javi",
-    "Jere",
-    "Jesús",
-    "Lucas Severo",
-    "Maicol",
-    "Miguel Lima",
-    "Nacho",
-    "Pilar",
-    "Roal",
-    "Rodri",
-    "Sadith",
-    "Santi",
-    "Sebas",
-    "Solf",
-    "Stephany",
-    "Teseo",
-    "Violeta"
+    "Xina Ro"
   ],
   "content": {
     "xpedition": [
@@ -895,6 +912,14 @@
       "image": "personajes/adrianapereira.png"
     },
     {
+      "name": "Agus",
+      "image": "personajes/agus.png"
+    },
+    {
+      "name": "Alex Yo Hender",
+      "image": "personajes/alexyohender.png"
+    },
+    {
       "name": "Alexander",
       "image": "personajes/alexander.png"
     },
@@ -905,10 +930,6 @@
     {
       "name": "Alexia",
       "image": "personajes/alexia.png"
-    },
-    {
-      "name": "Alex Yo Hender",
-      "image": "personajes/alexyohender.png"
     },
     {
       "name": "Alice",
@@ -931,6 +952,10 @@
       "image": "personajes/arisalgado.png"
     },
     {
+      "name": "Ariana Glande",
+      "image": "personajes/arianaglande.png"
+    },
+    {
       "name": "Atneimip",
       "image": "personajes/atneimip.png"
     },
@@ -949,6 +974,10 @@
     {
       "name": "Beto",
       "image": "personajes/beto.png"
+    },
+    {
+      "name": "Bodega Bodeguita",
+      "image": "personajes/bodegabodeguita.png"
     },
     {
       "name": "Bonju",
@@ -971,8 +1000,20 @@
       "image": "personajes/carlosharrington.png"
     },
     {
+      "name": "Carlos Rojas",
+      "image": "personajes/carlosrojas.png"
+    },
+    {
+      "name": "Carmine",
+      "image": "personajes/carmine.png"
+    },
+    {
       "name": "Cassandra Louvre",
       "image": "personajes/cassandralouvre.png"
+    },
+    {
+      "name": "Cassie Casu",
+      "image": "personajes/cassiecasu.png"
     },
     {
       "name": "Catalina",
@@ -1011,6 +1052,10 @@
       "image": "personajes/dani.png"
     },
     {
+      "name": "Daniel Sims",
+      "image": "personajes/danielsims.png"
+    },
+    {
       "name": "Daphne Blake",
       "image": "personajes/daphneblake.png"
     },
@@ -1045,6 +1090,10 @@
     {
       "name": "Elian",
       "image": "personajes/elian.png"
+    },
+    {
+      "name": "Elias",
+      "image": "personajes/elias.png"
     },
     {
       "name": "Elvin",
@@ -1089,6 +1138,10 @@
     {
       "name": "Greg",
       "image": "personajes/greg.png"
+    },
+    {
+      "name": "Heidi Cum",
+      "image": "personajes/heidicum.png"
     },
     {
       "name": "Humberto",
@@ -1143,6 +1196,14 @@
       "image": "personajes/julian.png"
     },
     {
+      "name": "Julie",
+      "image": "personajes/julie.png"
+    },
+    {
+      "name": "Kareli",
+      "image": "personajes/kareli.png"
+    },
+    {
       "name": "Katy",
       "image": "personajes/katy.png"
     },
@@ -1157,6 +1218,10 @@
     {
       "name": "Leandro",
       "image": "personajes/leandro.png"
+    },
+    {
+      "name": "Lily Louvre",
+      "image": "personajes/lilylouvre.png"
     },
     {
       "name": "Lola Mugler",
@@ -1175,6 +1240,10 @@
       "image": "personajes/luciano.png"
     },
     {
+      "name": "Lui Mclean",
+      "image": "personajes/luimclean.png"
+    },
+    {
       "name": "Luis",
       "image": "personajes/luis.png"
     },
@@ -1191,6 +1260,10 @@
       "image": "personajes/maria.png"
     },
     {
+      "name": "Maria Isabel",
+      "image": "personajes/mariaisabel.png"
+    },
+    {
       "name": "Marianito",
       "image": "personajes/marianito.png"
     },
@@ -1203,8 +1276,16 @@
       "image": "personajes/mati.png"
     },
     {
+      "name": "Mel Rz",
+      "image": "personajes/melrz.png"
+    },
+    {
       "name": "Miguel Lima",
       "image": "personajes/miguellima.png"
+    },
+    {
+      "name": "Miss Kopp",
+      "image": "personajes/misskopp.png"
     },
     {
       "name": "Nacho",
@@ -1289,6 +1370,10 @@
     {
       "name": "Sadith",
       "image": "personajes/sadith.png"
+    },
+    {
+      "name": "Sal Lua",
+      "image": "personajes/sallua.png"
     },
     {
       "name": "Samuel Gamert",
