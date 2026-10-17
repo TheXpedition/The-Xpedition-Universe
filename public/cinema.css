@@ -157,7 +157,7 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .detail-hero-shade{position:absolute;inset:0;background:linear-gradient(0deg,#151419 0%,#15141950 36%,transparent 85%),linear-gradient(90deg,#0c0a1175,transparent 80%);z-index:-2}
 .detail-hero .brand-art.detail-logo{position:absolute;left:50%;bottom:105px;width:360px;height:235px;max-width:65%;transform:translateX(-50%);filter:drop-shadow(0 5px 13px #0009)}
 .detail-hero .brand-art.detail-logo[data-brand=antarctica],.detail-hero .brand-art.detail-logo[data-brand=safari],.detail-hero .brand-art.detail-logo[data-brand=showdown]{height:180px;bottom:110px}
-.detail-hero-actions{position:absolute;left:36px;right:36px;bottom:39px;display:flex;justify-content:center;gap:12px;align-items:center}
+.detail-hero-actions{position:absolute;left:36px;right:36px;bottom:39px;display:flex;justify-content:flex-start;gap:12px;align-items:center}
 .detail-hero-actions .btn{padding:13px 25px;font-size:14px}.detail-save{width:42px;height:42px;border-radius:50%;border:1.5px solid #ffffff7a;color:#e7e2ed;background:#1010145c;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px);transition:background .2s,border-color .2s}.detail-save:hover{background:#ffffff28;border-color:white}.detail-save.saved{border-color:#d6bdfa;color:#e2cfff}
 .detail-upcoming{padding:12px 20px;border:1px solid #d6b6f55c;border-radius:7px;background:#281c3380;font-size:13px;font-weight:700;color:#e4c9ff}
 .detail-game-hero .detail-hero-image{object-fit:contain;object-position:center center;background:#151419}.detail-game-hero .detail-hero-shade{background:linear-gradient(0deg,#151419 0%,transparent 60%)}
@@ -194,3 +194,18 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .detail-game-hero[data-content-id] .detail-hero-image{background:none}
 .simulator-card .season-art>img.season-background,.detail-game-hero .detail-hero-image{width:auto;max-width:100%;height:100%;margin-inline:auto;clip-path:inset(0 1px 1px)}
 .detail-campria-hero .detail-hero-image{object-fit:contain;object-position:center center}
+/* Edge navigation follows the artwork height in every collection. */
+.rail-shell{position:relative;isolation:isolate}
+.rail,.ranked-track{position:relative;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+.rail-controls{position:absolute;inset:0;z-index:6;pointer-events:none}
+.rail-controls[hidden]{display:none}
+.rail-nav{position:absolute;top:var(--arrow-top,6px);height:var(--arrow-height,200px);width:clamp(38px,4.5vw,68px);display:flex;align-items:center;justify-content:center;color:#eeeaf5;border:0;border-radius:0;opacity:0;pointer-events:auto;transition:opacity .2s,background .2s,color .2s;cursor:pointer}
+.rail-prev{left:0;background:linear-gradient(90deg,#08090df5,#08090d9e)}
+.rail-next{right:0;background:linear-gradient(270deg,#08090df5,#08090d9e)}
+.rail-nav svg{width:27px;height:27px;stroke-width:2.1;filter:drop-shadow(0 2px 6px #000);transition:transform .2s}
+.rail-shell:hover .rail-nav:not(:disabled),.rail-shell:focus-within .rail-nav:not(:disabled){opacity:.82}
+.rail-nav:hover:not(:disabled),.rail-nav:focus-visible:not(:disabled){opacity:1!important;color:#fff}
+.rail-nav:focus-visible{outline:2px solid #cbb9ed;outline-offset:-2px}
+.rail-nav:hover svg,.rail-nav:focus-visible svg{transform:scale(1.18)}
+.rail-nav:disabled{visibility:hidden;opacity:0;pointer-events:none}
+@media(max-width:750px),(hover:none) and (pointer:coarse){.rail-controls{display:none}}

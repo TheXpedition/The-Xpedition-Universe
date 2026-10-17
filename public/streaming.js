@@ -16,6 +16,7 @@ renderChrome=function(){
 };
 const featuredItems=()=>['japan','safari','antarctica','traitor2','traitor-showdown'].map(id=>allContent().find(item=>item.id===id));
 const contentPreviews={
+  safari:{src:'media/safari-preview.mp4',title:'The Xpedition Safari',season:'Segunda temporada',note:'Segunda temporada · Safari',description:'Cada alianza cuenta. Solo uno llegará hasta el final. Adéntrate en una expedición de desafíos, estrategia y supervivencia.'},
   japan:{src:'media/japan-preview.mp4',title:'The Xpedition Japan',season:'Tercera temporada',note:'Tercera temporada · Próximamente',description:'Un nuevo destino. Alianzas que se ponen a prueba y secretos que pueden cambiarlo todo. La próxima expedición comienza en Japón.'},
   traitor2:{src:'media/traitor-2-preview.mp4',title:'The Traitor 2',season:'Segunda temporada',note:'Segunda temporada · 2025',description:'Rostros ocultos, juego de azar. Secretos, sospechas y alianzas que ponen a prueba la confianza.'},
   'traitor-showdown':{src:'media/showdown-2-preview.mp4',title:'Showdown 2',season:'Segunda edición',note:'Segunda edición · Torneo de estrellas',description:'Las estrellas de The Traitor regresan para un nuevo duelo. Estrategia, rivalidades y una sola meta: llegar hasta el final.'}
@@ -42,8 +43,13 @@ function featureHero(){
     </div>
   </section>`;
 }
-const controls=()=>`<div class="row-controls"><button data-stream="rail-prev" aria-label="Ver anteriores">${icon('back')}</button><button data-stream="rail-next" aria-label="Ver siguientes">${icon('arrow')}</button></div>`;
-function catalogRail(title,items,poster=false,subtitle=''){return `<section class="catalog-row"><div class="section-head"><h2>${title}</h2>${controls()}</div>${subtitle?`<p class="row-subtitle">${subtitle}</p>`:''}<div class="rail ${poster?'poster-rail':''}" tabindex="0" aria-label="${esc(title)}">${items.map(contentCard).join('')}</div></section>`;}
+icons.chevronLeft='<path d="m15 5-7 7 7 7"/>';
+icons.chevronRight='<path d="m9 5 7 7-7 7"/>';
+const controls=title=>`<div class="rail-controls" role="group" aria-label="Navegación de ${esc(title)}"><button class="rail-nav rail-prev" data-stream="rail-prev" aria-label="Ver anteriores en ${esc(title)}">${icon('chevronLeft')}</button><button class="rail-nav rail-next" data-stream="rail-next" aria-label="Ver siguientes en ${esc(title)}">${icon('chevronRight')}</button></div>`;
+function catalogRail(title,items,poster=false,subtitle=''){
+ return `<section class="catalog-row"><div class="section-head"><h2>${title}</h2></div>${subtitle?`<p class="row-subtitle">${subtitle}</p>`:''}<div class="rail-shell">${controls(title)}<div class="rail ${poster?'poster-rail':''}" tabindex="0" aria-label="${esc(title)}">${items.map(contentCard).join('')}</div></div></section>`;
+}
+
 function rankPoster(name,isSeason=false,position=0){
  const item=isSeason?allContent().find(c=>norm(c.name)===norm(name)):null;
  const profile=!item?state.profiles.find(p=>p.character&&norm(p.name)===norm(name)):null;
@@ -56,16 +62,33 @@ function rankNumeral(number){
 }
 function rankRow(list,home=false){
  const match=list.title.match(/^TOP (\d+) (.+)$/),topic=match?.[2]||list.title;
- return `<section class="ranked-section ${home?'home-ranked':''}"><div class="section-head"><h2 class="rank-heading" aria-label="${esc(list.title)}"><span class="rank-heading-metal">TOP ${match?.[1]||list.items.length}</span><span class="rank-heading-topic">${esc(topic)}<small>DEL UNIVERSO</small></span></h2>${controls()}</div><div class="ranked-track" tabindex="0" aria-label="${esc(list.title)}">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}">${rankNumeral(index+1)}${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name,false,index+1)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'),index+1)}</div>`).join('')}</div></section>`;
+ return `<section class="ranked-section ${home?'home-ranked':''}"><div class="section-head"><h2 class="rank-heading" aria-label="${esc(list.title)}"><span class="rank-heading-metal">TOP ${match?.[1]||list.items.length}</span><span class="rank-heading-topic">${esc(topic)}<small>DEL UNIVERSO</small></span></h2></div><div class="rail-shell rank-shell">${controls(list.title)}<div class="ranked-track" tabindex="0" aria-label="${esc(list.title)}">${list.items.map((entry,index)=>`<div class="rank-item ${list.isGroup?'group-rank':''}">${rankNumeral(index+1)}${list.isGroup?`<div class="rank-group">${entry.map(name=>rankPoster(name,false,index+1)).join('')}</div>`:rankPoster(entry,list.title.includes('Temporadas'),index+1)}</div>`).join('')}</div></div></section>`;
 }
 renderHome=function(){
   const c=state.catalog.content,rankings=state.catalog.rankings||[];
-  $('#main').innerHTML=`<div class="stream-home"><h1 class="sr-only">The Xpedition Universe — temporadas, personajes y comunidad</h1><div id="featuredArea">${featureHero()}</div><div class="catalog-body">${catalogRail('The Xpedition',c.xpedition,false,'Cada destino tiene una historia. Descubre la tuya.')}${rankings[0]?rankRow(rankings[0],true):''}<div class="franchise-logos"><a href="#explorar">THE XPEDITION<small>ORIGINALS</small></a><a href="#explorar">CAMPRIA<small>DONDE TODO COMENZÓ</small></a><a href="#explorar">THE TRAITOR<small>NO CONFÍES EN NADIE</small></a><a href="#simuladores">SIMULATORS<small>TÚ DECIDES</small></a></div>${catalogRail('Los spin-offs. La historia continúa.',c.spinoffs)}${catalogRail('Campria: el origen de un universo',c.campria,true)}${rankings[1]?rankRow(rankings[1],true):''}<section class="stream-banner"><div><div class="eyebrow">MÁS ALLÁ DE LA COMPETENCIA</div><h2>Los personajes son icónicos.<br>La comunidad la haces tú.</h2><p>Crea tu perfil, encuentra a otros participantes y lleva la conversación a tu propio chat.</p></div><a href="#comunidad" class="btn secondary">Entrar a la comunidad ${icon('arrow')}</a></section>${catalogRail('Ahora el juego lo escribes tú',c.simulators,false,'Simuladores oficiales. Tus participantes, tus alianzas, tus reglas.')}<section class="stream-news"><div class="section-head"><h2>Las historias detrás de la historia</h2><a href="#noticias" class="link-button">Todas las noticias ${icon('arrow')}</a></div><div class="news-grid">${state.catalog.news.slice(0,3).map(newsCard).join('')}</div></section></div></div>`;
+  $('#main').innerHTML=`<div class="stream-home"><h1 class="sr-only">The Xpedition Universe — temporadas, personajes y comunidad</h1><div id="featuredArea">${featureHero()}</div><div class="catalog-body">${catalogRail('The Xpedition',c.xpedition,false,'Cada destino tiene una historia. Descubre la tuya.')}${rankings[0]?rankRow(rankings[0],true):''}<div class="franchise-logos"><a href="#explorar/xpedition">THE XPEDITION<small>ORIGINALS</small></a><a href="#explorar/campria">CAMPRIA<small>DONDE TODO COMENZÓ</small></a><a href="#explorar/traitor">THE TRAITOR<small>NO CONFÍES EN NADIE</small></a><a href="#simuladores">SIMULATORS<small>TÚ DECIDES</small></a></div>${catalogRail('Los spin-offs. La historia continúa.',c.spinoffs)}${catalogRail('Campria: el origen de un universo',c.campria,true)}${rankings[1]?rankRow(rankings[1],true):''}<section class="stream-banner"><div><div class="eyebrow">MÁS ALLÁ DE LA COMPETENCIA</div><h2>Los personajes son icónicos.<br>La comunidad la haces tú.</h2><p>Crea tu perfil, encuentra a otros participantes y lleva la conversación a tu propio chat.</p></div><a href="#comunidad" class="btn secondary">Entrar a la comunidad ${icon('arrow')}</a></section>${catalogRail('Ahora el juego lo escribes tú',c.simulators,false,'Simuladores oficiales. Tus participantes, tus alianzas, tus reglas.')}<section class="stream-news"><div class="section-head"><h2>Las historias detrás de la historia</h2><a href="#noticias" class="link-button">Todas las noticias ${icon('arrow')}</a></div><div class="news-grid">${state.catalog.news.slice(0,3).map(newsCard).join('')}</div></section></div></div>`;
 };
+const sagaSections={
+ todos:{title:'Todas las temporadas.',eyebrow:'UN UNIVERSO. MUCHAS HISTORIAS.',description:'Desde los primeros desafíos hasta las nuevas historias. Encuentra tu próxima temporada.'},
+ xpedition:{title:'The Xpedition',eyebrow:'THE XPEDITION ORIGINALS',description:'De Antarctica a Japan. Cada destino tiene una historia y cada alianza puede cambiarlo todo.'},
+ campria:{title:'Campria',eyebrow:'DONDE TODO COMENZÓ',description:'Doce temporadas que dieron origen al universo. Regresa a sus desafíos y protagonistas.'},
+ traitor:{title:'The Traitor',eyebrow:'NO CONFÍES EN NADIE',description:'Secretos, sospechas y decisiones que cambian el juego. Explora The Traitor y su especial de estrellas.'},
+ spinoffs:{title:'Las historias continúan.',eyebrow:'LOS SPIN-OFFS DEL UNIVERSO',description:'Descubre The Traitor, Showdown y nuevas formas de vivir la competencia.'}
+};
+function exploreContent(){
+ const c=state.catalog.content;
+ if(state.filter==='traitor')return c.spinoffs.filter(item=>item.id.startsWith('traitor'));
+ if(state.filter==='todos')return [...c.xpedition,...c.spinoffs,...c.campria];
+ return c[state.filter]||[];
+}
 renderExplore=function(){
-  const tops=state.filter==='tops';
-  $('#main').innerHTML=`<section class="explore-cover"><div class="eyebrow">LAS CARAS. LOS MOMENTOS. EL LEGADO.</div><h1>Los que dejaron huella.</h1><p>Ganadores, amistades, rivalidades y participantes inolvidables. Explora todas las colecciones del universo.</p><div class="explore-tabs"><button data-stream="explore-tab" data-id="tops" class="${tops?'active':''}">Los tops del universo</button><button data-stream="explore-tab" data-id="todos" class="${!tops?'active':''}">Todas las temporadas</button></div></section>${tops?`<p class="rank-note" style="margin-bottom:30px">Selecciones del universo. El orden de estas listas no representa un ranking oficial.</p>${(state.catalog.rankings||[]).map(list=>rankRow(list)).join('')}`:`<div class="chips">${[['todos','Todas'],['xpedition','The Xpedition'],['spinoffs','Spin-offs'],['campria','Campria']].map(([id,label])=>`<button class="chip ${state.filter===id?'active':''}" data-action="explore-filter" data-id="${id}">${label}</button>`).join('')}</div><label class="search-field">${icon('search')}<input id="exploreSearch" placeholder="Busca tu temporada…" aria-label="Buscar temporada" value="${esc(state.query)}"></label><div class="content-grid catalog-results" id="exploreResults">${(state.filter==='todos'?[...state.catalog.content.xpedition,...state.catalog.content.spinoffs,...state.catalog.content.campria]:(state.catalog.content[state.filter]||[])).filter(c=>norm(c.name).includes(norm(state.query))).map(contentCard).join('')}</div>`}`;
+ const tops=state.filter==='tops',section=sagaSections[state.filter]||sagaSections.todos;
+ const title=tops?'Los que dejaron huella.':section.title;
+ const description=tops?'Ganadores, amistades, rivalidades y participantes inolvidables. Explora todas las colecciones del universo.':section.description;
+ const chips=[['todos','Todas'],['xpedition','The Xpedition'],['traitor','The Traitor'],['campria','Campria'],['spinoffs','Spin-offs']];
+ $('#main').innerHTML=`<section class="explore-cover"><div class="eyebrow">${esc(tops?'LAS CARAS. LOS MOMENTOS. EL LEGADO.':section.eyebrow)}</div><h1>${esc(title)}</h1><p>${esc(description)}</p><div class="explore-tabs"><button data-stream="explore-tab" data-id="tops" class="${tops?'active':''}">Los tops del universo</button><button data-stream="explore-tab" data-id="todos" class="${!tops?'active':''}">Todas las temporadas</button></div></section>${tops?`<p class="rank-note" style="margin-bottom:30px">Selecciones del universo. El orden de estas listas no representa un ranking oficial.</p>${(state.catalog.rankings||[]).map(list=>rankRow(list)).join('')}`:`<div class="chips">${chips.map(([id,label])=>`<button class="chip ${state.filter===id?'active':''}" data-action="explore-filter" data-id="${id}">${label}</button>`).join('')}</div><label class="search-field">${icon('search')}<input id="exploreSearch" placeholder="Busca tu temporada…" aria-label="Buscar temporada" value="${esc(state.query)}"></label><div class="content-grid catalog-results" id="exploreResults">${exploreContent().filter(c=>norm(c.name).includes(norm(state.query))).map(contentCard).join('')}</div>`}`;
 };
+
 renderSimulators=function(){
  $('#main').innerHTML=`<section class="simulator-intro"><div class="eyebrow">TU PRÓXIMA PARTIDA EMPIEZA AQUÍ</div><h1>Tu temporada.<br><span>Tus reglas.</span></h1><p>Elige el escenario. Reúne a tus participantes.<br>El resto de la historia lo escribes tú.</p><div class="simulator-intro-meta">${icon('game')} ${state.catalog.content.simulators.length} experiencias del universo</div></section><div class="simulator-grid">${state.catalog.content.simulators.map(contentCard).join('')}</div>`;
 };
@@ -107,8 +130,8 @@ document.addEventListener('click',event=>{
 document.addEventListener('click',event=>{
   const button=event.target.closest('[data-stream]');if(!button)return;const action=button.dataset.stream;
   if(action.startsWith('feature')){const n=featuredItems().length;state.featureIndex=action==='feature'?Number(button.dataset.index):action==='feature-next'?(state.featureIndex+1)%n:(state.featureIndex-1+n)%n;$('#featuredArea').innerHTML=featureHero();setupPreview();}
-  if(action==='rail-prev'||action==='rail-next'){const rail=button.closest('.catalog-row,.ranked-section')?.querySelector('.rail,.ranked-track');if(rail)rail.scrollBy({left:(action==='rail-prev'?-1:1)*rail.clientWidth*.78,behavior:'smooth'});}
-  if(action==='explore-tab'){state.filter=button.dataset.id;state.query='';renderExplore();}
+  if(action==='rail-prev'||action==='rail-next'){const rail=button.closest('.catalog-row,.ranked-section')?.querySelector('.rail,.ranked-track');if(rail)rail.scrollBy({left:(action==='rail-prev'?-1:1)*rail.clientWidth*.78,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+  if(action==='explore-tab')go('explorar/'+button.dataset.id);
 });
 
 const baseChatAvatar=chatAvatar;
@@ -152,14 +175,22 @@ document.addEventListener('click',async event=>{
 // Each rail updates only its own controls, once per animation frame.
 const trackedRails=new Map(),pendingRails=new Set();let railFrame=0,scanFrame=0;
 function queueRail(rail){pendingRails.add(rail);if(!railFrame)railFrame=requestAnimationFrame(()=>{
- railFrame=0;const changes=[...pendingRails].filter(r=>r.isConnected).map(rail=>({rail,scrollable:rail.scrollWidth>rail.clientWidth+3,atStart:rail.scrollLeft<3,atEnd:rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-3}));pendingRails.clear();
- for(const {rail,scrollable,atStart,atEnd}of changes){const controls=trackedRails.get(rail)?.controls;if(!controls)continue;controls.hidden=!scrollable;const buttons=$$('button',controls);buttons[0].disabled=atStart;buttons[1].disabled=atEnd;rail.classList.toggle('can-scroll-right',scrollable&&!atEnd);}
+ railFrame=0;const changes=[...pendingRails].filter(r=>r.isConnected).map(rail=>{
+  const visual=$('.season-art,.rank-poster>button',rail),shell=rail.parentElement,art=visual?.getBoundingClientRect(),bounds=shell.getBoundingClientRect();
+  return {rail,shell,artTop:art?art.top-bounds.top:0,artHeight:art?.height||rail.clientHeight,scrollable:rail.scrollWidth>rail.clientWidth+3,atStart:rail.scrollLeft<3,atEnd:rail.scrollLeft+rail.clientWidth>=rail.scrollWidth-3};
+ });pendingRails.clear();
+ for(const {rail,shell,artTop,artHeight,scrollable,atStart,atEnd}of changes){
+  const controls=trackedRails.get(rail)?.controls;if(!controls)continue;controls.hidden=!scrollable;
+  const buttons=$$('button',controls);buttons[0].disabled=atStart;buttons[1].disabled=atEnd;
+  shell.style.setProperty('--arrow-top',artTop+'px');shell.style.setProperty('--arrow-height',artHeight+'px');
+  rail.classList.toggle('can-scroll-right',scrollable&&!atEnd);
+ }
  });}
 const railResize=new ResizeObserver(entries=>entries.forEach(entry=>queueRail(entry.target)));
 function syncRailControls(){
  for(const [rail]of trackedRails)if(!rail.isConnected){railResize.unobserve(rail);trackedRails.delete(rail);}
  $$('.catalog-row,.ranked-section').forEach(section=>{
-  const rail=$('.rail,.ranked-track',section),controls=$('.row-controls',section);if(!rail||!controls)return;
+  const rail=$('.rail,.ranked-track',section),controls=$('.rail-controls',section);if(!rail||!controls)return;
   if(!trackedRails.has(rail)){trackedRails.set(rail,{controls});railResize.observe(rail);rail.addEventListener('scroll',()=>queueRail(rail),{passive:true});rail.addEventListener('keydown',event=>{if(event.target!==rail||!['ArrowLeft','ArrowRight'].includes(event.key))return;event.preventDefault();rail.scrollBy({left:(event.key==='ArrowLeft'?-1:1)*rail.clientWidth*.78,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});});}
   queueRail(rail);
  });

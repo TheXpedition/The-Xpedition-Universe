@@ -86,6 +86,7 @@ function searchResults(q){const profiles=state.profiles.filter(p=>norm(p.name).i
 function route(){
   if(!state.catalog)return;cancelRecording();
   const [view,id]=location.hash.slice(1).split('/');state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
+  if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','spinoffs'].includes(id))state.filter=id;
   const routes={inicio:renderHome,explorar:renderExplore,comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   (routes[state.route]||renderHome)();window.scrollTo({top:0,behavior:'instant'});
 }
@@ -268,7 +269,7 @@ document.addEventListener('click',async event=>{
     switch(action){
       case'login':openAuth('login');break;case'register':openAuth('register');break;case'google':googleLogin();break;case'close-modal':closeModal();break;case'account-menu':accountMenu();break;case'logout':await logout();break;case'my-profile':go('perfil/'+encodeURIComponent(state.user.id));break;case'profile':closeModal();go('perfil/'+encodeURIComponent(id));break;case'go-messages':go('mensajes');break;case'search':go('buscar');break;case'go-explore':go('explorar');break;case'go-community':go('comunidad');break;case'retry':location.reload();break;
       case'toggle-password':{const input=$('#'+id);input.type=input.type==='password'?'text':'password';button.setAttribute('aria-label',input.type==='password'?'Mostrar contraseña':'Ocultar contraseña');break;}
-      case'content':contentModal(id,button.dataset.kind);break;case'save':await saveContent(id);break;case'explore-filter':state.filter=id;renderExplore();break;case'community-tab':state.communityTab=id;state.query='';renderCommunity();break;case'follow':button.disabled=true;try{await follow(id);}finally{button.disabled=false;}break;case'news-like':button.disabled=true;try{await newsLike(id);}finally{button.disabled=false;}break;
+      case'content':contentModal(id,button.dataset.kind);break;case'save':await saveContent(id);break;case'explore-filter':go('explorar/'+id);break;case'community-tab':state.communityTab=id;state.query='';renderCommunity();break;case'follow':button.disabled=true;try{await follow(id);}finally{button.disabled=false;}break;case'news-like':button.disabled=true;try{await newsLike(id);}finally{button.disabled=false;}break;
       case'avatar':openAvatarPicker();break;case'choose-avatar':state.selectedAvatar=id;renderAvatarOptions($('#avatarSearch').value);break;
       case'save-avatar':button.disabled=true;try{await updateMe({avatar:state.selectedAvatar});closeModal();route();toast('Tu nuevo ícono ya está guardado.');}catch(error){$('#avatarError').textContent=error.message;}finally{button.disabled=false;}break;
       case'edit-profile':editProfile();break;case'password':passwordModal();break;case'followers':await connectionsModal(id,false);break;case'following':await connectionsModal(id,true);break;
@@ -301,7 +302,7 @@ document.addEventListener('input',event=>{
   const input=event.target;
   if(input.id==='communitySearch'){state.query=input.value;communityResults();}
   if(input.id==='avatarSearch')renderAvatarOptions(input.value);
-  if(input.id==='exploreSearch'){state.query=input.value;const items=(state.filter==='todos'?[...state.catalog.content.xpedition,...state.catalog.content.spinoffs,...state.catalog.content.campria]:state.catalog.content[state.filter]||[]).filter(c=>norm(c.name+' '+c.meta).includes(norm(state.query)));$('#exploreResults').innerHTML=items.map(contentCard).join('')||'<p class="no-results">No encontramos esa temporada.</p>';}
+  if(input.id==='exploreSearch'){state.query=input.value;const items=exploreContent().filter(c=>norm(c.name+' '+c.meta).includes(norm(state.query)));$('#exploreResults').innerHTML=items.map(contentCard).join('')||'<p class="no-results">No encontramos esa temporada.</p>';}
   if(input.id==='globalSearch')searchResults(input.value);
   if(input.id==='personSearch')$$('.person-row',$('#personList')).forEach(el=>{el.hidden=!norm(el.textContent).includes(norm(input.value));});
   if(input.id==='chatSearch'){state.chatQuery=input.value;renderConversationList();}
