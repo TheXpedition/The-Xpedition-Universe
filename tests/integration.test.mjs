@@ -2,13 +2,17 @@ import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
+import {DatabaseSync} from 'node:sqlite';
+import {openDatabase} from '../database.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const data=path.resolve(process.env.TEST_DATA_DIR||path.join(root,'work','test-'+randomUUID()));
 fs.mkdirSync(data,{recursive:true});
-let child,base,alice,bob,outsider,chat,message,imageId,group,keptImage,keptAudio,starts=0;
+let child,base,alice,bob,outsider,chat,message,imageId,group,keptImage,keptAudio,keptSticker,starts=0;
+const stickerCatalog=JSON.parse(fs.readFileSync(path.join(root,'public','stickers.json'),'utf8'));
+function testAudio(){const b=Buffer.alloc(16044);b.write('RIFF');b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(8000,24);b.writeUInt32LE(16000,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(16000,40);for(let i=0;i<8000;i++)b.writeInt16LE(Math.round(Math.sin(i/8000*Math.PI*880)*8000),44+i*2);return b;}
 async function start(){
   if(process.env.TEST_DATABASE_URL&&!['127.0.0.1','localhost'].includes(new URL(process.env.TEST_DATABASE_URL).hostname))throw new Error('Las pruebas solo admiten PostgreSQL local y aislado.');
   const instanceDir=process.env.TEST_DATABASE_URL?path.join(data,'instance-'+starts++):data;
@@ -74,7 +78,7 @@ test('imágenes privadas y archivos restringidos a miembros',async()=>{
   assert.equal((await request(alice,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'image',mime:'image/svg+xml',data:'PHN2Zz4=',filename:'x.svg'})).status,400);
   assert.equal((await request(alice,'/messages/'+imageId,'DELETE',{})).message.type,'deleted');assert.equal((await fetch(base+'/api/files/'+imageId,{headers:{cookie:bob.cookie}})).status,404);
   keptImage=(await request(alice,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'image',mime:'image/png',data:data64,filename:'conservar.png'})).message;
-  keptAudio=(await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'audio',mime:'audio/webm',data:Buffer.from('audio de prueba').toString('base64'),filename:'voz.webm'})).message;
+  keptAudio=(await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages','POST',{type:'audio',mime:'audio/wav',data:testAudio().toString('base64'),filename:'voz.wav',durationMs:1000})).message;
   assert(keptImage?.url);assert(keptAudio?.url);
 });
 test('grupos, permisos, nuevos miembros y salida',async()=>{
@@ -84,6 +88,7 @@ test('grupos, permisos, nuevos miembros y salida',async()=>{
   assert.equal((await request(outsider,'/conversations/'+group+'/messages')).status,200);
   await request(alice,'/conversations/'+group,'PATCH',{onlyAdminWrite:true});
   assert.equal((await request(bob,'/conversations/'+group+'/messages','POST',{text:'No permitido todavía'})).status,403);
+  assert.equal((await request(bob,'/conversations/'+group+'/messages','POST',{type:'sticker',stickerId:stickerCatalog[0].id})).status,403);
   assert.equal((await request(bob,'/conversations/'+group+'/members','PATCH',{userId:outsider.user.id,role:'admin'})).status,403);
   await request(alice,'/conversations/'+group+'/members','PATCH',{userId:bob.user.id,role:'mod'});
   assert.equal((await request(bob,'/conversations/'+group+'/messages','POST',{text:'Mensaje del moderador'})).status,201);
@@ -94,6 +99,29 @@ test('grupos, permisos, nuevos miembros y salida',async()=>{
   assert.equal((await request(outsider,'/conversations/'+group+'/messages')).status,404);
   assert.equal((await fetch(base+'/api/group-icons/'+group,{headers:{cookie:outsider.cookie}})).status,404);
   await request(alice,'/conversations/'+group,'DELETE',{});const remaining=(await request(bob,'/conversations')).conversations.find(c=>c.id===group);assert(remaining.members.some(m=>m.role==='admin'));assert.equal((await request(alice,'/conversations/'+group+'/messages')).status,404);
+});
+test('stickers originales, selección validada y reacciones personalizadas',async()=>{
+  assert.equal(stickerCatalog.length,34);
+  const result=await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:stickerCatalog[0].id});assert.equal(result.status,201);keptSticker=result.message;assert.equal(keptSticker.stickerId,stickerCatalog[0].id);
+  const file=await fetch(base+keptSticker.url);assert.equal(file.status,200);assert.deepEqual(Buffer.from(await file.arrayBuffer()),fs.readFileSync(path.join(root,'public',decodeURIComponent(stickerCatalog[0].src))));
+  assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:'https://example.com/no.png'})).status,400);
+  assert.equal((await request(outsider,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:stickerCatalog[0].id})).status,404);
+  for(const emoji of ['🥹','🫶','💜'])assert.equal((await request(bob,'/messages/'+keptSticker.id+'/reaction','POST',{emoji})).status,200);
+  const current=(await request(alice,'/conversations/'+chat+'/messages')).messages.find(m=>m.id===keptSticker.id);assert.deepEqual(current.reactions.map(r=>r.emoji),['💜']);
+  assert.equal((await request(bob,'/messages/'+keptSticker.id+'/reaction','POST',{emoji:'<script>'})).status,400);
+});
+test('audios privados reproducibles con duración, HEAD y búsqueda por rangos',async()=>{
+  assert.equal(keptAudio.durationMs,1000);
+  const head=await fetch(base+keptAudio.url,{method:'HEAD',headers:{cookie:alice.cookie}});assert.equal(head.status,200);assert.equal(head.headers.get('content-type'),'audio/wav');assert.equal(head.headers.get('accept-ranges'),'bytes');assert.equal(Number(head.headers.get('content-length')),testAudio().length);
+  const range=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie,Range:'bytes=0-43'}});assert.equal(range.status,206);assert.equal(range.headers.get('content-range'),`bytes 0-43/${testAudio().length}`);assert.deepEqual(Buffer.from(await range.arrayBuffer()),testAudio().subarray(0,44));
+  const tail=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie,Range:'bytes=-100'}});assert.equal(tail.status,206);assert.equal((await tail.arrayBuffer()).byteLength,100);
+  assert.equal((await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie,Range:'bytes=999999-'}})).status,416);
+  assert.equal((await fetch(base+keptAudio.url,{headers:{cookie:outsider.cookie,Range:'bytes=0-43'}})).status,404);assert.equal((await fetch(base+keptAudio.url,{method:'HEAD'})).status,401);
+});
+test('actualizar una base anterior conserva sus mensajes y adjuntos',{skip:!!process.env.TEST_DATABASE_URL},async()=>{
+  const legacyDir=path.join(data,'legacy');fs.mkdirSync(legacyDir);const legacy=new DatabaseSync(path.join(legacyDir,'xpedition.sqlite'));
+  legacy.exec("CREATE TABLE messages(id TEXT PRIMARY KEY,conversation TEXT,sender TEXT,text TEXT,type TEXT,file TEXT,mime TEXT,filename TEXT,reply_to TEXT,created INTEGER,edited INTEGER,deleted INTEGER DEFAULT 0);INSERT INTO messages(id,conversation,sender,text,type,file,created) VALUES('legacy','existing-chat','existing-user','Este mensaje debe conservarse.','audio','existing-private-file',1)");legacy.close();
+  const migrated=await openDatabase(legacyDir);try{const message=await migrated.one('SELECT * FROM messages WHERE id=?','legacy');assert.equal(message.text,'Este mensaje debe conservarse.');assert.equal(message.file,'existing-private-file');assert.equal(message.duration_ms,0);}finally{await migrated.close();}
 });
 test('cambio de contraseña verifica la clave actual y revoca otras sesiones',async()=>{
   const other=client();await request(other,'/auth/login','POST',{login:'QA Alice Nueva',password:'UnaClaveDePrueba-123'});
@@ -110,7 +138,8 @@ test('noticias, límites, CSRF y datos privados fuera del directorio público',a
 test('persistencia tras reinicio y cierre de sesión',async()=>{
   await stop();base=undefined;await start();const me=await request(alice,'/me');assert.equal(me.user.bio,'Una biografía real.');assert.equal(me.user.avatar,'Violeta');assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages')).messages.some(m=>m.text==='Hola editado'));
   const picture=await fetch(base+keptImage.url,{headers:{cookie:bob.cookie}});assert.equal(picture.status,200);assert.equal(Buffer.from(await picture.arrayBuffer()).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
-  const audio=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie}});assert.equal(audio.status,200);assert.equal(await audio.text(),'audio de prueba');
+  const audio=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie}});assert.equal(audio.status,200);assert.deepEqual(Buffer.from(await audio.arrayBuffer()),testAudio());
+  const persisted=(await request(bob,'/conversations/'+chat+'/messages')).messages;assert.equal(persisted.find(m=>m.id===keptAudio.id).durationMs,1000);assert.equal(persisted.find(m=>m.id===keptSticker.id).type,'sticker');
   assert.equal((await fetch(base+'/api/group-icons/'+group,{headers:{cookie:bob.cookie}})).status,200);
   if(process.env.TEST_DATABASE_URL){assert(!fs.existsSync(path.join(data,'instance-0')));assert(!fs.existsSync(path.join(data,'instance-1')));}
   const logout=await request(alice,'/auth/logout','POST',{});assert.equal(logout.status,200);assert.equal((await request(alice,'/me')).user,null);assert.equal((await request(alice,'/conversations')).status,401);

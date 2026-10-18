@@ -1,0 +1,966 @@
+[
+  {
+    "name": "Caras y emociones",
+    "items": [
+      {
+        "emoji": "😀",
+        "name": "sonrisa"
+      },
+      {
+        "emoji": "😃",
+        "name": "feliz"
+      },
+      {
+        "emoji": "😄",
+        "name": "alegría"
+      },
+      {
+        "emoji": "😁",
+        "name": "sonrisa"
+      },
+      {
+        "emoji": "😆",
+        "name": "risa"
+      },
+      {
+        "emoji": "😅",
+        "name": "nervios"
+      },
+      {
+        "emoji": "😂",
+        "name": "risa lágrimas"
+      },
+      {
+        "emoji": "🤣",
+        "name": "carcajada"
+      },
+      {
+        "emoji": "🥹",
+        "name": "emocionado"
+      },
+      {
+        "emoji": "😊",
+        "name": "feliz"
+      },
+      {
+        "emoji": "😇",
+        "name": "angel"
+      },
+      {
+        "emoji": "🙂",
+        "name": "sonrisa"
+      },
+      {
+        "emoji": "🙃",
+        "name": "ironía"
+      },
+      {
+        "emoji": "😉",
+        "name": "guiño"
+      },
+      {
+        "emoji": "😌",
+        "name": "alivio"
+      },
+      {
+        "emoji": "😍",
+        "name": "enamorado"
+      },
+      {
+        "emoji": "🥰",
+        "name": "amor"
+      },
+      {
+        "emoji": "😘",
+        "name": "beso"
+      },
+      {
+        "emoji": "😗",
+        "name": "beso"
+      },
+      {
+        "emoji": "😋",
+        "name": "rico"
+      },
+      {
+        "emoji": "😛",
+        "name": "lengua"
+      },
+      {
+        "emoji": "😜",
+        "name": "guiño lengua"
+      },
+      {
+        "emoji": "🤪",
+        "name": "loco"
+      },
+      {
+        "emoji": "😎",
+        "name": "gafas"
+      },
+      {
+        "emoji": "🤓",
+        "name": "inteligente"
+      },
+      {
+        "emoji": "🧐",
+        "name": "pensar"
+      },
+      {
+        "emoji": "🤩",
+        "name": "estrella"
+      },
+      {
+        "emoji": "🥳",
+        "name": "fiesta"
+      },
+      {
+        "emoji": "😏",
+        "name": "picaro"
+      },
+      {
+        "emoji": "😒",
+        "name": "molesto"
+      },
+      {
+        "emoji": "😞",
+        "name": "decepcionado"
+      },
+      {
+        "emoji": "😔",
+        "name": "triste"
+      },
+      {
+        "emoji": "😟",
+        "name": "preocupado"
+      },
+      {
+        "emoji": "😕",
+        "name": "confuso"
+      },
+      {
+        "emoji": "🙁",
+        "name": "triste"
+      },
+      {
+        "emoji": "☹️",
+        "name": "triste"
+      },
+      {
+        "emoji": "😣",
+        "name": "frustrado"
+      },
+      {
+        "emoji": "😖",
+        "name": "angustia"
+      },
+      {
+        "emoji": "😫",
+        "name": "cansado"
+      },
+      {
+        "emoji": "😩",
+        "name": "cansado"
+      },
+      {
+        "emoji": "🥺",
+        "name": "por favor"
+      },
+      {
+        "emoji": "😢",
+        "name": "llanto"
+      },
+      {
+        "emoji": "😭",
+        "name": "llorar"
+      },
+      {
+        "emoji": "😤",
+        "name": "enfado"
+      },
+      {
+        "emoji": "😠",
+        "name": "enojo"
+      },
+      {
+        "emoji": "😡",
+        "name": "furia"
+      },
+      {
+        "emoji": "🤬",
+        "name": "enojado"
+      },
+      {
+        "emoji": "🤯",
+        "name": "sorpresa"
+      },
+      {
+        "emoji": "😳",
+        "name": "vergüenza"
+      },
+      {
+        "emoji": "🥵",
+        "name": "calor"
+      },
+      {
+        "emoji": "🥶",
+        "name": "frio"
+      },
+      {
+        "emoji": "😱",
+        "name": "susto"
+      },
+      {
+        "emoji": "😨",
+        "name": "miedo"
+      },
+      {
+        "emoji": "😰",
+        "name": "nervioso"
+      },
+      {
+        "emoji": "😥",
+        "name": "tristeza"
+      },
+      {
+        "emoji": "😓",
+        "name": "sudor"
+      },
+      {
+        "emoji": "🤗",
+        "name": "abrazo"
+      },
+      {
+        "emoji": "🤔",
+        "name": "pensar"
+      },
+      {
+        "emoji": "🫣",
+        "name": "esconder"
+      },
+      {
+        "emoji": "🤭",
+        "name": "risa"
+      },
+      {
+        "emoji": "🫢",
+        "name": "sorpresa"
+      },
+      {
+        "emoji": "🤫",
+        "name": "silencio"
+      },
+      {
+        "emoji": "🤥",
+        "name": "mentira"
+      },
+      {
+        "emoji": "😶",
+        "name": "silencio"
+      },
+      {
+        "emoji": "😐",
+        "name": "neutral"
+      },
+      {
+        "emoji": "😑",
+        "name": "aburrido"
+      },
+      {
+        "emoji": "😬",
+        "name": "nervioso"
+      },
+      {
+        "emoji": "🙄",
+        "name": "ojos"
+      },
+      {
+        "emoji": "😯",
+        "name": "sorpresa"
+      },
+      {
+        "emoji": "😮",
+        "name": "asombro"
+      },
+      {
+        "emoji": "😲",
+        "name": "asombro"
+      },
+      {
+        "emoji": "🥱",
+        "name": "sueño"
+      },
+      {
+        "emoji": "😴",
+        "name": "dormir"
+      },
+      {
+        "emoji": "🤤",
+        "name": "babear"
+      },
+      {
+        "emoji": "🤮",
+        "name": "vomito"
+      },
+      {
+        "emoji": "🤢",
+        "name": "asco"
+      },
+      {
+        "emoji": "🤧",
+        "name": "estornudo"
+      },
+      {
+        "emoji": "😷",
+        "name": "enfermo"
+      },
+      {
+        "emoji": "🤒",
+        "name": "fiebre"
+      },
+      {
+        "emoji": "🤕",
+        "name": "herido"
+      },
+      {
+        "emoji": "🤑",
+        "name": "dinero"
+      },
+      {
+        "emoji": "🤠",
+        "name": "vaquero"
+      },
+      {
+        "emoji": "😈",
+        "name": "diablo"
+      },
+      {
+        "emoji": "👿",
+        "name": "diablo"
+      },
+      {
+        "emoji": "👻",
+        "name": "fantasma"
+      },
+      {
+        "emoji": "💀",
+        "name": "calavera"
+      },
+      {
+        "emoji": "☠️",
+        "name": "calavera"
+      },
+      {
+        "emoji": "👽",
+        "name": "alien"
+      },
+      {
+        "emoji": "🤖",
+        "name": "robot"
+      },
+      {
+        "emoji": "💩",
+        "name": "caca"
+      },
+      {
+        "emoji": "🤡",
+        "name": "payaso"
+      }
+    ]
+  },
+  {
+    "name": "Amor y gestos",
+    "items": [
+      {
+        "emoji": "❤️",
+        "name": "corazón amor"
+      },
+      {
+        "emoji": "🧡",
+        "name": "naranja amor"
+      },
+      {
+        "emoji": "💛",
+        "name": "amarillo amor"
+      },
+      {
+        "emoji": "💚",
+        "name": "verde amor"
+      },
+      {
+        "emoji": "💙",
+        "name": "azul amor"
+      },
+      {
+        "emoji": "💜",
+        "name": "morado amor"
+      },
+      {
+        "emoji": "🖤",
+        "name": "negro amor"
+      },
+      {
+        "emoji": "🤍",
+        "name": "blanco amor"
+      },
+      {
+        "emoji": "🤎",
+        "name": "marrón amor"
+      },
+      {
+        "emoji": "💔",
+        "name": "roto"
+      },
+      {
+        "emoji": "❤️‍🔥",
+        "name": "fuego amor"
+      },
+      {
+        "emoji": "💕",
+        "name": "corazones"
+      },
+      {
+        "emoji": "💞",
+        "name": "amor"
+      },
+      {
+        "emoji": "💓",
+        "name": "latido"
+      },
+      {
+        "emoji": "💗",
+        "name": "corazón"
+      },
+      {
+        "emoji": "💖",
+        "name": "brillo amor"
+      },
+      {
+        "emoji": "💘",
+        "name": "flecha"
+      },
+      {
+        "emoji": "💝",
+        "name": "regalo"
+      },
+      {
+        "emoji": "💌",
+        "name": "carta"
+      },
+      {
+        "emoji": "💋",
+        "name": "beso"
+      },
+      {
+        "emoji": "🫶",
+        "name": "corazón manos"
+      },
+      {
+        "emoji": "👍",
+        "name": "bien pulgar"
+      },
+      {
+        "emoji": "👎",
+        "name": "mal pulgar"
+      },
+      {
+        "emoji": "👏",
+        "name": "aplauso"
+      },
+      {
+        "emoji": "🙌",
+        "name": "celebrar"
+      },
+      {
+        "emoji": "🤝",
+        "name": "acuerdo"
+      },
+      {
+        "emoji": "🙏",
+        "name": "gracias"
+      },
+      {
+        "emoji": "💪",
+        "name": "fuerte"
+      },
+      {
+        "emoji": "👊",
+        "name": "puño"
+      },
+      {
+        "emoji": "✊",
+        "name": "fuerza"
+      },
+      {
+        "emoji": "✌️",
+        "name": "paz"
+      },
+      {
+        "emoji": "🤞",
+        "name": "suerte"
+      },
+      {
+        "emoji": "🤟",
+        "name": "amor"
+      },
+      {
+        "emoji": "🤘",
+        "name": "rock"
+      },
+      {
+        "emoji": "👌",
+        "name": "perfecto"
+      },
+      {
+        "emoji": "🤌",
+        "name": "gesto"
+      },
+      {
+        "emoji": "🤏",
+        "name": "poquito"
+      },
+      {
+        "emoji": "👈",
+        "name": "izquierda"
+      },
+      {
+        "emoji": "👉",
+        "name": "derecha"
+      },
+      {
+        "emoji": "👆",
+        "name": "arriba"
+      },
+      {
+        "emoji": "👇",
+        "name": "abajo"
+      },
+      {
+        "emoji": "☝️",
+        "name": "atención"
+      },
+      {
+        "emoji": "✋",
+        "name": "mano"
+      },
+      {
+        "emoji": "👋",
+        "name": "hola"
+      },
+      {
+        "emoji": "🤚",
+        "name": "mano"
+      },
+      {
+        "emoji": "🖐️",
+        "name": "mano"
+      },
+      {
+        "emoji": "🫡",
+        "name": "saludo"
+      },
+      {
+        "emoji": "👀",
+        "name": "ojos"
+      },
+      {
+        "emoji": "👁️",
+        "name": "ojo"
+      },
+      {
+        "emoji": "🧠",
+        "name": "cerebro"
+      }
+    ]
+  },
+  {
+    "name": "Animales y naturaleza",
+    "items": [
+      {
+        "emoji": "🐱",
+        "name": "gato"
+      },
+      {
+        "emoji": "🐶",
+        "name": "perro"
+      },
+      {
+        "emoji": "🦁",
+        "name": "leon"
+      },
+      {
+        "emoji": "🐯",
+        "name": "tigre"
+      },
+      {
+        "emoji": "🐻",
+        "name": "oso"
+      },
+      {
+        "emoji": "🐼",
+        "name": "panda"
+      },
+      {
+        "emoji": "🐨",
+        "name": "koala"
+      },
+      {
+        "emoji": "🐸",
+        "name": "rana"
+      },
+      {
+        "emoji": "🐷",
+        "name": "cerdo"
+      },
+      {
+        "emoji": "🐵",
+        "name": "mono"
+      },
+      {
+        "emoji": "🙈",
+        "name": "no veo"
+      },
+      {
+        "emoji": "🙉",
+        "name": "no escucho"
+      },
+      {
+        "emoji": "🙊",
+        "name": "no digo"
+      },
+      {
+        "emoji": "🐔",
+        "name": "gallina"
+      },
+      {
+        "emoji": "🦊",
+        "name": "zorro"
+      },
+      {
+        "emoji": "🦋",
+        "name": "mariposa"
+      },
+      {
+        "emoji": "🐝",
+        "name": "abeja"
+      },
+      {
+        "emoji": "🦄",
+        "name": "unicornio"
+      },
+      {
+        "emoji": "🐢",
+        "name": "tortuga"
+      },
+      {
+        "emoji": "🐍",
+        "name": "serpiente"
+      },
+      {
+        "emoji": "🦈",
+        "name": "tiburon"
+      },
+      {
+        "emoji": "🐬",
+        "name": "delfin"
+      },
+      {
+        "emoji": "🌸",
+        "name": "flor"
+      },
+      {
+        "emoji": "🌹",
+        "name": "rosa"
+      },
+      {
+        "emoji": "🥀",
+        "name": "rosa marchita"
+      },
+      {
+        "emoji": "🌻",
+        "name": "girasol"
+      },
+      {
+        "emoji": "🌵",
+        "name": "cactus"
+      },
+      {
+        "emoji": "🌴",
+        "name": "palmera"
+      },
+      {
+        "emoji": "🌿",
+        "name": "planta"
+      },
+      {
+        "emoji": "🍀",
+        "name": "suerte"
+      },
+      {
+        "emoji": "🌎",
+        "name": "mundo"
+      },
+      {
+        "emoji": "🌈",
+        "name": "arcoiris"
+      },
+      {
+        "emoji": "⭐",
+        "name": "estrella"
+      },
+      {
+        "emoji": "🌟",
+        "name": "estrella brillo"
+      },
+      {
+        "emoji": "✨",
+        "name": "brillo"
+      },
+      {
+        "emoji": "⚡",
+        "name": "rayo"
+      },
+      {
+        "emoji": "🔥",
+        "name": "fuego"
+      },
+      {
+        "emoji": "💥",
+        "name": "explosion"
+      },
+      {
+        "emoji": "❄️",
+        "name": "nieve"
+      },
+      {
+        "emoji": "☀️",
+        "name": "sol"
+      },
+      {
+        "emoji": "🌙",
+        "name": "luna"
+      },
+      {
+        "emoji": "☁️",
+        "name": "nube"
+      },
+      {
+        "emoji": "💧",
+        "name": "agua"
+      }
+    ]
+  },
+  {
+    "name": "Comida y celebración",
+    "items": [
+      {
+        "emoji": "🍕",
+        "name": "pizza"
+      },
+      {
+        "emoji": "🍔",
+        "name": "hamburguesa"
+      },
+      {
+        "emoji": "🍟",
+        "name": "papas"
+      },
+      {
+        "emoji": "🌮",
+        "name": "taco"
+      },
+      {
+        "emoji": "🍿",
+        "name": "palomitas"
+      },
+      {
+        "emoji": "🍩",
+        "name": "dona"
+      },
+      {
+        "emoji": "🍪",
+        "name": "galleta"
+      },
+      {
+        "emoji": "🍫",
+        "name": "chocolate"
+      },
+      {
+        "emoji": "🍓",
+        "name": "fresa"
+      },
+      {
+        "emoji": "🍒",
+        "name": "cereza"
+      },
+      {
+        "emoji": "🍑",
+        "name": "durazno"
+      },
+      {
+        "emoji": "🥑",
+        "name": "aguacate"
+      },
+      {
+        "emoji": "🍋",
+        "name": "limon"
+      },
+      {
+        "emoji": "🍉",
+        "name": "sandia"
+      },
+      {
+        "emoji": "🍎",
+        "name": "manzana"
+      },
+      {
+        "emoji": "🍇",
+        "name": "uva"
+      },
+      {
+        "emoji": "🎂",
+        "name": "cumpleaños"
+      },
+      {
+        "emoji": "🍰",
+        "name": "pastel"
+      },
+      {
+        "emoji": "🧁",
+        "name": "cupcake"
+      },
+      {
+        "emoji": "🍦",
+        "name": "helado"
+      },
+      {
+        "emoji": "☕",
+        "name": "cafe"
+      },
+      {
+        "emoji": "🧋",
+        "name": "bebida"
+      },
+      {
+        "emoji": "🥤",
+        "name": "refresco"
+      },
+      {
+        "emoji": "🥂",
+        "name": "brindar"
+      },
+      {
+        "emoji": "🍻",
+        "name": "cerveza"
+      },
+      {
+        "emoji": "🍷",
+        "name": "vino"
+      },
+      {
+        "emoji": "🎉",
+        "name": "fiesta"
+      },
+      {
+        "emoji": "🎊",
+        "name": "confeti"
+      },
+      {
+        "emoji": "🎈",
+        "name": "globo"
+      },
+      {
+        "emoji": "🎁",
+        "name": "regalo"
+      },
+      {
+        "emoji": "🏆",
+        "name": "trofeo"
+      },
+      {
+        "emoji": "🥇",
+        "name": "oro"
+      },
+      {
+        "emoji": "🥈",
+        "name": "plata"
+      },
+      {
+        "emoji": "🥉",
+        "name": "bronce"
+      },
+      {
+        "emoji": "👑",
+        "name": "corona"
+      },
+      {
+        "emoji": "💎",
+        "name": "diamante"
+      },
+      {
+        "emoji": "🎯",
+        "name": "objetivo"
+      },
+      {
+        "emoji": "🎮",
+        "name": "juego"
+      },
+      {
+        "emoji": "🎲",
+        "name": "dado"
+      },
+      {
+        "emoji": "🎭",
+        "name": "teatro"
+      },
+      {
+        "emoji": "🎵",
+        "name": "musica"
+      },
+      {
+        "emoji": "🎶",
+        "name": "musica"
+      },
+      {
+        "emoji": "🎤",
+        "name": "microfono"
+      },
+      {
+        "emoji": "🎧",
+        "name": "audifonos"
+      },
+      {
+        "emoji": "🎬",
+        "name": "cine"
+      },
+      {
+        "emoji": "📸",
+        "name": "foto"
+      },
+      {
+        "emoji": "🚀",
+        "name": "cohete"
+      },
+      {
+        "emoji": "💯",
+        "name": "cien"
+      },
+      {
+        "emoji": "✅",
+        "name": "si"
+      },
+      {
+        "emoji": "❌",
+        "name": "no"
+      },
+      {
+        "emoji": "❓",
+        "name": "pregunta"
+      },
+      {
+        "emoji": "❗",
+        "name": "exclamacion"
+      }
+    ]
+  }
+]

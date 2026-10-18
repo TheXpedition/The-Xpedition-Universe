@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS follows(actor TEXT NOT NULL REFERENCES users(id) ON D
 CREATE INDEX IF NOT EXISTS follows_target ON follows(target);
 CREATE TABLE IF NOT EXISTS conversations(id TEXT PRIMARY KEY,type TEXT NOT NULL,title TEXT NOT NULL,created INTEGER NOT NULL,only_admin INTEGER NOT NULL DEFAULT 0,icon TEXT,icon_mime TEXT);
 CREATE TABLE IF NOT EXISTS members(conversation TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,role TEXT NOT NULL DEFAULT 'member',read_at INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(conversation,user_id));
-CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,conversation TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,sender TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL DEFAULT '',type TEXT NOT NULL DEFAULT 'text',file TEXT,mime TEXT,filename TEXT,reply_to TEXT,created INTEGER NOT NULL,edited INTEGER,deleted INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,conversation TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,sender TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL DEFAULT '',type TEXT NOT NULL DEFAULT 'text',file TEXT,mime TEXT,filename TEXT,reply_to TEXT,created INTEGER NOT NULL,edited INTEGER,deleted INTEGER NOT NULL DEFAULT 0,duration_ms INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX IF NOT EXISTS messages_conversation_time ON messages(conversation,created);
 CREATE TABLE IF NOT EXISTS reactions(message TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,emoji TEXT NOT NULL,PRIMARY KEY(message,user_id));
 CREATE TABLE IF NOT EXISTS news_likes(news TEXT NOT NULL,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,PRIMARY KEY(news,user_id));`;
@@ -37,6 +37,7 @@ export async function openDatabase(dataDir) {
     for (const [name,type] of [['only_admin','INTEGER NOT NULL DEFAULT 0'],['icon','TEXT'],['icon_mime','TEXT']]) {
       if (!columns.has(name)) database.exec(`ALTER TABLE conversations ADD COLUMN ${name} ${type}`);
     }
+    if (!database.prepare('PRAGMA table_info(messages)').all().some(c=>c.name==='duration_ms')) database.exec('ALTER TABLE messages ADD COLUMN duration_ms INTEGER NOT NULL DEFAULT 0');
     return {
       kind:'sqlite',
       one: async (sql,...args)=>database.prepare(sql).get(...args),
@@ -73,6 +74,7 @@ export async function openDatabase(dataDir) {
     let pgSchema = schema.replace(/\bINTEGER\b/g,'BIGINT').replace('CREATE TABLE IF NOT EXISTS messages(', 'CREATE TABLE IF NOT EXISTS messages(xp_sequence BIGSERIAL UNIQUE,');
     // Index names are schema-qualified by PostgreSQL through their table.
     await pool.query(postgresSQL(pgSchema));
+    await pool.query('ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0');
     for (const table of tables) await pool.query(`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY;`);
     await pool.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;
       REVOKE ALL ON ALL SEQUENCES IN SCHEMA xpedition FROM PUBLIC;

@@ -13,6 +13,8 @@ const db = await openDatabase(dataDir);
 const storage = await openStorage(dataDir, db.kind === 'postgres');
 const publicUrl = (process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/$/, '');
 const catalog = JSON.parse(fs.readFileSync(path.join(publicDir, 'catalog.json'), 'utf8'));
+const stickerCatalog = new Map(JSON.parse(fs.readFileSync(path.join(publicDir,'stickers.json'),'utf8')).map(s=>[s.id,s]));
+const reactionEmojis = new Set(JSON.parse(fs.readFileSync(path.join(publicDir,'chat-emojis.json'),'utf8')).flatMap(g=>g.items.map(e=>e.emoji)));
 const canonical = v => String(v || '').normalize('NFKC').trim().replace(/\s+/g, ' ').toLocaleLowerCase('es');
 const characterId = name => 'char:' + name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 const characters = catalog.characters.map(c => ({
@@ -132,7 +134,9 @@ async function messageViews(rows) {
       sender: users.get(m.sender),
       text: m.deleted ? '' : m.text,
       type: m.deleted ? 'deleted' : m.type,
-      url: !m.deleted && m.file ? '/api/files/' + m.id : null,
+      url: m.deleted ? null : m.type==='sticker' ? '/'+(stickerCatalog.get(m.filename)?.src||'') : m.file ? '/api/files/' + m.id : null,
+      stickerId: !m.deleted&&m.type==='sticker' ? m.filename : null,
+      durationMs: m.deleted ? 0 : Number(m.duration_ms||0),
       filename: m.deleted ? null : m.filename,
       reply: reply ? {
         id: reply.id,
@@ -518,7 +522,7 @@ async function api(req, res, url) {
       checkRate(req, 'message', 120, 60000);
       const b = await body(req);
       const type = b.type || 'text';
-      if (!['text', 'image', 'audio'].includes(type)) fail(400, 'Tipo de mensaje inválido.');
+      if (!['text', 'image', 'audio', 'sticker'].includes(type)) fail(400, 'Tipo de mensaje inválido.');
       const text = String(b.text || '').trim();
       if (text.length > 5000 || !text && type === 'text') fail(400, 'Escribe un mensaje de hasta 5000 caracteres.');
       const mid = typeof b.id === 'string' && (/^[a-zA-Z0-9-]{20,80}$/).test(b.id) ? b.id : randomUUID();
@@ -532,7 +536,12 @@ async function api(req, res, url) {
       const reply = b.replyTo ? await one('SELECT id FROM messages WHERE id=? AND conversation=?', b.replyTo, id) : null;
       if (b.replyTo && !reply) fail(400, 'El mensaje citado ya no está disponible.');
       let file = null, mime = null, filename = null;
-      if (type !== 'text') {
+      const durationMs=type==='audio'&&Number.isFinite(b.durationMs)?Math.max(0,Math.min(90000,Math.round(b.durationMs))):0;
+      if(type==='sticker'){
+        const sticker=stickerCatalog.get(b.stickerId);if(!sticker)fail(400,'Este sticker no está disponible.');
+        filename=sticker.id;
+      }
+      if (type === 'image'||type === 'audio') {
         const allowed = type === 'image' ? ['image/png', 'image/jpeg', 'image/gif', 'image/webp'] : ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav'];
         mime = String(b.mime || '').split(';')[0];
         if (!allowed.includes(mime) || typeof b.data !== 'string') fail(400, 'Formato de archivo no admitido.');
@@ -545,7 +554,7 @@ async function api(req, res, url) {
       }
       const created = Math.max(stamp(), Number((await one('SELECT MAX(created) AS n FROM messages WHERE conversation=?', id)).n || 0) + 1);
       try {
-        await run('INSERT INTO messages(id,conversation,sender,text,type,file,mime,filename,reply_to,created) VALUES(?,?,?,?,?,?,?,?,?,?)', mid, id, u.id, text, type, file, mime, filename, reply?.id || null, created);
+        await run('INSERT INTO messages(id,conversation,sender,text,type,file,mime,filename,reply_to,created,duration_ms) VALUES(?,?,?,?,?,?,?,?,?,?,?)', mid, id, u.id, text, type, file, mime, filename, reply?.id || null, created,durationMs);
       } catch (e) {
         if (file) await storage.remove(file);
         throw e;
@@ -667,7 +676,7 @@ async function api(req, res, url) {
     await requireMember(m.conversation, u.id);
     if (msg[2] === 'reaction' && method === 'POST') {
       const b = await body(req);
-      if (!['❤️', '👍', '👎', '😂', '😮', '😡', '😢', '🔥', '💩', '🤮', '❓'].includes(b.emoji) || m.deleted) fail(400, 'Reacción inválida.');
+      if (!reactionEmojis.has(b.emoji) || m.deleted) fail(400, 'Reacción inválida.');
       const previous = await one('SELECT emoji FROM reactions WHERE message=? AND user_id=?', m.id, u.id);
       if (previous?.emoji === b.emoji) await run('DELETE FROM reactions WHERE message=? AND user_id=?', m.id, u.id); else await run('INSERT INTO reactions VALUES(?,?,?) ON CONFLICT(message,user_id) DO UPDATE SET emoji=excluded.emoji', m.id, u.id, b.emoji);
     } else if (method === 'DELETE' && !msg[2]) {
@@ -691,18 +700,28 @@ async function api(req, res, url) {
     });
   }
   const file = p.match(/^\/api\/files\/([^/]+)$/);
-  if (file && method === 'GET') {
+  if (file && ['GET','HEAD'].includes(method)) {
     const m = await one('SELECT * FROM messages WHERE id=? AND deleted=0', file[1]);
     if (!m?.file) fail(404, 'Archivo no encontrado.');
     await requireMember(m.conversation, u.id);
     const buffer = await storage.get(m.file);
-    res.writeHead(200, {
+    const headers={
       'Content-Type': m.mime,
       'Content-Length': buffer.length,
+      'Accept-Ranges': 'bytes',
       'Cache-Control': 'private, no-store',
       'Content-Disposition': `inline; filename*=UTF-8''${encodeURIComponent(m.filename || 'archivo')}`
-    });
-    res.end(buffer);
+    };
+    let start=0,end=buffer.length-1,status=200;const range=method==='GET'?req.headers.range:null;
+    if(range&&!range.includes(',')){
+      const match=range.match(/^bytes=(\d*)-(\d*)$/);
+      if(!match||!match[1]&&!match[2]){res.writeHead(416,{'Content-Range':`bytes */${buffer.length}`,'Cache-Control':'private, no-store'});return res.end();}
+      if(!match[1])start=Math.max(0,buffer.length-Number(match[2]));else{start=Number(match[1]);end=match[2]?Math.min(Number(match[2]),end):end;}
+      if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=buffer.length||end<start||!match[1]&&Number(match[2])===0){res.writeHead(416,{'Content-Range':`bytes */${buffer.length}`,'Cache-Control':'private, no-store'});return res.end();}
+      status=206;headers['Content-Range']=`bytes ${start}-${end}/${buffer.length}`;headers['Content-Length']=end-start+1;
+    }
+    res.writeHead(status,headers);
+    res.end(method==='HEAD'?undefined:buffer.subarray(start,end+1));
     return;
   }
   fail(404, 'No se encontró esta función.');
