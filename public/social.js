@@ -87,8 +87,8 @@ async function publishPost(e){
   }catch(error){if($('#postError'))$('#postError').textContent=error.message;else toast(error.message,true);}finally{postDraft.sending=false;if(button.isConnected){button.disabled=false;button.innerHTML=`Publicar ${icon('send')}`;}}
 }
 async function postStickerPicker(){
-  const stickers=await fetch('stickers.json').then(r=>r.json());
-  modal(`<h2 id="modalTitle">Un sticker para tu historia.</h2><p class="modal-intro">Elige uno de la colección.</p><div class="post-sticker-picker">${stickers.map(s=>`<button data-social="choose-post-sticker" data-id="${esc(s.id)}" data-src="${esc(s.src)}" aria-label="Elegir ${esc(s.name||'sticker')}"><img src="${esc(s.src)}" alt="${esc(s.name||'Sticker')}" loading="lazy"></button>`).join('')}</div>`,true,'post-sticker');
+  await chatAssetsReady;
+  modal(`<h2 id="modalTitle">Un sticker para tu historia.</h2><p class="modal-intro">Elige uno de la colección. ♥ Tus favoritos van primero.</p><div class="post-sticker-picker">${stickerTiles('post')}</div>`,true,'post-sticker');
 }
 function postMentionPicker(){
   modal('<h2 id="modalTitle">Menciona a tu gente.</h2><p class="modal-intro">Personas de la comunidad y personajes del universo. Hasta 10 por publicación.</p><label class="search-field">'+icon('search')+'<input id="mentionSearch" aria-label="Buscar persona o personaje" placeholder="Busca un nombre…"></label><div class="mention-results" id="mentionResults"></div>',false,'post-mention');

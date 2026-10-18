@@ -168,5 +168,85 @@
     "id": "5f66b60f28a25ccb",
     "name": "Sticker 34",
     "src": "stickers/vita.png"
+  },
+  {
+    "id": "cab39a970e9b8c25",
+    "name": "nuevo",
+    "src": "stickers/nuevo.png"
+  },
+  {
+    "id": "aabc9c851be9584e",
+    "name": "nuevo2",
+    "src": "stickers/nuevo2.png"
+  },
+  {
+    "id": "1c0797aa8532aab5",
+    "name": "nuevo3",
+    "src": "stickers/nuevo3.png"
+  },
+  {
+    "id": "7aa6d47745ee2699",
+    "name": "Nuevos (1)",
+    "src": "stickers/nuevos-1.png"
+  },
+  {
+    "id": "d60f01949b8d2968",
+    "name": "Nuevos (2)",
+    "src": "stickers/nuevos-2.png"
+  },
+  {
+    "id": "2ef307daf1ee4dca",
+    "name": "Nuevos (3)",
+    "src": "stickers/nuevos-3.png"
+  },
+  {
+    "id": "ed959dce823ee124",
+    "name": "Nuevos (4)",
+    "src": "stickers/nuevos-4.png"
+  },
+  {
+    "id": "d5587390108a9e7c",
+    "name": "Nuevos (5)",
+    "src": "stickers/nuevos-5.png"
+  },
+  {
+    "id": "31b0e256314ceb08",
+    "name": "Nuevos (6)",
+    "src": "stickers/nuevos-6.png"
+  },
+  {
+    "id": "875df86c8f62d1bb",
+    "name": "Nuevos (7)",
+    "src": "stickers/nuevos-7.png"
+  },
+  {
+    "id": "89daee1d88ad4de3",
+    "name": "Nuevos (8)",
+    "src": "stickers/nuevos-8.png"
+  },
+  {
+    "id": "31ffc3b737f70068",
+    "name": "Nuevos (9)",
+    "src": "stickers/nuevos-9.png"
+  },
+  {
+    "id": "1b3ea64c0c6e4263",
+    "name": "Nuevos (10)",
+    "src": "stickers/nuevos-10.png"
+  },
+  {
+    "id": "ba91282d676060d6",
+    "name": "Nuevos (11)",
+    "src": "stickers/nuevos-11.png"
+  },
+  {
+    "id": "33ebf6e625ab5688",
+    "name": "Nuevos (12)",
+    "src": "stickers/nuevos-12.png"
+  },
+  {
+    "id": "95eef7da5f4b92e3",
+    "name": "Nuevos (13)",
+    "src": "stickers/nuevos-13.png"
   }
 ]

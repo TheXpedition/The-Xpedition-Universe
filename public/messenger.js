@@ -5,6 +5,20 @@ const defaultReactions=['❤️','😂','😮','😢','😡','👍'];
 let emojiGroups=[],chatStickers=[],chatPopover=null,popoverAnchor=null,popoverContext=null,emojiQuery='',emojiCategory=0,customSlot=0;
 const chatAssetsReady=Promise.all([fetch('chat-emojis.json').then(r=>r.json()),fetch('stickers.json').then(r=>r.json())]).then(([emojis,stickers])=>{emojiGroups=emojis;chatStickers=stickers;}).catch(()=>{emojiGroups=[{name:'Reacciones',items:defaultReactions.map(emoji=>({emoji,name:emoji}))}];});
 const emojiList=()=>emojiGroups.flatMap(g=>g.items);
+const stickerFavorites=()=>new Set(state.user?.stickerFavorites||[]);
+function orderedStickers(){const favorites=stickerFavorites();return [...chatStickers.filter(s=>favorites.has(s.id)),...chatStickers.filter(s=>!favorites.has(s.id))];}
+function stickerTiles(mode='chat'){
+ const favorites=stickerFavorites();
+ return orderedStickers().map(s=>{const favorite=favorites.has(s.id),action=mode==='post'?`data-social="choose-post-sticker" data-id="${esc(s.id)}" data-src="${esc(s.src)}"`:`data-chat="send-sticker" data-sticker="${esc(s.id)}"`;return `<div class="sticker-tile" data-sticker-id="${esc(s.id)}"><button class="sticker-select" ${action} aria-label="${mode==='post'?'Elegir':'Enviar'} ${esc(s.name)}"><img src="${esc(s.src)}" alt="${esc(s.name)}" loading="lazy"></button><button class="sticker-favorite ${favorite?'selected':''}" data-chat="favorite-sticker" data-sticker="${esc(s.id)}" aria-label="${favorite?'Quitar de':'Añadir a'} favoritos: ${esc(s.name)}" aria-pressed="${favorite}" title="${favorite?'Quitar de favoritos':'Me encanta'}">${icon('heart')}</button></div>`;}).join('');
+}
+function refreshStickerPickers(){const chat=$('#chatPopover .sticker-grid'),post=$('.post-sticker-picker');if(chat)chat.innerHTML=stickerTiles();if(post)post.innerHTML=stickerTiles('post');if(chat)positionChatPopover();}
+async function toggleStickerFavorite(button){
+ if(!requireAuth())return;button.disabled=true;
+ try{const result=await api('/me/sticker-favorites/'+encodeURIComponent(button.dataset.sticker),{method:'PUT',body:{favorite:!stickerFavorites().has(button.dataset.sticker)}});state.user.stickerFavorites=result.stickerFavorites;refreshStickerPickers();}
+ finally{if(button.isConnected)button.disabled=false;}
+}
+const beforeStickerStream=startStream;
+startStream=function(){beforeStickerStream();state.stream?.addEventListener('sticker-favorites',event=>{const data=JSON.parse(event.data);if(state.user){state.user.stickerFavorites=data.stickerFavorites;refreshStickerPickers();}});};
 function quickReactions(){try{const list=JSON.parse(localStorage.getItem('xp-reactions:'+state.user?.id));if(Array.isArray(list)&&list.length===6&&new Set(list).size===6&&list.every(e=>emojiList().some(x=>x.emoji===e)))return list;}catch{}return [...defaultReactions];}
 function clockTime(seconds){if(!Number.isFinite(seconds)||seconds<0)return '0:00';return Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');}
 
@@ -42,8 +56,8 @@ function hydrateVoiceNotes(root=document){
 function messageHtml(m){
  const own=m.sender.id===state.user.id,c=state.conversations.find(c=>c.id===state.active),seen=own&&c?.members.filter(u=>u.id!==state.user.id).every(u=>u.readAt>=m.created);
  const reactions=[...new Set(m.reactions.map(r=>r.emoji))];
- const body=m.type==='deleted'?'Mensaje eliminado':m.type==='audio'?voiceMarkup(m.url,'Nota de voz de '+m.sender.name,m.durationMs):m.type==='image'||m.type==='sticker'?`<img class="${m.type==='sticker'?'chat-sticker':'chat-image'}" src="${esc(m.url)}" alt="${m.type==='sticker'?'Sticker':'Imagen'} enviado por ${esc(m.sender.name)}" ${m.type==='image'?`data-action="view-image" data-id="${m.id}"`:''} loading="lazy">`:linkify(m.text);
- return `<article class="message-row ${own?'own':''}" id="message-${m.id}" data-message-id="${m.id}">${!own?avatar(m.sender,'tiny'):''}<div class="message-wrap">${!own&&c?.type==='group'?`<div class="message-name">${esc(m.sender.name)}</div>`:''}<div class="bubble ${m.type==='deleted'?'deleted':''} ${m.type==='audio'?'voice-bubble':''} ${m.type==='sticker'?'sticker-bubble':''} ${m.type==='image'?'image-bubble':''}">${m.reply?`<button class="message-reply" data-action="jump-message" data-id="${m.reply.id}"><strong>${esc(m.reply.name)}</strong>${esc(m.reply.text.slice(0,100))}</button>`:''}${body}${m.type!=='text'&&m.type!=='deleted'&&m.text?`<div class="media-caption">${linkify(m.text)}</div>`:''}</div>${m.type!=='deleted'?`<div class="message-tools"><button class="icon-button" data-chat="reaction" data-id="${m.id}" aria-label="Reaccionar al mensaje">${icon('smile')}</button><button class="icon-button" data-action="message-options" data-id="${m.id}" aria-label="Opciones de mensaje">${icon('more')}</button></div>`:''}${reactions.length?`<div class="message-reactions">${reactions.map(emoji=>`<button class="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)?'mine':''}" data-action="react" data-id="${m.id}" data-emoji="${esc(emoji)}" aria-label="Reacción ${esc(emoji)}" aria-pressed="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)}"><span>${esc(emoji)}</span><small>${m.reactions.filter(r=>r.emoji===emoji).length}</small></button>`).join('')}</div>`:''}<div class="message-meta"><time datetime="${new Date(m.created).toISOString()}">${time(m.created)}</time>${m.edited&&m.type!=='deleted'?'<span>· editado</span>':''}${own?`<span class="${seen?'read':''}" title="${seen?'Leído por todos':'Enviado al servidor'}">${icon(seen?'checks':'check')}</span>`:''}</div></div></article>`;
+ const body=m.type==='deleted'?'Mensaje eliminado':m.type==='audio'?voiceMarkup(m.url,'Nota de voz de '+m.sender.name,m.durationMs):['image','video'].includes(m.type)?chatMediaMarkup(m):m.type==='sticker'?`<img class="${m.type==='sticker'?'chat-sticker':'chat-image'}" src="${esc(m.url)}" alt="${m.type==='sticker'?'Sticker':'Imagen'} enviado por ${esc(m.sender.name)}" ${m.type==='image'?`data-action="view-image" data-id="${m.id}"`:''} loading="lazy">`:linkify(m.text);
+ return `<article class="message-row ${own?'own':''}" id="message-${m.id}" data-message-id="${m.id}">${!own?avatar(m.sender,'tiny'):''}<div class="message-wrap">${!own&&c?.type==='group'?`<div class="message-name">${esc(m.sender.name)}</div>`:''}<div class="bubble ${m.type==='deleted'?'deleted':''} ${m.type==='audio'?'voice-bubble':''} ${m.type==='sticker'?'sticker-bubble':''} ${['image','video'].includes(m.type)?'image-bubble':''}">${m.reply?`<button class="message-reply" data-action="jump-message" data-id="${m.reply.id}"><strong>${esc(m.reply.name)}</strong>${esc(m.reply.text.slice(0,100))}</button>`:''}${body}${m.type!=='text'&&m.type!=='deleted'&&m.text?`<div class="media-caption">${linkify(m.text)}</div>`:''}</div>${m.type!=='deleted'?`<div class="message-tools"><button class="icon-button" data-chat="reaction" data-id="${m.id}" aria-label="Reaccionar al mensaje">${icon('smile')}</button><button class="icon-button" data-action="message-options" data-id="${m.id}" aria-label="Opciones de mensaje">${icon('more')}</button></div>`:''}${reactions.length?`<div class="message-reactions">${reactions.map(emoji=>`<button class="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)?'mine':''}" data-action="react" data-id="${m.id}" data-emoji="${esc(emoji)}" aria-label="Reacción ${esc(emoji)}" aria-pressed="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)}"><span>${esc(emoji)}</span><small>${m.reactions.filter(r=>r.emoji===emoji).length}</small></button>`).join('')}</div>`:''}<div class="message-meta"><time datetime="${new Date(m.created).toISOString()}">${time(m.created)}</time>${m.edited&&m.type!=='deleted'?'<span>· editado</span>':''}${own?`<span class="${seen?'read':''}" title="${seen?'Leído por todos':'Enviado al servidor'}">${icon(seen?'checks':'check')}</span>`:''}</div></div></article>`;
 }
 function renderMessages(scroll=false){
  const history=$('#chatHistory');if(!history||!state.user)return;
@@ -94,14 +108,14 @@ function emojiPickerMarkup(){
 }
 function emojiItems(items,context=popoverContext){return items.length?items.map(e=>`<button data-chat="pick-emoji" data-emoji="${esc(e.emoji)}" aria-label="${esc(e.name)}" title="${esc(e.name)}">${esc(e.emoji)}</button>`).join(''):'<p class="picker-help">No encontramos ese emoji.</p>';}
 function refreshEmojiPicker(){if(!chatPopover)return;chatPopover.innerHTML=emojiPickerMarkup();positionChatPopover();$(popoverContext.mode==='custom'?'.custom-reactions .selected':'.emoji-categories .selected',chatPopover)?.focus({preventScroll:true});}
-async function openEmojiComposer(anchor){await chatAssetsReady;emojiQuery='';emojiCategory=0;showChatPopover(anchor,'',{mode:'composer'},'Elegir emoji');refreshEmojiPicker();$('#chatEmojiSearch')?.focus();}
+async function openEmojiComposer(anchor){await chatAssetsReady;if(!anchor.isConnected)return;emojiQuery='';emojiCategory=0;showChatPopover(anchor,'',{mode:'composer'},'Elegir emoji');refreshEmojiPicker();$('#chatEmojiSearch')?.focus({preventScroll:true});}
 function messageOptions(id){
  const m=state.messages.find(m=>m.id===id);if(!m)return;const anchor=$(`[data-message-id="${id}"] [data-action="message-options"]`);
  showChatPopover(anchor,`<div class="message-menu"><button data-chat="reaction-menu" data-id="${id}">${icon('smile')} Reaccionar</button><button data-action="reply" data-id="${id}">${icon('back')} Responder</button>${m.sender.id===state.user.id?`${m.type==='text'?`<button data-action="edit-message" data-id="${id}">${icon('edit')} Editar mensaje</button>`:''}<button class="danger" data-action="delete-message" data-id="${id}">${icon('close')} Eliminar para todos</button>`:''}</div>`,{mode:'menu',id},'Opciones del mensaje');
 }
 async function openStickers(anchor){
  await chatAssetsReady;if(!anchor.isConnected)return;
- showChatPopover(anchor,`<div class="chat-picker sticker-picker"><div class="picker-heading"><strong>Stickers del universo</strong><button data-chat="close-picker" aria-label="Cerrar stickers">${icon('close')}</button></div><p class="sticker-hint">Toca uno para enviarlo</p><div class="sticker-grid">${chatStickers.map(s=>`<button data-chat="send-sticker" data-sticker="${s.id}" aria-label="Enviar ${esc(s.name)}"><img src="${esc(s.src)}" alt="${esc(s.name)}" loading="lazy"></button>`).join('')}</div></div>`,{mode:'stickers'},'Enviar stickers');
+ showChatPopover(anchor,`<div class="chat-picker sticker-picker"><div class="picker-heading"><strong>Stickers del universo</strong><button data-chat="close-picker" aria-label="Cerrar stickers">${icon('close')}</button></div><p class="sticker-hint">Toca uno para enviarlo · ♥ Tus favoritos van primero</p><div class="sticker-grid">${stickerTiles()}</div></div>`,{mode:'stickers'},'Enviar stickers');
 }
 async function sendSticker(id,button){
  if(state.sending||state.recording||!state.active)return;const chat=state.active;state.sending=true;button.disabled=true;
@@ -114,7 +128,7 @@ function attachmentPreview(){
  if(a.type==='audio'){
   a.preview=a.preview||URL.createObjectURL(a.file);
   $('#attachmentArea').innerHTML=`<div class="voice-draft"><div class="voice-draft-heading"><span>Escucha tu nota antes de enviarla</span><button class="icon-button" data-action="cancel-attachment" aria-label="Descartar nota de voz">${icon('close')}</button></div>${voiceMarkup(a.preview,'Vista previa de tu nota de voz',a.durationMs)}</div>`;hydrateVoiceNotes($('#attachmentArea'));
- }else $('#attachmentArea').innerHTML=`<div class="attachment-preview"><img src="${esc(a.preview)}" alt="Vista previa de adjunto"><span>${esc(a.filename)}</span><button class="icon-button" data-action="cancel-attachment" aria-label="Quitar adjunto">${icon('close')}</button></div>`;
+ }else $('#attachmentArea').innerHTML=`<div class="attachment-preview">${a.type==='video'?`<video src="${esc(a.preview)}" controls playsinline preload="metadata" aria-label="Vista previa de video"></video>`:`<img src="${esc(a.preview)}" alt="Vista previa de adjunto">`}<span>${esc(a.filename)}</span><button class="icon-button" data-action="cancel-attachment" aria-label="Quitar adjunto">${icon('close')}</button></div>`;
 }
 function recordingElapsed(r){return Date.now()-r.started-r.pausedMs-(r.pausedAt?Date.now()-r.pausedAt:0);}
 function finishRecordingResources(r){clearInterval(r.timer);r.stream.getTracks().forEach(t=>t.stop());r.source?.disconnect();}
@@ -174,6 +188,7 @@ document.addEventListener('click',async event=>{
  const action=button.dataset.chat,id=button.dataset.id;
  try{
   if(action==='reaction')openReactions(id,button);
+  if(action==='composer-emoji'){if(popoverContext?.mode==='composer'&&popoverAnchor===button)closeChatPopover();else await openEmojiComposer(button);}
   if(action==='reaction-menu'){const anchor=popoverAnchor;openReactions(id,anchor);}
   if(action==='reaction-more'){await chatAssetsReady;emojiQuery='';emojiCategory=0;popoverContext.mode='expanded';refreshEmojiPicker();$('#chatEmojiSearch')?.focus();}
   if(action==='close-picker')closeChatPopover();
@@ -191,6 +206,7 @@ document.addEventListener('click',async event=>{
   }
   if(action==='stickers')await openStickers(button);
   if(action==='send-sticker')await sendSticker(button.dataset.sticker,button);
+  if(action==='favorite-sticker')await toggleStickerFavorite(button);
   if(action==='voice-toggle'){
    const player=button.closest('.voice-note'),audio=$('audio',player);$('.voice-error',player).hidden=true;
    if(audio.paused){if(audio.error)audio.load();audio.muted=false;audio.volume=1;await audio.play();}else audio.pause();

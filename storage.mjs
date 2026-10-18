@@ -22,15 +22,20 @@ export async function openStorage(dataDir,remote) {
     global:{fetch:(url,options={})=>fetch(url,{...options,signal:AbortSignal.timeout(25000)})}
   });
   const name=process.env.SUPABASE_STORAGE_BUCKET||'xpedition-private';
+  const allowedMimeTypes=['image/png','image/jpeg','image/gif','image/webp','audio/webm','audio/ogg','audio/mp4','audio/mpeg','audio/wav','video/mp4','video/webm'];
   let {data:bucket,error}=await supabase.storage.getBucket(name);
   if(error && ['404','400'].includes(String(error.status||error.statusCode))) {
     const created=await supabase.storage.createBucket(name,{public:false,fileSizeLimit:6*1024*1024,
-      allowedMimeTypes:['image/png','image/jpeg','image/gif','image/webp','audio/webm','audio/ogg','audio/mp4','audio/mpeg','audio/wav']});
+      allowedMimeTypes});
     if(created.error)throw new Error('No se pudo crear el depósito privado de Supabase. Revisa la clave del servidor.');
     ({data:bucket,error}=await supabase.storage.getBucket(name));
   }
   if(error||!bucket)throw new Error('No se pudo consultar el almacenamiento de Supabase.');
   if(bucket.public)throw new Error('El depósito de adjuntos debe ser privado. Desactiva Public bucket en Supabase.');
+  if(Array.isArray(bucket.allowed_mime_types)&&allowedMimeTypes.some(mime=>!bucket.allowed_mime_types.includes(mime))){
+    const updated=await supabase.storage.updateBucket(name,{public:false,fileSizeLimit:bucket.file_size_limit||6*1024*1024,allowedMimeTypes:[...new Set([...bucket.allowed_mime_types,...allowedMimeTypes])]});
+    if(updated.error)throw new Error('No se pudieron habilitar los videos en el depósito privado.');
+  }
   const objects=supabase.storage.from(name);
   return {
     kind:'supabase',

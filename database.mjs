@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS post_comments(id TEXT PRIMARY KEY,post TEXT NOT NULL 
 CREATE INDEX IF NOT EXISTS post_comments_time ON post_comments(post,created);
 CREATE TABLE IF NOT EXISTS comment_reactions(comment TEXT NOT NULL REFERENCES post_comments(id),user_id TEXT NOT NULL REFERENCES users(id),emoji TEXT NOT NULL,PRIMARY KEY(comment,user_id));`;
 
-const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0']];
+const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0'],['sticker_favorites',"TEXT NOT NULL DEFAULT '[]'"]];
 const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions'];
 function postgresSQL(sql) {
   let n = 0;

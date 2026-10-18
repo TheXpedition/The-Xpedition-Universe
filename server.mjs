@@ -95,6 +95,7 @@ async function safeUser(u, own = false) {
   if (own) Object.assign(result, {
     email: u.email,
     saved: JSON.parse(u.saved),
+    stickerFavorites: JSON.parse(u.sticker_favorites||'[]'),
     follows: (await all('SELECT target FROM follows WHERE actor=?', u.id)).map(x => x.target),
     hasPassword: !!u.password,orientation:u.orientation||'',orientationVisible:!!Number(u.orientation_visible)
   });
@@ -433,6 +434,18 @@ async function api(req, res, url) {
     });
     return;
   }
+  const stickerFavorite=p.match(/^\/api\/me\/sticker-favorites\/([a-f0-9]{16})$/);
+  if(stickerFavorite&&method==='PUT'){
+    checkRate(req,'sticker-favorites',300,3600000);
+    const id=stickerFavorite[1],b=await body(req);
+    if(!stickerCatalog.has(id)||typeof b.favorite!=='boolean')fail(400,'Elige un sticker de la colección.');
+    const favorites=new Set(JSON.parse(u.sticker_favorites||'[]'));
+    if(b.favorite)favorites.add(id);else favorites.delete(id);
+    const stickerFavorites=[...favorites];
+    await run('UPDATE users SET sticker_favorites=? WHERE id=?',JSON.stringify(stickerFavorites),u.id);
+    notify([u.id],'sticker-favorites',{stickerFavorites});
+    return json(res,{stickerFavorites});
+  }
   if (p === '/api/me' && method === 'PATCH') {
     const b = await body(req);
     const name = b.name === undefined ? u.name : checkName(b.name);
@@ -514,11 +527,18 @@ async function api(req, res, url) {
       conversation: await conversationView(await one('SELECT * FROM conversations WHERE id=?', id), u.id)
     }, 201);
   }
-  const convMatch = p.match(/^\/api\/conversations\/([^/]+)(?:\/(messages|read|typing|members))?$/);
+  const convMatch = p.match(/^\/api\/conversations\/([^/]+)(?:\/(messages|media|read|typing|members))?$/);
   if (convMatch) {
     const id = decodeURIComponent(convMatch[1]);
     const conv = await requireMember(id, u.id);
     const action = convMatch[2];
+    if(action==='media'&&method==='GET'){
+      const before=Number(url.searchParams.get('before')||Number.MAX_SAFE_INTEGER),limit=Number(url.searchParams.get('limit')||36);
+      if(!Number.isSafeInteger(before)||before<0||!Number.isInteger(limit)||limit<1||limit>60)fail(400,'Página de multimedia inválida.');
+      const rows=await all("SELECT * FROM messages WHERE conversation=? AND deleted=0 AND type IN ('image','video') AND created<? ORDER BY created DESC,rowid DESC LIMIT ?",id,before,limit+1);
+      const total=Number((await one("SELECT COUNT(*) AS count FROM messages WHERE conversation=? AND deleted=0 AND type IN ('image','video')",id)).count);
+      return json(res,{media:await messageViews(rows.slice(0,limit)),total,hasMore:rows.length>limit});
+    }
     if (action === 'messages' && method === 'GET') {
       const before = Math.min(Number(url.searchParams.get('before')) || Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
       const rows = await all('SELECT * FROM messages WHERE conversation=? AND created<? ORDER BY created DESC,rowid DESC LIMIT 61', id, before);
@@ -533,7 +553,7 @@ async function api(req, res, url) {
       checkRate(req, 'message', 120, 60000);
       const b = await body(req);
       const type = b.type || 'text';
-      if (!['text', 'image', 'audio', 'sticker'].includes(type)) fail(400, 'Tipo de mensaje inválido.');
+      if (!['text', 'image', 'video', 'audio', 'sticker'].includes(type)) fail(400, 'Tipo de mensaje inválido.');
       const text = String(b.text || '').trim();
       if (text.length > 5000 || !text && type === 'text') fail(400, 'Escribe un mensaje de hasta 5000 caracteres.');
       const mid = typeof b.id === 'string' && (/^[a-zA-Z0-9-]{20,80}$/).test(b.id) ? b.id : randomUUID();
@@ -552,13 +572,14 @@ async function api(req, res, url) {
         const sticker=stickerCatalog.get(b.stickerId);if(!sticker)fail(400,'Este sticker no está disponible.');
         filename=sticker.id;
       }
-      if (type === 'image'||type === 'audio') {
-        const allowed = type === 'image' ? ['image/png', 'image/jpeg', 'image/gif', 'image/webp'] : ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav'];
+      if (['image','video','audio'].includes(type)) {
+        const allowed = type === 'image' ? ['image/png', 'image/jpeg', 'image/gif', 'image/webp'] : type==='video'?['video/mp4','video/webm']:['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav'];
         mime = String(b.mime || '').split(';')[0];
         if (!allowed.includes(mime) || typeof b.data !== 'string') fail(400, 'Formato de archivo no admitido.');
         const buffer = Buffer.from(b.data, 'base64');
-        if (!buffer.length || buffer.length > (type === 'image' ? 4 : 6) * 1024 * 1024) fail(413, 'Máximo 4 MB por imagen y 6 MB por audio.');
+        if (!buffer.length || buffer.length > (type === 'image' ? 4 : 6) * 1024 * 1024) fail(413, 'Máximo 4 MB por imagen y 6 MB por video o audio.');
         if (type === 'image' && !(mime === 'image/png' && buffer.subarray(0, 8).toString('hex') === '89504e470d0a1a0a' || mime === 'image/jpeg' && buffer[0] === 255 && buffer[1] === 216 || mime === 'image/gif' && buffer.subarray(0, 3).toString() === 'GIF' || mime === 'image/webp' && buffer.subarray(0, 4).toString() === 'RIFF' && buffer.subarray(8, 12).toString() === 'WEBP')) fail(400, 'La imagen no es válida.');
+        if(type==='video'&&!(mime==='video/mp4'&&buffer.subarray(4,8).toString()==='ftyp'&&buffer.includes(Buffer.from('moov'))&&buffer.includes(Buffer.from('mdat'))||mime==='video/webm'&&buffer.subarray(0,4).toString('hex')==='1a45dfa3'&&buffer.subarray(0,4096).includes(Buffer.from('webm'))))fail(400,'El video no es válido. Usa MP4 o WebM.');
         file = randomUUID();
         filename = String(b.filename || type).slice(0, 120);
         await storage.put(file, buffer, mime);
@@ -685,6 +706,7 @@ async function api(req, res, url) {
     const m = await one('SELECT * FROM messages WHERE id=?', msg[1]);
     if (!m) fail(404, 'Mensaje no encontrado.');
     await requireMember(m.conversation, u.id);
+    if(method==='GET'&&!msg[2])return json(res,{message:await messageView(m)});
     if (msg[2] === 'reaction' && method === 'POST') {
       const b = await body(req);
       if (!reactionEmojis.has(b.emoji) || m.deleted) fail(400, 'Reacción inválida.');

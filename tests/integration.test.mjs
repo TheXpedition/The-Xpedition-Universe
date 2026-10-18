@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const data=path.resolve(process.env.TEST_DATA_DIR||path.join(root,'work','test-'+randomUUID()));
 fs.mkdirSync(data,{recursive:true});
-let child,base,alice,bob,outsider,chat,message,imageId,group,keptImage,keptAudio,keptSticker,starts=0;
+let child,base,alice,bob,outsider,chat,message,imageId,group,keptImage,keptAudio,keptVideo,keptSticker,starts=0;
 const stickerCatalog=JSON.parse(fs.readFileSync(path.join(root,'public','stickers.json'),'utf8'));
 function testAudio(){const b=Buffer.alloc(16044);b.write('RIFF');b.writeUInt32LE(b.length-8,4);b.write('WAVEfmt ',8);b.writeUInt32LE(16,16);b.writeUInt16LE(1,20);b.writeUInt16LE(1,22);b.writeUInt32LE(8000,24);b.writeUInt32LE(16000,28);b.writeUInt16LE(2,32);b.writeUInt16LE(16,34);b.write('data',36);b.writeUInt32LE(16000,40);for(let i=0;i<8000;i++)b.writeInt16LE(Math.round(Math.sin(i/8000*Math.PI*880)*8000),44+i*2);return b;}
 async function start(){
@@ -102,7 +102,7 @@ test('grupos, permisos, nuevos miembros y salida',async()=>{
   await request(alice,'/conversations/'+group,'DELETE',{});const remaining=(await request(bob,'/conversations')).conversations.find(c=>c.id===group);assert(remaining.members.some(m=>m.role==='admin'));assert.equal((await request(alice,'/conversations/'+group+'/messages')).status,404);
 });
 test('stickers originales, selección validada y reacciones personalizadas',async()=>{
-  assert.equal(stickerCatalog.length,34);
+  assert.equal(stickerCatalog.length,50);
   const result=await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:stickerCatalog[0].id});assert.equal(result.status,201);keptSticker=result.message;assert.equal(keptSticker.stickerId,stickerCatalog[0].id);
   const file=await fetch(base+keptSticker.url);assert.equal(file.status,200);assert.deepEqual(Buffer.from(await file.arrayBuffer()),fs.readFileSync(path.join(root,'public',decodeURIComponent(stickerCatalog[0].src))));
   assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:'https://example.com/no.png'})).status,400);
@@ -204,8 +204,50 @@ test('portadas revisadas, públicas y ajustables sin cambiar otras cuentas',asyn
  keptCover=(await request(alice,'/me/cover','POST',{position:35})).user.cover;assert.equal((await request(alice,'/me')).user.coverPosition,35);
 });
 
+test('videos privados y galería completa con paginación y acceso solo para miembros',async()=>{
+  const endpoint='/conversations/'+encodeURIComponent(chat)+'/media';
+  assert.equal((await request(client(),endpoint)).status,401);assert.equal((await request(outsider,endpoint)).status,404);
+  assert.equal((await request(bob,endpoint+'?limit=61')).status,400);
+  const initial=(await request(bob,endpoint)).total;
+  const bytes=fs.readFileSync(path.join(root,'public/media/japan-preview-mobile.mp4'));
+  const payload={id:randomUUID(),type:'video',mime:'video/mp4',data:bytes.toString('base64'),filename:'aventura.mp4'};
+  const result=await request(alice,'/conversations/'+chat+'/messages','POST',payload);assert.equal(result.status,201);keptVideo=result.message;
+  assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',payload)).status,200);
+  const head=await fetch(base+keptVideo.url,{method:'HEAD',headers:{cookie:bob.cookie}});assert.equal(head.status,200);assert.equal(head.headers.get('content-type'),'video/mp4');assert.equal(Number(head.headers.get('content-length')),bytes.length);
+  const range=await fetch(base+keptVideo.url,{headers:{cookie:bob.cookie,Range:'bytes=0-31'}});assert.equal(range.status,206);assert.deepEqual(Buffer.from(await range.arrayBuffer()),bytes.subarray(0,32));
+  assert.equal((await request(outsider,'/messages/'+keptVideo.id)).status,404);assert.equal((await request(bob,'/messages/'+keptVideo.id)).message.type,'video');
+  for(const [mime,data]of[['video/mp4',Buffer.from('<script>fake</script>')],['video/webm',Buffer.from('fake')],['video/quicktime',bytes]])assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',{type:'video',mime,data:data.toString('base64')})).status,400);
+  assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',{type:'video',mime:'video/mp4',data:Buffer.alloc(6*1024*1024+1).toString('base64')})).status,413);
+  const pictures=[];for(let i=0;i<4;i++)pictures.push((await request(bob,'/conversations/'+chat+'/messages','POST',{type:'image',mime:'image/png',data:'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+X2ioAAAAASUVORK5CYII=',filename:'foto.png'})).message);
+  const page=await request(bob,endpoint+'?limit=3');assert.equal(page.total,initial+5);assert.equal(page.media.length,3);assert.equal(page.hasMore,true);
+  const ids=page.media.map(m=>m.id);let cursor=page;while(cursor.hasMore){cursor=await request(bob,endpoint+'?limit=3&before='+cursor.media.at(-1).created);ids.push(...cursor.media.map(m=>m.id));assert(cursor.media.every(m=>['image','video'].includes(m.type)));}
+  assert.equal(ids.length,initial+5);assert.equal(new Set(ids).size,ids.length);assert(ids.includes(keptVideo.id));
+  await request(bob,'/messages/'+pictures[0].id,'DELETE',{});const remaining=await request(alice,endpoint);assert.equal(remaining.total,initial+4);assert(!remaining.media.some(m=>m.id===pictures[0].id));
+});
+
+test('stickers nuevos y favoritos privados por cuenta sobreviven a nuevas sesiones',async()=>{
+  const first=stickerCatalog[34],last=stickerCatalog.at(-1),url='/me/sticker-favorites/';
+  assert.equal((await request(client(),url+first.id,'PUT',{favorite:true})).status,401);
+  assert.equal((await request(alice,url+'0000000000000000','PUT',{favorite:true})).status,400);
+  assert.equal((await request(alice,url+first.id,'PUT',{favorite:'sí'})).status,400);
+  for(let i=0;i<2;i++)assert.deepEqual((await request(alice,url+first.id,'PUT',{favorite:true})).stickerFavorites,[first.id]);
+  await request(alice,url+last.id,'PUT',{favorite:true});
+  assert.deepEqual((await request(alice,'/me')).user.stickerFavorites,[first.id,last.id]);
+  assert.deepEqual((await request(bob,'/me')).user.stickerFavorites,[]);
+  assert((await request(bob,'/profiles')).profiles.every(p=>p.stickerFavorites===undefined));
+  const login=await request(client(),'/auth/login','POST',{login:'QA Alice Nueva',password:'NuevaClaveDePrueba-456'});
+  assert.deepEqual(login.user.stickerFavorites,[first.id,last.id]);
+  assert.deepEqual((await request(alice,url+first.id,'PUT',{favorite:false})).stickerFavorites,[last.id]);
+  const sent=await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:last.id});assert.equal(sent.status,201);
+  const image=await fetch(base+sent.message.url);assert.equal(image.status,200);assert.deepEqual(Buffer.from(await image.arrayBuffer()),fs.readFileSync(path.join(root,'public',last.src)));
+  const published=await request(alice,'/posts','POST',{sticker:last.id});assert.equal(published.status,201);assert.equal(published.post.sticker.id,last.id);
+  await request(alice,'/posts/'+published.post.id,'PATCH',{archived:true});
+});
+
 test('persistencia tras reinicio y cierre de sesión',async()=>{
   await stop();base=undefined;await start();const me=await request(alice,'/me');assert.equal(me.user.bio,'Una biografía real.');assert.equal(me.user.avatar,'Violeta');assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages')).messages.some(m=>m.text==='Hola editado'));
+  assert.deepEqual(me.user.stickerFavorites,[stickerCatalog.at(-1).id]);
+  assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/media')).media.some(m=>m.id===keptVideo.id));assert.equal((await fetch(base+keptVideo.url,{headers:{cookie:bob.cookie},method:'HEAD'})).status,200);
   const picture=await fetch(base+keptImage.url,{headers:{cookie:bob.cookie}});assert.equal(picture.status,200);assert.equal(Buffer.from(await picture.arrayBuffer()).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
   const audio=await fetch(base+keptAudio.url,{headers:{cookie:alice.cookie}});assert.equal(audio.status,200);assert.deepEqual(Buffer.from(await audio.arrayBuffer()),testAudio());
   const persisted=(await request(bob,'/conversations/'+chat+'/messages')).messages;assert.equal(persisted.find(m=>m.id===keptAudio.id).durationMs,1000);assert.equal(persisted.find(m=>m.id===keptSticker.id).type,'sticker');
