@@ -5,7 +5,14 @@ import { fileURLToPath } from 'node:url';
 const dir=path.dirname(fileURLToPath(import.meta.url));
 const url='http://localhost:3000';
 if(Number(process.versions.node.split('.')[0])<24){console.error('Instala Node.js 24 LTS desde https://nodejs.org/ y vuelve a abrir este archivo.');process.exit(1);}
-async function healthy(){try{const r=await fetch(url+'/api/health',{signal:AbortSignal.timeout(1000)});const v=await r.json();return v.ok&&v.version==='2.0.0';}catch{return false;}}
+if(!fs.existsSync(path.join(dir,'node_modules','sharp','package.json'))||!fs.existsSync(path.join(dir,'node_modules','@tensorflow','tfjs-backend-wasm','package.json'))){
+  console.log('Preparando las herramientas para publicar imágenes. Esto solo se hace la primera vez.');
+  const npmPath=path.join(path.dirname(process.execPath),'node_modules','npm','bin','npm-cli.js');
+  const install=fs.existsSync(npmPath)?spawn(process.execPath,[npmPath,'ci','--omit=dev'],{cwd:dir,windowsHide:true,stdio:'inherit'}):spawn('cmd.exe',['/d','/s','/c','npm ci --omit=dev'],{cwd:dir,windowsHide:true,stdio:'inherit'});
+  const status=await new Promise(resolve=>{install.once('error',()=>resolve(1));install.once('exit',resolve);});
+  if(status!==0){console.error('No se pudieron preparar las imágenes. Revisa tu conexión y vuelve a abrir la página.');process.exit(1);}
+}
+async function healthy(){try{const r=await fetch(url+'/api/health',{signal:AbortSignal.timeout(1000)});const v=await r.json();return v.ok&&String(v.version).startsWith('2.');}catch{return false;}}
 if(!await healthy()){
   fs.mkdirSync(path.join(dir,'data'),{recursive:true});
   const log=fs.openSync(path.join(dir,'data','servidor.log'),'a');

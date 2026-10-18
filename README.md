@@ -10,9 +10,10 @@ El enlace de GitHub Pages y sus rutas antiguas de `public/` envían a [la web co
 
 ## Abrir en tu equipo
 
-Requiere **Node.js 24**. El modo local usa SQLite y no necesita instalar dependencias:
+Requiere **Node.js 24**. El modo local usa SQLite. Instala las dependencias para la revisión de imágenes:
 
 ```sh
+npm ci --omit=dev
 node server.mjs
 ```
 
