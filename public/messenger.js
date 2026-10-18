@@ -210,4 +210,3 @@ document.addEventListener('click',event=>{if(Date.now()<suppressMessageClickUnti
 document.addEventListener('pointerdown',event=>{const row=event.target.closest('.message-row');if(event.pointerType!=='touch'||!row||event.target.closest('button,input,a,audio'))return;longPress={x:event.clientX,y:event.clientY,timer:setTimeout(()=>{openReactions(row.dataset.messageId,$('.bubble',row));suppressMessageClickUntil=Date.now()+750;longPress=null;},450)};});
 const cancelLongPress=()=>{clearTimeout(longPress?.timer);longPress=null;};document.addEventListener('pointerup',cancelLongPress);document.addEventListener('pointercancel',cancelLongPress);document.addEventListener('pointermove',event=>{if(longPress&&(Math.abs(event.clientX-longPress.x)>10||Math.abs(event.clientY-longPress.y)>10))cancelLongPress();});
 document.addEventListener('contextmenu',event=>{if(event.target.closest('.message-row')&&chatPopover)event.preventDefault();});
-init();

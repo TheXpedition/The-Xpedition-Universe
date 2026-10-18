@@ -66,7 +66,7 @@ function rankPoster(entry,isSeason=false,position=0){
  const action=item?'content':'profile',id=item?.id||profile?.id,label=item?.name||name;
  const caption=label+(record.context?' - '+record.context:'');
  const cover=id?`<button class="rank-cover" data-action="${action}" data-id="${esc(id)}" ${item?`data-kind="${esc(item.kind)}"`:''} aria-label="${position?'Puesto '+position+': ':''}Ver ${esc(label)}">`:'<div class="rank-cover">';
- return `<div class="rank-poster">${cover}<img src="${esc(item?contentArt(item):refreshedAsset(portrait.image))}" alt="${esc(label)}" loading="lazy" decoding="async">${item?brandArt(item,'rank-season-logo'):''}<span class="rank-poster-glow" aria-hidden="true"></span>${id?'</button>':'</div>'}<span class="rank-name" title="${esc(caption)}"><span class="rank-person">${esc(label)}</span>${record.context?`<span class="rank-context"> - ${esc(record.context)}</span>`:''}</span></div>`;
+ return `<div class="rank-poster">${cover}<img src="${esc(item?(record.poster||contentArt(item)):refreshedAsset(portrait.image))}" alt="${esc(label)}" loading="lazy" decoding="async">${item?(record.logo?`<svg class="brand-art rank-season-logo" viewBox="${record.logo.frame.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(label)}"><image href="${esc(record.logo.src)}" width="${record.logo.width}" height="${record.logo.height}"/></svg>`:brandArt(item,'rank-season-logo')):''}<span class="rank-poster-glow" aria-hidden="true"></span>${id?'</button>':'</div>'}<span class="rank-name" title="${esc(caption)}"><span class="rank-person">${esc(label)}</span>${record.context?`<span class="rank-context"> - ${esc(record.context)}</span>`:''}</span></div>`;
 }
 function rankNumeral(number){
  const width=number===10?285:160;

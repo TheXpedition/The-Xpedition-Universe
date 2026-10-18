@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 import {openDatabase} from '../database.mjs';
+import {explicitContent} from '../moderation.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -135,6 +136,42 @@ test('noticias, límites, CSRF y datos privados fuera del directorio público',a
   const csrf=await fetch(base+'/api/me',{method:'PATCH',headers:{cookie:alice.cookie,'Content-Type':'application/json',origin:'https://otro.example'},body:JSON.stringify({bio:'Intruso'})});assert.equal(csrf.status,403);
   for(const p of ['/server.mjs','/data/xpedition.sqlite','/data/uploads/'+imageId])assert.equal((await fetch(base+p)).status,404);
 });
+test('el filtro bloquea probabilidades explícitas sin rechazar solo sensualidad',()=>{
+  assert(explicitContent([{className:'Porn',probability:.8}]));assert(explicitContent([{className:'Hentai',probability:.8}]));assert(explicitContent([{className:'Porn',probability:.5},{className:'Hentai',probability:.4}]));assert(!explicitContent([{className:'Sexy',probability:.99},{className:'Neutral',probability:.01}]));
+});
+test('identidad editable y orientación privada en perfiles y publicaciones',async()=>{
+  const me=await request(alice,'/me','PATCH',{genderIdentity:'No Binario',pronouns:'elle',orientation:'Bisexual',orientationVisible:false});assert.equal(me.user.pronouns,'elle');assert.equal(me.user.orientation,'Bisexual');
+  const publicUser=(await request(bob,'/profiles')).profiles.find(p=>p.id===alice.user.id);assert.equal(publicUser.orientation,undefined);assert.equal(publicUser.pronouns,'elle');
+  assert.equal((await request(alice,'/me','PATCH',{genderIdentity:'Therian',pronouns:''})).status,400);
+  assert.equal((await request(alice,'/me','PATCH',{genderIdentity:'Hombre',pronouns:'ella'})).user.pronouns,'el');
+  await request(alice,'/me','PATCH',{genderIdentity:'Mujer',orientationVisible:true});assert.equal((await request(bob,'/profiles')).profiles.find(p=>p.id===alice.user.id).orientation,'Bisexual');
+  await request(alice,'/me','PATCH',{orientationVisible:false});
+});
+test('publicaciones, menciones, stickers, archivo recuperable y orden reciente',async()=>{
+  assert.equal((await request(client(),'/posts','POST',{text:'Intruso'})).status,401);
+  const a=await request(alice,'/posts','POST',{text:'Hola universo',feeling:'orgullosa',sticker:stickerCatalog[0].id,mentions:[bob.user.id,'char:dani']});assert.equal(a.status,201);assert.equal(a.post.mentions.length,2);assert.equal(a.post.author.orientation,undefined);assert.equal(a.post.sticker.id,stickerCatalog[0].id);
+  await new Promise(r=>setTimeout(r,3));const b=await request(bob,'/posts','POST',{text:'La más reciente'});const feed=await request(client(),'/posts');assert.equal(feed.posts[0].id,b.post.id);
+  assert.equal((await request(bob,'/posts/'+a.post.id,'PATCH',{archived:true})).status,404);
+  assert.equal((await request(alice,'/posts/'+a.post.id,'PATCH',{archived:true})).status,200);assert(!(await request(client(),'/posts')).posts.some(p=>p.id===a.post.id));
+  assert.equal((await request(bob,'/posts?author='+alice.user.id+'&archived=1')).status,403);assert((await request(alice,'/posts?author='+alice.user.id+'&archived=1')).posts.some(p=>p.id===a.post.id));
+  await request(alice,'/posts/'+a.post.id,'PATCH',{archived:false});assert((await request(client(),'/posts?author='+alice.user.id)).posts.some(p=>p.id===a.post.id));
+  for(const values of [{text:'x',mentions:['char:noexiste']},{sticker:'../private'},{text:'x',feeling:'noexiste'}])assert.equal((await request(alice,'/posts','POST',values)).status,400);
+});
+test('popularidad inicial, visitas únicas y cambios graduales',async()=>{
+  let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);assert.deepEqual(p.slice(0,5).map(p=>p.name),['Bonju','Dani','Isabel','Luciano','Andromeda']);assert.equal(p.at(-1).id,'char:alexyohender');assert.equal(p.at(-2).name,'Carlos Rojas');
+  const last=p.at(-1);for(let i=0;i<3;i++)assert.equal((await request(alice,'/characters/'+last.id+'/view','POST',{})).status,200);
+  const next=(await request(client(),'/profiles')).profiles.find(p=>p.id===last.id);assert.equal(next.visits,last.visits+1);assert.equal(next.popularityRank,last.popularityRank);
+  await request(bob,'/characters/'+last.id+'/view','POST',{});assert.equal((await request(client(),'/profiles')).profiles.find(p=>p.id===last.id).visits,last.visits+2);
+});
+test('revisión real de imágenes públicas sin bloquear los mensajes',async()=>{
+  const pending=request(alice,'/posts','POST',{text:'Arte aprobado',image:fs.readFileSync(path.join(root,'public/backdrops/apocalypse-top.png')).toString('base64')});
+  await new Promise(r=>setTimeout(r,250));const t=Date.now();assert.equal((await request(bob,'/conversations/'+chat+'/messages','POST',{text:'El chat sigue funcionando durante la revisión'})).status,201);assert(Date.now()-t<2000);
+  const result=await pending;assert.equal(result.status,201);const image=await fetch(base+result.post.image);assert.equal(image.status,200);assert.equal(image.headers.get('content-type'),'image/png');
+  assert.equal((await request(alice,'/posts','POST',{image:Buffer.from('<svg/>').toString('base64')})).status,422);
+  await request(alice,'/posts/'+result.post.id,'PATCH',{archived:true});assert.equal((await fetch(base+result.post.image)).status,404);
+  await request(alice,'/posts/'+result.post.id,'PATCH',{archived:false});assert.equal((await fetch(base+result.post.image)).status,200);
+});
+
 test('persistencia tras reinicio y cierre de sesión',async()=>{
   await stop();base=undefined;await start();const me=await request(alice,'/me');assert.equal(me.user.bio,'Una biografía real.');assert.equal(me.user.avatar,'Violeta');assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages')).messages.some(m=>m.text==='Hola editado'));
   const picture=await fetch(base+keptImage.url,{headers:{cookie:bob.cookie}});assert.equal(picture.status,200);assert.equal(Buffer.from(await picture.arrayBuffer()).subarray(0,8).toString('hex'),'89504e470d0a1a0a');

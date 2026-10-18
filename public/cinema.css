@@ -221,3 +221,7 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .rank-context{color:#aaa0b8;font-weight:500}
 .annotated-ranking .rank-number{margin-bottom:53px}
 @media(max-width:750px){.annotated-ranking .rank-name{height:54px}.annotated-ranking .rank-number{margin-bottom:64px}}
+
+/* Keep Showdown's face above the title on landscape cards. */
+.season-card[data-content-id="safari-showdown"] .season-art>img.season-background{object-position:center 4%}
+.season-card[data-content-id="safari-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}

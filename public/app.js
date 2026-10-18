@@ -117,7 +117,7 @@ async function submitAuth(e){
     const registering=state.authMode==='register',password=$('#authPassword').value;
     if(registering&&password!==$('#authConfirm').value)throw new Error('Las contraseñas no coinciden.');
     const values=registering?{name:$('#authName').value,email:$('#authEmail').value,password}:{login:$('#authLogin').value,password};
-    const result=await api('/auth/'+(registering?'register':'login'),{method:'POST',body:values});await authenticated(result.user);closeModal();toast('¡Bienvenid@, '+state.user.name+'!');if(registering)openAvatarPicker();
+    const result=await api('/auth/'+(registering?'register':'login'),{method:'POST',body:values});await authenticated(result.user);closeModal();toast('¡Bienvenid@, '+state.user.name+'!');if(registering)editProfile(true);
   }catch(error){if($('#authError'))$('#authError').textContent=error.message;}finally{if(button.isConnected)button.disabled=false;}
 }
 async function loadFirebase(){
@@ -133,7 +133,7 @@ function googleLogin(){
   const button=$('#googleButton');if(button)button.disabled=true;
   // Called directly from the user gesture, before any await, to preserve popup permission.
   state.firebase.signInWithPopup(state.firebase.auth,state.firebase.provider).then(async result=>{
-    const idToken=await result.user.getIdToken();const data=await api('/auth/google',{method:'POST',body:{idToken}});await authenticated(data.user);closeModal();toast('Entraste con Google. ¡Bienvenid@!');
+    const idToken=await result.user.getIdToken();const data=await api('/auth/google',{method:'POST',body:{idToken}});await authenticated(data.user);closeModal();toast('Entraste con Google. ¡Bienvenid@!');if(!state.user.genderIdentity)editProfile(true);
   }).catch(error=>{
     const descriptions={'auth/popup-blocked':'Tu navegador bloqueó la ventana de Google. Permite ventanas emergentes para esta web y vuelve a intentar.','auth/popup-closed-by-user':'Cerraste la ventana de Google. Puedes volver a abrirla cuando quieras.','auth/unauthorized-domain':'Este dominio necesita autorizarse en Firebase → Authentication → Settings → Authorized domains. Para esta prueba abre http://localhost:3000.','auth/operation-not-allowed':'Activa el proveedor Google en Firebase → Authentication → Sign-in method.','auth/network-request-failed':'No se pudo conectar con Google. Revisa tu conexión.'};
     const message=descriptions[error.code]||error.message||'No se pudo iniciar sesión con Google.';if($('#authError'))$('#authError').textContent=message;else toast(message,true);
@@ -232,7 +232,7 @@ function startStream(){
   stopStream();if(!state.user)return;const stream=new EventSource('/api/events');state.stream=stream;
   stream.addEventListener('ready',()=>{setConnection(true);refreshConversations().catch(()=>{});refreshProfiles().catch(()=>{});if(state.active&&state.route==='mensajes')refreshActiveMessages().catch(()=>{});});
   stream.onerror=()=>setConnection(false);stream.onopen=()=>setConnection(true);
-  stream.addEventListener('profiles',async()=>{try{const own=await api('/me');state.user=own.user;await refreshProfiles();renderChrome();if(state.route==='comunidad')communityResults();if(state.route==='perfil')renderProfile(decodeURIComponent(location.hash.split('/')[1]||''));}catch{}});
+  stream.addEventListener('profiles',async()=>{try{const own=await api('/me');state.user=own.user;await refreshProfiles();renderChrome();if(state.route==='comunidad')communityResults();if(state.route==='perfil'&&!$('#postForm'))renderProfile(decodeURIComponent(location.hash.split('/')[1]||''));}catch{}});
   stream.addEventListener('news',async()=>{await refreshNews();if(state.route==='noticias')renderNews();});
   stream.addEventListener('presence',event=>{const p=JSON.parse(event.data);const profile=getProfile(p.id);if(profile)profile.online=p.online;for(const c of state.conversations)for(const m of c.members)if(m.id===p.id)m.online=p.online;renderConversationList();updateChatStatus();});
   stream.addEventListener('conversations',async()=>{await refreshConversations();if(state.active&&!state.conversations.some(c=>c.id===state.active)){state.active=null;if(state.route==='mensajes')renderMessenger();}});

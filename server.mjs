@@ -1,4 +1,6 @@
 import http from 'node:http';
+import {createSocial,identityValues} from './social.mjs';
+import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
 import {openStorage} from './storage.mjs';
 import {randomBytes, randomUUID, scrypt as scryptCb, timingSafeEqual, createHash} from 'node:crypto';
@@ -78,7 +80,9 @@ function userFields(u) {
     character: false,
     online: events.has(u.id),
     followers: Number(u.followers || 0),
-    following: Number(u.following || 0)
+    following: Number(u.following || 0),
+    genderIdentity:u.gender_identity||'',pronouns:u.pronouns||'',
+    ...(Number(u.orientation_visible)?{orientation:u.orientation,orientationVisible:true}:{orientationVisible:false})
   };
 }
 const countedUsers = 'SELECT u.*, (SELECT COUNT(*) FROM follows WHERE target=u.id) AS followers, (SELECT COUNT(*) FROM follows WHERE actor=u.id) AS following FROM users u';
@@ -90,15 +94,17 @@ async function safeUser(u, own = false) {
     email: u.email,
     saved: JSON.parse(u.saved),
     follows: (await all('SELECT target FROM follows WHERE actor=?', u.id)).map(x => x.target),
-    hasPassword: !!u.password
+    hasPassword: !!u.password,orientation:u.orientation||'',orientationVisible:!!Number(u.orientation_visible)
   });
   return result;
 }
 async function profiles() {
   const counts = new Map((await all('SELECT target,COUNT(*) AS n FROM follows GROUP BY target')).map(x => [x.target, Number(x.n)]));
   const users = await all(countedUsers + ' ORDER BY u.created');
+  const popularity=await social.ranks(counts);
   return [...characters.map(c => ({
     ...c,
+    ...popularity.get(c.id),
     followers: counts.get(c.id) || 0,
     following: 0,
     online: false
@@ -290,7 +296,7 @@ async function api(req, res, url) {
       ok: true,
       database: db.kind,
       storage: storage.kind,
-      version: '2.0.0'
+      version: '2.1.0',imageModeration:moderationStatus()
     });
   }
   if (p === '/api/me' && method === 'GET') return json(res, {
@@ -370,6 +376,7 @@ async function api(req, res, url) {
       ok: true
     });
   }
+  if(await social.handle(req,res,url,u))return;
   if (!u) fail(401, 'Inicia sesión para continuar.');
   const connections = p.match(/^\/api\/profiles\/([^/]+)\/(followers|following)$/);
   if (connections && method === 'GET') {
@@ -432,8 +439,9 @@ async function api(req, res, url) {
     if (bio.length > 600) fail(400, 'La biografía admite hasta 600 caracteres.');
     const saved = b.saved === undefined ? JSON.parse(u.saved) : b.saved;
     if (!Array.isArray(saved) || saved.length > 200 || saved.some(id => !Object.values(catalog.content).flat().some(c => c.id === id))) fail(400, 'Lista inválida.');
+    const identity=identityValues(b,u,fail);
     try {
-      await run('UPDATE users SET name=?,name_key=?,avatar=?,bio=?,saved=? WHERE id=?', name, canonical(name), avatar, bio, JSON.stringify([...new Set(saved)]), u.id);
+      await run('UPDATE users SET name=?,name_key=?,avatar=?,bio=?,saved=?,gender_identity=?,pronouns=?,orientation=?,orientation_visible=? WHERE id=?', name, canonical(name), avatar, bio, JSON.stringify([...new Set(saved)]),...identity,u.id);
     } catch {
       fail(409, 'Ese nombre ya está en uso.');
     }
@@ -727,19 +735,16 @@ async function api(req, res, url) {
   fail(404, 'No se encontró esta función.');
 }
 let writeQueue = Promise.resolve();
-async function dispatchApi(req, res, url) {
-  if (['GET', 'HEAD'].includes(req.method)) return api(req, res, url);
-  const previous = writeQueue;
-  let release;
-  writeQueue = new Promise(resolve => {
-    release = resolve;
-  });
-  await previous;
-  try {
-    return await api(req, res, url);
-  } finally {
-    release();
-  }
+async function serialize(fn){
+  const previous=writeQueue;let release;
+  writeQueue=new Promise(resolve=>{release=resolve;});await previous;
+  try{return await fn();}finally{release();}
+}
+const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone});
+async function dispatchApi(req,res,url){
+  // Image review runs in a worker before taking the write lock so chat stays responsive.
+  if(['GET','HEAD'].includes(req.method)||(req.method==='POST'&&url.pathname==='/api/posts'))return api(req,res,url);
+  return serialize(()=>api(req,res,url));
 }
 const mimeTypes = {
   '.html': 'text/html; charset=utf-8',
@@ -805,6 +810,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 server.listen(Number(process.env.PORT || 3000), process.env.HOST || '127.0.0.1', () => console.log(`The Xpedition · http://localhost:${server.address().port}\nBase de datos: ${db.kind} · archivos: ${storage.kind}`));
+if(process.env.NODE_ENV==='production')warmModeration(fs.readFileSync(path.join(publicDir,'backdrops/apocalypse-top.png')));
 setInterval(async () => {
   try {
     await run('DELETE FROM sessions WHERE expires<?', stamp());

@@ -1443,7 +1443,21 @@
         "antarctica",
         "the traitor 2",
         "showdown 2",
-        "apocalypse"
+        {
+          "name": "Apocalypse",
+          "poster": "backdrops/apocalypse-top.png",
+          "logo": {
+            "src": "transparent/apocalypse-top.png",
+            "width": 2131,
+            "height": 738,
+            "frame": [
+              64,
+              166,
+              1992,
+              460
+            ]
+          }
+        }
       ]
     },
     {

@@ -55,3 +55,13 @@ node --test tests/integration.test.mjs
 ```
 
 Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se admite un PostgreSQL **local y aislado** mediante `TEST_DATABASE_URL` para comprobar la persistencia externa. Más detalles en [LEEME.md](LEEME.md).
+
+## Comunidad y publicaciones
+
+Los perfiles pueden compartir texto, una imagen PNG/JPG/WebP de hasta 4 MB o un sticker de la colección. Incluyen sentimientos según los pronombres elegidos y hasta diez menciones a cuentas o personajes. El feed muestra primero las publicaciones recientes. Archivar oculta una publicación y su imagen; el autor puede restaurarla desde su archivo.
+
+Identidad y pronombres se editan en el perfil. La orientación sexual es opcional y privada por defecto; las respuestas públicas del servidor no incluyen una orientación oculta. Las migraciones añaden tablas y columnas sin reiniciar usuarios, sesiones, conversaciones ni archivos existentes.
+
+Las imágenes públicas se revisan en el servidor con NSFWJS MobileNetV2, antes de publicarse. La revisión corre en un worker con cola limitada para mantener el chat disponible. No envía imágenes a otro proveedor. Si falla o vence el tiempo de revisión, la imagen no se publica. Es un filtro automático con posibles falsos positivos y negativos; no sustituye la revisión humana. Los stickers aprobados mantienen sus archivos originales.
+
+La popularidad arranca con el orden editorial solicitado. Cada puesto parte con 100 puntos de diferencia; cada visita única por día suma uno y cada seguidor actual suma doce. Repetir visitas el mismo día no aumenta la cuenta. Así la competencia cambia gradualmente entre puestos cercanos.

@@ -13,13 +13,19 @@ CREATE TABLE IF NOT EXISTS members(conversation TEXT NOT NULL REFERENCES convers
 CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY,conversation TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,sender TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL DEFAULT '',type TEXT NOT NULL DEFAULT 'text',file TEXT,mime TEXT,filename TEXT,reply_to TEXT,created INTEGER NOT NULL,edited INTEGER,deleted INTEGER NOT NULL DEFAULT 0,duration_ms INTEGER NOT NULL DEFAULT 0);
 CREATE INDEX IF NOT EXISTS messages_conversation_time ON messages(conversation,created);
 CREATE TABLE IF NOT EXISTS reactions(message TEXT NOT NULL REFERENCES messages(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,emoji TEXT NOT NULL,PRIMARY KEY(message,user_id));
-CREATE TABLE IF NOT EXISTS news_likes(news TEXT NOT NULL,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,PRIMARY KEY(news,user_id));`;
+CREATE TABLE IF NOT EXISTS news_likes(news TEXT NOT NULL,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,PRIMARY KEY(news,user_id));
+CREATE TABLE IF NOT EXISTS posts(id TEXT PRIMARY KEY,author TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL DEFAULT '',image TEXT,mime TEXT,sticker TEXT,feeling TEXT NOT NULL DEFAULT '',created INTEGER NOT NULL,archived INTEGER NOT NULL DEFAULT 0);
+CREATE INDEX IF NOT EXISTS posts_created ON posts(created);
+CREATE TABLE IF NOT EXISTS post_mentions(post TEXT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,target TEXT NOT NULL,PRIMARY KEY(post,target));
+CREATE TABLE IF NOT EXISTS character_views(character TEXT PRIMARY KEY,views INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS character_visits(character TEXT NOT NULL,visitor TEXT NOT NULL,day INTEGER NOT NULL,PRIMARY KEY(character,visitor,day));`;
 
-const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes'];
+const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0']];
+const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits'];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|follows|conversations|members|messages|reactions|news_likes)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';
@@ -38,6 +44,8 @@ export async function openDatabase(dataDir) {
       if (!columns.has(name)) database.exec(`ALTER TABLE conversations ADD COLUMN ${name} ${type}`);
     }
     if (!database.prepare('PRAGMA table_info(messages)').all().some(c=>c.name==='duration_ms')) database.exec('ALTER TABLE messages ADD COLUMN duration_ms INTEGER NOT NULL DEFAULT 0');
+    const userColumns=new Set(database.prepare('PRAGMA table_info(users)').all().map(c=>c.name));
+    for(const [name,type] of profileColumns)if(!userColumns.has(name))database.exec(`ALTER TABLE users ADD COLUMN ${name} ${type}`);
     return {
       kind:'sqlite',
       one: async (sql,...args)=>database.prepare(sql).get(...args),
@@ -75,6 +83,7 @@ export async function openDatabase(dataDir) {
     // Index names are schema-qualified by PostgreSQL through their table.
     await pool.query(postgresSQL(pgSchema));
     await pool.query('ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0');
+    for(const [name,type] of profileColumns)await pool.query(`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`);
     for (const table of tables) await pool.query(`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY;`);
     await pool.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;
       REVOKE ALL ON ALL SEQUENCES IN SCHEMA xpedition FROM PUBLIC;
