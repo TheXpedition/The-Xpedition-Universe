@@ -193,7 +193,10 @@
         "accent": "var(--tr)",
         "kind": "Spin Off",
         "url": "https://thexpedition.github.io/The-Traitor/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/traitor-season-1-20261018.png"
+        }
       },
       {
         "id": "traitor2",
