@@ -225,3 +225,4 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 /* Keep Showdown's face above the title on landscape cards. */
 .season-card[data-content-id="safari-showdown"] .season-art>img.season-background{object-position:center 4%}
 .season-card[data-content-id="safari-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}
+.rail:not(.poster-rail)>.season-card[data-content-id="traitor-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}
