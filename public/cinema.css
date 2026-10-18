@@ -226,3 +226,5 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .season-card[data-content-id="safari-showdown"] .season-art>img.season-background{object-position:center 4%}
 .season-card[data-content-id="safari-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}
 .rail:not(.poster-rail)>.season-card[data-content-id="traitor-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}
+.campria-card .season-art .brand-art.season-logo{inset:auto 9% 9%;width:82%;height:37%;max-width:none;max-height:none;transform:none;object-fit:contain;filter:drop-shadow(0 3px 6px #000c)}
+.campria-card:has(.brand-art) .season-art>img.season-background{object-position:center 20%}
