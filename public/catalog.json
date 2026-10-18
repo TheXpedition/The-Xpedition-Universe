@@ -234,6 +234,156 @@
         "kind": "Spin Off",
         "url": "https://thexpedition.github.io/The-Traitor-2/",
         "actionLabel": "Ir a la temporada"
+      },
+      {
+        "id": "diamond-rush-1",
+        "name": "Diamond Rush 1",
+        "meta": "Season 1 · 2015",
+        "season": "S1",
+        "desc": "Maria Villegas abre las puertas de Diamond Rush, una nueva competencia del universo Campria donde cada voto vale tanto como un diamante. Luis, Coronel, Felipe y Sophie se enfrentan a alianzas fugaces y decisiones que pueden cambiar el juego en una sola noche.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-1.png",
+          "logo": {
+            "src": "transparent/diamond-rush-1.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              32,
+              267,
+              1408,
+              560
+            ]
+          }
+        }
+      },
+      {
+        "id": "diamond-rush-2",
+        "name": "Diamond Rush 2",
+        "meta": "Season 2 · 2016",
+        "season": "S2",
+        "desc": "El brillo regresa con una segunda temporada más impredecible. Nidia Mirella, Luis, Damián y Amanda Lewis ponen a prueba sus estrategias mientras Maria Villegas conduce una carrera de pactos secretos, votos decisivos y lealtades que duran lo justo.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-2.png",
+          "logo": {
+            "src": "transparent/diamond-rush-2.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              29,
+              244,
+              1419,
+              594
+            ]
+          }
+        }
+      },
+      {
+        "id": "diamond-rush-3",
+        "name": "Diamond Rush 3",
+        "meta": "Season 3 · 2016",
+        "season": "S3",
+        "desc": "Las viejas rivalidades encuentran un nuevo escenario. Vitany Glambert, Emanuel, Coronel, Luis y Mati buscan dominar las votaciones en una edición donde Maria Villegas recuerda a todos que la mejor alianza también puede ser la próxima amenaza.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-3.png",
+          "logo": {
+            "src": "transparent/diamond-rush-3.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              30,
+              238,
+              1418,
+              600
+            ]
+          }
+        }
+      },
+      {
+        "id": "diamond-rush-4",
+        "name": "Diamond Rush 4",
+        "meta": "Season 4 · 2017",
+        "season": "S4",
+        "desc": "Renzo, Nidia Mirella, Robin, Luciano y Javi llegan dispuestos a mover cada pieza. Bajo la mirada de Maria Villegas, una temporada de acuerdos arriesgados y mayorías cambiantes convierte la confianza en el recurso más difícil de conservar.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-4.png",
+          "logo": {
+            "src": "transparent/diamond-rush-4.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              31,
+              250,
+              1417,
+              590
+            ]
+          }
+        }
+      },
+      {
+        "id": "diamond-rush-5",
+        "name": "Diamond Rush 5",
+        "meta": "Season 5 · 2017",
+        "season": "S5",
+        "desc": "Emily Waldorf, Valery Ocampo, Alexandro y Dani encabezan una edición en la que nadie quiere quedar a la sombra. Maria Villegas reúne a un elenco que deberá elegir entre proteger sus vínculos o apostar por el voto capaz de llevarlo hasta el final.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-5.png",
+          "logo": {
+            "src": "transparent/diamond-rush-5.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              27,
+              249,
+              1421,
+              588
+            ]
+          }
+        }
+      },
+      {
+        "id": "diamond-rush-6",
+        "name": "Diamond Rush 6",
+        "meta": "Season 6 · 2018",
+        "season": "S6",
+        "desc": "La sexta carrera por el diamante reúne a Sadith, Jesus, Luis, Ivy y Vitany Glambert. Con Maria Villegas al frente, nuevas alianzas y cuentas pendientes chocan en una temporada donde cada eliminación redefine quién tiene realmente el control.",
+        "accent": "#cbb0f3",
+        "kind": "Spin Off",
+        "saga": "diamond-rush",
+        "universe": "Campria",
+        "art": {
+          "background": "backdrops/diamond-rush-6.png",
+          "logo": {
+            "src": "transparent/diamond-rush-6.png",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              25,
+              259,
+              1423,
+              586
+            ]
+          }
+        }
       }
     ],
     "campria": [

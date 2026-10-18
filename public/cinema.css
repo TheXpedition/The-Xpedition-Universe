@@ -228,3 +228,12 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .rail:not(.poster-rail)>.season-card[data-content-id="traitor-showdown"] .season-art .brand-art.season-logo{top:auto;bottom:4%;height:46%;width:74%;left:13%}
 .campria-card .season-art .brand-art.season-logo{inset:auto 9% 9%;width:82%;height:37%;max-width:none;max-height:none;transform:none;object-fit:contain;filter:drop-shadow(0 3px 6px #000c)}
 .campria-card:has(.brand-art) .season-art>img.season-background{object-position:center 20%}
+.diamond-rush-card .season-art{aspect-ratio:2/3}
+.diamond-rush-card .season-art>img.season-background{object-position:center 22%}
+.diamond-rush-card .season-art .brand-art.season-logo{inset:auto 9% 9%;width:82%;height:37%;filter:drop-shadow(0 3px 6px #000c)}
+.rail:not(.poster-rail)>.diamond-rush-card .season-art,.detail-recommendations .diamond-rush-card .season-art{aspect-ratio:1.56}
+.rail:not(.poster-rail)>.diamond-rush-card .season-art>img.season-background,.detail-recommendations .diamond-rush-card .season-art>img.season-background{object-position:center 34%}
+.rail:not(.poster-rail)>.diamond-rush-card .season-art .brand-art.season-logo,.detail-recommendations .diamond-rush-card .season-art .brand-art.season-logo{inset:auto 16% 4%;width:68%;height:39%}
+.detail-diamond-rush-hero .detail-hero-image{object-position:center 34%}
+.detail-diamond-rush-hero .brand-art.detail-logo{bottom:65px;width:300px;height:125px}
+@media(max-width:750px){.detail-diamond-rush-hero .detail-hero-image{object-position:center 26%}.detail-diamond-rush-hero .brand-art.detail-logo{bottom:65px;width:240px;height:100px}}

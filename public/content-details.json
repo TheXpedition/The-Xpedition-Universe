@@ -758,5 +758,179 @@
       "Convivencia",
       "Estrategia"
     ]
+  },
+  "diamond-rush-1": {
+    "previewCast": [
+      "Maria Villegas",
+      "Luis",
+      "Coronel",
+      "Felipe",
+      "Sophie"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Luis",
+      "Coronel",
+      "Felipe",
+      "Joaquín",
+      "Sophie",
+      "Jeyson",
+      "Iker",
+      "Mariano",
+      "Violeta",
+      "Alexia",
+      "Humberto"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
+  },
+  "diamond-rush-2": {
+    "previewCast": [
+      "Maria Villegas",
+      "Nidia Mirella",
+      "Luis",
+      "Damián",
+      "Amanda Lewis"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Nidia Mirella",
+      "Luis",
+      "Damián",
+      "Amanda Lewis",
+      "Javi",
+      "Robin",
+      "Jeyson",
+      "Eduard",
+      "Iker",
+      "Jesus",
+      "Alexandro",
+      "Luciano",
+      "Felipe"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
+  },
+  "diamond-rush-3": {
+    "previewCast": [
+      "Maria Villegas",
+      "Vitany Glambert",
+      "Emanuel",
+      "Coronel",
+      "Luis",
+      "Mati"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Vitany Glambert",
+      "Emanuel",
+      "Coronel",
+      "Luis",
+      "Mati",
+      "Javi",
+      "Nidia Mirella",
+      "Luciano",
+      "Damián",
+      "Vladimir",
+      "Dani"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
+  },
+  "diamond-rush-4": {
+    "previewCast": [
+      "Maria Villegas",
+      "Renzo",
+      "Nidia Mirella",
+      "Robin",
+      "Luciano",
+      "Javi"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Renzo",
+      "Nidia Mirella",
+      "Damián",
+      "Robin",
+      "Luciano",
+      "Javi",
+      "Emanuel",
+      "Alexandro",
+      "Coronel",
+      "Pablo",
+      "Nahuee",
+      "Isaac",
+      "Julie",
+      "Mati"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
+  },
+  "diamond-rush-5": {
+    "previewCast": [
+      "Maria Villegas",
+      "Emily Waldorf",
+      "Valery Ocampo",
+      "Alexandro",
+      "Dani"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Emily Waldorf",
+      "Valery Ocampo",
+      "Alexandro",
+      "Dani",
+      "Coronel",
+      "Ian Esteban",
+      "Javi",
+      "Damián",
+      "Luciano",
+      "Nidia Mirella"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
+  },
+  "diamond-rush-6": {
+    "previewCast": [
+      "Maria Villegas",
+      "Sadith",
+      "Jesus",
+      "Luis",
+      "Ivy",
+      "Vitany Glambert"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Sadith",
+      "Jesus",
+      "Luis",
+      "Ivy",
+      "Vitany Glambert",
+      "Alexandro",
+      "Joaquin",
+      "Luciano",
+      "Robin",
+      "Ashley"
+    ],
+    "genres": [
+      "Temporada Corta",
+      "Estrategia",
+      "Votaciones"
+    ]
   }
 }
