@@ -11,6 +11,7 @@
     "Andromeda",
     "Ari Salgado",
     "Ariana Glande",
+    "Ashley",
     "Atneimip",
     "Azael",
     "Azealia Midnight",
@@ -19,8 +20,10 @@
     "Bodega Bodeguita",
     "Bonju",
     "Brave",
+    "Britney Britney",
     "Bruno Macri",
     "Bryan Montalvo",
+    "Candy Cookies",
     "Carlos Harrington",
     "Carlos Rojas",
     "Carmine",
@@ -29,6 +32,7 @@
     "Catalina",
     "Chad Gil Pete",
     "Christopher",
+    "Cinthia Carral",
     "Cocomong",
     "Coronel",
     "Cristian Julio",
@@ -44,15 +48,18 @@
     "Edson",
     "Eduard",
     "Eduardo",
+    "Eduardo Buñuelo",
     "Elian",
     "Elias",
     "Elvin",
     "Emanuel",
+    "Emily Waldorf",
     "Emmy Mango",
     "Eris Midnight",
     "Esteban",
     "Felipe Vicente",
     "Felix",
+    "Gaba Hochbaum",
     "Gabriel Sab",
     "Garnet",
     "Gokuh Moreno",
@@ -64,12 +71,17 @@
     "Iker",
     "Imanol",
     "Iñaella Rose",
+    "Isaac",
     "Isabel",
     "Ivan Serrano",
     "Ivy",
+    "Jared",
     "Javi",
     "Jere",
     "Jesús",
+    "Jeyson",
+    "Joaquin",
+    "Jose Serna",
     "Julián",
     "Julie",
     "Kareli",
@@ -88,6 +100,7 @@
     "Marcos",
     "Maria",
     "Maria Isabel",
+    "Maria Luna",
     "Marianito",
     "Mary Hao",
     "Mati",
@@ -127,9 +140,11 @@
     "Stalin Mango",
     "Stephany",
     "Teseo",
+    "Valery Ocampo",
     "Violeta",
     "Vita",
     "Vitany Glambert",
+    "Vladimir",
     "Ximena",
     "Xina Ro"
   ],
@@ -1123,6 +1138,10 @@
       "image": "personajes/arianaglande.png"
     },
     {
+      "name": "Ashley",
+      "image": "personajes/ashley.png"
+    },
+    {
       "name": "Atneimip",
       "image": "personajes/atneimip.png"
     },
@@ -1155,12 +1174,20 @@
       "image": "personajes/brave.png"
     },
     {
+      "name": "Britney Britney",
+      "image": "personajes/britneybritney.png"
+    },
+    {
       "name": "Bruno Macri",
       "image": "personajes/brunomacri.png"
     },
     {
       "name": "Bryan Montalvo",
       "image": "personajes/bryanmontalvo.png"
+    },
+    {
+      "name": "Candy Cookies",
+      "image": "personajes/candycookies.png"
     },
     {
       "name": "Carlos Harrington",
@@ -1193,6 +1220,10 @@
     {
       "name": "Christopher",
       "image": "personajes/christopher.png"
+    },
+    {
+      "name": "Cinthia Carral",
+      "image": "personajes/cinthiacarral.png"
     },
     {
       "name": "Cocomong",
@@ -1255,6 +1286,10 @@
       "image": "personajes/eduardo.png"
     },
     {
+      "name": "Eduardo Buñuelo",
+      "image": "personajes/eduardobunuelo.png"
+    },
+    {
       "name": "Elian",
       "image": "personajes/elian.png"
     },
@@ -1269,6 +1304,10 @@
     {
       "name": "Emanuel",
       "image": "personajes/emanuel.png"
+    },
+    {
+      "name": "Emily Waldorf",
+      "image": "personajes/emilywaldorf.png"
     },
     {
       "name": "Emmy Mango",
@@ -1289,6 +1328,10 @@
     {
       "name": "Felix",
       "image": "personajes/felix.png"
+    },
+    {
+      "name": "Gaba Hochbaum",
+      "image": "personajes/gabahochbaum.png"
     },
     {
       "name": "Gabriel Sab",
@@ -1335,6 +1378,10 @@
       "image": "personajes/inaellarose.png"
     },
     {
+      "name": "Isaac",
+      "image": "personajes/isaac.png"
+    },
+    {
       "name": "Isabel",
       "image": "personajes/isabel.png"
     },
@@ -1347,6 +1394,10 @@
       "image": "personajes/ivy.png"
     },
     {
+      "name": "Jared",
+      "image": "personajes/jared.png"
+    },
+    {
       "name": "Javi",
       "image": "personajes/javi.png"
     },
@@ -1357,6 +1408,18 @@
     {
       "name": "Jesús",
       "image": "personajes/jesus.png"
+    },
+    {
+      "name": "Jeyson",
+      "image": "personajes/jeyson.png"
+    },
+    {
+      "name": "Joaquin",
+      "image": "personajes/joaquin.png"
+    },
+    {
+      "name": "Jose Serna",
+      "image": "personajes/joseserna.png"
     },
     {
       "name": "Julián",
@@ -1429,6 +1492,10 @@
     {
       "name": "Maria Isabel",
       "image": "personajes/mariaisabel.png"
+    },
+    {
+      "name": "Maria Luna",
+      "image": "personajes/marialuna.png"
     },
     {
       "name": "Marianito",
@@ -1587,6 +1654,10 @@
       "image": "personajes/teseo.png"
     },
     {
+      "name": "Valery Ocampo",
+      "image": "personajes/valeryocampo.png"
+    },
+    {
       "name": "Violeta",
       "image": "personajes/violeta.png"
     },
@@ -1597,6 +1668,10 @@
     {
       "name": "Vitany Glambert",
       "image": "personajes/vitanyglambert.png"
+    },
+    {
+      "name": "Vladimir",
+      "image": "personajes/vladimir.png"
     },
     {
       "name": "Ximena",

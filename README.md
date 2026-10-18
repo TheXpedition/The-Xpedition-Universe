@@ -41,7 +41,7 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 ## Funciones
 
-Registro, contraseña, Google, perfiles editables, 132 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
+Registro, contraseña, Google, perfiles editables, 147 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
 
 Publicaciones con imágenes, stickers, menciones y sentimientos; reacciones a publicaciones y comentarios, comentarios editables por su autor y actualizaciones en tiempo real. Los perfiles permiten elegir identidad, pronombres, visibilidad de la orientación y una portada ajustable que llena todo el espacio. Las imágenes de publicaciones y portadas pasan por revisión local antes de mostrarse. La popularidad de los personajes combina el orden inicial con visitas únicas diarias y seguidores.
 

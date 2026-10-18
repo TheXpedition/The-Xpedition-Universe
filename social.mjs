@@ -15,7 +15,8 @@ export function identityValues(b,u,fail){
 }
 export function popularityOrder(characters,details){
   const first=['Bonju','Dani','Isabel','Luciano','Andromeda','Alexandro','Coronel','Peggy','Ivy','Catalina','Lucas Mendez','Bayron','Felix','Daelly','Dua Lingo','Eduard','Iñaella Rose','Julián','Marcos','Alice','Bryan Montalvo','Sal Lua','Mary Hao','Leandro','Carlos Harrington','Vita','Ximena','Luis','Kim Camila','Ignacio Ricci','Pier','Gabriel Sab','Esteban','Adriana Pereira','Bodega Bodeguita','Beto','Ari Salgado','Renata','Pablo','Nahuee','Teseo','Marianito','Cocomong'];
-  const last=['Damián','Agus','Amanda Lewis','Brave','Atneimip','Edson','Cassie Casu','Emmy Mango','Gokuh Moreno','Imanol','Alexia','Katy','Kareli','Julie','Maicol','Lui Mclean','Pilar','Rodri','Sadith','Stephany','Carlos Rojas','Alex Yohender'];
+  first.splice(2,0,'Britney Britney');first.splice(14,0,'Eduardo Buñuelo');first.splice(19,0,'Dios');
+  const last=['Damián','Agus','Amanda Lewis','Brave','Atneimip','Edson','Cassie Casu','Emmy Mango','Gokuh Moreno','Imanol','Alexia','Katy','Kareli','Julie','Maicol','Lui Mclean','Pilar','Rodri','Sadith','Stephany','Carlos Rojas','Alex Yohender','Ashley','Candy Cookies','Cinthia Carral','Emily Waldorf','Gaba Hochbaum','Isaac','Jared','Jeyson','Joaquin','Jose Serna','Maria Luna','Valery Ocampo','Vladimir'];
   const key=n=>n.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
   const available=new Map(characters.map(c=>[key(c.name),c]));
   const priority=new Set(['antarctica','safari','traitor-showdown'].flatMap(id=>details[id]?.cast||[]).map(key));

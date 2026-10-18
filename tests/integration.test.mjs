@@ -158,7 +158,7 @@ test('publicaciones, menciones, stickers, archivo recuperable y orden reciente',
   for(const values of [{text:'x',mentions:['char:noexiste']},{sticker:'../private'},{text:'x',feeling:'noexiste'}])assert.equal((await request(alice,'/posts','POST',values)).status,400);
 });
 test('popularidad inicial, visitas únicas y cambios graduales',async()=>{
-  let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);assert.deepEqual(p.slice(0,5).map(p=>p.name),['Bonju','Dani','Isabel','Luciano','Andromeda']);assert.equal(p.at(-1).id,'char:alexyohender');assert.equal(p.at(-2).name,'Carlos Rojas');
+  let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);assert.equal(p.length,147);assert.equal(new Set(p.map(p=>p.id)).size,147);assert.deepEqual(p.slice(0,5).map(p=>p.name),['Bonju','Dani','Britney Britney','Isabel','Luciano']);assert.equal(p[14].name,'Eduardo Buñuelo');assert.equal(p[19].name,'Dios');assert.equal(p.at(-1).name,'Vladimir');assert.equal(p.at(-2).name,'Valery Ocampo');
   const last=p.at(-1);for(let i=0;i<3;i++)assert.equal((await request(alice,'/characters/'+last.id+'/view','POST',{})).status,200);
   const next=(await request(client(),'/profiles')).profiles.find(p=>p.id===last.id);assert.equal(next.visits,last.visits+1);assert.equal(next.popularityRank,last.popularityRank);
   await request(bob,'/characters/'+last.id+'/view','POST',{});assert.equal((await request(client(),'/profiles')).profiles.find(p=>p.id===last.id).visits,last.visits+2);
