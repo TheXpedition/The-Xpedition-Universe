@@ -18,14 +18,19 @@ CREATE TABLE IF NOT EXISTS posts(id TEXT PRIMARY KEY,author TEXT NOT NULL REFERE
 CREATE INDEX IF NOT EXISTS posts_created ON posts(created);
 CREATE TABLE IF NOT EXISTS post_mentions(post TEXT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,target TEXT NOT NULL,PRIMARY KEY(post,target));
 CREATE TABLE IF NOT EXISTS character_views(character TEXT PRIMARY KEY,views INTEGER NOT NULL DEFAULT 0);
-CREATE TABLE IF NOT EXISTS character_visits(character TEXT NOT NULL,visitor TEXT NOT NULL,day INTEGER NOT NULL,PRIMARY KEY(character,visitor,day));`;
+CREATE TABLE IF NOT EXISTS character_visits(character TEXT NOT NULL,visitor TEXT NOT NULL,day INTEGER NOT NULL,PRIMARY KEY(character,visitor,day));
+CREATE TABLE IF NOT EXISTS profile_covers(user_id TEXT PRIMARY KEY REFERENCES users(id),file TEXT NOT NULL,position INTEGER NOT NULL DEFAULT 50,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS post_reactions(post TEXT NOT NULL REFERENCES posts(id),user_id TEXT NOT NULL REFERENCES users(id),emoji TEXT NOT NULL,PRIMARY KEY(post,user_id));
+CREATE TABLE IF NOT EXISTS post_comments(id TEXT PRIMARY KEY,post TEXT NOT NULL REFERENCES posts(id),author TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL,created INTEGER NOT NULL,edited INTEGER);
+CREATE INDEX IF NOT EXISTS post_comments_time ON post_comments(post,created);
+CREATE TABLE IF NOT EXISTS comment_reactions(comment TEXT NOT NULL REFERENCES post_comments(id),user_id TEXT NOT NULL REFERENCES users(id),emoji TEXT NOT NULL,PRIMARY KEY(comment,user_id));`;
 
 const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0']];
-const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits'];
+const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions'];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';

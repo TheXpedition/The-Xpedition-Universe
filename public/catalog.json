@@ -594,7 +594,8 @@
       "role": "The Xpedition Host",
       "title": "Bonju fue galardonada como Mejor Host virtual",
       "text": "Bonju fue galardonada como Mejor Host virtual en los Camp Awards, reforzando su lugar como una de las figuras más queridas y reconocibles del universo The Xpedition. El reconocimiento celebra su presencia, su estilo para conducir la competencia y la forma en que acompaña cada giro importante de la franquicia.",
-      "imageName": "Bonju"
+      "imageName": "Bonju",
+      "portraitBackground": "#efdec2"
     },
     {
       "id": "xpedition-japan-location",
@@ -610,7 +611,8 @@
       "role": "The Xpedition Host",
       "title": "Ignacio Ricci se consagró como el ganador de Safari Showdown 2",
       "text": "Ignacio Ricci ganó el especial de reunión de Safari Showdown 2 y cerró la noche con una victoria contundente. Además del premio de 20 dólares, obtuvo un pase directo a la próxima temporada, convirtiéndose en una de las figuras a seguir para lo que viene.",
-      "imageName": "Bonju"
+      "imageName": "Bonju",
+      "portraitBackground": "#fee4bf"
     },
     {
       "id": "julian-fuera-final-safari",
@@ -618,7 +620,8 @@
       "role": "The Xpedition Host",
       "title": "¡Julián queda fuera de la final de Safari!",
       "text": "Después de un reto cargado de tensión, presión y decisiones al límite, Julián quedó fuera de la final de Safari. Con su eliminación, Peggy y Coronel se consolidan como el top 2 de una recta final marcada por rivalidad, resistencia y mucho nervio competitivo.",
-      "imageName": "Bonju"
+      "imageName": "Bonju",
+      "portraitBackground": "#fde5c1"
     },
     {
       "id": "safari-regreso-2025",
@@ -634,7 +637,8 @@
       "role": "The Xpedition Host",
       "title": "Dani es la ganadora de The Xpedition Antarctica",
       "text": "Después de 18 episodios, 4 fases y una ruta llena de retos, drama, sorpresas y decisiones difíciles, Dani se convirtió en la ganadora de The Xpedition Antarctica. Su recorrido combinó resistencia, lectura social y momentos clave que la llevaron a cerrar la primera temporada con una victoria histórica.",
-      "imageName": "Bonju"
+      "imageName": "Bonju",
+      "portraitBackground": "#fee4c1"
     }
   ],
   "stats": {

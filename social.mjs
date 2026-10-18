@@ -23,7 +23,7 @@ export function popularityOrder(characters,details){
   const rest=characters.filter(c=>!used.has(key(c.name))).sort((a,b)=>Number(priority.has(key(b.name)))-Number(priority.has(key(a.name)))||a.name.localeCompare(b.name,'es'));
   return [...first.map(n=>available.get(key(n))),...rest,...last.map(n=>available.get(key(n)))].filter(Boolean);
 }
-export function createSocial({db,storage,characters,details,stickers,userFields,body,json,fail,checkRate,serialize,everyone}){
+export function createSocial({db,storage,characters,details,stickers,userFields,body,json,fail,checkRate,serialize,everyone,interactions}){
   const order=popularityOrder(characters,details),ids=new Set(characters.map(c=>c.id));
   const visitorSecret=process.env.DATABASE_PASSWORD||randomBytes(32).toString('hex');
   async function ranks(counts){
@@ -31,12 +31,12 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
     const sorted=order.map((c,i)=>({id:c.id,seed:i,views:views.get(c.id)||0,score:(order.length-i)*100+(views.get(c.id)||0)+(counts.get(c.id)||0)*12})).sort((a,b)=>b.score-a.score||a.seed-b.seed);
     return new Map(sorted.map((c,i)=>[c.id,{popularityRank:i+1,visits:c.views}]));
   }
-  async function postValue(post){
+  async function postValue(post,viewer){
     const author=await db.one('SELECT * FROM users WHERE id=?',post.author);
     const mentions=await db.all('SELECT target FROM post_mentions WHERE post=?',post.id);
     const profiles=[];
     for(const {target} of mentions){const c=characters.find(c=>c.id===target);const u=c?null:await db.one('SELECT * FROM users WHERE id=?',target);if(c||u)profiles.push(c?{id:c.id,name:c.name,avatar:c.avatar,character:true}:userFields(u));}
-    return {id:post.id,text:post.text,author:userFields(author),created:post.created,feeling:post.feeling,sticker:post.sticker?stickers.get(post.sticker):null,image:post.image?'/api/post-images/'+post.id:null,mentions:profiles,archived:!!post.archived};
+    return {id:post.id,text:post.text,author:userFields(author),created:post.created,feeling:post.feeling,sticker:post.sticker?stickers.get(post.sticker):null,image:post.image?'/api/post-images/'+post.id:null,mentions:profiles,archived:!!post.archived,reactions:await interactions.summary('post',post.id,viewer),commentsCount:await interactions.commentCount(post.id)};
   }
   async function handle(req,res,url,u){
     const p=url.pathname,method=req.method;
@@ -58,7 +58,7 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
       const beforeId=String(url.searchParams.get('beforeId')||'');
       const query='SELECT * FROM posts WHERE archived=? AND (created<? OR (created=? AND id<?))'+(author?' AND author=?':'')+' ORDER BY created DESC,id DESC LIMIT 21';
       const list=await db.all(query,...[archived?1:0,before,before,beforeId,...(author?[author]:[])]);
-      json(res,{posts:await Promise.all(list.slice(0,20).map(postValue)),hasMore:list.length>20});return true;
+      json(res,{posts:await Promise.all(list.slice(0,20).map(post=>postValue(post,u))),hasMore:list.length>20});return true;
     }
     const image=p.match(/^\/api\/post-images\/([a-f0-9-]+)$/);
     if(image&&['GET','HEAD'].includes(method)){
@@ -92,7 +92,7 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
           });
         });
       }catch(error){if(file)await storage.remove(file).catch(()=>{});throw error;}
-      everyone('posts',{});json(res,{post:await postValue(await db.one('SELECT * FROM posts WHERE id=?',id))},201);return true;
+      everyone('posts',{});json(res,{post:await postValue(await db.one('SELECT * FROM posts WHERE id=?',id),u)},201);return true;
     }
     const edit=p.match(/^\/api\/posts\/([a-f0-9-]+)$/);
     if(edit&&method==='PATCH'){

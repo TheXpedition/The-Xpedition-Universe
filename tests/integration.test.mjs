@@ -172,6 +172,38 @@ test('revisión real de imágenes públicas sin bloquear los mensajes',async()=>
   await request(alice,'/posts/'+result.post.id,'PATCH',{archived:false});assert.equal((await fetch(base+result.post.image)).status,200);
 });
 
+let keptCover;
+test('reacciones a publicaciones y comentarios con permisos y persistencia',async()=>{
+ const post=(await request(alice,'/posts','POST',{text:'Publicación para conversar'})).post;
+ assert.equal((await request(client(),'/posts/'+post.id+'/reaction','POST',{emoji:'❤️'})).status,401);
+ assert.equal((await request(bob,'/posts/'+post.id+'/reaction','POST',{emoji:'❤️'})).status,200);
+ await request(bob,'/posts/'+post.id+'/reaction','POST',{emoji:'💜'});await request(alice,'/posts/'+post.id+'/reaction','POST',{emoji:'💜'});
+ let activity=await request(bob,'/posts/'+post.id+'/activity');assert.deepEqual(activity.reactions,[{emoji:'💜',count:2,mine:true}]);
+ assert.equal((await request(bob,'/posts/'+post.id+'/reaction','POST',{emoji:'<script>'})).status,400);
+ await request(bob,'/posts/'+post.id+'/reaction','POST',{emoji:''});assert.equal((await request(bob,'/posts/'+post.id+'/activity')).reactions[0].mine,false);
+ assert.equal((await request(client(),'/posts/'+post.id+'/comments','POST',{text:'No autorizado'})).status,401);
+ const id=randomUUID();const c=await request(bob,'/posts/'+post.id+'/comments','POST',{id,text:'Mi comentario'});assert.equal(c.status,201);
+ assert.equal((await request(bob,'/posts/'+post.id+'/comments','POST',{id,text:'Mi comentario'})).commentsCount,1);
+ await request(alice,'/comments/'+c.comment.id+'/reaction','POST',{emoji:'😂'});const publicComment=(await request(client(),'/comments/'+c.comment.id)).comment;assert.equal(publicComment.reactions[0].mine,false);assert.equal(publicComment.reactions[0].count,1);assert.equal(publicComment.author.orientation,undefined);
+ assert.equal((await request(alice,'/comments/'+c.comment.id,'PATCH',{text:'Cambiar comentario ajeno'})).status,403);
+ assert.equal((await request(bob,'/comments/'+c.comment.id,'PATCH',{text:'Comentario corregido'})).comment.text,'Comentario corregido');
+ for(let n=0;n<22;n++)await request(bob,'/posts/'+post.id+'/comments','POST',{text:'Comentario '+n});
+ const page=await request(client(),'/posts/'+post.id+'/comments');assert.equal(page.comments.length,20);assert.equal(page.hasMore,true);
+ const previous=await request(client(),'/posts/'+post.id+'/comments?before='+page.comments[0].created+'&beforeId='+page.comments[0].id);assert.equal(previous.comments.length,3);assert.equal(new Set([...previous.comments,...page.comments].map(c=>c.id)).size,23);
+ assert.equal((await request(client(),'/posts/'+post.id+'/activity')).commentsCount,23);
+ await request(alice,'/posts/'+post.id,'PATCH',{archived:true});assert.equal((await request(bob,'/posts/'+post.id+'/comments')).status,404);assert.equal((await request(bob,'/comments/'+c.comment.id+'/reaction','POST',{emoji:'👍'})).status,404);
+ await request(alice,'/posts/'+post.id,'PATCH',{archived:false});assert.equal((await request(client(),'/posts/'+post.id+'/comments')).comments.length,20);
+});
+test('portadas revisadas, públicas y ajustables sin cambiar otras cuentas',async()=>{
+ assert.equal((await request(client(),'/me/cover','POST',{position:50})).status,401);
+ assert.equal((await request(alice,'/me/cover','POST',{position:101})).status,400);
+ assert.equal((await request(alice,'/me/cover','POST',{image:Buffer.from('<svg/>').toString('base64')})).status,422);
+ const result=await request(alice,'/me/cover','POST',{image:fs.readFileSync(path.join(root,'public/backdrops/apocalypse-top.png')).toString('base64'),position:25});assert.equal(result.status,200);assert.equal(result.user.coverPosition,25);assert(result.user.cover);
+ const image=await fetch(base+result.user.cover);assert.equal(image.status,200);assert.equal(image.headers.get('content-type'),'image/png');
+ const publicProfile=(await request(client(),'/profiles')).profiles.find(p=>p.id===alice.user.id);assert.equal(publicProfile.coverPosition,25);assert.equal(publicProfile.cover,result.user.cover);assert.equal((await request(bob,'/me')).user.cover,null);
+ keptCover=(await request(alice,'/me/cover','POST',{position:35})).user.cover;assert.equal((await request(alice,'/me')).user.coverPosition,35);
+});
+
 test('persistencia tras reinicio y cierre de sesión',async()=>{
   await stop();base=undefined;await start();const me=await request(alice,'/me');assert.equal(me.user.bio,'Una biografía real.');assert.equal(me.user.avatar,'Violeta');assert((await request(bob,'/conversations/'+encodeURIComponent(chat)+'/messages')).messages.some(m=>m.text==='Hola editado'));
   const picture=await fetch(base+keptImage.url,{headers:{cookie:bob.cookie}});assert.equal(picture.status,200);assert.equal(Buffer.from(await picture.arrayBuffer()).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
@@ -179,5 +211,6 @@ test('persistencia tras reinicio y cierre de sesión',async()=>{
   const persisted=(await request(bob,'/conversations/'+chat+'/messages')).messages;assert.equal(persisted.find(m=>m.id===keptAudio.id).durationMs,1000);assert.equal(persisted.find(m=>m.id===keptSticker.id).type,'sticker');
   assert.equal((await fetch(base+'/api/group-icons/'+group,{headers:{cookie:bob.cookie}})).status,200);
   if(process.env.TEST_DATABASE_URL){assert(!fs.existsSync(path.join(data,'instance-0')));assert(!fs.existsSync(path.join(data,'instance-1')));}
+  assert.equal((await fetch(base+keptCover)).status,200);assert.equal(me.user.coverPosition,35);assert((await request(client(),'/posts')).posts.some(p=>p.commentsCount===23));
   const logout=await request(alice,'/auth/logout','POST',{});assert.equal(logout.status,200);assert.equal((await request(alice,'/me')).user,null);assert.equal((await request(alice,'/conversations')).status,401);
 });

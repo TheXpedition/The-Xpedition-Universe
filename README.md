@@ -43,6 +43,8 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 Registro, contraseña, Google, perfiles editables, 132 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 24 contenidos y las 14 colecciones de tops originales.
 
+Publicaciones con imágenes, stickers, menciones y sentimientos; reacciones a publicaciones y comentarios, comentarios editables por su autor y actualizaciones en tiempo real. Los perfiles permiten elegir identidad, pronombres, visibilidad de la orientación y una portada ajustable que llena todo el espacio. Las imágenes de publicaciones y portadas pasan por revisión local antes de mostrarse. La popularidad de los personajes combina el orden inicial con visitas únicas diarias y seguidores.
+
 Portada con las previas de Japan, Safari, Antarctica, The Traitor 2 y Showdown 2, controles de sonido y reproducción, enlaces originales a las temporadas, logos completos y tops con números metálicos. Las fichas incluyen elencos enlazados a perfiles, géneros, tres títulos similares y reparto completo; los simuladores conservan su arte original con relleno lateral del mismo color.
 
 Las cinco previas tienen una versión ligera para móvil en H.264/AAC, con inicio progresivo y fotogramas clave cada dos segundos. La portada admite deslizamiento horizontal y conserva el desplazamiento vertical. Un bloqueo de reproducción del navegador no pausa las otras previas; el control de reproducción permite reintentarlo. Las tarjetas del catálogo mantienen el mismo formato en todos los filtros y no muestran un borde blanco al pasar el mouse.
