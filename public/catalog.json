@@ -231,7 +231,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Retroverse/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s1.png",
+          "logo": {
+            "src": "transparent/campria-s1.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              48,
+              209,
+              1580,
+              506
+            ]
+          }
+        }
       },
       {
         "id": "popular",
@@ -242,7 +256,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Popular-vs-Fan/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s2.png",
+          "logo": {
+            "src": "transparent/campria-s2.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              60,
+              292,
+              1552,
+              342
+            ]
+          }
+        }
       },
       {
         "id": "comeback",
@@ -253,7 +281,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Comeback/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s3.png",
+          "logo": {
+            "src": "transparent/campria-s3.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              64,
+              273,
+              1545,
+              357
+            ]
+          }
+        }
       },
       {
         "id": "golden",
@@ -264,7 +306,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Golden-vs-Platinum/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s4.png",
+          "logo": {
+            "src": "transparent/campria-s4.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              23,
+              91,
+              1638,
+              800
+            ]
+          }
+        }
       },
       {
         "id": "money",
@@ -275,7 +331,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Money-Race/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s5.png",
+          "logo": {
+            "src": "transparent/campria-s5.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              138,
+              126,
+              1384,
+              723
+            ]
+          }
+        }
       },
       {
         "id": "allstars",
@@ -286,7 +356,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/All-Stars/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s6.png",
+          "logo": {
+            "src": "transparent/campria-s6.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              7,
+              194,
+              1662,
+              578
+            ]
+          }
+        }
       },
       {
         "id": "elements",
@@ -297,7 +381,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Elements/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s7.png",
+          "logo": {
+            "src": "transparent/campria-s7.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              50,
+              188,
+              1586,
+              526
+            ]
+          }
+        }
       },
       {
         "id": "andromeda",
@@ -308,7 +406,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Andromeda/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s8.png",
+          "logo": {
+            "src": "transparent/campria-s8.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              25,
+              287,
+              1623,
+              361
+            ]
+          }
+        }
       },
       {
         "id": "apocalypse",
@@ -344,7 +456,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/New-Era/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s10.png",
+          "logo": {
+            "src": "transparent/campria-s10.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              25,
+              265,
+              1622,
+              440
+            ]
+          }
+        }
       },
       {
         "id": "empire",
@@ -355,7 +481,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/Empire-Of-Blood/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s11.png",
+          "logo": {
+            "src": "transparent/campria-s11.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              50,
+              224,
+              1583,
+              466
+            ]
+          }
+        }
       },
       {
         "id": "allstars2",
@@ -366,7 +506,21 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "https://thexpedition.github.io/All-Stars-2/",
-        "actionLabel": "Ir a la temporada"
+        "actionLabel": "Ir a la temporada",
+        "art": {
+          "background": "backdrops/campria-s12.png",
+          "logo": {
+            "src": "transparent/campria-s12.png",
+            "width": 1672,
+            "height": 941,
+            "frame": [
+              22,
+              228,
+              1620,
+              538
+            ]
+          }
+        }
       }
     ],
     "simulators": [
