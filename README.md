@@ -71,6 +71,8 @@ Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se 
 
 ## Comunidad y publicaciones
 
+La configuración de AdSense se describe en [ADSENSE.md](ADSENSE.md). La verificación usa la cuenta real del titular; los anuncios quedan apagados hasta la aprobación del sitio y la configuración de consentimiento. El sitio no ofrece monedas por pulsar anuncios.
+
 Los perfiles pueden compartir texto, una imagen PNG/JPG/WebP de hasta 4 MB o un sticker de la colección. Incluyen sentimientos según los pronombres elegidos y hasta diez menciones a cuentas o personajes. El feed muestra primero las publicaciones recientes. Archivar oculta una publicación y su imagen; el autor puede restaurarla desde su archivo.
 
 Identidad y pronombres se editan en el perfil. La orientación sexual es opcional y privada por defecto; las respuestas públicas del servidor no incluyen una orientación oculta. Las migraciones añaden tablas y columnas sin reiniciar usuarios, sesiones, conversaciones ni archivos existentes.

@@ -4,6 +4,7 @@ import {createProgression,levelFor} from './progression.mjs';
 import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
 import {accountRole} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
+import {monetizationConfig,adsText} from './monetization.mjs';
 import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
@@ -15,6 +16,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(root, 'public');
+const monetization=monetizationConfig();
 const dataDir = path.resolve(process.env.DATA_DIR || path.join(root, 'data'));
 const db = await openDatabase(dataDir);
 const storage = await openStorage(dataDir, db.kind === 'postgres');
@@ -299,7 +301,8 @@ async function api(req, res, url) {
   const u = await getSession(req);
   if (p === '/api/config' && method === 'GET') return json(res, {
     firebase: firebaseConfig,
-    google: googleInfo
+    google: googleInfo,
+    monetization
   });
   if (p === '/api/health' && method === 'GET') {
     await one('SELECT 1 AS n');
@@ -793,7 +796,6 @@ async function dispatchApi(req,res,url){
   return serialize(()=>api(req,res,url));
 }
 const mimeTypes = {
-  '.ico': 'image/x-icon',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -816,10 +818,12 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname.startsWith('/api/')) return await dispatchApi(req, res, url);
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
+    if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
     const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
+    if(filename===path.join(publicDir,'index.html')&&monetization.adsense.publisher){const html=fs.readFileSync(filename,'utf8').replace('</head>','<meta name="google-adsense-account" content="'+monetization.adsense.publisher+'"></head>');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(html)});return res.end(req.method==='HEAD'?undefined:html);}
     const size = fs.statSync(filename).size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',

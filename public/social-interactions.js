@@ -100,4 +100,4 @@ document.addEventListener('click',async event=>{
     case'edit-cover':editCover();break;
   }}catch(error){toast(error.message,true);}
 });
-init();
+document.addEventListener('DOMContentLoaded',init,{once:true});

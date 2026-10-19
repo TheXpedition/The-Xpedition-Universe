@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs tests/progression.test.mjs tests/simulator.test.mjs tests/notifications.test.mjs tests/community-polish.test.mjs tests/moderation.test.mjs"
+    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs tests/progression.test.mjs tests/simulator.test.mjs tests/notifications.test.mjs tests/community-polish.test.mjs tests/moderation.test.mjs tests/monetization.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",

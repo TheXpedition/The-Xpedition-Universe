@@ -95,7 +95,7 @@ function route(){
   if(!state.catalog)return;cancelRecording();
   const [view,id]=location.hash.slice(1).split('/');state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
-  const routes={inicio:renderHome,explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  const routes={inicio:renderHome,explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   (routes[state.route]||renderHome)();window.scrollTo({top:0,behavior:'instant'});
 }
 const go = hash => {if(location.hash==='#'+hash)route();else location.hash=hash;};
