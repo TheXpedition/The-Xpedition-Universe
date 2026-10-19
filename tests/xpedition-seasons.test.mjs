@@ -134,3 +134,16 @@ test('el render distingue el empate, comeback y doble eliminación sin cambiar l
  const final=ctx.xpeditionDuel(antarctica.versus.rounds.at(-1),22,antarctica);
  assert(final.includes('GANADORA'));assert(final.includes('Dani'));assert(!final.includes('is-gray'));
 });
+
+test('cada versus conserva todos sus puestos en etiquetas sobre las imágenes',()=>{
+ const {ctx}=context();
+ for(const record of Object.values(archive.seasons))for(const [index,round] of record.versus.rounds.entries()){
+  const html=ctx.xpeditionDuel(round,index,record);
+  const players=html.split('class="xp-duel-players"')[1].split('<div class="xp-duel-result">')[0];
+  const positions=[...players.matchAll(/data-versus-position="(\d+)"/g)].map(m=>Number(m[1]));
+  assert.deepEqual(positions,round.competitors.map((_,i)=>i+1));
+  assert.equal((players.match(/class="xp-duel-position"/g)||[]).length,round.competitors.length);
+  assert(!players.includes('class="ch-duel-person'));
+  assert(!players.includes('<small'));
+ }
+});

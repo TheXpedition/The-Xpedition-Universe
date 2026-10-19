@@ -81,7 +81,7 @@
         "Cristian Julio": "personajes/cristianjulio.png",
         "Gokuh Moreno": "personajes/gokuhmoreno.png",
         "Maria Villegas": "personajes/maria.png",
-        "Gustavo": null,
+        "Gustavo": "personajes/gustavo.png",
         "Nahuee": "personajes/nahuee.png",
         "Luciano": "personajes/luciano.png",
         "Isaac": "personajes/isaac.png",
@@ -184,7 +184,7 @@
         {
           "name": "Gustavo",
           "place": "Participante",
-          "image": null
+          "image": "personajes/gustavo.png"
         },
         {
           "name": "Nahuee",
@@ -591,7 +591,7 @@
         "Violeta": "personajes/violeta.png",
         "Maria Villegas": "personajes/maria.png",
         "Felix": "personajes/felix.png",
-        "Mariano": null,
+        "Mariano": "personajes/mariano.png",
         "Felipe": "personajes/felipevicente.png",
         "Joaquín": "personajes/joaquin.png",
         "Susano": null,
@@ -840,7 +840,7 @@
         {
           "name": "Mariano",
           "place": "Participante",
-          "image": null
+          "image": "personajes/mariano.png"
         },
         {
           "name": "Felipe",
@@ -975,7 +975,7 @@
         "Jesus": "personajes/jesus.png",
         "Maria Villegas": "personajes/maria.png",
         "Pier": "personajes/pier.png",
-        "Mariano": null,
+        "Mariano": "personajes/mariano.png",
         "Alexandro": "personajes/alexandro.png",
         "Renzo": "personajes/renzo.png",
         "Gokuh Moreno": "personajes/gokuhmoreno.png",
@@ -1293,7 +1293,7 @@
         {
           "name": "Mariano",
           "place": "Participante",
-          "image": null
+          "image": "personajes/mariano.png"
         },
         {
           "name": "Alexandro",
@@ -2270,7 +2270,7 @@
         "Javier": "personajes/javi.png",
         "Coronel": "personajes/coronel.png",
         "Eduard": "personajes/eduard.png",
-        "Miguel Antonio": null,
+        "Myke Z": "personajes/mykez.png",
         "Sebastián": null,
         "Nacho": "personajes/nacho.png",
         "Sadith": "personajes/sadith.png",
@@ -2304,7 +2304,7 @@
             "ep": "3",
             "competitors": [
               {
-                "name": "Miguel Antonio"
+                "name": "Myke Z"
               },
               {
                 "name": "Sebas"
@@ -2315,7 +2315,7 @@
                 "type": "eliminated",
                 "people": [
                   {
-                    "name": "Miguel Antonio"
+                    "name": "Myke Z"
                   },
                   {
                     "name": "Sebas"
@@ -2597,9 +2597,9 @@
           "image": "personajes/eduard.png"
         },
         {
-          "name": "Miguel Antonio",
+          "name": "Myke Z",
           "place": "Participante",
-          "image": null
+          "image": "personajes/mykez.png"
         },
         {
           "name": "Sebastián",
@@ -2688,7 +2688,7 @@
         "Maria Villegas": "personajes/maria.png",
         "Azealia Midnight": "personajes/azealiamidnight.png",
         "Luciano": "personajes/luciano.png",
-        "Edwin": null,
+        "Edwin": "personajes/edwin.png",
         "Azael": "personajes/azael.png",
         "Alex": null,
         "Catalina": "personajes/catalina.png",
@@ -3130,7 +3130,7 @@
         {
           "name": "Edwin",
           "place": "Participante",
-          "image": null
+          "image": "personajes/edwin.png"
         },
         {
           "name": "Azael",
@@ -4172,7 +4172,7 @@
         "Isabel": "seasons/campria/portraits/38d6c47c00e5a272.png",
         "Maria Villegas": "personajes/maria.png",
         "Esteban": "personajes/esteban.png",
-        "Edwin": null,
+        "Edwin": "personajes/edwin.png",
         "Daphne Blake": "personajes/daphneblake.png"
       },
       "versus": {
@@ -4429,7 +4429,7 @@
         {
           "name": "Edwin",
           "place": "Participante",
-          "image": null
+          "image": "personajes/edwin.png"
         },
         {
           "name": "Daphne Blake",

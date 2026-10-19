@@ -13,6 +13,13 @@ const details=JSON.parse(fs.readFileSync(path.join(root,'content-details.json'),
 const streaming=fs.readFileSync(path.join(root,'streaming.js'),'utf8');
 const seasonsJS=fs.readFileSync(path.join(root,'seasons.js'),'utf8');
 const ids=['retroverse','popular','comeback','golden','money','allstars','elements','andromeda','apocalypse','newera','empire','allstars2'];
+test('los personajes añadidos usan sus iconos en Campria y Miguel Antonio aparece como Myke Z',()=>{
+ assert(!JSON.stringify(archive).includes('Miguel Antonio'));assert(!JSON.stringify(details).includes('Miguel Antonio'));
+ for(const season of Object.values(archive.seasons))for(const name of ['Edwin','Myke Z','Mariano','Gustavo']){
+  if(Object.hasOwn(season.images,name))assert.equal(season.images[name],catalog.characters.find(p=>p.name===name).image);
+  for(const person of [...season.participants,...season.mainCast])if(person.name===name)assert.equal(person.image,season.images[name]);
+ }
+});
 const norm=name=>name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const castKey=name=>norm(name).replace(/[^a-z0-9]/g,'');
 const aliases={mariavillegas:'Maria',marcosjc:'Marcos',jeremias:'Jere',javier:'Javi',felipe:'Felipe Vicente',plastique:'Plastique Doll',sophie:'Sophie Bradley'};

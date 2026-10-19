@@ -10,7 +10,7 @@ function criticsBadge(item){
  return `<span class="season-critics" aria-label="The X Critics: ${score} de 10"><span aria-hidden="true">★</span><strong>${score}</strong><span>The X Critics</span></span>`;
 }
 async function loadCampriaArchive(){
- if(!campriaArchivePromise)campriaArchivePromise=fetch('seasons/campria/seasons.json?v=2').then(r=>{if(!r.ok)throw new Error('No se pudo cargar esta temporada.');return r.json();}).catch(error=>{campriaArchivePromise=null;throw error;});
+ if(!campriaArchivePromise)campriaArchivePromise=fetch('seasons/campria/seasons.json?v=3').then(r=>{if(!r.ok)throw new Error('No se pudo cargar esta temporada.');return r.json();}).catch(error=>{campriaArchivePromise=null;throw error;});
  return campriaArchivePromise;
 }
 async function renderSeasonPage(id){

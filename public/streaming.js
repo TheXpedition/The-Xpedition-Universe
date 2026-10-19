@@ -118,7 +118,7 @@ function castProfile(name){
  const key=castKey(name),alias=castProfileAliases[key];
  return state.profiles.find(p=>p.character&&castKey(p.name)===key)||(alias?state.profiles.find(p=>p.character&&p.name===alias):null);
 }
-const canonicalCastName=name=>castKey(name)==='sophie'?'Sophie Bradley':name;
+const canonicalCastName=name=>({sophie:'Sophie Bradley',miguelantonio:'Myke Z'})[castKey(name)]||name;
 function castNames(names){return names.map(rawName=>{
  const name=canonicalCastName(rawName);
  const profile=castProfile(name);

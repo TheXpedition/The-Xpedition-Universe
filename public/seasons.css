@@ -1,4 +1,6 @@
 /* Campria lives in the same cinematic shell as the rest of the universe. */
+.season-page:not(.xp-season) .ch-participants-preview{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);grid-template-columns:none;gap:16px;overflow-x:auto;scrollbar-width:thin;padding-bottom:10px}
+@media(max-width:1050px){.season-page:not(.xp-season) .ch-participants-preview{grid-auto-columns:160px;scroll-snap-type:x proximity}.season-page:not(.xp-season) .ch-participants-preview>.ch-person-card{scroll-snap-align:start}}
 .season-critics{display:flex;align-items:center;gap:5px;color:#c8c0d5;font-size:10px;line-height:1.6;margin-top:9px}
 .season-critics>span:first-child{color:#e9c66d;font-size:13px}.season-critics strong{color:#f3e2b1;font-size:12px}.season-critics>span:last-child{margin-left:3px;letter-spacing:.1px}
 .season-page{max-width:1440px;margin:0 auto}.ch-breadcrumb{display:flex;gap:15px;align-items:center;font-size:12px;color:#898495;margin-bottom:25px}.ch-breadcrumb>a{display:flex;align-items:center;gap:8px;color:#d8ccee}.ch-breadcrumb>a svg{width:15px;height:15px}

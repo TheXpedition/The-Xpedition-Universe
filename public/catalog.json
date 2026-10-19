@@ -49,6 +49,7 @@
     "Eduard",
     "Eduardo",
     "Eduardo Buñuelo",
+    "Edwin",
     "Elian",
     "Elias",
     "Elvin",
@@ -64,6 +65,7 @@
     "Garnet",
     "Gokuh Moreno",
     "Greg",
+    "Gustavo",
     "Heidi Cum",
     "Humberto",
     "Ian Esteban",
@@ -80,6 +82,7 @@
     "Jere",
     "Jesús",
     "Jeyson",
+    "Jiafei",
     "Joaquin",
     "Jose Serna",
     "Julián",
@@ -102,11 +105,13 @@
     "Maria Isabel",
     "Maria Luna",
     "Marianito",
+    "Mariano",
     "Mary Hao",
     "Mati",
     "Mel Rz",
     "Miguel Lima",
     "Miss Kopp",
+    "Myke Z",
     "Nacho",
     "Nahuee",
     "Nicki Gorilaj",
@@ -1619,6 +1624,10 @@
       "image": "personajes/eduardobunuelo.png"
     },
     {
+      "name": "Edwin",
+      "image": "personajes/edwin.png"
+    },
+    {
       "name": "Elian",
       "image": "personajes/elian.png"
     },
@@ -1677,6 +1686,10 @@
     {
       "name": "Greg",
       "image": "personajes/greg.png"
+    },
+    {
+      "name": "Gustavo",
+      "image": "personajes/gustavo.png"
     },
     {
       "name": "Heidi Cum",
@@ -1741,6 +1754,10 @@
     {
       "name": "Jeyson",
       "image": "personajes/jeyson.png"
+    },
+    {
+      "name": "Jiafei",
+      "image": "personajes/jiafei.png"
     },
     {
       "name": "Joaquin",
@@ -1831,6 +1848,10 @@
       "image": "personajes/marianito.png"
     },
     {
+      "name": "Mariano",
+      "image": "personajes/mariano.png"
+    },
+    {
       "name": "Mary Hao",
       "image": "personajes/maryhao.png"
     },
@@ -1849,6 +1870,10 @@
     {
       "name": "Miss Kopp",
       "image": "personajes/misskopp.png"
+    },
+    {
+      "name": "Myke Z",
+      "image": "personajes/mykez.png"
     },
     {
       "name": "Nacho",

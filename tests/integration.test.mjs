@@ -158,10 +158,25 @@ test('publicaciones, menciones, stickers, archivo recuperable y orden reciente',
   for(const values of [{text:'x',mentions:['char:noexiste']},{sticker:'../private'},{text:'x',feeling:'noexiste'}])assert.equal((await request(alice,'/posts','POST',values)).status,400);
 });
 test('popularidad inicial, visitas únicas y cambios graduales',async()=>{
-  let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);assert.equal(p.length,147);assert.equal(new Set(p.map(p=>p.id)).size,147);assert.deepEqual(p.slice(0,5).map(p=>p.name),['Bonju','Dani','Britney Britney','Isabel','Luciano']);assert.equal(p[14].name,'Eduardo Buñuelo');assert.equal(p[19].name,'Dios');assert.equal(p.at(-1).name,'Vladimir');assert.equal(p.at(-2).name,'Valery Ocampo');
+  let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);
+  assert.equal(p.length,152);assert.equal(new Set(p.map(p=>p.id)).size,152);
+  assert.deepEqual(p.slice(0,15).map(p=>p.name),['Bonju','Jiafei','Dua Lingo','Dani','Britney Britney','Isabel','Luciano','Andromeda','Alexandro','Coronel','Nicki Gorilaj','Pepi','Nidia Mirella','Mel Rz','Edna Droga']);
+  assert.equal(p.at(-1).name,'Vladimir');assert.equal(p.at(-2).name,'Gustavo');
   const last=p.at(-1);for(let i=0;i<3;i++)assert.equal((await request(alice,'/characters/'+last.id+'/view','POST',{})).status,200);
   const next=(await request(client(),'/profiles')).profiles.find(p=>p.id===last.id);assert.equal(next.visits,last.visits+1);assert.equal(next.popularityRank,last.popularityRank);
   await request(bob,'/characters/'+last.id+'/view','POST',{});assert.equal((await request(client(),'/profiles')).profiles.find(p=>p.id===last.id).visits,last.visits+2);
+});
+test('los cinco personajes nuevos tienen perfiles, iconos y se pueden elegir como avatar',async()=>{
+ const profiles=(await request(client(),'/profiles')).profiles;
+ for(const [name,slug] of [['Edwin','edwin'],['Myke Z','mykez'],['Jiafei','jiafei'],['Mariano','mariano'],['Gustavo','gustavo']]){
+  const p=profiles.find(p=>p.id==='char:'+slug);assert(p?.character);assert.equal(p.name,name);
+  const image=await fetch(base+'/personajes/'+slug+'.png');assert.equal(image.status,200);
+  const bytes=Buffer.from(await image.arrayBuffer());assert.equal(bytes.readUInt32BE(16),200);assert.equal(bytes.readUInt32BE(20),200);
+  assert.equal((await request(alice,'/me','PATCH',{avatar:name})).user.avatar,name);
+ }
+ assert(!profiles.some(p=>p.name==='Miguel Antonio'));
+ assert(profiles.some(p=>p.name==='Marianito')&&profiles.some(p=>p.name==='Mariano'));
+ await request(alice,'/me','PATCH',{avatar:'Violeta'});
 });
 test('revisión real de imágenes públicas sin bloquear los mensajes',async()=>{
   const pending=request(alice,'/posts','POST',{text:'Arte aprobado',image:fs.readFileSync(path.join(root,'public/backdrops/apocalypse-top.png')).toString('base64')});
