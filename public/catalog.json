@@ -164,7 +164,10 @@
         "kind": "Temporada",
         "url": "#temporada/antarctica",
         "actionLabel": "Ir a la temporada",
-        "integrated": true
+        "integrated": true,
+        "art": {
+          "background": "backdrops/antarctica-20261019.webp"
+        }
       },
       {
         "id": "safari",
@@ -175,7 +178,10 @@
         "kind": "Temporada",
         "url": "#temporada/safari",
         "actionLabel": "Ir a la temporada",
-        "integrated": true
+        "integrated": true,
+        "art": {
+          "background": "backdrops/safari-20261019.webp"
+        }
       },
       {
         "id": "japan",
@@ -186,7 +192,10 @@
         "kind": "Temporada",
         "url": null,
         "actionLabel": "Próximamente",
-        "disabled": true
+        "disabled": true,
+        "art": {
+          "background": "backdrops/japan-20261019.webp"
+        }
       }
     ],
     "spinoffs": [
@@ -779,7 +788,21 @@
         "url": "/simulator/",
         "actionLabel": "Jugar",
         "logo": "TXSimulator Logo Color .png",
-        "transparent": "simulator"
+        "transparent": "simulator",
+        "art": {
+          "background": "backdrops/simulator-peach-20261019.webp",
+          "logo": {
+            "src": "simulator/assets/logo-hd-20261019.webp",
+            "width": 2172,
+            "height": 724,
+            "frame": [
+              0,
+              0,
+              2172,
+              724
+            ]
+          }
+        }
       },
       {
         "id": "traitorsim",

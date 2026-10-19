@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import {JSDOM,VirtualConsole} from 'jsdom';
 const root=new URL('../public/simulator/',import.meta.url),shop=JSON.parse(fs.readFileSync(new URL('catalog.json',root)));
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function waitForCheckpoint(predicate){const deadline=Date.now()+4000;while(!predicate()){assert(Date.now()<deadline,'El punto de control no terminó de actualizarse');await pause(25);}}
 async function engine(mode='antarctica',snapshot=null,all=false){
  const id=['house','traitor'].includes(mode)?mode:'game',html=fs.readFileSync(new URL(id+'/index.html',root),'utf8');
  const virtual=new VirtualConsole(),errors=[];virtual.on('jsdomError',e=>{if(!/Not implemented|Could not parse CSS/.test(e.message))errors.push(e.message);});
@@ -60,7 +61,7 @@ test('Cruise conserva sus 22 pasajeros y el reparto inicial en sus dos equipos',
  const r=await engine('cruise',saved);try{assert.equal(r.w.XPState.capture().vars.selected18.length,22);assert(r.$('#cruiseTeamsBoard'));assert.equal(r.$('.stage.active').id,'stage-cruise-teams');assert.deepEqual(r.errors,[]);}finally{r.close();}
 });
 test('las estadísticas editadas de World se recuperan aunque las vistas anteriores no estén reconstruidas',async()=>{
- const e=await engine('world',null,true);let saved,values,stats;try{e.select('#stage-world-cast select','Britney Britney');const confirm=[...e.w.document.querySelectorAll('#stage-world-cast button')].find(b=>/confirmar|continuar|preparar/i.test(b.textContent));confirm.click();const rows=[...e.w.document.querySelectorAll('#stage-world-stats .v3-stat-row')];assert(rows.length>=2);rows[0].querySelector('[data-rating="1"]').click();rows[1].querySelector('[data-rating="4"]').click();await pause(450);saved=e.snapshot;values=[...e.w.document.querySelectorAll('#stage-world-stats .v3-stat-value')].map(f=>f.textContent);stats=JSON.stringify(e.w.XPState.capture().world.stats);assert(saved.forms.every(f=>f.scope==='stage-world-stats'));assert.deepEqual(e.errors,[]);}finally{e.close();}
+ const e=await engine('world',null,true);let saved,values,stats;try{e.select('#stage-world-cast select','Britney Britney');const confirm=[...e.w.document.querySelectorAll('#stage-world-cast button')].find(b=>/confirmar|continuar|preparar/i.test(b.textContent));confirm.click();const rows=[...e.w.document.querySelectorAll('#stage-world-stats .v3-stat-row')];assert(rows.length>=2);rows[0].querySelector('[data-rating="1"]').click();rows[1].querySelector('[data-rating="4"]').click();stats=JSON.stringify(e.w.XPState.capture().world.stats);await waitForCheckpoint(()=>JSON.stringify(e.snapshot?.state?.world?.stats)===stats);saved=e.snapshot;values=[...e.w.document.querySelectorAll('#stage-world-stats .v3-stat-value')].map(f=>f.textContent);assert(saved.forms.every(f=>f.scope==='stage-world-stats'));assert.deepEqual(e.errors,[]);}finally{e.close();}
  const r=await engine('world',saved,true);try{assert.deepEqual([...r.w.document.querySelectorAll('#stage-world-stats .v3-stat-value')].map(f=>f.textContent),values);assert.equal(JSON.stringify(r.w.XPState.capture().world.stats),stats);assert.deepEqual(r.errors,[]);}finally{r.close();}
 });
 test('Show de Talentos usa los catorce talentos solicitados también en las temporadas clásicas',async()=>{

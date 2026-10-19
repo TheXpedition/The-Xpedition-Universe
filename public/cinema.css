@@ -199,6 +199,13 @@ dialog[data-kind=content] .modal-inner{padding:0}dialog[data-kind=content] .moda
 .detail-game-hero[data-content-id] .detail-hero-image{background:none}
 .simulator-card .season-art>img.season-background,.detail-game-hero .detail-hero-image{width:auto;max-width:100%;height:100%;margin-inline:auto;clip-path:inset(0 1px 1px)}
 .detail-campria-hero .detail-hero-image{object-fit:contain;object-position:center center}
+/* Updated simulator identity and seasonal poster framing. */
+.simulator-card[data-content-id="simulator"] .season-art,.detail-game-hero[data-content-id="simulator"]{background:#ffd097;background-image:none}
+.simulator-card[data-content-id="simulator"] .season-art>img.season-background,.detail-game-hero[data-content-id="simulator"] .detail-hero-image{width:100%;height:100%;max-width:none;object-fit:cover;clip-path:none}
+.simulator-card[data-content-id="simulator"] .season-art .brand-art.season-logo{inset:20% 8%;width:84%;height:60%;filter:drop-shadow(0 7px 15px #a3541c25)}
+.detail-game-hero[data-content-id="simulator"] .brand-art.detail-logo{inset:20% 12% auto;width:76%;height:45%;max-width:none;transform:none;filter:drop-shadow(0 7px 15px #a3541c25)}
+.detail-game-hero[data-content-id="simulator"] .detail-hero-shade{background:linear-gradient(0deg,#151419bb,transparent 27%)}
+.season-card[data-content-id="traitor2"] .season-art>img.season-background{object-position:18% 35%}
 /* Edge navigation follows the artwork height in every collection. */
 .rail-shell{position:relative;isolation:isolate}
 .rail,.ranked-track{position:relative;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}

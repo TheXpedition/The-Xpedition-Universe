@@ -48,3 +48,9 @@ El juego se simula en el navegador. El servidor verifica cuenta, propiedad de la
 `npm ci` y `npm test`. Las pruebas usan cuentas y bases aisladas. Cubren sesión compartida, privacidad, precios, regalos, idempotencia, bloqueos, saldo insuficiente, límites, finales, bonus de delegación y persistencia. Los motores se ejecutan en JSDOM para comprobar recuperación de Antarctica, Safari, Cruise, Race, House y The Traitor, así como representantes y estadísticas de Vs. The World. También se verifica que el primer episodio terminado conserva sus resultados y puede avanzar después de reabrirlo.
 
 Los recursos de los motores provienen de los archivos locales proporcionados para esta integración; los PNG grandes se optimizaron en las copias publicadas.
+
+## Presentación adaptable
+
+`engine.css` se carga después de los estilos de cada motor. Las pantallas completas desplazan su contenido cuando supera la altura disponible. El selector conserva sus acciones accesibles, con requisitos de nivel separados de las descripciones; en celular organiza cada temporada en una tarjeta horizontal. La cabecera móvil distribuye cuenta, tickets, monedas, nivel y tienda en dos filas y deja el resto de la altura al juego.
+
+La portada y la carga usan el fondo HD de octubre de 2026 con proporciones conservadas y un logo independiente. En celular el personaje aparece arriba y el logo y el inicio debajo. La tienda muestra nombre, pronombres y precio de los personajes; los talentos permanecen disponibles para las pruebas del juego.
