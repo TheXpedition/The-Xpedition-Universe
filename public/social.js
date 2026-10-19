@@ -38,6 +38,7 @@ const visitedCharacters=new Set();
 renderProfile=function(id){
   baseRenderProfile(id);const p=getProfile(id);if(!p)return;
   if(p.character){
+    loadProfileAwards(p);
     const count=$('.profile-counts [data-action="following"]');if(count)count.outerHTML=`<div class="popularity-stat"><strong>#${p.popularityRank||'—'}</strong><span>Popularidad</span></div>`;
     if(!visitedCharacters.has(id)){visitedCharacters.add(id);api('/characters/'+encodeURIComponent(id)+'/view',{method:'POST',body:{}}).then(refreshProfiles).then(()=>{if(state.route==='perfil'&&decodeURIComponent(location.hash.split('/')[1]||'')===id&&$('.popularity-stat strong'))$('.popularity-stat strong').textContent='#'+getProfile(id).popularityRank;}).catch(()=>visitedCharacters.delete(id));}return;
   }

@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "editions": {
     "edicion-1": {
       "id": "awards-1",
@@ -28,7 +28,8 @@
                     "Dani"
                   ],
                   "description": "",
-                  "winner": true
+                  "winner": true,
+                  "winnerLabel": "Ganadora"
                 },
                 {
                   "title": "Iñaella Rose",
@@ -133,7 +134,8 @@
                     "Ximena"
                   ],
                   "description": "",
-                  "winner": true
+                  "winner": true,
+                  "winnerLabel": "Ganadora"
                 },
                 {
                   "title": "Beto",
@@ -220,9 +222,15 @@
                   "winner": true
                 },
                 {
-                  "title": "Equipo azul de la segunda fase",
-                  "people": [],
-                  "description": "Nomina a malos participantes para mantener a los suyos en juego. Nominaciones para Vita Molotov, Dani Jara, Ximena AT, Emanuel y Bayron."
+                  "title": "Vita, Dani, Ximena, Emanuel & Bayron",
+                  "people": [
+                    "Vita",
+                    "Dani",
+                    "Ximena",
+                    "Emanuel",
+                    "Bayron"
+                  ],
+                  "description": "Equipo azul de la segunda fase: nominan a malos participantes para mantener a los suyos en juego. Nominación para los cinco."
                 }
               ]
             },
@@ -267,12 +275,12 @@
                   "description": "Elimina a Beto Trujillo."
                 },
                 {
-                  "title": "Angel B. Vanderwood & Bayron",
+                  "title": "Eris Midnight & Bayron",
                   "people": [
-                    "Angel B. Vanderwood",
+                    "Eris Midnight",
                     "Bayron"
                   ],
-                  "description": "Angel B. Vanderwood y Bayron Daniel Campos Vega ganan el Versus; no hay eliminación en el episodio."
+                  "description": "Eris Midnight y Bayron Daniel Campos Vega ganan el Versus; no hay eliminación en el episodio."
                 }
               ]
             },
@@ -692,7 +700,8 @@
                     "Peggy"
                   ],
                   "description": "",
-                  "winner": true
+                  "winner": true,
+                  "winnerLabel": "Ganadora"
                 }
               ]
             },
@@ -1307,7 +1316,8 @@
                   "description": "The Xpedition Showdown",
                   "show": "safari-showdown"
                 }
-              ]
+              ],
+              "production": true
             },
             {
               "id": "juez-invitado",
@@ -1456,11 +1466,26 @@
             {
               "id": "produccion-1",
               "name": "Mejor Episodio",
-              "nominees": []
+              "nominees": [],
+              "production": true
             }
           ]
         }
       ]
+    }
+  },
+  "profileExtras": {
+    "Bonju": {
+      "nominations": 23,
+      "awards": 8
+    },
+    "Maria Villegas": {
+      "nominations": 14,
+      "awards": 5
+    },
+    "Dua Lingo": {
+      "nominations": 3,
+      "awards": 1
     }
   }
 }
