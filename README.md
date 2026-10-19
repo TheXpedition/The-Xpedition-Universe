@@ -43,6 +43,8 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 Registro, contraseña, Google, perfiles editables, 147 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 30 contenidos y las 14 colecciones de tops originales.
 
+Las doce temporadas de Campria se consultan dentro de la web mediante `#temporada/retroverse` y las rutas equivalentes. Cada una reúne su historia, estadísticas, protagonistas, elenco, arte original y track record con zoom. New Era y Empire of Blood incluyen sus 30 enfrentamientos Versus. Las notas de The X Critics aparecen en las temporadas y en las tarjetas del catálogo.
+
 Publicaciones con imágenes, stickers, menciones y sentimientos; reacciones a publicaciones y comentarios, comentarios editables por su autor y actualizaciones en tiempo real. Los perfiles permiten elegir identidad, pronombres, visibilidad de la orientación y una portada ajustable que llena todo el espacio. Las imágenes de publicaciones y portadas pasan por revisión local antes de mostrarse. La popularidad de los personajes combina el orden inicial con visitas únicas diarias y seguidores.
 
 La colección incluye 50 stickers originales, con favoritos privados por cuenta que aparecen primero en chat y publicaciones. El chat admite imágenes de hasta 4 MB y videos MP4/WebM de hasta 6 MB; sus vistas compactas abren un visor grande con navegación y miniaturas. La información de la conversación muestra tres archivos y el acceso a toda la multimedia, incluida la más antigua mediante paginación; solo los miembros pueden consultar y reproducir los adjuntos.

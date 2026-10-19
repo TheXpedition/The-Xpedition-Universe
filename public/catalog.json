@@ -398,8 +398,8 @@
         "desc": "El inicio de una historia.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Retroverse/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/retroverse",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s1.png",
           "logo": {
@@ -413,6 +413,12 @@
               506
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 7.2,
+          "outOf": 10
         }
       },
       {
@@ -423,8 +429,8 @@
         "desc": "Guerra de poder y egos.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Popular-vs-Fan/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/popular",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s2.png",
           "logo": {
@@ -438,6 +444,12 @@
               342
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 7.5,
+          "outOf": 10
         }
       },
       {
@@ -448,8 +460,8 @@
         "desc": "En un viaje por todo el mundo, cualquier cosa puede pasar.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Comeback/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/comeback",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s3.png",
           "logo": {
@@ -463,6 +475,12 @@
               357
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 8.6,
+          "outOf": 10
         }
       },
       {
@@ -473,8 +491,8 @@
         "desc": "Duelo de jerarquías, guerra declarada.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Golden-vs-Platinum/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/golden",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s4.png",
           "logo": {
@@ -488,6 +506,12 @@
               800
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 8.2,
+          "outOf": 10
         }
       },
       {
@@ -498,8 +522,8 @@
         "desc": "1, 2 , 3 ¡Carrera por la victoria!",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Money-Race/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/money",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s5.png",
           "logo": {
@@ -513,6 +537,12 @@
               723
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 5.7,
+          "outOf": 10
         }
       },
       {
@@ -523,8 +553,8 @@
         "desc": "El reencuentro de las caras más destacadas de la saga.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/All-Stars/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/allstars",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s6.png",
           "logo": {
@@ -538,6 +568,12 @@
               578
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 8.9,
+          "outOf": 10
         }
       },
       {
@@ -548,8 +584,8 @@
         "desc": "Un reinicio prometido, reglas nuevas pero misma ambición.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Elements/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/elements",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s7.png",
           "logo": {
@@ -563,6 +599,12 @@
               526
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 7.4,
+          "outOf": 10
         }
       },
       {
@@ -573,8 +615,8 @@
         "desc": "El futuro es hoy, nuevas mecánicas de juego.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Andromeda/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/andromeda",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s8.png",
           "logo": {
@@ -588,6 +630,12 @@
               361
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 8.1,
+          "outOf": 10
         }
       },
       {
@@ -598,8 +646,8 @@
         "desc": "El fin que marcó todo, estelares, drama y twists en todos lados.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Apocalypse/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/apocalypse",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/apocalypse-top.png",
           "logo": {
@@ -613,6 +661,12 @@
               460
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 9.3,
+          "outOf": 10
         }
       },
       {
@@ -623,8 +677,8 @@
         "desc": "El reinicio de una saga, nuevas caras pero el mismo deseo por ganar.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/New-Era/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/newera",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s10.png",
           "logo": {
@@ -638,6 +692,12 @@
               440
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 7.8,
+          "outOf": 10
         }
       },
       {
@@ -648,8 +708,8 @@
         "desc": "Sangre nueva, ¿quien quedará con vida al final de la historia?",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/Empire-Of-Blood/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/empire",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s11.png",
           "logo": {
@@ -663,6 +723,12 @@
               466
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 6.9,
+          "outOf": 10
         }
       },
       {
@@ -673,8 +739,8 @@
         "desc": "Los estelares de las ultimas entregan se reencuentran por ultima vez para está caótica entrega.",
         "accent": "var(--c1)",
         "kind": "Campria",
-        "url": "https://thexpedition.github.io/All-Stars-2/",
-        "actionLabel": "Ir a la temporada",
+        "url": "#temporada/allstars2",
+        "actionLabel": "Explorar temporada",
         "art": {
           "background": "backdrops/campria-s12.png",
           "logo": {
@@ -688,6 +754,12 @@
               538
             ]
           }
+        },
+        "universe": "Campria",
+        "critics": {
+          "source": "The X Critics",
+          "score": 5.4,
+          "outOf": 10
         }
       }
     ],

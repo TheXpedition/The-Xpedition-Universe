@@ -9,10 +9,12 @@ icons.volume='<path d="M11 4 6 8H3v8h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 
 icons.muted='<path d="M11 4 6 8H3v8h3l5 4zM16 9l5 6m0-6-5 6"/>';
 const streamNav=[['inicio','Inicio'],['explorar','Explorar'],['noticias','Noticias'],['comunidad','Comunidad'],['guardados','Mi lista'],['simuladores','Simuladores'],['universo','El universo']];
 renderChrome=function(){
+  const activeRoute=state.route==='temporada'?'explorar':state.route;
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);document.body.dataset.view=state.route;
-  $('#navigation').innerHTML=streamNav.map(([route,label],i)=>`<a href="#${route}" class="nav-link ${route===state.route?'active':''} ${i>=5?'nav-extra':''}" ${state.route===route?'aria-current="page"':''}><span>${label}</span></a>`).join('');
+  $('#navigation').innerHTML=streamNav.map(([route,label],i)=>`<a href="#${route}" class="nav-link ${route===activeRoute?'active':''} ${i>=5?'nav-extra':''}" ${activeRoute===route?'aria-current="page"':''}><span>${label}</span></a>`).join('');
   $('#accountActions').innerHTML=state.user?`<button class="icon-button" data-action="go-messages" aria-label="Ver mensajes${unread?', '+unread+' sin leer':''}" style="position:relative">${icon('chat')}${unread?`<span style="position:absolute;right:-2px;top:-2px;background:#9570cd;color:white;font-size:8px;border-radius:4px;padding:0 4px">${unread}</span>`:''}</button><button data-action="account-menu" aria-label="Opciones de ${esc(state.user.name)}" aria-expanded="false">${avatar(state.user)}</button>`:`<button class="link-button" data-action="login">Iniciar sesión</button><button class="btn primary small" data-action="register">Regístrate</button>`;
-  document.title=`${unread?'('+unread+') ':''}The Xpedition — ${streamNav.find(n=>n[0]===state.route)?.[1]||(state.route==='mensajes'?'Mensajes':'Universe')}`;
+  const currentSeason=state.route==='temporada'?state.catalog?.content.campria.find(item=>item.id===decodeURIComponent(location.hash.split('/')[1]||'')):null;
+  document.title=`${unread?'('+unread+') ':''}${currentSeason?currentSeason.name+' — Campria | The Xpedition':'The Xpedition — '+(streamNav.find(n=>n[0]===state.route)?.[1]||(state.route==='mensajes'?'Mensajes':'Universe'))}`;
 };
 const featuredItems=()=>['japan','safari','antarctica','traitor2','traitor-showdown'].map(id=>allContent().find(item=>item.id===id));
 const contentPreviews={
@@ -108,7 +110,7 @@ renderExplore=function(){
 renderSimulators=function(){
  $('#main').innerHTML=`<section class="simulator-intro"><div class="eyebrow">TU PRÓXIMA PARTIDA EMPIEZA AQUÍ</div><h1>Tu temporada.<br><span>Tus reglas.</span></h1><p>Elige el escenario. Reúne a tus participantes.<br>El resto de la historia lo escribes tú.</p><div class="simulator-intro-meta">${icon('game')} ${state.catalog.content.simulators.length} experiencias del universo</div></section><div class="simulator-grid">${state.catalog.content.simulators.map(contentCard).join('')}</div>`;
 };
-const castProfileAliases={'mariavillegas':'Maria','marcosjc':'Marcos','jeremias':'Jere','javier':'Javi','felipe':'Felipe Vicente'};
+const castProfileAliases={'mariavillegas':'Maria','marcosjc':'Marcos','jeremias':'Jere','javier':'Javi','felipe':'Felipe Vicente','plastique':'Plastique Doll'};
 const castKey=name=>norm(name).replace(/[^a-z0-9]/g,'');
 function castProfile(name){
  const key=castKey(name),alias=castProfileAliases[key];
@@ -135,6 +137,7 @@ function relatedContent(item){
 }
 contentModal=function(id,kind){
  const item=allContent().find(c=>c.id===id&&(!kind||c.kind===kind));if(!item)return;
+ if(item.kind==='Campria'){go('temporada/'+item.id);return;}
  const detail=state.catalog.details[item.id]||{},simulator=item.kind==='Simulador',japan=item.id==='japan';
  const hasCast=!simulator&&detail.cast?.length;
  const moreCast=hasCast&&detail.cast.length>detail.previewCast.length;

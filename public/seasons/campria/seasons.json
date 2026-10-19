@@ -1,0 +1,1419 @@
+{
+  "version": 1,
+  "seasons": {
+    "retroverse": {
+      "id": "retroverse",
+      "number": 1,
+      "description": "Retroverse fue la primera temporada de Campria. Sirvió como introducción al formato del show y a su dinámica principal, la temporada estuvo inspirada en su totalidad en Total Drama Island. A lo largo de la temporada se establecieron las bases del juego: cómo se forman las alianzas, cómo funcionan las decisiones y cómo se desarrolla la eliminación.",
+      "stats": {
+        "Estreno": "18 de Diciembre, 2015",
+        "Duración": "36 Días",
+        "Participantes": "16 Concursantes",
+        "Ganador": "Sebastian Américo"
+      },
+      "protagonists": [
+        {
+          "name": "Sebas",
+          "place": "Winner",
+          "image": "personajes/sebas.png"
+        },
+        {
+          "name": "Sadith",
+          "place": "Runner up",
+          "image": "personajes/sadith.png"
+        },
+        {
+          "name": "Roal",
+          "place": "3rd Place",
+          "image": "personajes/roal.png"
+        },
+        {
+          "name": "Renzo",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/b9fd8598563345a3.png"
+        },
+        {
+          "name": "Renata",
+          "place": "5th Place",
+          "image": "personajes/renata.png"
+        },
+        {
+          "name": "Lucas Severo",
+          "place": "6th Place",
+          "image": "personajes/lucassevero.png"
+        },
+        {
+          "name": "Teseo",
+          "place": "7th Place",
+          "image": "personajes/teseo.png"
+        },
+        {
+          "name": "Stephany",
+          "place": "8th Place",
+          "image": "personajes/stephany.png"
+        },
+        {
+          "name": "Cristian Julio",
+          "place": "9th Place",
+          "image": "personajes/cristianjulio.png"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "place": "12th Place",
+          "image": "personajes/gokuhmoreno.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/retroverse/track.png",
+        "width": 1065,
+        "height": 647
+      },
+      "poster": "seasons/campria/retroverse/poster.png",
+      "images": {
+        "Sebas": "personajes/sebas.png",
+        "Sadith": "personajes/sadith.png",
+        "Roal": "personajes/roal.png",
+        "Renzo": "seasons/campria/portraits/b9fd8598563345a3.png",
+        "Renata": "personajes/renata.png",
+        "Lucas Severo": "personajes/lucassevero.png",
+        "Teseo": "personajes/teseo.png",
+        "Stephany": "personajes/stephany.png",
+        "Cristian Julio": "personajes/cristianjulio.png",
+        "Gokuh Moreno": "personajes/gokuhmoreno.png"
+      }
+    },
+    "popular": {
+      "id": "popular",
+      "number": 2,
+      "description": "La segunda entrega de Campria fue una guerra entre nombres \"populares\" de la comunidad Drama Total Latina y otros nombres no tan populares pero con el mismo nivel competitivo, principalmente basada en The Amazing Race y en su mayoría retos contrareloj.",
+      "stats": {
+        "Estreno": "29 de Enero, 2016",
+        "Duración": "30 Días",
+        "Participantes": "18 Concursantes",
+        "Ganador": "Luis Pivovarov"
+      },
+      "protagonists": [
+        {
+          "name": "Luis",
+          "place": "Winner",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Damián",
+          "place": "Runner up",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Atneimip",
+          "place": "3rd Place",
+          "image": "personajes/atneimip.png"
+        },
+        {
+          "name": "Mati",
+          "place": "4th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Stephany",
+          "place": "7th Place",
+          "image": "personajes/stephany.png"
+        },
+        {
+          "name": "Pilar",
+          "place": "8th Place",
+          "image": "personajes/pilar.png"
+        },
+        {
+          "name": "Solf",
+          "place": "9th Place",
+          "image": "seasons/campria/portraits/d630ac11f5a37ad6.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "11th Place",
+          "image": "personajes/nahuee.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/popular/track.png",
+        "width": 885,
+        "height": 723
+      },
+      "poster": "seasons/campria/popular/poster.png",
+      "images": {
+        "Luis": "personajes/luis.png",
+        "Damián": "personajes/damian.png",
+        "Atneimip": "personajes/atneimip.png",
+        "Mati": "personajes/mati.png",
+        "Ivy": "seasons/campria/portraits/bc06bf99c605b469.png",
+        "Javi": "personajes/javi.png",
+        "Stephany": "personajes/stephany.png",
+        "Pilar": "personajes/pilar.png",
+        "Solf": "seasons/campria/portraits/d630ac11f5a37ad6.png",
+        "Nahuee": "personajes/nahuee.png"
+      }
+    },
+    "comeback": {
+      "id": "comeback",
+      "number": 3,
+      "description": "En la tercera entrega de Campria, Comeback, la competencia alcanzó un nuevo nivel. Los retos pasaron a estar inspirados en cada destino visitado y, por primera vez en la saga, se introdujeron los Duelos de Eliminación, una mecánica que cambió por completo la forma de jugar. El inesperado regreso de un participante eliminado añadió aún más tensión, convirtiendo a Comeback en una de las temporadas más impredecibles hasta el momento.",
+      "stats": {
+        "Estreno": "9 de Julio, 2016",
+        "Duración": "106 Días",
+        "Participantes": "22 Concursantes",
+        "Ganador": "José Ignacio \"Nacho\""
+      },
+      "protagonists": [
+        {
+          "name": "Nacho",
+          "place": "Winner",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Runner up",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "3rd Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Mati",
+          "place": "4th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Alexia",
+          "place": "5th Place",
+          "image": "personajes/alexia.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "7th Place",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Miguel Lima",
+          "place": "9th Place",
+          "image": "personajes/miguellima.png"
+        },
+        {
+          "name": "Coronel",
+          "place": "11th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Violeta",
+          "place": "12th Place",
+          "image": "personajes/violeta.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/comeback/track.png",
+        "width": 1305,
+        "height": 875
+      },
+      "poster": "seasons/campria/comeback/poster.png",
+      "images": {
+        "Nacho": "personajes/nacho.png",
+        "Luis": "personajes/luis.png",
+        "Luciano": "personajes/luciano.png",
+        "Mati": "personajes/mati.png",
+        "Alexia": "personajes/alexia.png",
+        "Javi": "personajes/javi.png",
+        "Nahuee": "personajes/nahuee.png",
+        "Miguel Lima": "personajes/miguellima.png",
+        "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
+        "Violeta": "personajes/violeta.png"
+      }
+    },
+    "golden": {
+      "id": "golden",
+      "number": 4,
+      "description": "En Golden vs Platinum, la temporada dividió a los participantes en dos equipos, Golden y Platinum. Esta estructura marcó el desarrollo del juego, creando una competencia constante entre ambos bandos y aumentando la tensión estratégica a lo largo de toda la temporada. Además, fue la primera temporada en contar con Duelos de Eliminación de principio a fin, lo que añadió una capa extra de presión y cambió por completo la forma en que se enfrentaban las eliminaciones.",
+      "stats": {
+        "Estreno": "9 de Abril, 2017",
+        "Duración": "90 Días",
+        "Participantes": "20 Concursantes",
+        "Ganador": "Felix Gagenze"
+      },
+      "protagonists": [
+        {
+          "name": "Felix",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+        },
+        {
+          "name": "Robin",
+          "place": "Runner up",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luis",
+          "place": "3rd Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Nidia Mirella",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/5ad36f4dd795be0f.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "5th Place",
+          "image": "personajes/pablo.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "7th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Iker",
+          "place": "8th Place",
+          "image": "personajes/iker.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "9th Place",
+          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+        },
+        {
+          "name": "Jesus",
+          "place": "10th Place",
+          "image": "personajes/jesus.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/golden/track.png",
+        "width": 1185,
+        "height": 799
+      },
+      "poster": "seasons/campria/golden/poster.png",
+      "images": {
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Robin": "personajes/robin.png",
+        "Luis": "personajes/luis.png",
+        "Nidia Mirella": "seasons/campria/portraits/5ad36f4dd795be0f.png",
+        "Pablo": "personajes/pablo.png",
+        "Javi": "personajes/javi.png",
+        "Luciano": "personajes/luciano.png",
+        "Iker": "personajes/iker.png",
+        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png",
+        "Jesus": "personajes/jesus.png"
+      }
+    },
+    "money": {
+      "id": "money",
+      "number": 5,
+      "description": "Money Race fue una temporada de Campria basada en una dinámica de puntos y decisiones estratégicas. Cada semana, el desempeño en los desafíos determinaba ventajas, inmunidades o sentencias dentro del juego, afectando directamente la posición de los participantes. En la etapa de eliminación, los sentenciados enfrentaban “La Elección”, un sistema donde debían decidir entre compartir o robar los puntos acumulados, lo que podía cambiar completamente el resultado de la eliminación y el curso del juego.",
+      "stats": {
+        "Estreno": "5 de Agosto, 2017",
+        "Duración": "53 Días",
+        "Participantes": "13 Concursantes",
+        "Ganador": "Edson Geremy"
+      },
+      "protagonists": [
+        {
+          "name": "Edson",
+          "place": "Winner",
+          "image": "personajes/edson.png"
+        },
+        {
+          "name": "Katy",
+          "place": "Runner up",
+          "image": "personajes/katy.png"
+        },
+        {
+          "name": "Pepi",
+          "place": "Runner up",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "place": "4th Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Felix",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+        },
+        {
+          "name": "Damián",
+          "place": "6th Place",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Mati",
+          "place": "8th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Jesus",
+          "place": "9th Place",
+          "image": "personajes/jesus.png"
+        },
+        {
+          "name": "Coronel",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/money/track.png",
+        "width": 1125,
+        "height": 533
+      },
+      "poster": "seasons/campria/money/poster.png",
+      "images": {
+        "Edson": "personajes/edson.png",
+        "Katy": "personajes/katy.png",
+        "Pepi": "personajes/pepi.png",
+        "Luis": "personajes/luis.png",
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Damián": "personajes/damian.png",
+        "Mati": "personajes/mati.png",
+        "Jesus": "personajes/jesus.png",
+        "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
+        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+      }
+    },
+    "allstars": {
+      "id": "allstars",
+      "number": 6,
+      "description": "All Stars reunió a varios de los mejores de las temporadas anteriores de Campria en una competencia donde el control del juego se concentró en los más fuertes. Cada semana, los dos ganadores del reto principal se enfrentaban en un duelo decisivo, y el vencedor obtenía el poder de elegir directamente al eliminado. En la parte final de la temporada, solo habría un ganador por episodio y el poder de eliminar a cualquiera seguía en juego.",
+      "stats": {
+        "Estreno": "5 de Enero, 2018",
+        "Duración": "76 días",
+        "Participantes": "15 Concursantes",
+        "Ganador": "Nahuee"
+      },
+      "protagonists": [
+        {
+          "name": "Nahuee",
+          "season": "Comeback",
+          "place": "Winner",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Pepi",
+          "season": "Money Race",
+          "place": "Runner up",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "season": "Popular vs Fan",
+          "place": "3rd Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Robin",
+          "season": "Golden vs Platinum",
+          "place": "4th Place",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luciano",
+          "season": "Comeback",
+          "place": "5th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Felix",
+          "season": "Golden vs Platinum",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+        },
+        {
+          "name": "Iker",
+          "season": "Golden vs Platinum",
+          "place": "7th Place",
+          "image": "personajes/iker.png"
+        },
+        {
+          "name": "Renata",
+          "season": "Retroverse",
+          "place": "8th Place",
+          "image": "personajes/renata.png"
+        },
+        {
+          "name": "Nacho",
+          "season": "Comeback",
+          "place": "9th Place",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Nidia Mirella",
+          "season": "Golden vs Platinum",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/5ad36f4dd795be0f.png"
+        },
+        {
+          "name": "Damián",
+          "season": "Popular vs Fan",
+          "place": "11th Place",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Coronel",
+          "season": "Comeback",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Jesus",
+          "season": "Golden vs Platinum",
+          "place": "13th Place",
+          "image": "personajes/jesus.png"
+        },
+        {
+          "name": "Katy",
+          "season": "Money Race",
+          "place": "14th Place",
+          "image": "personajes/katy.png"
+        },
+        {
+          "name": "Eduard",
+          "season": "Golden vs Platinum",
+          "place": "15th Place",
+          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/allstars/track.png",
+        "width": 1065,
+        "height": 609
+      },
+      "poster": "seasons/campria/allstars/poster.png",
+      "images": {
+        "Nahuee": "personajes/nahuee.png",
+        "Pepi": "personajes/pepi.png",
+        "Luis": "personajes/luis.png",
+        "Robin": "personajes/robin.png",
+        "Luciano": "personajes/luciano.png",
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Iker": "personajes/iker.png",
+        "Renata": "personajes/renata.png",
+        "Nacho": "personajes/nacho.png",
+        "Nidia Mirella": "seasons/campria/portraits/5ad36f4dd795be0f.png",
+        "Damián": "personajes/damian.png",
+        "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
+        "Jesus": "personajes/jesus.png",
+        "Katy": "personajes/katy.png",
+        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+      }
+    },
+    "elements": {
+      "id": "elements",
+      "number": 7,
+      "description": "Elements fue una temporada de Campria donde el juego se estructuró alrededor de los cuatro elementos de la naturaleza, sirviendo como base para los retos y dinámicas de cada episodio. Los participantes rotaban constantemente de equipos, evitando que las alianzas fueran fijas y obligándolos a adaptarse semana a semana. A lo largo de la competencia, los líderes de cada reto tuvieron un rol clave con inmunidad y poder de decisión sobre el rumbo del juego, mientras que los duelos entre nominados definían quién continuaba y quién quedaba eliminado.",
+      "stats": {
+        "Estreno": "8 de Enero, 2019",
+        "Duración": "49 Días",
+        "Participantes": "14 Concursantes",
+        "Ganador": "Javier Araya \"Amanda Lewis\""
+      },
+      "protagonists": [
+        {
+          "name": "Amanda Lewis",
+          "place": "Winner",
+          "image": "personajes/amandalewis.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/8cc8b8ef43aa35ef.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "3rd Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Felix",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        },
+        {
+          "name": "Solf",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/d630ac11f5a37ad6.png"
+        },
+        {
+          "name": "Jose Julián",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/9614998df57f1e52.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/elements/track.png",
+        "width": 945,
+        "height": 571
+      },
+      "poster": "seasons/campria/elements/poster.png",
+      "images": {
+        "Amanda Lewis": "personajes/amandalewis.png",
+        "Plastique Doll": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
+        "Luciano": "personajes/luciano.png",
+        "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Ivy": "seasons/campria/portraits/bc06bf99c605b469.png",
+        "Solf": "seasons/campria/portraits/d630ac11f5a37ad6.png",
+        "Jose Julián": "seasons/campria/portraits/9614998df57f1e52.png"
+      }
+    },
+    "andromeda": {
+      "id": "andromeda",
+      "number": 8,
+      "description": "Andromeda fue una temporada de Campria centrada en el juego individual, donde cada reto tenía dos ganadores y tres nominados definidos por rendimiento, decisión del segundo ganador y votos. El ganador principal tenía el poder de eliminar a uno de los nominados, marcando el ritmo de la competencia. Más adelante se añadieron los duelos de eliminación, y se introdujo el sistema de IDs secretos, donde descubrir el código de otro participante resultaba en eliminación automática, aumentando la estrategia y la paranoia dentro del juego.",
+      "stats": {
+        "Estreno": "16 de Julio, 2019",
+        "Duración": "85 Días",
+        "Participantes": "16 Concursantes",
+        "Ganador": "Emanuel Bagundo"
+      },
+      "protagonists": [
+        {
+          "name": "Emanuel",
+          "place": "Winner",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Runner up",
+          "image": "personajes/plastiquedollold.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Pier",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/346cf5e97f17f3f0.png"
+        },
+        {
+          "name": "Dani",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/c9320a90dce6ac7b.png"
+        },
+        {
+          "name": "Humberto",
+          "place": "7th Place",
+          "image": "personajes/humberto.png"
+        },
+        {
+          "name": "Imanol",
+          "place": "8th Place",
+          "image": "personajes/imanolold.png"
+        },
+        {
+          "name": "Felix",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/andromeda/track.png",
+        "width": 1005,
+        "height": 647
+      },
+      "poster": "seasons/campria/andromeda/poster.png",
+      "images": {
+        "Emanuel": "personajes/emanuel.png",
+        "Plastique Doll": "personajes/plastiquedollold.png",
+        "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
+        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
+        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Humberto": "personajes/humberto.png",
+        "Imanol": "personajes/imanolold.png",
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+      }
+    },
+    "apocalypse": {
+      "id": "apocalypse",
+      "number": 9,
+      "description": "Apocalypse reunió a un elenco estelar en una temporada marcada por los giros constantes y las mecánicas estratégicas. La Hermandad, formada por los participantes con mejor desempeño, tuvo un papel central en las nominaciones, mientras que las Espadas de Salvación, los Infectados y los cofres con ventajas ocultas añadieron incertidumbre a cada etapa del juego.",
+      "stats": {
+        "Estreno": "30 de Marzo, 2020",
+        "Duración": "102 Días",
+        "Participantes": "18 Concursantes",
+        "Ganadora": "Plastique Doll"
+      },
+      "protagonists": [
+        {
+          "name": "Plastique Doll",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/8cc8b8ef43aa35ef.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Pier",
+          "place": "3rd Place",
+          "image": "seasons/campria/portraits/346cf5e97f17f3f0.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "4th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Luis",
+          "place": "5th Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Dani",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/c9320a90dce6ac7b.png"
+        },
+        {
+          "name": "Marcos",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/4cacb121eff66f9c.png"
+        },
+        {
+          "name": "Emanuel",
+          "place": "8th Place",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "9th Place",
+          "image": "personajes/pablo.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "10th Place",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "11th Place",
+          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+        },
+        {
+          "name": "Vita",
+          "place": "12th Place",
+          "image": "personajes/vita.png"
+        },
+        {
+          "name": "Santi",
+          "place": "13th Place",
+          "image": "personajes/santi.png"
+        },
+        {
+          "name": "Teseo",
+          "place": "14th Place",
+          "image": "personajes/teseo.png"
+        },
+        {
+          "name": "Maicol",
+          "place": "15th Place",
+          "image": "personajes/maicol.png"
+        },
+        {
+          "name": "Mati",
+          "place": "16th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "17th Place",
+          "image": "seasons/campria/portraits/40d41e276595852f.png"
+        },
+        {
+          "name": "Sal Lua",
+          "place": "18th Place",
+          "image": "personajes/sallua.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Judge",
+          "image": "personajes/dualingo.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/apocalypse/track.png",
+        "width": 1065,
+        "height": 723
+      },
+      "poster": "seasons/campria/apocalypse/poster.png",
+      "images": {
+        "Plastique Doll": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
+        "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
+        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
+        "Luciano": "personajes/luciano.png",
+        "Luis": "personajes/luis.png",
+        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Marcos": "seasons/campria/portraits/4cacb121eff66f9c.png",
+        "Emanuel": "personajes/emanuel.png",
+        "Pablo": "personajes/pablo.png",
+        "Nahuee": "personajes/nahuee.png",
+        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png",
+        "Vita": "personajes/vita.png",
+        "Santi": "personajes/santi.png",
+        "Teseo": "personajes/teseo.png",
+        "Maicol": "personajes/maicol.png",
+        "Mati": "personajes/mati.png",
+        "Oscar": "seasons/campria/portraits/40d41e276595852f.png",
+        "Sal Lua": "personajes/sallua.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Dua Lingo": "personajes/dualingo.png"
+      }
+    },
+    "newera": {
+      "id": "newera",
+      "number": 10,
+      "description": "New Era enfrentó a los participantes contra exconcursantes destacados de temporadas anteriores en duelos que podían otorgar ventajas, recompensas y control sobre las eliminaciones. Con reglas cambiantes entre equipos y fusión, la temporada destacó por conectar el presente de Campria con algunas de sus figuras más recordadas.",
+      "stats": {
+        "Estreno": "15 de Mayo, 2020",
+        "Duración": "74 Días",
+        "Participantes": "15 Concursantes",
+        "Ganadores": "Brave Oe, Isabel Vilches"
+      },
+      "protagonists": [
+        {
+          "name": "Brave",
+          "place": "Winner",
+          "image": "personajes/brave.png"
+        },
+        {
+          "name": "Isabel",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/e260bc61066e3478.png"
+        },
+        {
+          "name": "Beto",
+          "place": "Runner up",
+          "image": "personajes/beto.png"
+        },
+        {
+          "name": "Nacho",
+          "place": "4th Place",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Eduardo",
+          "place": "5th Place",
+          "image": "personajes/eduardo.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/40d41e276595852f.png"
+        },
+        {
+          "name": "Daphne Blake",
+          "place": "8th Place",
+          "image": "personajes/daphneblake.png"
+        },
+        {
+          "name": "Damián",
+          "place": "9th Place",
+          "image": "personajes/damian.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/newera/track.png",
+        "width": 1005,
+        "height": 609
+      },
+      "poster": "seasons/campria/newera/poster.png",
+      "images": {
+        "Brave": "personajes/brave.png",
+        "Isabel": "seasons/campria/portraits/e260bc61066e3478.png",
+        "Beto": "personajes/beto.png",
+        "Nacho": "personajes/nacho.png",
+        "Eduardo": "personajes/eduardo.png",
+        "Oscar": "seasons/campria/portraits/40d41e276595852f.png",
+        "Daphne Blake": "personajes/daphneblake.png",
+        "Damián": "personajes/damian.png",
+        "Nahuee": "personajes/nahuee.png",
+        "Emanuel": "personajes/emanuel.png",
+        "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
+        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Azael": "personajes/azael.png",
+        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
+        "Carlos Rojas": "personajes/carlosrojas.png",
+        "Marcos": "seasons/campria/portraits/4cacb121eff66f9c.png",
+        "Luciano": "personajes/luciano.png",
+        "Catalina": "seasons/campria/portraits/d9cda072663a35b1.png",
+        "Luis": "personajes/luis.png",
+        "Ivy": "seasons/campria/portraits/bc06bf99c605b469.png",
+        "Plastique": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
+        "Pablo": "personajes/pablo.png"
+      },
+      "versus": {
+        "format": "assassin",
+        "rounds": [
+          {
+            "ep": "1",
+            "assassin": "Nahuee",
+            "opponents": [
+              "Oscar"
+            ],
+            "winners": [
+              "Nahuee"
+            ]
+          },
+          {
+            "ep": "2",
+            "assassin": "Emanuel",
+            "opponents": [
+              "Brave"
+            ],
+            "winners": [
+              "Emanuel"
+            ]
+          },
+          {
+            "ep": "3",
+            "assassin": "Alexandro",
+            "opponents": [
+              "Beto"
+            ],
+            "winners": [
+              "Beto"
+            ]
+          },
+          {
+            "ep": "4",
+            "assassin": "Dani",
+            "opponents": [
+              "Azael"
+            ],
+            "winners": [
+              "Dani"
+            ]
+          },
+          {
+            "ep": "5",
+            "assassin": "Pier",
+            "opponents": [
+              "Isabel",
+              "Carlos Rojas"
+            ],
+            "winners": [
+              "Pier"
+            ]
+          },
+          {
+            "ep": "6",
+            "assassin": "Marcos",
+            "opponents": [
+              "Brave"
+            ],
+            "winners": [
+              "Marcos"
+            ]
+          },
+          {
+            "ep": "7",
+            "assassin": "Nacho",
+            "opponents": [
+              "Isabel"
+            ],
+            "winners": [
+              "Isabel"
+            ]
+          },
+          {
+            "ep": "8",
+            "assassin": "Luciano",
+            "opponents": [
+              "Nacho"
+            ],
+            "winners": [
+              "Luciano"
+            ]
+          },
+          {
+            "ep": "9",
+            "assassin": "Catalina",
+            "opponents": [
+              "Beto"
+            ],
+            "winners": [
+              "Beto"
+            ]
+          },
+          {
+            "ep": "10",
+            "assassin": "Luis",
+            "opponents": [
+              "Beto",
+              "Nacho"
+            ],
+            "winners": [
+              "Beto"
+            ]
+          },
+          {
+            "ep": "11",
+            "assassin": "Ivy",
+            "opponents": [
+              "Brave"
+            ],
+            "winners": [
+              "Brave"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Plastique",
+            "opponents": [
+              "Isabel"
+            ],
+            "winners": [
+              "Plastique"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Pablo",
+            "opponents": [
+              "Isabel"
+            ],
+            "winners": [
+              "Pablo"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Plastique",
+            "opponents": [
+              "Beto"
+            ],
+            "winners": [
+              "Plastique"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Pablo",
+            "opponents": [
+              "Beto"
+            ],
+            "winners": [
+              "Pablo"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Plastique",
+            "opponents": [
+              "Brave"
+            ],
+            "winners": [
+              "Plastique",
+              "Brave"
+            ]
+          },
+          {
+            "ep": "12",
+            "assassin": "Pablo",
+            "opponents": [
+              "Brave"
+            ],
+            "winners": [
+              "Pablo",
+              "Brave"
+            ]
+          }
+        ]
+      }
+    },
+    "empire": {
+      "id": "empire",
+      "number": 11,
+      "description": "Empire of Blood fue una temporada con una estética completamente enfocada en el horror, donde los retos y dinámicas giraban en torno a ambientes oscuros, tensión constante y pruebas diseñadas para poner a los participantes bajo presión. El cast, en su mayoría nuevo, aportó una energía distinta a la competencia, generando una temporada marcada por lo impredecible, el caos estratégico y un tono más intenso dentro del juego.",
+      "stats": {
+        "Estreno": "8 de Enero, 2021",
+        "Duración": "43 Días",
+        "Participantes": "14 Concursantes",
+        "Ganador": "Vita Molotov"
+      },
+      "protagonists": [
+        {
+          "name": "Vita",
+          "place": "Winner",
+          "image": "personajes/vita.png"
+        },
+        {
+          "name": "Rodri",
+          "place": "Runner up",
+          "image": "personajes/rodri.png"
+        },
+        {
+          "name": "Carlos Harrington",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/8455a87fd3f71203.png"
+        },
+        {
+          "name": "Eris Midnight",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/f28c8e357f348811.png"
+        },
+        {
+          "name": "Lola Mugler",
+          "place": "5th Place",
+          "image": "personajes/lolamugler.png"
+        },
+        {
+          "name": "Jere",
+          "place": "6th Place",
+          "image": "personajes/jere.png"
+        },
+        {
+          "name": "Santi",
+          "place": "7th Place",
+          "image": "personajes/santi.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/9b8c7cac8645bc24.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/empire/track.png",
+        "width": 885,
+        "height": 571
+      },
+      "poster": "seasons/campria/empire/poster.png",
+      "images": {
+        "Vita": "personajes/vita.png",
+        "Rodri": "personajes/rodri.png",
+        "Carlos Harrington": "seasons/campria/portraits/8455a87fd3f71203.png",
+        "Eris Midnight": "seasons/campria/portraits/f28c8e357f348811.png",
+        "Lola Mugler": "personajes/lolamugler.png",
+        "Jere": "personajes/jere.png",
+        "Santi": "personajes/santi.png",
+        "Oscar": "seasons/campria/portraits/9b8c7cac8645bc24.png",
+        "Brave": "personajes/brave.png",
+        "Mati": "personajes/mati.png",
+        "Azael": "personajes/azael.png",
+        "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
+        "Alexander": "seasons/campria/portraits/34a22635ff2069a2.png",
+        "Carlos": "seasons/campria/portraits/8455a87fd3f71203.png",
+        "Eduardo": "seasons/campria/portraits/12f87c014ce5e587.png",
+        "Elvin": "seasons/campria/portraits/f2eb8b8576d4cc6f.png",
+        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Beto": "seasons/campria/portraits/3c77b62c387f96eb.png",
+        "Iker": "personajes/iker.png",
+        "Robin": "personajes/robin.png",
+        "Isabel": "seasons/campria/portraits/38d6c47c00e5a272.png"
+      },
+      "versus": {
+        "format": "killer",
+        "rounds": [
+          {
+            "ep": "1",
+            "competitors": [
+              "Brave",
+              "Oscar",
+              "Rodri"
+            ],
+            "winners": [
+              "Oscar"
+            ]
+          },
+          {
+            "ep": "2",
+            "competitors": [
+              "Mati",
+              "Azael",
+              "Lola Mugler"
+            ],
+            "winners": [
+              "Lola Mugler"
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              "Coronel",
+              "Alexander",
+              "Carlos",
+              "Oscar"
+            ],
+            "winners": [
+              "Alexander",
+              "Oscar"
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              "Eduardo",
+              "Elvin",
+              "Santi"
+            ],
+            "winners": [
+              "Elvin"
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              "Felix",
+              "Santi",
+              "Lola Mugler"
+            ],
+            "winners": [
+              "Santi"
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              "Beto",
+              "Oscar",
+              "Vita"
+            ],
+            "winners": [
+              "Oscar",
+              "Vita"
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              "Iker",
+              "Jere",
+              "Carlos Harrington"
+            ],
+            "winners": [
+              "Jere"
+            ]
+          },
+          {
+            "ep": "8",
+            "competitors": [
+              "Robin",
+              "Eris Midnight",
+              "Lola Mugler"
+            ],
+            "winners": [
+              "Robin"
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              "Oscar",
+              "Carlos",
+              "Vita"
+            ],
+            "winners": [
+              "Oscar",
+              "Vita"
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              "Isabel",
+              "Carlos"
+            ],
+            "winners": [
+              "Isabel"
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              "Isabel",
+              "Eris Midnight"
+            ],
+            "winners": [
+              "Isabel"
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              "Isabel",
+              "Rodri"
+            ],
+            "winners": [
+              "Rodri"
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              "Isabel",
+              "Vita"
+            ],
+            "winners": [
+              "Isabel"
+            ]
+          }
+        ]
+      }
+    },
+    "allstars2": {
+      "id": "allstars2",
+      "number": 12,
+      "description": "All Stars 2 reunió a participantes que regresaron en busca de redención, revancha y una última oportunidad para cambiar su legado dentro de la franquicia. Entre cuentas pendientes, nuevas alianzas y viejas rivalidades, la temporada ofreció una competencia intensa donde cada resultado podía reescribir la historia de sus concursantes. All Stars 2 marcó el final de la saga original, cerrando definitivamente una era.",
+      "stats": {
+        "Estreno": "3 de Junio, 2021",
+        "Duración": "52 días",
+        "Participantes": "13 Concursantes",
+        "Ganadores": "Beto Trujillo, Pablo Maximoff"
+      },
+      "protagonists": [
+        {
+          "name": "Beto",
+          "season": "New Era",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/a5a18f7e14deb17b.png"
+        },
+        {
+          "name": "Pablo",
+          "season": "Golden vs Platinum",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/a67c7cbf2347a3f0.png"
+        },
+        {
+          "name": "Amanda Lewis",
+          "season": "Elements",
+          "place": "3rd/4th Place",
+          "image": "seasons/campria/portraits/58915d7f397b75a8.png"
+        },
+        {
+          "name": "Vita",
+          "season": "Empire of Blood",
+          "place": "3rd/4th Place",
+          "image": "seasons/campria/portraits/5e14e551ab47ab61.png"
+        },
+        {
+          "name": "Eduardo",
+          "season": "New Era",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/0b7e6e3b3ed910f5.png"
+        },
+        {
+          "name": "Maicol",
+          "season": "Apocalypse",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/f1130d13c8b821a6.png"
+        },
+        {
+          "name": "Elvin",
+          "season": "Empire of Blood",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/a63bc71e89dff75c.png"
+        },
+        {
+          "name": "Eris Midnight",
+          "season": "Empire of Blood",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/2539582d8f08aeea.png"
+        },
+        {
+          "name": "Emanuel",
+          "season": "Andromeda",
+          "place": "9th Place",
+          "image": "seasons/campria/portraits/d4afc8e5512257a0.png"
+        },
+        {
+          "name": "Iker",
+          "season": "All Stars 1",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/eb72ae180821d303.png"
+        },
+        {
+          "name": "Renzo",
+          "season": "Retroverse",
+          "place": "11th Place",
+          "image": "seasons/campria/portraits/88d7c9ba44629703.png"
+        },
+        {
+          "name": "Azealia Midnight",
+          "season": "Andromeda",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/c2a0bb1419645a35.png"
+        },
+        {
+          "name": "Marcos",
+          "season": "Apocalypse",
+          "place": "13th Place",
+          "image": "seasons/campria/portraits/37a375e20b3c931b.png"
+        }
+      ],
+      "track": {
+        "src": "seasons/campria/allstars2/track.png",
+        "width": 825,
+        "height": 533
+      },
+      "poster": "seasons/campria/allstars2/poster.png",
+      "images": {
+        "Beto": "seasons/campria/portraits/a5a18f7e14deb17b.png",
+        "Pablo": "seasons/campria/portraits/a67c7cbf2347a3f0.png",
+        "Amanda Lewis": "seasons/campria/portraits/58915d7f397b75a8.png",
+        "Vita": "seasons/campria/portraits/5e14e551ab47ab61.png",
+        "Eduardo": "seasons/campria/portraits/0b7e6e3b3ed910f5.png",
+        "Maicol": "seasons/campria/portraits/f1130d13c8b821a6.png",
+        "Elvin": "seasons/campria/portraits/a63bc71e89dff75c.png",
+        "Eris Midnight": "seasons/campria/portraits/2539582d8f08aeea.png",
+        "Emanuel": "seasons/campria/portraits/d4afc8e5512257a0.png",
+        "Iker": "seasons/campria/portraits/eb72ae180821d303.png",
+        "Renzo": "seasons/campria/portraits/88d7c9ba44629703.png",
+        "Azealia Midnight": "seasons/campria/portraits/c2a0bb1419645a35.png",
+        "Marcos": "seasons/campria/portraits/37a375e20b3c931b.png"
+      }
+    }
+  }
+}
