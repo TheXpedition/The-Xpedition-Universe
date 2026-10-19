@@ -1,5 +1,6 @@
 import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
+import {createProgression} from './progression.mjs';
 import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
@@ -97,7 +98,7 @@ async function safeUser(u, own = false) {
     saved: JSON.parse(u.saved),
     stickerFavorites: JSON.parse(u.sticker_favorites||'[]'),
     follows: (await all('SELECT target FROM follows WHERE actor=?', u.id)).map(x => x.target),
-    hasPassword: !!u.password,orientation:u.orientation||'',orientationVisible:!!Number(u.orientation_visible)
+    hasPassword: !!u.password,orientation:u.orientation||'',orientationVisible:!!Number(u.orientation_visible),economy:await progression.wallet(u.id)
   });
   return result;
 }
@@ -193,7 +194,8 @@ async function conversationView(c, uid) {
 async function conversations(uid) {
   return (await conversationList(await all('SELECT c.* FROM conversations c JOIN members m ON m.conversation=c.id WHERE m.user_id=?', uid), uid)).sort((a, b) => (b.last?.created || b.created) - (a.last?.created || a.created));
 }
-async function makeSession(req, res, uid) {
+async function makeSession(req, res, uid, initialize=true) {
+  if(initialize)await progression.bootstrap(await one('SELECT * FROM users WHERE id=?',uid));
   const token = randomBytes(32).toString('hex');
   await run('INSERT INTO sessions VALUES (?,?,?)', hashToken(token), uid, stamp() + 30 * 86400000);
   const secure = process.env.SECURE_COOKIES === 'true' || publicUrl.startsWith('https://');
@@ -302,9 +304,10 @@ async function api(req, res, url) {
       version: '2.1.0',imageModeration:moderationStatus()
     });
   }
-  if (p === '/api/me' && method === 'GET') return json(res, {
+  if (p === '/api/me' && method === 'GET') {if(u)await serialize(()=>progression.bootstrap(u));return json(res, {
     user: await safeUser(u, true)
-  });
+  });}
+  if(await progression.handle(req,res,url,u))return;
   if (p === '/api/profiles' && method === 'GET') return json(res, {
     profiles: await profiles()
   });
@@ -462,8 +465,11 @@ async function api(req, res, url) {
       fail(409, 'Ese nombre ya está en uso.');
     }
     everyone('profiles', {});
+    const updatedProfile=await one('SELECT * FROM users WHERE id=?',u.id);
+    await progression.profile(updatedProfile,{avatar:b.avatar&&b.avatar!==u.avatar?b.avatar:null});
+    if(b.saved)await progression.saved(u.id,saved);
     return json(res, {
-      user: await safeUser(await one('SELECT * FROM users WHERE id=?', u.id), true)
+      user: await safeUser(updatedProfile, true)
     });
   }
   if (p === '/api/me/password' && method === 'POST') {
@@ -475,7 +481,7 @@ async function api(req, res, url) {
     await db.transaction(async () => {
       await run('UPDATE users SET password=? WHERE id=?', password, u.id);
       await run('DELETE FROM sessions WHERE user_id=?', u.id);
-      await makeSession(req, res, u.id);
+      await makeSession(req, res, u.id, false);
     });
     return json(res, {
       ok: true
@@ -488,7 +494,7 @@ async function api(req, res, url) {
     if (!characterIds.has(id) && !await one('SELECT 1 FROM users WHERE id=?', id)) fail(404, 'Perfil no encontrado.');
     const b = await body(req);
     if (typeof b.follow !== 'boolean') fail(400, 'Seguimiento inválido.');
-    if (b.follow) await run('INSERT INTO follows VALUES (?,?) ON CONFLICT DO NOTHING', u.id, id); else await run('DELETE FROM follows WHERE actor=? AND target=?', u.id, id);
+    if (b.follow) {await run('INSERT INTO follows VALUES (?,?) ON CONFLICT DO NOTHING', u.id, id);await progression.follow(u.id,id);} else await run('DELETE FROM follows WHERE actor=? AND target=?', u.id, id);
     everyone('profiles', {});
     return json(res, {
       user: await safeUser(await one('SELECT * FROM users WHERE id=?', u.id), true)
@@ -523,6 +529,7 @@ async function api(req, res, url) {
       for (const uid of ids) await run('INSERT INTO members(conversation,user_id,role) VALUES(?,?,?)', id, uid, uid === u.id ? 'admin' : 'member');
     });
     notify(ids, 'conversations', {});
+    if(type==='group')await progression.socialAction(u.id,'group',ids.slice().sort().join(':'));
     return json(res, {
       conversation: await conversationView(await one('SELECT * FROM conversations WHERE id=?', id), u.id)
     }, 201);
@@ -592,6 +599,7 @@ async function api(req, res, url) {
         throw e;
       }
       const message = await messageView(await one('SELECT * FROM messages WHERE id=?', mid));
+      await progression.socialAction(u.id,'message',id,text||'multimedia');
       notify(await memberIds(id), 'message', {
         conversation: id,
         message
@@ -765,8 +773,9 @@ async function serialize(fn){
   writeQueue=new Promise(resolve=>{release=resolve;});await previous;
   try{return await fn();}finally{release();}
 }
-const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis});
-const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions});
+const progression=createProgression({db,shop:JSON.parse(fs.readFileSync(path.join(publicDir,'simulator/catalog.json'),'utf8')),catalog,body,json,fail,checkRate,serialize,notify});
+const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
+const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   // Image review runs in a worker before taking the write lock so chat stays responsive.
   if(['GET','HEAD'].includes(req.method)||(req.method==='POST'&&['/api/posts','/api/me/cover'].includes(url.pathname)))return api(req,res,url);
@@ -795,7 +804,8 @@ const server = http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname.startsWith('/api/')) return await dispatchApi(req, res, url);
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
-    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname);
+    if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
+    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
     const size = fs.statSync(filename).size;

@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Xpedition Presents: The Traitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:wght@400;500;600;700&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root { --bg: #180106; --bg-2: #2b0006; --gold: #f1d38a; --ink: #e9e2dc; --venom: #27c76f; --shadow: rgba(0,0,0,.65); --glass: rgba(255, 255, 255, .06); --glass-brd: rgba(255, 255, 255, .12); --tile: #12020a; --tr-safe: #e5e7eb; --tr-high: #9ad9ff; --tr-low: #ffb1c1; --tr-btm: #ff6347; --tr-elim: #ff0000; --tr-murd-bg: #5C0000; --tr-murd-txt: #EA0000; --tr-win-bg: #C00000; --tr-win-txt: #FFFFFF; --tr-empty: #26262a; }
+* { box-sizing: border-box; } html, body { height: 100%; }
+body { margin: 0; background: radial-gradient(1000px 600px at 30% 0%, #3d0009 0%, transparent 60%), radial-gradient(900px 600px at 70% 100%, #220005 0%, transparent 60%), linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%); color: var(--ink); font-family: "Cormorant Garamond", serif; line-height: 1.45; overflow-x: hidden; }
+.gold-emboss { font-family: "Cinzel", serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); text-shadow: 0 1px 0 #fff2, 0 2px 6px #0009, 0 0 30px rgba(255,228,134,.08), 0 0 70px rgba(255,215,128,.05); }
+.header { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; border-bottom: 1px solid #ffffff1a; background: linear-gradient(180deg,#25000677,#0000); backdrop-filter: blur(6px); }
+.brand { display: flex; align-items: center; gap: 14px; }
+.h1 { font-size: 24px; font-weight: 800; margin: 0; }
+.step-indicator { font-weight: 800; color: #ff99b3; font-family: "Rubik", sans-serif; font-size: 14px; }
+.wrap { max-width: 1180px; margin: 16px auto; padding: 12px 16px; font-family: "Rubik", sans-serif; }
+.glass { background: var(--glass); border: 1px solid var(--glass-brd); backdrop-filter: blur(10px) saturate(160%); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 12px; border: 1px solid #caa44e88; background: linear-gradient(180deg,#3a1d00,#1a0d00); color: #f7e9b4; font-family: "Cinzel", serif; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,.25); transition: filter .2s; }
+.btn:hover { filter: brightness(1.15); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.primary { background: linear-gradient(180deg,#8b0000,#4a0000); border-color: #ff658a; color: #fff; }
+.control-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 14px 0; }
+.help { color: #cbd5e1; font-weight: 600; font-size: 14px; margin-bottom: 8px; display: block; }
+.hide { display: none !important; }
+.grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); justify-items: center; }
+.slot { position: relative; background: var(--tile); border: 1px solid #3a0a17; border-radius: 16px; padding: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.35); transition: transform .15s ease, border-color .15s ease; width: 100%; max-width: 160px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.slot:hover { transform: translateY(-3px); }
+.slot.selected-traitor { border: 2px solid #ff0000; background: #2a0000; }
+.icon { position: relative; width: 100px; height: 100px; border-radius: 14px; background: linear-gradient(180deg,#2b0010,#120007); border: 1px solid #531122; display: grid; place-items: center; overflow: hidden; margin-bottom: 8px; }
+.icon img { width: 100%; height: 100%; object-fit: cover; }
+.icon .placeholder { font-size: 18px; font-weight: 800; color: #ff99b3; }
+.slot .name { font-weight: 800; font-size: 13px; text-align: center; margin-bottom: 6px; color: #fff; }
+.slot select { width: 100%; height: 28px; border: 1px solid #531122; border-radius: 8px; background: #1a0009; color: #ffdfe9; font-weight: 700; font-size: 12px; }
+.murder-text { color: #ff0000; font-weight: 900; font-size: 14px; text-transform: uppercase; margin-top: 4px; display: none; }
+.slot.murder-target { border-color: #ff0000; background: #3a0000; }
+.slot.murder-target .murder-text { display: block; }
+.stage { display: none; }
+.stage.active { display: block; animation: fadeUp .4s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.ev-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 8px 12px; margin: 6px 0; border: 1px solid #3a0a17; border-radius: 10px; background: rgba(0,0,0,.3); font-size: 14px; }
+.ev-row .txt { font-weight: 500; color: #e9e2dc; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 8px; background: #1a0009; border: 1px solid #531122; font-weight: 700; font-size: 12px; color: #fff; }
+.pill img { width: 22px; height: 22px; border-radius: 4px; object-fit: cover; }
+.ev-title { font-family: "Cinzel", serif; font-weight: 700; color: var(--gold); font-size: 18px; margin: 16px 0 8px; border-bottom: 1px solid #ffffff22; padding-bottom: 4px;}
+.trk { overflow: auto; background: #12020a; border: 1px solid #3a0a17; border-radius: 14px; padding: 8px; margin-top: 14px; }
+.table { border-collapse: collapse; border-spacing: 0; width: max-content; }
+.table th, .table td { border: 1px solid #1a0a0f; padding: 0; text-align: center; font-weight: 800; font-size: 13px; height: 38px; }
+.table th { background: #1c0a12; padding: 8px 12px; color: #e5e7eb; }
+.cell { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; padding: 0 10px; margin: 0; font-weight: 900; min-width: 56px; box-sizing: border-box; border-radius: 0; }
+.cell.win { background: var(--tr-win-bg); color: var(--tr-win-txt); }
+.cell.high { background: var(--tr-high); color: #051620; }
+.cell.safe { background: var(--tr-safe); color: #111; }
+.cell.low { background: var(--tr-low); color: #300018; }
+.cell.btm { background: var(--tr-btm); color: #000; }
+.cell.elim { background: var(--tr-elim); color: #000; }
+.cell.murd { background: var(--tr-murd-bg); color: var(--tr-murd-txt); }
+.cell.disq { background: #500000; color: #fff; }
+.cell.evac { background: #DA70D6; color: #000; }
+.cell.quit { background: #800000; color: #fff; }
+.cell.champ { background: #ffd700; color: #000; }
+.cell.run { background: #c0c0c0; color: #000; }
+.cell.grey { background: var(--tr-empty); color: transparent; }
+.status-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); margin-top: 16px; }
+.status-card { background: linear-gradient(180deg, #2b0010, #120007); border: 1px solid #531122; border-radius: 12px; padding: 12px; text-align: center; }
+.status-card img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 8px; }
+.status-card .name { font-weight: 800; font-size: 14px; color: #fff; }
+.status-card .role { font-family: "Cinzel", serif; font-size: 12px; font-weight: 700; margin: 4px 0; }
+.status-card .role.traitor { color: #ff4d4d; }
+.status-card .role.innocent { color: var(--gold); }
+.status-card .wins { font-size: 12px; color: #aaa; }
+.results-grid { display: grid; gap: 12px; margin-bottom: 24px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+@media (min-width: 900px) { .results-grid { grid-template-columns: repeat(5, 1fr); } }
+.res-card { background: linear-gradient(180deg, #1c0a12, #0a0205); border: 1px solid #3a0a17; border-radius: 12px; padding: 12px; text-align: center; }
+.res-card img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; margin-bottom: 6px; }
+.res-card .res-name { font-weight: 800; font-size: 14px; color: #fff; }
+.res-card .res-role { font-family: "Cinzel", serif; font-size: 12px; font-weight: 700; margin: 4px 0; }
+.res-card .res-outcome { font-size: 11px; font-weight: 700; color: #9aa0a6; padding-top: 4px; border-top: 1px solid #3a0a17; margin-top: 4px;}
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 100; background: #000; color: #fff; font-weight: 800; padding: 10px 16px; border-radius: 999px; box-shadow: 0 8px 20px rgba(0,0,0,.5); display: none; font-family: "Rubik", sans-serif; }
+.toast.show { display: block; }
+</style>
+<script src="/simulator/bridge.js"></script><link rel="stylesheet" href="/simulator/engine.css"></head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <div class="h1 gold-emboss">The Traitor</div>
+    <div class="step-indicator" id="stepName">Elección de Elenco</div>
+  </div>
+</header>
+
+<main>
+  <section class="wrap glass stage active" id="stage-1">
+   <span class="help">Elige la cantidad de participantes:</span>
+<select id="castCountSelect" class="btn" style="margin-bottom:10px;">
+    <option value="12">12</option><option value="14">14</option>
+    <option value="16" selected>16</option><option value="18">18</option>
+    <option value="20">20</option><option value="22">22</option><option value="24">24</option>
+    <option value="26">26</option>
+    <option value="28">28</option>
+    <option value="30">30</option>
+</select>
+    <div class="grid" id="castGrid"></div>
+    <div class="control-bar">
+  <span class="help" id="castCountHelp" style="margin:0; margin-right:auto;">0/16 seleccionados</span>
+  <button class="btn" id="randomCast">Random Cast</button>
+  <button class="btn primary" id="btnToTraitors" disabled>Continuar →</button>
+</div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-2">
+<h2 class="gold-emboss" style="text-align:center; margin-top:0;">Elección de Traidores</h2>
+<span id="castDescText" class="help" style="text-align:center;">En un cast de 16, los concursantes son referidos como los "Inocentes", y entre ellos están los "Traidores", un grupo seleccionado en secreto por la anfitriona, Bonju.</span>
+    <span class="help" style="text-align:center; margin-bottom:16px;">Selecciona 3 Traidores o deja que el azar lo decida.</span>
+
+    <div class="grid" id="traitorsGrid"></div>
+
+    <div class="control-bar" style="justify-content:center;">
+      <button class="btn" id="randomTraitors">Random Traidores</button>
+      <button class="btn primary" id="btnStartGame" disabled>Comenzar Juego →</button>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-3">
+    <h2 class="gold-emboss" id="epTitle" style="margin-top:0;">Episodio 1</h2>
+
+    <div class="control-bar">
+      <select id="challengeSelect" style="padding:8px; border-radius:8px; background:#1a0009; color:#fff; border:1px solid #531122;">
+        <option value="">— Selecciona un Reto —</option>
+        <option>Rápidez</option><option>Estrategia</option><option>Creatividad</option><option>Inteligencia</option>
+        <option>Agilidad</option><option>Búsqueda</option><option>Duelos</option><option>Moda</option>
+        <option>Música</option><option>Cultura & Conocimiento</option><option>Rap</option><option>Suerte</option>
+        <option>Bonju Chef</option><option>Wipeout 💦</option><option>Expedición Turística en la Antártida</option>
+        <option>Sillas Musicales</option><option>La Bomba</option>
+      </select>
+      <button class="btn" id="randomChallengeBtn">Random</button>
+      <button class="btn primary" id="runChallengeBtn" disabled>Generar Reto</button>
+    </div>
+
+    <div id="challengeEventsBox" class="hide">
+      <h3 class="ev-title">Eventos de la Mansión (Episodio)</h3>
+      <div id="mansionEventsList"></div>
+
+      <h3 class="ev-title" style="margin-top: 24px;">Eventos del Reto</h3>
+      <div id="challengeEventsList"></div>
+
+      <div style="margin-top: 16px; padding: 12px; background: rgba(192,0,0,0.1); border: 1px solid #C00000; border-radius: 10px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;" id="challengeWinnerText">
+      </div>
+
+      <div class="control-bar" style="margin-top: 20px;">
+        <button class="btn primary" id="btnToMurder">Continuar a la Noche →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-4">
+    <h2 class="gold-emboss" style="text-align:center; margin-top:0;">Sacrificio de los Traidores</h2>
+    <span class="help" style="text-align:center; margin-bottom:20px;">Es de noche. Los traidores se reúnen para decidir a quién asesinar. Elige un participante activo para ser asesinado (los traidores y los ganadores son inmunes).</span>
+
+    <div class="grid" id="murderGrid"></div>
+
+    <div class="control-bar" style="justify-content:center; margin-top:24px;">
+      <button class="btn" id="randomMurder">Random Asesinato</button>
+      <button class="btn primary" id="btnConfirmMurder" disabled>Confirmar Asesinato →</button>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-5">
+    <h2 class="gold-emboss" id="trialTitle" style="margin-top:0;">Juicio Final</h2>
+
+    <div id="trialEventsBox">
+      <h3 class="ev-title">Eventos del Juicio</h3>
+      <div id="trialEventsList"></div>
+    </div>
+
+    <div id="votingBox" style="margin-top: 24px;">
+      <h3 class="ev-title">Votación</h3>
+      <div id="votingList"></div>
+
+      <div id="trialResultBox" style="margin-top: 16px; padding: 16px; background: rgba(0,0,0,0.5); border: 1px solid #3a0a17; border-radius: 10px; text-align: center;">
+        <h3 id="elimResultText" style="margin:0; font-size:20px; font-weight:800; color:#fff;"></h3>
+        <p id="elimRoleText" style="margin:8px 0 0; font-family:'Cinzel',serif; font-size:18px; color:var(--gold);"></p>
+      </div>
+    </div>
+
+    <div class="control-bar" style="margin-top: 20px;">
+      <button class="btn primary" id="btnToTR">Ver Track Record →</button>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-6">
+    <div id="finaleResultsBox" class="hide"></div>
+
+    <h2 class="gold-emboss" id="trTitle" style="margin-top:0;">Track Record</h2>
+    <div class="trk">
+      <table class="table" id="trkTable">
+        <thead id="trkHead"></thead>
+        <tbody id="trkBody"></tbody>
+      </table>
+    </div>
+    <div class="control-bar" style="margin-top: 20px;">
+      <button class="btn primary" id="btnToStatus">Continuar →</button>
+      <button class="btn hide" id="btnRestart" style="background:#4a0000; border-color:#ff0000; color:#fff;">Simular de Nuevo</button>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-new-traitor">
+    <h2 class="gold-emboss" style="text-align:center; margin-top:0;">Reclutamiento</h2>
+    <span class="help" style="text-align:center; margin-bottom:20px;">Los traidores han sido eliminados. Bonju ha decidido que la mansión no puede quedarse sin sangre. Elige un jugador vivo para convertirse en el nuevo Traidor.</span>
+    <div class="grid" id="newTraitorGrid"></div>
+    <div class="control-bar" style="justify-content:center; margin-top:24px;">
+      <button class="btn" id="randomNewTraitor">Random Reclutamiento</button>
+      <button class="btn primary" id="btnConfirmNewTraitor" disabled>Confirmar Reclutamiento →</button>
+    </div>
+  </section>
+
+  <section class="wrap glass stage" id="stage-7">
+    <h2 class="gold-emboss" style="margin-top:0;">Jugadores Vivos</h2>
+    <div class="status-grid" id="statusGrid"></div>
+    <div class="control-bar" style="margin-top: 24px;">
+      <button class="btn primary" id="btnNextEpisode">Siguiente Episodio →</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Pronouns Logic
+const __gNorm = s => String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+
+const GENDER_MAP = (()=> {
+  const raw = [
+  ["Mother", "F"],
+  ["Adriana Pereira", "F"],
+  ["Alex Yohender", "M"],
+  ["Alexandro", "M"],
+  ["Alice", "F"],
+  ["Amanda Lewis", "F"],
+  ["Anderson Moreno", "M"],
+  ["Andrómeda", "F"],
+  ["Antonio Ezequiel", "M"],
+  ["Ari Salgado", "M"],
+  ["Azael", "M"],
+  ["Bayron", "M"],
+  ["Beto", "M"],
+  ["Bodega Bodeguita", "M"],
+  ["Braulio", "M"],
+  ["Bruno Macri", "M"],
+  ["Bryan Montalvo", "M"],
+  ["Carlos Harrington", "M"],
+  ["Catalina", "F"],
+  ["Christopher", "M"],
+  ["Cinthia Carral", "F"],
+  ["Coronel", "M"],
+  ["Daelly", "F"],
+  ["Dani", "F"],
+  ["Doppel", "F"],
+  ["Dua Lingo", "F"],
+  ["Eduard", "M"],
+  ["Eduardo", "M"],
+  ["Elian", "M"],
+  ["Emanuel", "M"],
+  ["Eris Midnight", "M"],
+  ["Esteban", "M"],
+  ["Felix", "M"],
+  ["Gabriel Sab", "M"],
+  ["Greg", "M"],
+  ["Harmony", "F"],
+  ["Ian Esteban", "M"],
+  ["Isabel", "F"],
+  ["Iñaella Rose", "F"],
+  ["Ivan Serrano", "M"],
+  ["Ivy", "F"],
+  ["Jose Serna", "M"],
+  ["Julián", "M"],
+  ["Kim Camila", "F"],
+  ["Lalamila", "F"],
+  ["Leandro", "M"],
+  ["Lucas Mendez", "M"],
+  ["Luciano", "M"],
+  ["Marcos", "M"],
+  ["Marianito", "M"],
+  ["Mary Hao", "F"],
+  ["Mischa Bachinski", "M"],
+  ["Nahuee", "M"],
+  ["Nicki Gorilaj", "F"],
+  ["Paula Garcia", "F"],
+  ["Paula Garcia de Cartón", "F"],
+  ["Paulis Queen", "F"],
+  ["Peggy", "F"],
+  ["Pier", "M"],
+  ["Plastique Doll", "F"],
+  ["Renata", "F"],
+  ["Renzo", "M"],
+  ["Samuel Gamert", "M"],
+  ["Silvanya D'Lemberth", "F"],
+  ["Sophia Asdero", "F"],
+  ["Stalin Mango", "M"],
+  ["Vita", "M"],
+  ["Vitany Glambert", "F"],
+  ["Ximena", "F"],
+  ["Xina Ro", "F"]
+];
+  const m = {};
+  raw.forEach(([n,g]) => { m[__gNorm(n)] = g; });
+  return m;
+})(); Object.assign(GENDER_MAP,{"adriana pereira":"F","agus":"M","alex yohender":"M","alexandro":"M","alexia":"F","alice":"F","amanda lewis":"F","anderson moreno":"M","andromeda":"F","ari salgado":"M","ariana glande":"F","ashley":"F","atneimip":"F","azael":"M","azealia midnight":"F","bayron":"M","beto":"M","bodega bodeguita":"M","bonju":"F","brave":"M","britney britney":"F","bruno macri":"M","bryan montalvo":"M","candy cookies":"F","carlos harrington":"M","carlos rojas":"M","carmine":"M","cassandra louvre":"F","cassie casu":"M","catalina":"F","chad gil pete":"M","christopher":"M","cinthia carral":"M","cocomong":"M","coronel":"M","cristian julio":"M","daelly":"F","damian":"M","dani":"F","daniel sims":"M","daphne blake":"F","dios":"M","doppel":"F","dua lingo":"F","edna droga":"F","edson":"M","eduard":"M","eduardo":"M","eduardo bunuelo":"M","edwin":"M","elian":"M","elias":"M","elvin":"M","emanuel":"M","emily waldorf":"F","emmy mango":"F","eris midnight":"M","esteban":"M","felipe vicente":"M","felix":"M","gaba hochbaum":"F","gabriel sab":"M","garnet":"M","gokuh moreno":"F","greg":"M","gustavo":"M","heidi cum":"F","humberto":"M","ian esteban":"M","ignacio ricci":"M","iker":"M","imanol":"M","inaella rose":"F","isaac":"M","isabel":"F","ivan serrano":"M","ivy":"F","jared":"M","javi":"M","jere":"M","jesus":"M","jeyson":"M","jiafei":"F","joaquin":"M","jose serna":"M","julian":"M","julie":"F","kareli":"F","katy":"F","kim camila":"F","lalamila":"F","leandro":"M","lily louvre":"F","lola mugler":"F","lucas mendez":"M","lucas severo":"M","luciano":"M","lui mclean":"M","luis":"M","maicol":"M","marcos":"M","maria villegas":"F","maria isabel":"M","maria luna":"F","marianito":"M","mariano":"M","mary hao":"F","mati":"M","mel rz":"M","miguel lima":"M","miss kopp":"M","myke z":"F","nacho":"M","nahuee":"M","nicki gorilaj":"F","nidia mirella":"F","ocean harmony":"F","oscar":"M","pablo":"M","paula garcia":"F","paulis queen":"F","peggy":"F","pepi":"F","pier":"M","pilar":"F","plastique doll":"F","rafael":"M","renata":"F","renzo":"M","roal":"M","robin":"M","rodri":"M","sadith":"F","sal lua":"F","samuel gamert":"M","sandro":"M","santi":"M","sebas":"M","silvanya d'lemberth":"F","solf":"M","sophia asdero":"F","sophie bradley":"F","stalin mango":"M","stephany":"F","teseo":"M","valery ocampo":"F","violeta":"F","vita":"M","vitany glambert":"F","vladimir":"M","ximena":"F","xina ro":"F"});
+
+const getGender = name => GENDER_MAP[__gNorm(name)] || "M";
+const gText = (name, textM, textF) => getGender(name) === "F" ? textF : textM;
+
+// Data
+const ALL_PARTICIPANTS = window.XPBridge.characters();
+
+// Función Helper para el Rol textualmente correcto
+const getRoleText = name => roles[name] === 'Traidor' ? gText(name, 'Traidor', 'Traidora') : 'Inocente';
+// DATA BASE DE EVENTOS
+const GROUP_EVENTS = [
+  {needs:["Nahuee","Nicki Gorilaj"], parts:[{chip:"Nahuee"}," le enseñó a ",{chip:"Nicki Gorilaj"}," a disfrazarse de Saw para asustar a todos."]},
+  {needs:["Cinthia Carral","Ivy"], parts:[{chip:"Cinthia Carral"}," se puso a fumar a escondidas en el patio con ",{chip:"Ivy"}]},
+  {needs:["Lucas Mendez","Adriana Pereira"], parts:[{chip:"Lucas Mendez"}," le dijo a ",{chip:"Adriana Pereira"}," que si no lo ayudaba la iba a ir a buscar a su casa."]},
+  {needs:["Eduard","Renata"], parts:[{chip:"Eduard"}," le enseñó a hacer panes a ",{chip:"Renata"}," en la cocina de la mansión."]},
+  {needs:["Bruno Macri","Paulis Queen"], parts:[{chip:"Bruno Macri"}," le dijo a ",{chip:"Paulis Queen"}," que Drag Race cambió su vida."]},
+  {needs:["Renata","Xina Ro"], parts:[{chip:"Renata"}," persiguió a ",{chip:"Xina Ro"}," por los pasillos como si fuera su presa."]},
+  {needs:["Plastique Doll","Luciano"], parts:[{chip:"Plastique Doll"}," le hizo bullying a ",{chip:"Luciano"}," todo el día."]},
+  {needs:["Mary Hao","Isabel"], parts:[{chip:"Mary Hao"}," se disfrazó con ",{chip:"Isabel"}," de Goku y Naruto en medio del salón."]},
+  {needs:["Mary Hao","Dani"], parts:[{chip:"Mary Hao"}," pensó que ",{chip:"Dani"}," era Jhon Cock y le pidió un autógrafo."]},
+  {needs:["Renata","Luciano"], parts:[{chip:"Renata"}," le hizo el calzón chino a ",{chip:"Luciano"},"."]},
+  {needs:["Alice","Mary Hao"], parts:[{chip:"Alice"}," jugó a la Ouija a medianoche con ",{chip:"Mary Hao"}]},
+  {needs:["Alexandro","Luciano"], parts:[{chip:"Alexandro"}," le dijo a ",{chip:"Luciano"}," que era muy débil mentalmente para estar aquí."]},
+  {needs:["Esteban","Lucas Mendez","Vita"], parts:[{chip:"Esteban"}," y ",{chip:"Lucas Mendez"}," persiguieron a ",{chip:"Vita"}," durante toda la tarde."]},
+  {needs:["Dani","Isabel"], parts:[{chip:"Dani"}," le dijo a ",{chip:"Isabel"}," que jamás conseguiría una hombra mejor que ella."]},
+  {needs:["Andromeda","Peggy"], parts:[{chip:"Andromeda"}," le metió una puñalada trasera a ",{chip:"Peggy"}," durante el episodio."]},
+  {needs:["Renata","Xina Ro"], parts:[{chip:"Renata"}," persiguió a ",{chip:"Xina Ro"}," con un cuchillo durante el episodio."]},
+  {needs:["Felix","Bayron"], parts:[{chip:"Felix"}," le succionó la juventud a ",{chip:"Bayron"}," en un rincón."]},
+  {needs:["Coronel","Bryan Montalvo"], parts:[{chip:"Coronel"}," jugó a secreto en la montaña con ",{chip:"Bryan Montalvo"},"."]},
+  {needs:["Daelly","Coronel"], parts:[{chip:"Daelly"}," le insinuó a ",{chip:"Coronel"}," que lo hicieran detrás de cámaras."]},
+  {needs:["Iñaella Rose","Dani"], parts:[{chip:"Iñaella Rose"}," dijo que ",{chip:"Dani"}," era el hombre más atractivo de la temporada."]},
+  {needs:["Alexandro","Daelly"], parts:[{chip:"Alexandro"}," le dijo a ",{chip:"Daelly"}," que ella no tiene trayectoria."]},
+  {needs:["Kim Camila","Andromeda"], parts:[{chip:"Kim Camila"}," le dijo a ",{chip:"Andromeda"}," que si quería ser su amiga tenía que ir al gimnasio."]},
+  {needs:["Bruno Macri","Mary Hao"], parts:[{chip:"Bruno Macri"}," le confesó a ",{chip:"Mary Hao"}," que él también quería ser travesti."]},
+  {needs:["Harmony","Peggy"], parts:[{chip:"Harmony"}," le dijo a ",{chip:"Peggy"}," que ella también era travesti en Facebook."]},
+  {needs:["Silvanya D'Lemberth","Braulio"], parts:[{chip:"Silvanya D'Lemberth"}," le propuso a ",{chip:"Braulio"}," hacer un boicot contra Bonju."]},
+  {needs:["Lucas Mendez","Bayron"], parts:[{chip:"Lucas Mendez"}," amenazó a ",{chip:"Bayron"}," diciéndole que lo iba a buscar en la noche."]},
+  {needs:["Christopher","Bayron"], parts:[{chip:"Christopher"}," se cagó los pañales con ",{chip:"Bayron"}," del miedo."]},
+  {needs:["Xina Ro","Peggy"], parts:[{chip:"Xina Ro"}," le dijo a ",{chip:"Peggy"}," que el 51 era su número de la suerte."]},
+  {needs:["Eris Midnight","Jose Serna"], parts:[{chip:"Eris Midnight"}," junto a ",{chip:"Jose Serna"}," no se callaron en todo el día."]},
+  {needs:["Kim Camila","Pier"], parts:[{chip:"Kim Camila"}," usó sus habilidades en karate para darle una paliza a ",{chip:"Pier"},"."]},
+  {needs:["Lucas Mendez","Nicki Gorilaj"], parts:[{chip:"Lucas Mendez"}," se enojó porque ",{chip:"Nicki Gorilaj"}," estaba en la temporada."]},
+  {needs:["Ivan Serrano","Greg"], parts:[{chip:"Ivan Serrano"}," habló con ",{chip:"Greg"}," y le dijo que Taylor Swift también cambió su vida."]}
+];
+
+const MULTI_EVENTS = [
+ {needs:["Xina Ro","Andromeda","Peggy","Isabel"], parts:[{chip:"Xina Ro"}," les gritó a ",{chip:"Andromeda"},", ",{chip:"Peggy"}," e ",{chip:"Isabel"}," que jamás volvería a confiar en ellas."]},
+ {needs:["Coronel","Dani","Bryan Montalvo"], parts:[{chip:"Coronel"}," le propuso a ",{chip:"Dani"}," y ",{chip:"Bryan Montalvo"}," hacer una alianza estricta de hombres."]},
+ {needs:["Bruno Macri","Lucas Mendez","Adriana Pereira"], parts:[{chip:"Bruno Macri"}," intentó aliarse con ",{chip:"Lucas Mendez"}," y ",{chip:"Adriana Pereira"}," pero Adriana se quedó dormida."]},
+ {needs:["Kim Camila","Luciano","Coronel","Marcos"], parts:[{chip:"Kim Camila"}," les dijo a ",{chip:"Luciano"},", ",{chip:"Coronel"}," y ",{chip:"Marcos"}," que parecían un circo."]}
+];
+
+const SOLO_EVENTS = [
+  ["Alexandro", "invitó a los demás a entrar a su propio concurso donde sí son profesionales."],
+  ["Alexandro", "amenazó a la producción con mandar a sus sicarios si lo eliminan."],
+  ["Anderson Moreno", "dijo que le dieron permiso de mandarlos a comer m*erd* a todos."],
+  ["Andromeda", "se quedó en su cuarto jugando Genshin Impact todo el día."],
+  ["Andromeda", "se tiró un peo y casi asfixia a todo el cast."],
+  ["Pier", "se orinó en un poste del patio de la mansión."],
+  ["Pier", "mordió a Bonju cuando pasó a saludar."],
+  ["Beto", "intentó estafar a los demás revendiendo objetos de la mansión."],
+  ["Christopher", "se cagó los boxers de la tensión."],
+  ["Catalina", "dijo que nadie la apoya y amenazó con renunciar al programa."],
+  ["Catalina", "dijo que tenía cosas más importantes que estar en este programa de cuarta."],
+  ["Bruno Macri", "se la pasó hablando de travestis en el pasillo."],
+  ["Bruno Macri", "le disparó a un participante porque sí."],
+  ["Ari Salgado", "se enojó y abandonó la mansión, pero después regresó como si nada."],
+  ["Anderson Moreno", "estaba emocionado por entrar a la mansión y se puso de rodillas para que no lo mataran en el primer día."],
+  ["Daelly", "quedó en embarazo durante el episodio."],
+  ["Daelly", "se suicidó y falleció."],
+  ["Bayron", "se puso a llorar gritando 'mamii mamii me duele la piernita'."],
+  ["Mary Hao", "confesó que su canción favorita es Fake Love de BTS y empezó a bailar Butter."],
+  ["Coronel", "les preguntó a las mujeres de la mansión qué talla de brasier eran."],
+  ["Daelly", "se enojó con la producción y dijo que nada en el juego era justo."],
+  ["Dani", "empezó a escribir fics homosexuales de los participantes en su libreta."],
+  ["Dani", "se quitó el brasier, empezó a gritar y a rayar las paredes de la mansión."],
+  ["Luciano", "dijo que este era su sueño y pidió de rodillas no ser eliminado."],
+  ["Dua Lingo", "lloró en una esquina por el amor de su audiencia."],
+  ["Dua Lingo", "se cagó encima hablando en francés."],
+  ["Doppel", "confesó que no la invitaron y se metió por la ventana de la mansión."],
+  ["Eris Midnight", "le hizo honor a su legado y se hizo Poop of the Year en los calzoncillos."],
+  ["Felix", "se le empezó a caer la piel por el estrés del juego."],
+  ["Gabriel Sab", "se la pasó hablando como cotorra y no dejaba escuchar a nadie."],
+  ["Isabel", "colapsó y eliminó a todos de su lista de amigos en League of Legends."],
+  ["Isabel", "le pidió a la producción alargar la temporada para no tener que trabajar afuera."],
+  ["Ivy", "pasó la burla pero revivió 3 veces de forma milagrosa."],
+  ["Ivy", "dijo que le daba igual que la mataran porque iba a regresar en el siguiente juego."],
+  ["Renata", "el viento le quitó la peluca y todos se dieron cuenta que es calva."],
+  ["Lucas Mendez", "fue a donde todos estaban dormidos y los obligó a escuchar a Cardi B."],
+  ["Ari Salgado", "pensó que el programa era Survivor y se fue a buscar ídolos ocultos."],
+  ["Alice", "sacó la Ouija y empezó a jugar sola en el salón principal."],
+  ["Marcos", "hizo un trago especial, pero sabía a Ivan Diamandis."],
+  ["Xina Ro", "cerró su cuenta de Facebook por 3 días por la presión de la mansión."],
+  ["Xina Ro", "dijo que mejor se iba a devolver a Imvu."],
+  ["Vita", "dijo que iba a renunciar porque se aburrió esperando."],
+  ["Peggy", "enloqueció y empezó a gritar que no confía en absolutamente nadie."],
+  ["Nicki Gorilaj", "hizo el baile del gorila para relajar la tensión."],
+  ["Sophia Asdero", "se metió a la piscina y todos se dieron cuenta que es travesti."],
+  ["Ignacio Ricci", "mandó un audio de WhatsApp de mil horas."],
+  ["Silvanya D'Lemberth", "buscó conflictos con el resto del cast por aburrimiento."],
+  ["Adriana Pereira", "no llegó al desayuno porque se quedó dormida en su cama."],
+  ["Dani", "dijo que la temporada era pan comido para ella porque toda la vida ha traicionado a todas las personas."],
+  ["Dani", "se puso a llorar porque lo acusaron de ser traidor."],
+  ["Isabel", "enloqueció y empezó a apuntarle a todos con un cuchillo."],
+  ["Iñaella Rose", "dijo que no entendía nada."],
+  ["Iñaella Rose", "preguntó por el nombre del programa."],
+  ["Iñaella Rose", "preguntó: '¿A qué hora empezaba el duelo de eliminación?'"],
+  ["Bryan Montalvo", "se puso a bailar una canción original de sida pop en la mansión pero se cayó con todo y el piso."],
+  ["Nahuee", "se hizo la rascadita navideña en la sala."],
+  ["Marianito", "se orinó, se poposeó y se vomitó en la cama."],
+  ["Azael", "se le salió un mojón de la impresión."],
+  ["Greg", "calificó el día con un 0 de 100 en Gregcritic."],
+  ["Ian Esteban", "se le olvidó que hoy grababan y se quedó en pijama."]
+];
+
+const RETO_EVENTS = [
+ "{A} se resbaló y cayó de cara haciendo el ridículo.",
+ "{A} encontró un atajo estratégico y le avisó a {B}.",
+ "{A} intentó hacer trampa pero Bonju se dio cuenta.",
+ "{A} casi se rinde a mitad del reto, pero {B} lo motivó a seguir.",
+ "{A} y {B} tuvieron una sincronización perfecta durante la prueba.",
+ "{A} arruinó el progreso de {B} por accidente."
+];
+
+// Utils
+const $ = sel => document.querySelector(sel);
+const toast = msg => { const el=$("#toast"); el.textContent=msg; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"), 2000); };
+const imgFor = name=>[window.XPBridge.image(name)];
+const slug = s => String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"").trim();
+const shuffle = arr => arr.slice().sort(() => Math.random() - 0.5);
+
+function loadImg(el, candidates) {
+ let i = 0;
+ function next() {
+   if (i >= candidates.length) {
+     if(el.parentElement) {
+       const ph = document.createElement('div'); ph.className = 'placeholder';
+       ph.textContent = el.alt.substring(0,2).toUpperCase();
+       el.replaceWith(ph);
+     }
+     return;
+   }
+   const img = new Image();
+   img.onload = () => el.src = img.src;
+   img.onerror = () => { i++; next(); };
+   img.src = candidates[i];
+ }
+ next();
+}
+
+function checkSpecialEvent(targetName) {
+  if (specialEventUsed) return null;
+
+
+  if (!chaosMode) return null;
+
+  // SOLO episodios 2-5
+  if (episode < 2 || episode > 5) return null;
+
+  const roll = Math.random();
+
+  // probabilidad base del evento
+  if (roll < 0.90) {
+    specialEventUsed = true;
+
+    const events = ["EVACUADO", "EXPULSADO", "RENUNCIA"];
+    const type = events[Math.floor(Math.random() * events.length)];
+
+    return type;
+  }
+
+  return null;
+}
+
+function chip(name, txt="") {
+ const span = document.createElement("span"); span.className = "pill";
+ const img = document.createElement("img"); img.alt = name; loadImg(img, imgFor(name));
+ span.appendChild(img);
+ const b = document.createElement("b"); b.textContent = name; span.appendChild(b);
+ if(txt) { const t = document.createElement("span"); t.style.fontWeight = "500"; t.textContent = " " + txt; span.appendChild(t); }
+ return span;
+}
+
+function evRow(contentHTML) {
+    const div = document.createElement("div");
+    div.className = "ev-row";
+    div.innerHTML = contentHTML;
+
+    // FIX: Obligamos a cargar las imágenes una vez que el HTML está en el DOM
+    div.querySelectorAll('img').forEach(img => {
+        if(img.alt) {
+            loadImg(img, imgFor(img.alt));
+        }
+    });
+
+    return div;
+}
+
+function checkAllActive(arr) {
+ return arr.every(p => alive.includes(p));
+}
+
+// State
+let step = 1;
+let cast = [];
+let castCount = 16;
+let roles = {};
+let wins = {};
+let alive = [];
+let elim_order = [];
+let trackData = {};
+let episode = 1;
+let specialEventHappened = false;
+let chaosMode = false;
+
+
+// Ep State
+let immune = [];
+let murdered = null;
+let eliminated = [];
+let btm_players = [];
+let btm_count = 0;
+let alliances = [];
+let isFinale = false;
+let specialEventUsed = false;
+
+// Event limiters
+let usedGroups = new Set();
+let usedSolos = new Set();
+
+// Navigation
+function go(stageId) {
+ document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+ $(`#${stageId}`).classList.add('active');
+ window.scrollTo(0,0);
+}
+
+document.getElementById('castCountSelect').onchange = (e) => {
+    castCount = parseInt(e.target.value);
+
+    // 1. Regenerar grid
+    initCastGrid();
+
+    // 2. Actualizar texto en Stage 1
+    $("#castCountHelp").textContent = `0/${castCount} seleccionados`;
+
+    // 3. ACTUALIZACIÓN DINÁMICA: Cambia el texto en Stage 2
+    $("#castDescText").textContent = `En un cast de ${castCount}, los concursantes son referidos como los "Inocentes", y entre ellos están los "Traidores", un grupo seleccionado en secreto por la anfitriona, Bonju.`;
+};
+
+// STAGE 1
+function initCastGrid() {
+ const grid = $("#castGrid"); grid.innerHTML = "";
+for(let i=0; i<castCount; i++) {
+   const slot = document.createElement("div"); slot.className = "slot";
+   const icon = document.createElement("div"); icon.className = "icon";
+   const img = document.createElement("img"); img.alt = "?"; icon.appendChild(img);
+   const sel = document.createElement("select");
+   sel.innerHTML = `<option value="">— Ninguno —</option>` + ALL_PARTICIPANTS.map(n => `<option>${n}</option>`).join("");
+
+   sel.onchange = () => {
+     const v = sel.value;
+     if(v) loadImg(img, imgFor(v));
+     else { img.removeAttribute('src'); img.alt="?"; }
+     updateCastUI();
+   };
+
+   slot.appendChild(icon); slot.appendChild(sel); grid.appendChild(slot);
+ }
+}
+function updateCastUI() {
+  const selects = Array.from(document.querySelectorAll("#castGrid select"));
+  const vals = selects.map(s => s.value).filter(Boolean);
+  const unique = new Set(vals);
+
+  selects.forEach(s => {
+    Array.from(s.options).forEach(o => {
+      if(!o.value) return;
+      o.disabled = unique.has(o.value) && s.value !== o.value;
+    });
+  });
+
+  $("#castCountHelp").textContent = `${unique.size}/${castCount} seleccionados`;
+  $("#btnToTraitors").disabled = unique.size !== castCount;
+}
+
+$("#randomCast").onclick = () => {
+  const selects = Array.from(document.querySelectorAll("#castGrid select"));
+
+  const pool = shuffle([...ALL_PARTICIPANTS]);
+
+  if (pool.length < selects.length) {
+    return toast("No hay suficientes participantes.");
+  }
+
+  const chosen = pool.slice(0, selects.length);
+
+  selects.forEach((s, i) => {
+    s.value = chosen[i];
+    s.dispatchEvent(new Event("change"));
+  });
+};
+
+$("#btnToTraitors").onclick = () => {
+ cast = Array.from(document.querySelectorAll("#castGrid select")).map(s => s.value);
+ cast.forEach(n => { roles[n] = 'Inocente'; wins[n] = 0; trackData[n] = []; });
+ alive = [...cast];
+  chaosMode = cast.length > 20;
+ initTraitorsGrid();
+ go("stage-2");
+ $("#stepName").textContent = "Elección de Traidores";
+};
+
+// STAGE 2
+function initTraitorsGrid() {window.XPBridge.checkpoint("initTraitorsGrid",Array.from(arguments));
+ const grid = $("#traitorsGrid"); grid.innerHTML = "";
+ cast.forEach(name => {
+   const slot = document.createElement("div"); slot.className = "slot";
+   const icon = document.createElement("div"); icon.className = "icon";
+   const img = document.createElement("img"); img.alt = name; loadImg(img, imgFor(name)); icon.appendChild(img);
+   const n = document.createElement("div"); n.className = "name"; n.textContent = name;
+
+   slot.appendChild(icon); slot.appendChild(n);
+   slot.onclick = () => {
+     if(slot.classList.contains("selected-traitor")) {
+       slot.classList.remove("selected-traitor");
+     } else {
+       if(document.querySelectorAll(".selected-traitor").length >= 3) return toast("Máximo 3 Traidores.");
+       slot.classList.add("selected-traitor");
+     }
+     $("#btnStartGame").disabled = document.querySelectorAll(".selected-traitor").length !== 3;
+   };
+   grid.appendChild(slot);
+ });
+}
+
+$("#randomTraitors").onclick = () => {
+ document.querySelectorAll("#traitorsGrid .slot").forEach(s => s.classList.remove("selected-traitor"));
+ const slots = shuffle(Array.from(document.querySelectorAll("#traitorsGrid .slot"))).slice(0, 3);
+ slots.forEach(s => s.classList.add("selected-traitor"));
+ $("#btnStartGame").disabled = false;
+};
+
+$("#btnStartGame").onclick = () => {
+ document.querySelectorAll("#traitorsGrid .slot.selected-traitor").forEach(s => {
+   roles[s.querySelector(".name").textContent] = 'Traidor';
+ });
+ startEpisode();
+};
+
+// STAGE 3: CHALLENGE
+function startEpisode() {window.XPBridge.checkpoint("startEpisode",Array.from(arguments));
+ immune = []; murdered = null; eliminated = []; alliances = []; btm_players = []; btm_count = 0;
+ isFinale = alive.length <= 4;
+
+ $("#epTitle").textContent = isFinale ? `Episodio Final` : `Episodio ${episode}`;
+ $("#stepName").textContent = isFinale ? `Gran Final` : `Episodio ${episode}`;
+
+ $("#challengeSelect").value = "";
+ $("#runChallengeBtn").disabled = true;
+ $("#challengeEventsBox").classList.add("hide");
+
+ go("stage-3");
+}
+
+$("#challengeSelect").onchange = () => $("#runChallengeBtn").disabled = !$("#challengeSelect").value;
+$("#randomChallengeBtn").onclick = () => {
+ const opts = Array.from($("#challengeSelect").options).filter(o => o.value);
+ $("#challengeSelect").value = opts[Math.floor(Math.random() * opts.length)].value;
+ $("#challengeSelect").dispatchEvent(new Event("change"));
+};
+
+$("#runChallengeBtn").onclick = () => {
+    $("#runChallengeBtn").disabled = true;
+    $("#challengeSelect").disabled = true;
+
+    generateChallengeEvents();
+};
+
+function generateChallengeEvents() {
+ const mList = $("#mansionEventsList"); mList.innerHTML = "";
+ let mCount = 0;
+
+ const availGroups = MULTI_EVENTS.concat(GROUP_EVENTS).filter(e => checkAllActive(e.needs) && !usedGroups.has(e.parts.join("")));
+ if(availGroups.length > 0 && mCount < 6) {
+   const picked = shuffle(availGroups)[0];
+   let html = "";
+   picked.parts.forEach(p => {
+     if(typeof p === "string") html += `<span class="txt">${p}</span>`;
+     else html += chip(p.chip).outerHTML;
+   });
+   mList.appendChild(evRow(html));
+   usedGroups.add(picked.parts.join(""));
+   mCount++;
+ }
+
+ let availSolos = shuffle(SOLO_EVENTS.filter(e => alive.includes(e[0]) && !usedSolos.has(e[1])));
+ while(mCount < 6 && availSolos.length > 0) {
+   let s = availSolos.pop();
+   mList.appendChild(evRow(`${chip(s[0]).outerHTML} <span class="txt">${s[1]}</span>`));
+   usedSolos.add(s[1]);
+   mCount++;
+ }
+
+const genericMansion = [
+  "{A} falleció durante el episodio.",
+  "{A} y {B} tuvieron una fuerte discusión por la limpieza de la mansión.",
+  "{A} y {B} hicieron el amor en una de las habitaciones de la mansión.",
+  "{A} observó a {B} saliendo de una habitación en secreto.",
+  "{A} intentó convencer a {B} de que no es un traidor.",
+  "{A} cree que {B} pertenece al equipo de traidores.",
+  "{A} colapsó por la paranoia y {B} intentó calmarlo."
+];
+ while(mCount < 6 && alive.length >= 2) {
+   let p1 = alive[Math.floor(Math.random() * alive.length)];
+   let p2 = alive[Math.floor(Math.random() * alive.length)];
+   if(p1 === p2) continue;
+   let text = genericMansion[Math.floor(Math.random() * genericMansion.length)].replace("{A}", chip(p1).outerHTML).replace("{B}", chip(p2).outerHTML);
+   mList.appendChild(evRow(`<span class="txt">${text}</span>`));
+   mCount++;
+ }
+
+ const cList = $("#challengeEventsList"); cList.innerHTML = "";
+ const challengeName = $("#challengeSelect").value;
+ let cCount = 0;
+
+ while(cCount < 5 && alive.length >= 2) {
+   let p1 = alive[Math.floor(Math.random() * alive.length)];
+   let p2 = alive[Math.floor(Math.random() * alive.length)];
+   if(p1 === p2) continue;
+   let text = RETO_EVENTS[Math.floor(Math.random() * RETO_EVENTS.length)].replace("{A}", chip(p1).outerHTML).replace("{B}", chip(p2).outerHTML);
+   cList.appendChild(evRow(`<span class="txt">${text}</span>`));
+   cCount++;
+ }
+
+ let p3 = alive[Math.floor(Math.random() * alive.length)];
+ let p4 = alive[Math.floor(Math.random() * alive.length)];
+ while(p3 === p4) p4 = alive[Math.floor(Math.random() * alive.length)];
+ cList.appendChild(evRow(`${chip(p3).outerHTML} <span class="txt">destacó enormemente en ${challengeName}, superando las habilidades de</span> ${chip(p4).outerHTML}`));
+
+ let numWinners = isFinale ? 1 : 2;
+ const winners = shuffle(alive).slice(0, numWinners);
+ winners.forEach(w => wins[w]++);
+ const winIconsHTML = winners.map(w => chip(w).outerHTML).join(` <span style="color:#ff4d4d; font-weight:800;">y</span> `);
+
+const container = $("#challengeWinnerText");
+   container.innerHTML = ""; // Limpiamos el contenedor
+
+   // Texto inicial
+   const start = document.createElement("strong");
+   start.style.cssText = "color: #ff4d4d; font-size:16px;";
+   start.textContent = "¡ ";
+   container.appendChild(start);
+
+   // Chips de ganadores (construcción DOM real)
+   winners.forEach((w, index) => {
+       container.appendChild(chip(w));
+       if (index < winners.length - 1) {
+           const y = document.createElement("span");
+           y.style.cssText = "color: #ff4d4d; font-weight:800; margin: 0 4px;";
+           y.textContent = " y ";
+           container.appendChild(y);
+       }
+   });
+
+   // Texto final
+   const end = document.createElement("strong");
+   end.style.cssText = "color: #ff4d4d; font-size:16px;";
+   end.textContent = isFinale ? " ganó el reto final! Obtiene una pista crucial." : " ganaron el reto! Obtienen inmunidad y pistas para el juicio.";
+   container.appendChild(end);
+
+   // Botones
+   if(!isFinale) {
+       immune = winners;
+       $("#btnToMurder").textContent = "Continuar a la Noche →";
+       $("#btnToMurder").onclick = () => initMurderGrid();
+   } else {
+       immune = [];
+       $("#btnToMurder").textContent = "Continuar al Juicio Final →";
+       $("#btnToMurder").onclick = () => initTrial();
+   }
+
+ $("#challengeEventsBox").classList.remove("hide");
+}
+
+// STAGE 4: MURDER
+function initMurderGrid() {
+ $("#stepName").textContent = `Noche ${episode}`;
+ const grid = $("#murderGrid"); grid.innerHTML = "";
+ murdered = null;
+
+ alive.forEach(name => {
+   const slot = document.createElement("div"); slot.className = "slot";
+   const icon = document.createElement("div"); icon.className = "icon";
+   const img = document.createElement("img"); img.alt = name; loadImg(img, imgFor(name)); icon.appendChild(img);
+   const n = document.createElement("div"); n.className = "name"; n.textContent = name;
+   const mt = document.createElement("div"); mt.className = "murder-text"; mt.textContent = "MATAR";
+
+   slot.appendChild(icon); slot.appendChild(n); slot.appendChild(mt);
+
+   if(immune.includes(name) || roles[name] === 'Traidor') {
+     slot.style.opacity = "0.4"; slot.style.cursor = "not-allowed";
+     const esc = document.createElement("div");
+     esc.style.color = roles[name]==='Traidor' ? "#ff0000" : "#ffd700";
+     esc.style.fontSize="12px"; esc.style.fontWeight="bold";
+     esc.textContent = roles[name]==='Traidor' ? "TRAIDOR" : "INMUNE";
+     slot.appendChild(esc);
+   } else {
+     slot.onclick = () => {
+       document.querySelectorAll("#murderGrid .slot").forEach(s => s.classList.remove("murder-target"));
+       slot.classList.add("murder-target");
+       murdered = name;
+       $("#btnConfirmMurder").disabled = false;
+     };
+   }
+   grid.appendChild(slot);
+ });
+
+ $("#btnConfirmMurder").disabled = true;
+ go("stage-4");
+}
+
+$("#randomMurder").onclick = () => {
+ const targets = alive.filter(p => !immune.includes(p) && roles[p] !== 'Traidor');
+ if(targets.length === 0) return toast("No hay nadie disponible para asesinar.");
+ const picked = targets[Math.floor(Math.random() * targets.length)];
+ const slots = Array.from(document.querySelectorAll("#murderGrid .slot"));
+ const slot = slots.find(s => s.querySelector(".name").textContent === picked);
+ if(slot) slot.click();
+};
+
+$("#btnConfirmMurder").onclick = () => {
+ alive = alive.filter(p => p !== murdered);
+ elim_order.push({ name: murdered, ep: episode, reason: 'MURD' });
+ initTrial();
+};
+
+// STAGE 5: TRIAL
+function initTrial() {window.XPBridge.checkpoint("initTrial",Array.from(arguments));
+ $("#stepName").textContent = `Juicio Final ${episode}`;
+ $("#trialTitle").textContent = isFinale ? "Fuego de la Verdad (Final)" : "Juicio Final";
+
+ const evList = $("#trialEventsList"); evList.innerHTML = "";
+ alliances = [];
+
+ let challengeWinners = Object.keys(wins).filter(w => alive.includes(w)).sort(() => Math.random() - 0.5).slice(0, isFinale ? 1 : 2);
+
+ challengeWinners.forEach(w => {
+   if(roles[w] === 'Inocente') {
+     evList.appendChild(evRow(`${chip(w).outerHTML} <span class="txt">comparte la pista que obtuvo con el resto del grupo.</span>`));
+   } else {
+     const isFalse = Math.random() < 0.5;
+     if(isFalse) evList.appendChild(evRow(`${chip(w).outerHTML} <span class="txt">comparte información falsa sobre la pista para desviar sospechas.</span>`));
+     else evList.appendChild(evRow(`${chip(w).outerHTML} <span class="txt">decide no compartir su pista con el grupo.</span>`));
+   }
+ });
+
+ let pool = shuffle(alive);
+ if(pool.length >= 2) {
+   evList.appendChild(evRow(`${chip(pool[0]).outerHTML} <span class="txt">acusa abiertamente a</span> ${chip(pool[1]).outerHTML} <span class="txt">de ser un traidor.</span>`));
+ }
+ if(pool.length >= 4) {
+   evList.appendChild(evRow(`${chip(pool[2]).outerHTML} <span class="txt">y</span> ${chip(pool[3]).outerHTML} <span class="txt">forman una alianza durante el juicio.</span>`));
+   alliances.push([pool[2], pool[3]]);
+ }
+ if(pool.length >= 5) {
+   evList.appendChild(evRow(`${chip(pool[4]).outerHTML} <span class="txt">defiende a</span> ${chip(pool[0]).outerHTML} <span class="txt">y dice que es inocente.</span>`));
+ }
+ if(pool.length >= 7) {
+   evList.appendChild(evRow(`${chip(pool[5]).outerHTML} <span class="txt">se enojó y comenzó a gritar durante el juicio.</span>`));
+ }
+
+ if(!isFinale) {
+   runStandardVoting();
+ } else {
+   runFinaleLogic();
+ }
+
+ go("stage-5");
+}
+
+function areAllies(a, b) {
+ return alliances.some(al => (al[0]===a && al[1]===b) || (al[0]===b && al[1]===a));
+}
+
+function runStandardVoting() {
+  const vList = $("#votingList");
+  vList.innerHTML = "";
+  let votes = {};
+  alive.forEach(p => votes[p] = 0);
+
+  let deadTraitors = elim_order.filter(e => roles[e.name] === 'Traidor' && e.reason === 'ELIM').length;
+  let forceTraitor = false;
+
+  if (episode <= 3 && deadTraitors === 0) {
+    if (episode === 3 || Math.random() < 0.35) {
+      forceTraitor = true;
+    }
+  }
+
+  let availableTargets = alive.filter(t => !immune.includes(t));
+  let mainTargets = [];
+
+  if (forceTraitor) {
+    let traitorTargets = availableTargets.filter(t => roles[t] === 'Traidor');
+    if (traitorTargets.length > 0) {
+      mainTargets = [traitorTargets[Math.floor(Math.random() * traitorTargets.length)]];
+    } else {
+      mainTargets = shuffle(availableTargets).slice(0, Math.min(availableTargets.length, Math.floor(Math.random() * 2) + 2));
+    }
+  } else {
+    mainTargets = shuffle(availableTargets).slice(0, Math.min(availableTargets.length, Math.floor(Math.random() * 2) + 2));
+  }
+
+  // ================= VOTACIONES =================
+  alive.forEach(voter => {
+    let targets = mainTargets.filter(t => t !== voter && !areAllies(voter, t));
+    if (targets.length === 0) targets = availableTargets.filter(t => t !== voter && !areAllies(voter, t));
+    if (targets.length === 0) targets = availableTargets.filter(t => t !== voter);
+    if (targets.length === 0) return;
+
+    let target = targets[Math.floor(Math.random() * targets.length)];
+
+    if (forceTraitor && mainTargets.includes(target)) {
+      target = mainTargets[0];
+    }
+
+    votes[target]++;
+    vList.appendChild(
+      evRow(`${chip(voter).outerHTML} <span class="txt">vota por</span> ${chip(target).outerHTML} <span class="txt">para ser ${gText(target, "eliminado", "eliminada")}.</span>`)
+    );
+  });
+
+  // ================= RESOLUCIÓN DE VOTO =================
+  let maxV = 0;
+  let tie = [];
+
+  for (let p in votes) {
+    if (votes[p] > maxV) {
+      maxV = votes[p];
+      tie = [p];
+    } else if (votes[p] === maxV) {
+      tie.push(p);
+    }
+  }
+
+  let eliminated_player = tie[Math.floor(Math.random() * tie.length)];
+  const votedPlayers = Object.keys(votes).filter(p => votes[p] > 0);
+  btm_count = votedPlayers.length;
+
+ // ================= EVENTO ESPECIAL =================
+let specialCandidates = alive.filter(p => !immune.includes(p));
+if (specialCandidates.length === 0) specialCandidates = [...alive];
+let special_player = specialCandidates[Math.floor(Math.random() * specialCandidates.length)];
+let specialResult = checkSpecialEvent(special_player);
+
+if (specialResult) {
+
+  let g = getGender(special_player);
+
+  let narrativeText = "";
+
+  if (specialResult === "RENUNCIA") {
+    narrativeText = `${special_player} ha renunciado por motivos personales. El eliminado por votos está a salvo.`;
+  }
+
+  else if (specialResult === "EXPULSADO") {
+    narrativeText = `${special_player} ha sido ${g === "F" ? "expulsada" : "expulsado"} por romper las reglas. El eliminado por votos está a salvo.`;
+  }
+
+  else if (specialResult === "EVACUADO") {
+    narrativeText = `${special_player} ha sido ${g === "F" ? "evacuada" : "evacuado"} por heridas. El eliminado por votos está a salvo.`;
+  }
+
+  vList.appendChild(
+    evRow(`<strong style="color:var(--gold)">${narrativeText}</strong>`)
+  );
+
+  $("#elimResultText").textContent = narrativeText;
+  $("#elimResultText").style.color = "var(--gold)";
+  $("#elimRoleText").textContent = `${special_player} era ${getRoleText(special_player)}.`;
+
+  btm_players = votedPlayers.filter(p => p !== special_player);
+  alive = alive.filter(p => p !== special_player);
+
+  elim_order.push({
+    name: special_player,
+    ep: episode,
+    reason: specialResult
+  });
+
+  trackData[special_player][episode - 1] = {
+    cls: "disq",
+    txt: specialResult === "RENUNCIA" ? "QUIT"
+        : specialResult === "EVACUADO" ? "EVAC"
+        : "DISQ"
+  };
+
+  return;
+}
+
+  // ================= ELIMINACIÓN NORMAL =================
+  eliminated = [eliminated_player];
+
+  btm_players = votedPlayers.filter(p => p !== eliminated_player);
+
+  alive = alive.filter(p => p !== eliminated_player);
+
+  elim_order.push({
+    name: eliminated_player,
+    ep: episode,
+    reason: 'ELIM'
+  });
+
+  $("#elimResultText").textContent = `${eliminated_player} fue ${gText(eliminated_player, "eliminado", "eliminada")}.`;
+  $("#elimResultText").style.color = "#ff4d4d";
+  $("#elimRoleText").textContent = `${eliminated_player} era ${getRoleText(eliminated_player)}.`;
+
+}
+
+function markFinalWinners(winners) {
+  winners.forEach(name => {
+    trackData[name][episode - 1] = { cls: "champ", txt: "WINNER" };
+  });
+}
+
+function markFinalEliminated(names, reason = "ELIM") {
+  names.forEach(name => {
+    if (!elim_order.some(e => e.name === name && e.ep === episode)) {
+      elim_order.push({ name, ep: episode, reason });
+    }
+    trackData[name][episode - 1] = { cls: "elim", txt: "ELIM" };
+  });
+}
+
+function decideEndOrContinue(vList) {
+  let round = 1;
+
+  while (true) {
+    let votes = { terminar: 0, continuar: 0 };
+
+    alive.forEach((voter, index) => {
+      let choice = Math.random() < 0.5 ? "terminar" : "continuar";
+
+      if (round > 1 && index === alive.length - 1) {
+        const terminarAhead = votes.terminar > votes.continuar;
+        const continuarAhead = votes.continuar > votes.terminar;
+        const wouldTie = (terminarAhead && choice === "continuar") || (continuarAhead && choice === "terminar");
+        if (wouldTie) choice = terminarAhead ? "terminar" : "continuar";
+      }
+
+      votes[choice]++;
+      vList.appendChild(
+        evRow(`${chip(voter).outerHTML} <span class="txt">vota por</span> <strong style="color:var(--gold)">${choice.toUpperCase()}</strong><span class="txt">.</span>`)
+      );
+    });
+
+    if (votes.terminar !== votes.continuar) {
+      return votes.terminar > votes.continuar ? "terminar" : "continuar";
+    }
+
+    vList.appendChild(
+      evRow(`<strong style="color:var(--gold)">Empate entre TERMINAR y CONTINUAR. El grupo vuelve a votar.</strong>`)
+    );
+
+    round++;
+  }
+}
+function buildFinalExecutionVotes(vList) {
+  let votes = {};
+  alive.forEach(p => votes[p] = 0);
+
+  const totalTie = Math.random() < 0.22;
+  const fourPersonDoubleTie = alive.length === 4 && !totalTie && Math.random() < 0.35;
+  let plan = null;
+
+  if (totalTie) {
+    plan = [...alive];
+  } else if (fourPersonDoubleTie) {
+    plan = shuffle([...alive]).slice(0, 2);
+  }
+
+  alive.forEach((voter, index) => {
+    let target;
+
+    if (plan) {
+      const options = plan.filter(p => p !== voter);
+      target = options.length ? options[index % options.length] : shuffle(alive.filter(p => p !== voter))[0];
+    } else {
+      let options = alive.filter(p => p !== voter);
+      const traitors = options.filter(p => roles[p] === "Traidor");
+      const innocents = options.filter(p => roles[p] !== "Traidor");
+      const targetPool = Math.random() < 0.5 && traitors.length ? traitors : (innocents.length ? innocents : options);
+      target = targetPool[Math.floor(Math.random() * targetPool.length)];
+    }
+
+    if (!target) return;
+    votes[target]++;
+    vList.appendChild(
+      evRow(`${chip(voter).outerHTML} <span class="txt">vota por</span> ${chip(target).outerHTML} <span class="txt">para ser ${gText(target, "ejecutado", "ejecutada")}.</span>`)
+    );
+  });
+
+  return votes;
+}
+
+function resolveFinalExecutionTie(votes) {
+  const entries = Object.entries(votes);
+  const maxVotes = Math.max(...entries.map(([, v]) => v));
+  const tied = entries.filter(([, v]) => v === maxVotes).map(([name]) => name);
+
+  if (tied.length === alive.length) return { type: "total", eliminated: [...alive] };
+  if (alive.length === 4 && tied.length === 2) return { type: "double", eliminated: tied };
+  return { type: "single", eliminated: [tied[Math.floor(Math.random() * tied.length)]] };
+}
+
+function runFinaleLogic() {
+  const vList = $("#votingList");
+  vList.innerHTML = "";
+
+  let p = shuffle(alive);
+
+  if (p.length >= 2) {
+    vList.appendChild(
+      evRow(
+        `${chip(p[0]).outerHTML} <span class="txt">dice que</span> ${chip(p[1]).outerHTML} <span class="txt">debió llegar más lejos.</span>`
+      )
+    );
+  }
+
+  if (p.length >= 3) {
+    vList.appendChild(
+      evRow(
+        `${chip(p[2]).outerHTML} <span class="txt">ya no confía en nadie dentro de la mansión.</span>`
+      )
+    );
+  }
+
+  const startingFinalists = [...alive];
+  let resultText = "";
+  let resultColor = "";
+  let resultRoleText = "";
+  let finalResolved = false;
+
+  while (!finalResolved) {
+    const decision = decideEndOrContinue(vList);
+    const traitorsBeforeDecision = alive.filter(a => roles[a] === "Traidor");
+    const innocentsBeforeDecision = alive.filter(a => roles[a] !== "Traidor");
+
+    if (decision === "terminar") {
+      if (traitorsBeforeDecision.length > 0) {
+        resultText = "LOS TRAIDORES GANAN";
+        resultColor = "#ff4d4f";
+        resultRoleText = `${traitorsBeforeDecision.join(" y ")} ${traitorsBeforeDecision.length === 1 ? "gana" : "ganan"}. Quedaba al menos un traidor vivo.`;
+        markFinalWinners(traitorsBeforeDecision);
+        alive.filter(a => !traitorsBeforeDecision.includes(a)).forEach(a => {
+          trackData[a][episode - 1] = { cls: "run", txt: "Runner Up" };
+        });
+      } else {
+        resultText = "LOS INOCENTES GANAN";
+        resultColor = "var(--gold)";
+        resultRoleText = `${innocentsBeforeDecision.join(" y ")} ${innocentsBeforeDecision.length === 1 ? "gana" : "ganan"}. No quedaban traidores.`;
+        markFinalWinners(innocentsBeforeDecision);
+      }
+
+      finalResolved = true;
+      break;
+    }
+
+    vList.appendChild(evRow(`<strong style="color:var(--gold)">El grupo decide CONTINUAR. Hay una votación final de ejecución.</strong>`));
+    const votes = buildFinalExecutionVotes(vList);
+    const resolution = resolveFinalExecutionTie(votes);
+    const executed = resolution.eliminated;
+
+    markFinalEliminated(executed);
+    alive = alive.filter(p => !executed.includes(p));
+
+    if (resolution.type === "total") {
+      resultText = "NADIE GANA";
+      resultColor = "#ff4d4d";
+      resultRoleText = "Empate total: todos fueron eliminados.";
+      finalResolved = true;
+      break;
+    }
+
+    const traitorsLeft = alive.filter(a => roles[a] === "Traidor");
+    const innocentsLeft = alive.filter(a => roles[a] !== "Traidor");
+    const traitorWasExecuted = executed.some(a => roles[a] === "Traidor");
+
+    if (traitorWasExecuted) {
+      resultText = "LOS INOCENTES GANAN";
+      resultColor = "var(--gold)";
+      resultRoleText = "El traidor fue ejecutado en el juicio final.";
+      markFinalWinners(innocentsLeft);
+      finalResolved = true;
+      break;
+    }
+
+    if (resolution.type === "double") {
+      if (traitorsLeft.length > 0) {
+        resultText = "EL TRAIDOR GANA";
+        resultColor = "#ff4d4f";
+        resultRoleText = `${traitorsLeft.join(" y ")} ${traitorsLeft.length === 1 ? "sobrevive" : "sobreviven"}. El traidor gana porque quedó vivo entre los dos finalistas.`;
+        markFinalWinners(traitorsLeft);
+        innocentsLeft.forEach(a => {
+          trackData[a][episode - 1] = { cls: "run", txt: "Runner Up" };
+        });
+      } else {
+        resultText = "LOS INOCENTES GANAN";
+        resultColor = "var(--gold)";
+        resultRoleText = `${innocentsLeft.join(" y ")} ganan. Los dos sobrevivientes son inocentes.`;
+        markFinalWinners(innocentsLeft);
+      }
+
+      finalResolved = true;
+      break;
+    }
+
+    if (traitorsLeft.length === 0) {
+      if (alive.length <= 2) {
+        resultText = "LOS INOCENTES GANAN";
+        resultColor = "var(--gold)";
+        resultRoleText = `${innocentsLeft.join(" y ")} ${innocentsLeft.length === 1 ? "gana" : "ganan"}. No quedan traidores vivos.`;
+        markFinalWinners(innocentsLeft);
+        finalResolved = true;
+        break;
+      }
+
+      vList.appendChild(
+        evRow(`<strong style="color:var(--gold)">El jugador ejecutado era inocente. Los ${alive.length} inocentes sobrevivientes vuelven a decidir si TERMINAR o CONTINUAR.</strong>`)
+      );
+      continue;
+    }
+    if (alive.length <= 2) {
+      resultText = "EL TRAIDOR GANA";
+      resultColor = "#ff4d4f";
+      resultRoleText = `${traitorsLeft.join(" y ")} ${traitorsLeft.length === 1 ? "sobrevive" : "sobreviven"}. El traidor gana al llegar al juicio final sin ser ejecutado.`;
+      markFinalWinners(traitorsLeft);
+      innocentsLeft.forEach(a => {
+        trackData[a][episode - 1] = { cls: "run", txt: "Runner Up" };
+      });
+      finalResolved = true;
+      break;
+    }
+
+    vList.appendChild(
+      evRow(`<strong style="color:var(--gold)">El jugador ejecutado era inocente. Los ${alive.length} sobrevivientes vuelven a decidir si TERMINAR o CONTINUAR.</strong>`)
+    );
+  }
+
+  startingFinalists.forEach(name => {
+    if (!trackData[name][episode - 1]) {
+      trackData[name][episode - 1] = { cls: "run", txt: "Runner Up" };
+    }
+  });
+
+  cast.forEach(name => {
+    if (!trackData[name][episode - 1]) {
+      trackData[name][episode - 1] = { cls: "grey", txt: "" };
+    }
+  });
+
+  $("#elimResultText").textContent = resultText;
+  $("#elimResultText").style.color = resultColor;
+  $("#elimRoleText").textContent = resultRoleText;
+}
+// limpieza final
+eliminated.forEach(a => {
+  trackData[a][episode-1] = { cls: 'elim', txt: 'ELIMINATED' };
+});
+
+$("#btnToTR").onclick = () => {
+  if(!isFinale) populateTRForEpisode();
+  buildTR();
+
+  // CORRECCIÓN 3: RECLUTAMIENTO FORZADO
+  let aliveTraitors = alive.filter(a => roles[a] === 'Traidor');
+  if (aliveTraitors.length === 0 && alive.length > 4 && !isFinale) {
+      initNewTraitor();
+      return;
+  }
+
+  go("stage-6");
+
+  if(isFinale) {
+    $("#btnToStatus").classList.add("hide");
+    $("#btnRestart").classList.remove("hide");
+  } else {
+    let aliveTraitors = alive.filter(a => roles[a] === 'Traidor');
+    if(aliveTraitors.length === 0 && alive.length > 4) {
+      $("#btnToStatus").textContent = "Reclutar Nuevo Traidor →";
+      $("#btnToStatus").onclick = () => initNewTraitor();
+    } else {
+      $("#btnToStatus").textContent = "Continuar →";
+      $("#btnToStatus").onclick = () => initStatus();
+    }
+  }
+};
+
+$("#btnRestart").onclick = () => location.reload();
+
+function populateTRForEpisode() {
+  cast.forEach(p => {
+    const special = elim_order.find(e => e.name === p && e.ep === episode && ["EVACUADO", "EXPULSADO", "RENUNCIA"].includes(e.reason));
+    let td = { cls: 'safe', txt: 'SAFE' };
+
+    if (special) {
+      if (special.reason === 'EVACUADO') td = { cls: 'evac', txt: 'EVAC' };
+      else if (special.reason === 'EXPULSADO') td = { cls: 'disq', txt: 'DISQ' };
+      else td = { cls: 'quit', txt: 'QUIT' };
+    }
+
+    else if (eliminated.includes(p)) {
+      td = { cls: 'elim', txt: 'ELIM' };
+    }
+
+    else if (p === murdered) {
+      td = { cls: 'murd', txt: 'MURD' };
+    }
+
+    else if (!alive.includes(p)) {
+      td = { cls: 'grey', txt: '' };
+    }
+
+    else if (immune.includes(p)) {
+      td = { cls: 'win', txt: 'WIN' };
+    }
+
+    else if (btm_players.includes(p)) {
+      td = { cls: 'btm', txt: `BTM${btm_count || btm_players.length}` };
+    }
+
+    if (td.txt === 'SAFE') {
+      let r = Math.random();
+      if (r < 0.20) td = { cls: 'high', txt: 'HIGH' };
+      else if (r < 0.35) td = { cls: 'low', txt: 'LOW' };
+    }
+
+    trackData[p][episode - 1] = td;
+  });
+}
+function buildFinaleResults(sortedCast) {
+  const box = $("#finaleResultsBox");
+  box.innerHTML = `<h2 class="gold-emboss" style="text-align:center; margin-bottom:16px;">RESULTADOS</h2>`;
+  const grid = document.createElement("div");
+  grid.className = "results-grid";
+
+  sortedCast.forEach(p => {
+      const card = document.createElement("div"); card.className = "res-card";
+      const img = document.createElement("img"); img.alt = p; loadImg(img, imgFor(p));
+      const n = document.createElement("div"); n.className = "res-name"; n.textContent = p;
+
+      const r = document.createElement("div"); r.className = "res-role";
+      r.textContent = getRoleText(p);
+      r.style.color = roles[p] === 'Traidor' ? "#ff4d4d" : "var(--gold)";
+
+      const o = document.createElement("div"); o.className = "res-outcome";
+      let outcome = "";
+      let td = trackData[p][episode-1];
+      if(td && td.cls === 'champ') outcome = `Ganador de la Final`;
+      else if (td && td.cls === 'run') outcome = `Finalista`;
+      else {
+          let el = elim_order.find(e => e.name === p);
+          if(el) {
+              if(el.reason === 'MURD') outcome = gText(p, `Asesinado en la Noche ${el.ep}`, `Asesinada en la Noche ${el.ep}`);
+              if(el.reason === 'ELIM') outcome = gText(p, `Ejecutado en la Noche ${el.ep}`, `Ejecutada en la Noche ${el.ep}`);
+          }
+      }
+      o.textContent = outcome;
+
+      card.appendChild(img); card.appendChild(n); card.appendChild(r); card.appendChild(o);
+      grid.appendChild(card);
+  });
+
+  box.appendChild(grid);
+  box.classList.remove("hide");
+}
+
+
+function buildTR() {window.XPBridge.checkpoint("buildTR",Array.from(arguments));
+  const head = $("#trkHead"); const body = $("#trkBody");
+  head.innerHTML = ""; body.innerHTML = "";
+
+  const trH = document.createElement("tr");
+  trH.innerHTML = `<th>Participante</th>` + Array.from({length: episode}, (_,i)=>`<th>E${i+1}</th>`).join("");
+  head.appendChild(trH);
+
+  let sortedCast = [...cast].sort((a,b) => {
+    if(isFinale) {
+      let aWin = trackData[a][episode-1]?.cls === 'champ';
+      let bWin = trackData[b][episode-1]?.cls === 'champ';
+      if(aWin && !bWin) return -1;
+      if(!aWin && bWin) return 1;
+
+      let aRun = trackData[a][episode-1]?.cls === 'run';
+      let bRun = trackData[b][episode-1]?.cls === 'run';
+      if(aRun && !bRun) return -1;
+      if(!aRun && bRun) return 1;
+    }
+
+    let aAlive = alive.includes(a); let bAlive = alive.includes(b);
+    if(aAlive && !bAlive) return -1;
+    if(!aAlive && bAlive) return 1;
+    if(aAlive && bAlive) return a.localeCompare(b);
+
+    let aElim = elim_order.find(e => e.name === a);
+    let bElim = elim_order.find(e => e.name === b);
+    if(aElim && bElim) {
+      if(aElim.ep !== bElim.ep) return bElim.ep - aElim.ep;
+      if(aElim.reason === 'ELIM' && bElim.reason === 'MURD') return -1;
+      if(aElim.reason === 'MURD' && bElim.reason === 'ELIM') return 1;
+    }
+    return a.localeCompare(b);
+  });
+
+  if (isFinale) {
+    buildFinaleResults(sortedCast);
+  } else {
+    $("#finaleResultsBox").classList.add("hide");
+  }
+
+  sortedCast.forEach(p => {
+    const tr = document.createElement("tr");
+    let nameHtml = `<td style="text-align:left; padding-left:12px; background:#12020a; width: 140px;">${p}</td>`;
+    let cellsHtml = trackData[p].map(c => `<td><div class="cell ${c.cls}">${c.txt}</div></td>`).join("");
+    tr.innerHTML = nameHtml + cellsHtml;
+    body.appendChild(tr);
+  });
+}
+
+function initNewTraitor() {window.XPBridge.checkpoint("initNewTraitor",Array.from(arguments));
+  $("#stepName").textContent = `Noche Especial ${episode}`;
+  const grid = $("#newTraitorGrid"); grid.innerHTML = "";
+  let selectedNew = null;
+
+  alive.forEach(name => {
+    const slot = document.createElement("div"); slot.className = "slot";
+    const icon = document.createElement("div"); icon.className = "icon";
+    const img = document.createElement("img"); img.alt = name; loadImg(img, imgFor(name)); icon.appendChild(img);
+    const n = document.createElement("div"); n.className = "name"; n.textContent = name;
+
+    slot.appendChild(icon); slot.appendChild(n);
+    slot.onclick = () => {
+      document.querySelectorAll("#newTraitorGrid .slot").forEach(s => s.classList.remove("selected-traitor"));
+      slot.classList.add("selected-traitor");
+      selectedNew = name;
+      $("#btnConfirmNewTraitor").disabled = false;
+    };
+    grid.appendChild(slot);
+  });
+
+  $("#btnConfirmNewTraitor").disabled = true;
+  $("#btnConfirmNewTraitor").onclick = () => {
+    roles[selectedNew] = 'Traidor';
+    let nuevoTrai = gText(selectedNew, "el nuevo Traidor", "la nueva Traidora");
+    toast(`${selectedNew} es ${nuevoTrai}.`);
+    initStatus();
+  };
+
+  $("#randomNewTraitor").onclick = () => {
+    const slots = Array.from(document.querySelectorAll("#newTraitorGrid .slot"));
+    if (slots.length > 0) {
+      const randomSlot = slots[Math.floor(Math.random() * slots.length)];
+      randomSlot.click();
+    }
+  };
+
+  go("stage-new-traitor");
+}
+
+function initStatus() {window.XPBridge.checkpoint("initStatus",Array.from(arguments));
+  $("#stepName").textContent = `Resumen Ep ${episode}`;
+  const grid = $("#statusGrid"); grid.innerHTML = "";
+
+  alive.forEach(name => {
+    const card = document.createElement("div"); card.className = "status-card";
+    const img = document.createElement("img"); img.alt = name; loadImg(img, imgFor(name));
+    const n = document.createElement("div"); n.className = "name"; n.textContent = name;
+    const r = document.createElement("div"); r.className = `role ${roles[name]==='Traidor'?'traitor':'innocent'}`;
+    r.textContent = getRoleText(name);
+    const w = document.createElement("div"); w.className = "wins"; w.textContent = `Victorias: ${wins[name]}`;
+
+    card.appendChild(img); card.appendChild(n); card.appendChild(r); card.appendChild(w);
+    grid.appendChild(card);
+  });
+
+  go("stage-7");
+}
+
+$("#btnNextEpisode").onclick = () => {
+  episode++;
+  startEpisode();
+};
+
+// Start
+initCastGrid();
+</script>
+<script>window.XPState={capture:()=>({vars:{step,cast,castCount,roles,wins,alive,elim_order,trackData,episode,specialEventHappened,chaosMode,immune,murdered,eliminated,btm_players,btm_count,alliances,isFinale,specialEventUsed,usedGroups,usedSolos},mutable:{},globals:Object.fromEntries([].filter(k=>window.XPBridge.serializable(window[k])).map(k=>[k,window[k]])),world:window.XPWorld?.capture()}),restore:s=>{if(Object.hasOwn(s.vars,"step"))step=s.vars.step;if(Object.hasOwn(s.vars,"cast"))cast=s.vars.cast;if(Object.hasOwn(s.vars,"castCount"))castCount=s.vars.castCount;if(Object.hasOwn(s.vars,"roles"))roles=s.vars.roles;if(Object.hasOwn(s.vars,"wins"))wins=s.vars.wins;if(Object.hasOwn(s.vars,"alive"))alive=s.vars.alive;if(Object.hasOwn(s.vars,"elim_order"))elim_order=s.vars.elim_order;if(Object.hasOwn(s.vars,"trackData"))trackData=s.vars.trackData;if(Object.hasOwn(s.vars,"episode"))episode=s.vars.episode;if(Object.hasOwn(s.vars,"specialEventHappened"))specialEventHappened=s.vars.specialEventHappened;if(Object.hasOwn(s.vars,"chaosMode"))chaosMode=s.vars.chaosMode;if(Object.hasOwn(s.vars,"immune"))immune=s.vars.immune;if(Object.hasOwn(s.vars,"murdered"))murdered=s.vars.murdered;if(Object.hasOwn(s.vars,"eliminated"))eliminated=s.vars.eliminated;if(Object.hasOwn(s.vars,"btm_players"))btm_players=s.vars.btm_players;if(Object.hasOwn(s.vars,"btm_count"))btm_count=s.vars.btm_count;if(Object.hasOwn(s.vars,"alliances"))alliances=s.vars.alliances;if(Object.hasOwn(s.vars,"isFinale"))isFinale=s.vars.isFinale;if(Object.hasOwn(s.vars,"specialEventUsed"))specialEventUsed=s.vars.specialEventUsed;if(Object.hasOwn(s.vars,"usedGroups"))usedGroups=s.vars.usedGroups;if(Object.hasOwn(s.vars,"usedSolos"))usedSolos=s.vars.usedSolos;Object.assign(window,s.globals||{});if(s.world)window.XPWorld?.restore(s.world);},refresh:()=>{ALL_PARTICIPANTS.splice(0,ALL_PARTICIPANTS.length,...window.XPBridge.characters());},engine:"traitor"};</script><script src="/simulator/engine.js"></script></body>
+</html>

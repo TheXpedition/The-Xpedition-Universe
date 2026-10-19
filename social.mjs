@@ -28,7 +28,7 @@ export function popularityOrder(characters,details){
   const rest=characters.filter(c=>!used.has(key(c.name))).sort((a,b)=>Number(priority.has(key(b.name)))-Number(priority.has(key(a.name)))||a.name.localeCompare(b.name,'es'));
   return [...first.map(n=>available.get(key(n))),...rest,...last.map(n=>available.get(key(n)))].filter(Boolean);
 }
-export function createSocial({db,storage,characters,details,stickers,userFields,body,json,fail,checkRate,serialize,everyone,interactions}){
+export function createSocial({db,storage,characters,details,stickers,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression}){
   const order=popularityOrder(characters,details),ids=new Set(characters.map(c=>c.id));
   const visitorSecret=process.env.DATABASE_PASSWORD||randomBytes(32).toString('hex');
   async function ranks(counts){
@@ -97,6 +97,7 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
           });
         });
       }catch(error){if(file)await storage.remove(file).catch(()=>{});throw error;}
+      await serialize(()=>progression.socialAction(u.id,'post',text.trim().toLowerCase(),text||'Una imagen de la comunidad'));
       everyone('posts',{});json(res,{post:await postValue(await db.one('SELECT * FROM posts WHERE id=?',id),u)},201);return true;
     }
     const edit=p.match(/^\/api\/posts\/([a-f0-9-]+)$/);

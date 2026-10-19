@@ -1,0 +1,3308 @@
+{
+  "version": 1,
+  "aliases": {
+    "mariavillegas": "maria",
+    "miguelantonio": "mykez",
+    "sophie": "sophiebradley"
+  },
+  "items": [
+    {
+      "id": "character:adrianapereira",
+      "kind": "character",
+      "name": "Adriana Pereira",
+      "image": "/personajes/adrianapereira.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:agus",
+      "kind": "character",
+      "name": "Agus",
+      "image": "/personajes/agus.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:alexyohender",
+      "kind": "character",
+      "name": "Alex Yohender",
+      "image": "/personajes/alexyohender.png",
+      "starter": false,
+      "price": 0,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:alexandro",
+      "kind": "character",
+      "name": "Alexandro",
+      "image": "/personajes/alexandro.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:alexia",
+      "kind": "character",
+      "name": "Alexia",
+      "image": "/personajes/alexia.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:alice",
+      "kind": "character",
+      "name": "Alice",
+      "image": "/personajes/alice.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:amandalewis",
+      "kind": "character",
+      "name": "Amanda Lewis",
+      "image": "/personajes/amandalewis.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:andersonmoreno",
+      "kind": "character",
+      "name": "Anderson Moreno",
+      "image": "/personajes/andersonmoreno.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:andromeda",
+      "kind": "character",
+      "name": "Andromeda",
+      "image": "/personajes/andromeda.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:arisalgado",
+      "kind": "character",
+      "name": "Ari Salgado",
+      "image": "/personajes/arisalgado.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:arianaglande",
+      "kind": "character",
+      "name": "Ariana Glande",
+      "image": "/personajes/arianaglande.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:ashley",
+      "kind": "character",
+      "name": "Ashley",
+      "image": "/personajes/ashley.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Pasear perros"
+    },
+    {
+      "id": "character:atneimip",
+      "kind": "character",
+      "name": "Atneimip",
+      "image": "/personajes/atneimip.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:azael",
+      "kind": "character",
+      "name": "Azael",
+      "image": "/personajes/azael.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:azealiamidnight",
+      "kind": "character",
+      "name": "Azealia Midnight",
+      "image": "/personajes/azealiamidnight.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:bayron",
+      "kind": "character",
+      "name": "Bayron",
+      "image": "/personajes/bayron.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:beto",
+      "kind": "character",
+      "name": "Beto",
+      "image": "/personajes/beto.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:bodegabodeguita",
+      "kind": "character",
+      "name": "Bodega Bodeguita",
+      "image": "/personajes/bodegabodeguita.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:bonju",
+      "kind": "character",
+      "name": "Bonju",
+      "image": "/personajes/bonju.png",
+      "starter": false,
+      "price": 300,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:brave",
+      "kind": "character",
+      "name": "Brave",
+      "image": "/personajes/brave.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:britneybritney",
+      "kind": "character",
+      "name": "Britney Britney",
+      "image": "/personajes/britneybritney.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Hacer Playback"
+    },
+    {
+      "id": "character:brunomacri",
+      "kind": "character",
+      "name": "Bruno Macri",
+      "image": "/personajes/brunomacri.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:bryanmontalvo",
+      "kind": "character",
+      "name": "Bryan Montalvo",
+      "image": "/personajes/bryanmontalvo.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:candycookies",
+      "kind": "character",
+      "name": "Candy Cookies",
+      "image": "/personajes/candycookies.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Robar un Brainrot"
+    },
+    {
+      "id": "character:carlosharrington",
+      "kind": "character",
+      "name": "Carlos Harrington",
+      "image": "/personajes/carlosharrington.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:carlosrojas",
+      "kind": "character",
+      "name": "Carlos Rojas",
+      "image": "/personajes/carlosrojas.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:carmine",
+      "kind": "character",
+      "name": "Carmine",
+      "image": "/personajes/carmine.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:cassandralouvre",
+      "kind": "character",
+      "name": "Cassandra Louvre",
+      "image": "/personajes/cassandralouvre.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:cassiecasu",
+      "kind": "character",
+      "name": "Cassie Casu",
+      "image": "/personajes/cassiecasu.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:catalina",
+      "kind": "character",
+      "name": "Catalina",
+      "image": "/personajes/catalina.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:chadgilpete",
+      "kind": "character",
+      "name": "Chad Gil Pete",
+      "image": "/personajes/chadgilpete.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Él / He",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:christopher",
+      "kind": "character",
+      "name": "Christopher",
+      "image": "/personajes/christopher.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:cinthiacarral",
+      "kind": "character",
+      "name": "Cinthia Carral",
+      "image": "/personajes/cinthiacarral.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:cocomong",
+      "kind": "character",
+      "name": "Cocomong",
+      "image": "/personajes/cocomong.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:coronel",
+      "kind": "character",
+      "name": "Coronel",
+      "image": "/personajes/coronel.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:cristianjulio",
+      "kind": "character",
+      "name": "Cristian Julio",
+      "image": "/personajes/cristianjulio.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:daelly",
+      "kind": "character",
+      "name": "Daelly",
+      "image": "/personajes/daelly.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:damian",
+      "kind": "character",
+      "name": "Damián",
+      "image": "/personajes/damian.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:dani",
+      "kind": "character",
+      "name": "Dani",
+      "image": "/personajes/dani.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:danielsims",
+      "kind": "character",
+      "name": "Daniel Sims",
+      "image": "/personajes/danielsims.png",
+      "starter": false,
+      "price": 0,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:daphneblake",
+      "kind": "character",
+      "name": "Daphne Blake",
+      "image": "/personajes/daphneblake.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:dios",
+      "kind": "character",
+      "name": "Dios",
+      "image": "/personajes/dios.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Él / He",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:doppel",
+      "kind": "character",
+      "name": "Doppel",
+      "image": "/personajes/doppel.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:dualingo",
+      "kind": "character",
+      "name": "Dua Lingo",
+      "image": "/personajes/dualingo.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:ednadroga",
+      "kind": "character",
+      "name": "Edna Droga",
+      "image": "/personajes/ednadroga.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:edson",
+      "kind": "character",
+      "name": "Edson",
+      "image": "/personajes/edson.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:eduard",
+      "kind": "character",
+      "name": "Eduard",
+      "image": "/personajes/eduard.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:eduardo",
+      "kind": "character",
+      "name": "Eduardo",
+      "image": "/personajes/eduardo.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:eduardobunuelo",
+      "kind": "character",
+      "name": "Eduardo Buñuelo",
+      "image": "/personajes/eduardobunuelo.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Él / He",
+      "talent": "Hacer flan"
+    },
+    {
+      "id": "character:edwin",
+      "kind": "character",
+      "name": "Edwin",
+      "image": "/personajes/edwin.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "alzar pesas"
+    },
+    {
+      "id": "character:elian",
+      "kind": "character",
+      "name": "Elian",
+      "image": "/personajes/elian.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:elias",
+      "kind": "character",
+      "name": "Elias",
+      "image": "/personajes/elias.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:elvin",
+      "kind": "character",
+      "name": "Elvin",
+      "image": "/personajes/elvin.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:emanuel",
+      "kind": "character",
+      "name": "Emanuel",
+      "image": "/personajes/emanuel.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:emilywaldorf",
+      "kind": "character",
+      "name": "Emily Waldorf",
+      "image": "/personajes/emilywaldorf.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Servir café en el aeropuerto"
+    },
+    {
+      "id": "character:emmymango",
+      "kind": "character",
+      "name": "Emmy Mango",
+      "image": "/personajes/emmymango.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:erismidnight",
+      "kind": "character",
+      "name": "Eris Midnight",
+      "image": "/personajes/erismidnight.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:esteban",
+      "kind": "character",
+      "name": "Esteban",
+      "image": "/personajes/esteban.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:felipevicente",
+      "kind": "character",
+      "name": "Felipe Vicente",
+      "image": "/personajes/felipevicente.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:felix",
+      "kind": "character",
+      "name": "Felix",
+      "image": "/personajes/felix.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:gabahochbaum",
+      "kind": "character",
+      "name": "Gaba Hochbaum",
+      "image": "/personajes/gabahochbaum.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Quedar en embarazo"
+    },
+    {
+      "id": "character:gabrielsab",
+      "kind": "character",
+      "name": "Gabriel Sab",
+      "image": "/personajes/gabrielsab.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:garnet",
+      "kind": "character",
+      "name": "Garnet",
+      "image": "/personajes/garnet.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:gokuhmoreno",
+      "kind": "character",
+      "name": "Gokuh Moreno",
+      "image": "/personajes/gokuhmoreno.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:greg",
+      "kind": "character",
+      "name": "Greg",
+      "image": "/personajes/greg.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:gustavo",
+      "kind": "character",
+      "name": "Gustavo",
+      "image": "/personajes/gustavo.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Cobrar la Renta"
+    },
+    {
+      "id": "character:heidicum",
+      "kind": "character",
+      "name": "Heidi Cum",
+      "image": "/personajes/heidicum.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:humberto",
+      "kind": "character",
+      "name": "Humberto",
+      "image": "/personajes/humberto.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:ianesteban",
+      "kind": "character",
+      "name": "Ian Esteban",
+      "image": "/personajes/ianesteban.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:ignacioricci",
+      "kind": "character",
+      "name": "Ignacio Ricci",
+      "image": "/personajes/ignacioricci.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:iker",
+      "kind": "character",
+      "name": "Iker",
+      "image": "/personajes/iker.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:imanol",
+      "kind": "character",
+      "name": "Imanol",
+      "image": "/personajes/imanol.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:inaellarose",
+      "kind": "character",
+      "name": "Iñaella Rose",
+      "image": "/personajes/inaellarose.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:isaac",
+      "kind": "character",
+      "name": "Isaac",
+      "image": "/personajes/isaac.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:isabel",
+      "kind": "character",
+      "name": "Isabel",
+      "image": "/personajes/isabel.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:ivanserrano",
+      "kind": "character",
+      "name": "Ivan Serrano",
+      "image": "/personajes/ivanserrano.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:ivy",
+      "kind": "character",
+      "name": "Ivy",
+      "image": "/personajes/ivy.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:jared",
+      "kind": "character",
+      "name": "Jared",
+      "image": "/personajes/jared.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Cover de My Chemical Romance"
+    },
+    {
+      "id": "character:javi",
+      "kind": "character",
+      "name": "Javi",
+      "image": "/personajes/javi.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:jere",
+      "kind": "character",
+      "name": "Jere",
+      "image": "/personajes/jere.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:jesus",
+      "kind": "character",
+      "name": "Jesús",
+      "image": "/personajes/jesus.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:jeyson",
+      "kind": "character",
+      "name": "Jeyson",
+      "image": "/personajes/jeyson.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:jiafei",
+      "kind": "character",
+      "name": "Jiafei",
+      "image": "/personajes/jiafei.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Cantar"
+    },
+    {
+      "id": "character:joaquin",
+      "kind": "character",
+      "name": "Joaquin",
+      "image": "/personajes/joaquin.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:joseserna",
+      "kind": "character",
+      "name": "Jose Serna",
+      "image": "/personajes/joseserna.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:julian",
+      "kind": "character",
+      "name": "Julián",
+      "image": "/personajes/julian.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:julie",
+      "kind": "character",
+      "name": "Julie",
+      "image": "/personajes/julie.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:kareli",
+      "kind": "character",
+      "name": "Kareli",
+      "image": "/personajes/kareli.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:katy",
+      "kind": "character",
+      "name": "Katy",
+      "image": "/personajes/katy.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:kimcamila",
+      "kind": "character",
+      "name": "Kim Camila",
+      "image": "/personajes/kimcamila.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:lalamila",
+      "kind": "character",
+      "name": "Lalamila",
+      "image": "/personajes/lalamila.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:leandro",
+      "kind": "character",
+      "name": "Leandro",
+      "image": "/personajes/leandro.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:lilylouvre",
+      "kind": "character",
+      "name": "Lily Louvre",
+      "image": "/personajes/lilylouvre.png",
+      "starter": false,
+      "price": 0,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:lolamugler",
+      "kind": "character",
+      "name": "Lola Mugler",
+      "image": "/personajes/lolamugler.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:lucasmendez",
+      "kind": "character",
+      "name": "Lucas Mendez",
+      "image": "/personajes/lucasmendez.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:lucassevero",
+      "kind": "character",
+      "name": "Lucas Severo",
+      "image": "/personajes/lucassevero.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:luciano",
+      "kind": "character",
+      "name": "Luciano",
+      "image": "/personajes/luciano.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:luimclean",
+      "kind": "character",
+      "name": "Lui Mclean",
+      "image": "/personajes/luimclean.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:luis",
+      "kind": "character",
+      "name": "Luis",
+      "image": "/personajes/luis.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:maicol",
+      "kind": "character",
+      "name": "Maicol",
+      "image": "/personajes/maicol.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:marcos",
+      "kind": "character",
+      "name": "Marcos",
+      "image": "/personajes/marcos.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:maria",
+      "kind": "character",
+      "name": "Maria Villegas",
+      "image": "/personajes/maria.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:mariaisabel",
+      "kind": "character",
+      "name": "Maria Isabel",
+      "image": "/personajes/mariaisabel.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Él / He",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:marialuna",
+      "kind": "character",
+      "name": "Maria Luna",
+      "image": "/personajes/marialuna.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacerse la muerta"
+    },
+    {
+      "id": "character:marianito",
+      "kind": "character",
+      "name": "Marianito",
+      "image": "/personajes/marianito.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:mariano",
+      "kind": "character",
+      "name": "Mariano",
+      "image": "/personajes/mariano.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:maryhao",
+      "kind": "character",
+      "name": "Mary Hao",
+      "image": "/personajes/maryhao.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:mati",
+      "kind": "character",
+      "name": "Mati",
+      "image": "/personajes/mati.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:melrz",
+      "kind": "character",
+      "name": "Mel Rz",
+      "image": "/personajes/melrz.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:miguellima",
+      "kind": "character",
+      "name": "Miguel Lima",
+      "image": "/personajes/miguellima.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:misskopp",
+      "kind": "character",
+      "name": "Miss Kopp",
+      "image": "/personajes/misskopp.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:mykez",
+      "kind": "character",
+      "name": "Myke Z",
+      "image": "/personajes/mykez.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Gritar"
+    },
+    {
+      "id": "character:nacho",
+      "kind": "character",
+      "name": "Nacho",
+      "image": "/personajes/nacho.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:nahuee",
+      "kind": "character",
+      "name": "Nahuee",
+      "image": "/personajes/nahuee.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:nickigorilaj",
+      "kind": "character",
+      "name": "Nicki Gorilaj",
+      "image": "/personajes/nickigorilaj.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:nidiamirella",
+      "kind": "character",
+      "name": "Nidia Mirella",
+      "image": "/personajes/nidiamirella.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:oceanharmony",
+      "kind": "character",
+      "name": "Ocean Harmony",
+      "image": "/personajes/oceanharmony.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:oscar",
+      "kind": "character",
+      "name": "Oscar",
+      "image": "/personajes/oscar.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:pablo",
+      "kind": "character",
+      "name": "Pablo",
+      "image": "/personajes/pablo.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:paulagarcia",
+      "kind": "character",
+      "name": "Paula Garcia",
+      "image": "/personajes/paulagarcia.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:paulisqueen",
+      "kind": "character",
+      "name": "Paulis Queen",
+      "image": "/personajes/paulisqueen.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:peggy",
+      "kind": "character",
+      "name": "Peggy",
+      "image": "/personajes/peggy.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:pepi",
+      "kind": "character",
+      "name": "Pepi",
+      "image": "/personajes/pepi.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:pier",
+      "kind": "character",
+      "name": "Pier",
+      "image": "/personajes/pier.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:pilar",
+      "kind": "character",
+      "name": "Pilar",
+      "image": "/personajes/pilar.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:plastiquedoll",
+      "kind": "character",
+      "name": "Plastique Doll",
+      "image": "/personajes/plastiquedoll.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:rafael",
+      "kind": "character",
+      "name": "Rafael",
+      "image": "/personajes/rafael.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:renata",
+      "kind": "character",
+      "name": "Renata",
+      "image": "/personajes/renata.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:renzo",
+      "kind": "character",
+      "name": "Renzo",
+      "image": "/personajes/renzo.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:roal",
+      "kind": "character",
+      "name": "Roal",
+      "image": "/personajes/roal.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:robin",
+      "kind": "character",
+      "name": "Robin",
+      "image": "/personajes/robin.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:rodri",
+      "kind": "character",
+      "name": "Rodri",
+      "image": "/personajes/rodri.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:sadith",
+      "kind": "character",
+      "name": "Sadith",
+      "image": "/personajes/sadith.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:sallua",
+      "kind": "character",
+      "name": "Sal Lua",
+      "image": "/personajes/sallua.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer un avión de papel"
+    },
+    {
+      "id": "character:samuelgamert",
+      "kind": "character",
+      "name": "Samuel Gamert",
+      "image": "/personajes/samuelgamert.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:sandro",
+      "kind": "character",
+      "name": "Sandro",
+      "image": "/personajes/sandro.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:santi",
+      "kind": "character",
+      "name": "Santi",
+      "image": "/personajes/santi.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:sebas",
+      "kind": "character",
+      "name": "Sebas",
+      "image": "/personajes/sebas.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Armar un rompecabezas"
+    },
+    {
+      "id": "character:silvanyadlemberth",
+      "kind": "character",
+      "name": "Silvanya D'Lemberth",
+      "image": "/personajes/silvanyadlemberth.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:solf",
+      "kind": "character",
+      "name": "Solf",
+      "image": "/personajes/solf.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "character:sophiaasdero",
+      "kind": "character",
+      "name": "Sophia Asdero",
+      "image": "/personajes/sophiaasdero.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Hacer malabares con dos pelotas"
+    },
+    {
+      "id": "character:sophiebradley",
+      "kind": "character",
+      "name": "Sophie Bradley",
+      "image": "/personajes/sophiebradley.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Dibujar una estrella"
+    },
+    {
+      "id": "character:stalinmango",
+      "kind": "character",
+      "name": "Stalin Mango",
+      "image": "/personajes/stalinmango.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Preparar un sándwich"
+    },
+    {
+      "id": "character:stephany",
+      "kind": "character",
+      "name": "Stephany",
+      "image": "/personajes/stephany.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Bailar sin música"
+    },
+    {
+      "id": "character:teseo",
+      "kind": "character",
+      "name": "Teseo",
+      "image": "/personajes/teseo.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Silbar"
+    },
+    {
+      "id": "character:valeryocampo",
+      "kind": "character",
+      "name": "Valery Ocampo",
+      "image": "/personajes/valeryocampo.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Barrer"
+    },
+    {
+      "id": "character:violeta",
+      "kind": "character",
+      "name": "Violeta",
+      "image": "/personajes/violeta.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Chasquear los dedos"
+    },
+    {
+      "id": "character:vita",
+      "kind": "character",
+      "name": "Vita",
+      "image": "/personajes/vita.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Contar chistes"
+    },
+    {
+      "id": "character:vitanyglambert",
+      "kind": "character",
+      "name": "Vitany Glambert",
+      "image": "/personajes/vitanyglambert.png",
+      "starter": false,
+      "price": 220,
+      "level": 1,
+      "premium": true,
+      "pronouns": "Ella / She",
+      "talent": "Hacer café"
+    },
+    {
+      "id": "character:vladimir",
+      "kind": "character",
+      "name": "Vladimir",
+      "image": "/personajes/vladimir.png",
+      "starter": false,
+      "price": 0,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "talent": "Acosar"
+    },
+    {
+      "id": "character:ximena",
+      "kind": "character",
+      "name": "Ximena",
+      "image": "/personajes/ximena.png",
+      "starter": true,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Saltar la cuerda"
+    },
+    {
+      "id": "character:xinaro",
+      "kind": "character",
+      "name": "Xina Ro",
+      "image": "/personajes/xinaro.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "talent": "Imitar sonidos"
+    },
+    {
+      "id": "challenge:rapidez",
+      "kind": "challenge",
+      "name": "Rápidez",
+      "value": "Rápidez",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:estrategia",
+      "kind": "challenge",
+      "name": "Estrategia",
+      "value": "Estrategia",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:creatividad",
+      "kind": "challenge",
+      "name": "Creatividad",
+      "value": "Creatividad",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:inteligencia",
+      "kind": "challenge",
+      "name": "Inteligencia",
+      "value": "Inteligencia",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:agilidad",
+      "kind": "challenge",
+      "name": "Agilidad",
+      "value": "Agilidad",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:busqueda",
+      "kind": "challenge",
+      "name": "Búsqueda",
+      "value": "Búsqueda",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:duelos",
+      "kind": "challenge",
+      "name": "Duelos",
+      "value": "Duelos",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:moda",
+      "kind": "challenge",
+      "name": "Moda",
+      "value": "Moda",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:musica",
+      "kind": "challenge",
+      "name": "Música",
+      "value": "Música",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:culturaconocimiento",
+      "kind": "challenge",
+      "name": "Cultura & Conocimiento",
+      "value": "Cultura & Conocimiento",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:showdetalentos",
+      "kind": "challenge",
+      "name": "Show de Talentos",
+      "value": "Show de Talentos",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:rap",
+      "kind": "challenge",
+      "name": "Rap",
+      "value": "Rap",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:townofsalem",
+      "kind": "challenge",
+      "name": "Town of Salem",
+      "value": "Town of Salem",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:noticiero",
+      "kind": "challenge",
+      "name": "Noticiero",
+      "value": "Noticiero",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:eldespiertaton",
+      "kind": "challenge",
+      "name": "El Despiertatón",
+      "value": "El Despiertatón",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:suerte",
+      "kind": "challenge",
+      "name": "Suerte",
+      "value": "Suerte",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:bonjuchef",
+      "kind": "challenge",
+      "name": "Bonju Chef",
+      "value": "Bonju Chef",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:quienmatoabonju",
+      "kind": "challenge",
+      "name": "¿Quién mató a Bonju?",
+      "value": "¿Quién mató a Bonju?",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:bonjudragrace",
+      "kind": "challenge",
+      "name": "Bonju Drag Race",
+      "value": "Bonju Drag Race",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:topmodel",
+      "kind": "challenge",
+      "name": "Top Model",
+      "value": "Top Model",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:wipeout",
+      "kind": "challenge",
+      "name": "Wipeout 💦",
+      "value": "Wipeout 💦",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:expedicionturisticaenlaantartida",
+      "kind": "challenge",
+      "name": "Expedición Turística en la Antártida",
+      "value": "Expedición Turística en la Antártida",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:batalladebaile",
+      "kind": "challenge",
+      "name": "Batalla de Baile",
+      "value": "Batalla de Baile",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:covers",
+      "kind": "challenge",
+      "name": "Covers",
+      "value": "Covers",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:sillasmusicales",
+      "kind": "challenge",
+      "name": "Sillas Musicales",
+      "value": "Sillas Musicales",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:entrevistadetrabajo",
+      "kind": "challenge",
+      "name": "Entrevista de Trabajo",
+      "value": "Entrevista de Trabajo",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:romperhielos",
+      "kind": "challenge",
+      "name": "Romper Hielos",
+      "value": "Romper Hielos",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:excluir",
+      "kind": "challenge",
+      "name": "Excluir",
+      "value": "Excluir",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:robaunbonjuroit",
+      "kind": "challenge",
+      "name": "Roba un Bonjuroit",
+      "value": "Roba un Bonjuroit",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:labomba",
+      "kind": "challenge",
+      "name": "La Bomba",
+      "value": "La Bomba",
+      "modes": [
+        "game",
+        "traitor"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:gimnasio",
+      "kind": "challenge",
+      "name": "Gimnasio",
+      "value": "Gimnasio",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/antarctica.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:safarishowdown",
+      "kind": "challenge",
+      "name": "Safari Showdown",
+      "value": "Safari Showdown",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:roast",
+      "kind": "challenge",
+      "name": "Roast",
+      "value": "Roast",
+      "modes": [
+        "game",
+        "world"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:finalsafari",
+      "kind": "challenge",
+      "name": "Final Safari",
+      "value": "Final Safari",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:lapurga",
+      "kind": "challenge",
+      "name": "La Purga",
+      "value": "La Purga",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:retoderegreso",
+      "kind": "challenge",
+      "name": "Reto de Regreso",
+      "value": "Reto de Regreso",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:parejas",
+      "kind": "challenge",
+      "name": "Parejas",
+      "value": "Parejas",
+      "modes": [
+        "game"
+      ],
+      "image": "/simulator/game/assets/safari.png",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "system": true
+    },
+    {
+      "id": "challenge:pruebaderesistenciaenelmuro",
+      "kind": "challenge",
+      "name": "Prueba de Resistencia en el Muro",
+      "value": "Prueba de Resistencia en el Muro",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:circuitodevelocidadyobstaculos",
+      "kind": "challenge",
+      "name": "Circuito de Velocidad y Obstáculos",
+      "value": "Circuito de Velocidad y Obstáculos",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:triviaestrictadeconvivencia",
+      "kind": "challenge",
+      "name": "Trivia Estricta de Convivencia",
+      "value": "Trivia Estricta de Convivencia",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:desafiodeazarysuerte",
+      "kind": "challenge",
+      "name": "Desafío de Azar y Suerte",
+      "value": "Desafío de Azar y Suerte",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:escaperoomdelacasa",
+      "kind": "challenge",
+      "name": "Escape Room de la Casa",
+      "value": "Escape Room de la Casa",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:pruebadeequilibriosobreagua",
+      "kind": "challenge",
+      "name": "Prueba de Equilibrio sobre Agua",
+      "value": "Prueba de Equilibrio sobre Agua",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:juegodememoriavisualciega",
+      "kind": "challenge",
+      "name": "Juego de Memoria Visual Ciega",
+      "value": "Juego de Memoria Visual Ciega",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:laberintoaoscurasenelpatio",
+      "kind": "challenge",
+      "name": "Laberinto a Oscuras en el Patio",
+      "value": "Laberinto a Oscuras en el Patio",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:duelodebailecoreograficoeimprovisacion",
+      "kind": "challenge",
+      "name": "Duelo de Baile Coreográfico e Improvisación",
+      "value": "Duelo de Baile Coreográfico e Improvisación",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:pasarelaextravaganteyaltamoda",
+      "kind": "challenge",
+      "name": "Pasarela Extravagante y Alta Moda",
+      "value": "Pasarela Extravagante y Alta Moda",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:batallateatralyactuaciondramatica",
+      "kind": "challenge",
+      "name": "Batalla Teatral y Actuación Dramática",
+      "value": "Batalla Teatral y Actuación Dramática",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:interpretacionvocalylipsyncdealtatension",
+      "kind": "challenge",
+      "name": "Interpretación Vocal y Lipsync de Alta Tensión",
+      "value": "Interpretación Vocal y Lipsync de Alta Tensión",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:pruebadefuerzacuerdasytraccion",
+      "kind": "challenge",
+      "name": "Prueba de Fuerza, Cuerdas y Tracción",
+      "value": "Prueba de Fuerza, Cuerdas y Tracción",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:desafiodecocinadediosbajopresion",
+      "kind": "challenge",
+      "name": "Desafío de Cocina de Dios bajo Presión",
+      "value": "Desafío de Cocina de Dios bajo Presión",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:torneodeestrategiamentirasyacertijos",
+      "kind": "challenge",
+      "name": "Torneo de Estrategia Mentiras y Acertijos",
+      "value": "Torneo de Estrategia Mentiras y Acertijos",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:maratonderompecabezasgigantes",
+      "kind": "challenge",
+      "name": "Maratón de Rompecabezas Gigantes",
+      "value": "Maratón de Rompecabezas Gigantes",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:pruebaderesistenciademantenerlaantorchaencendida",
+      "kind": "challenge",
+      "name": "Prueba de Resistencia de Mantener la Antorcha Encendida",
+      "value": "Prueba de Resistencia de Mantener la Antorcha Encendida",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:desafiodeculturapopymemoriadereality",
+      "kind": "challenge",
+      "name": "Desafío de Cultura Pop y Memoria de Reality",
+      "value": "Desafío de Cultura Pop y Memoria de Reality",
+      "modes": [
+        "house"
+      ],
+      "image": "/backdrops/house.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:snatchgame",
+      "kind": "challenge",
+      "name": "Snatch Game",
+      "value": "Snatch Game",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/snatchgame.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:standup",
+      "kind": "challenge",
+      "name": "Stand-up",
+      "value": "Stand-up",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/standup.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:improv",
+      "kind": "challenge",
+      "name": "Improv",
+      "value": "Improv",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/improv.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:talentshow",
+      "kind": "challenge",
+      "name": "Talent Show",
+      "value": "Talent Show",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/varietyshow.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:design",
+      "kind": "challenge",
+      "name": "Design",
+      "value": "Design",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/design.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:theball",
+      "kind": "challenge",
+      "name": "The Ball",
+      "value": "The Ball",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/ball.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:roomdecor",
+      "kind": "challenge",
+      "name": "Room Decor",
+      "value": "Room Decor",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/roomdecor.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:missuniverse",
+      "kind": "challenge",
+      "name": "Miss Universe",
+      "value": "Miss Universe",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/missuniverse.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:makeover",
+      "kind": "challenge",
+      "name": "Makeover",
+      "value": "Makeover",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/makeover.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:photoshoot",
+      "kind": "challenge",
+      "name": "Photoshoot",
+      "value": "Photoshoot",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/photoshoot.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:runwaypairs",
+      "kind": "challenge",
+      "name": "Runway Pairs",
+      "value": "Runway Pairs",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/runwaypairs.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:modeling",
+      "kind": "challenge",
+      "name": "Modeling",
+      "value": "Modeling",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/modeling.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:themusical",
+      "kind": "challenge",
+      "name": "The Musical",
+      "value": "The Musical",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/musical.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:musicalgroups",
+      "kind": "challenge",
+      "name": "Musical Groups",
+      "value": "Musical Groups",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/musicalgroup.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:dancing",
+      "kind": "challenge",
+      "name": "Dancing",
+      "value": "Dancing",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/dancing.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:lipsync",
+      "kind": "challenge",
+      "name": "Lip Sync",
+      "value": "Lip Sync",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/lipsync.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:rappinroast",
+      "kind": "challenge",
+      "name": "Rappin' Roast",
+      "value": "Rappin' Roast",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/rappinroast.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:singing",
+      "kind": "challenge",
+      "name": "Singing",
+      "value": "Singing",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/singing.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:rumix",
+      "kind": "challenge",
+      "name": "Rumix",
+      "value": "Rumix",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/remix.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:karaoke",
+      "kind": "challenge",
+      "name": "Karaoke",
+      "value": "Karaoke",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/karaoke.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:actingchallenge",
+      "kind": "challenge",
+      "name": "Acting Challenge",
+      "value": "Acting Challenge",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/acting.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:trailer",
+      "kind": "challenge",
+      "name": "Trailer",
+      "value": "Trailer",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/trailerclip.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:voiceover",
+      "kind": "challenge",
+      "name": "Voice-over",
+      "value": "Voice-over",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/voiceover.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:politicaldebate",
+      "kind": "challenge",
+      "name": "Political Debate",
+      "value": "Political Debate",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/politicaldebate.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:commercial",
+      "kind": "challenge",
+      "name": "Commercial",
+      "value": "Commercial",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/commercial.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:podcast",
+      "kind": "challenge",
+      "name": "Podcast",
+      "value": "Podcast",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/podcast.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:interview",
+      "kind": "challenge",
+      "name": "Interview",
+      "value": "Interview",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/interview.png",
+      "starter": true,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "challenge:stripers",
+      "kind": "challenge",
+      "name": "Stripers",
+      "value": "Stripers",
+      "modes": [
+        "world"
+      ],
+      "image": "/simulator/game/retos/stripers.png",
+      "starter": false,
+      "price": 60,
+      "level": 1
+    },
+    {
+      "id": "team:pinguinos",
+      "kind": "team",
+      "name": "Pingüinos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/antarctica.png"
+    },
+    {
+      "id": "team:focas",
+      "kind": "team",
+      "name": "Focas",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/antarctica.png"
+    },
+    {
+      "id": "team:krills",
+      "kind": "team",
+      "name": "Krills",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/antarctica.png"
+    },
+    {
+      "id": "team:leones",
+      "kind": "team",
+      "name": "Leones",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:serpientes",
+      "kind": "team",
+      "name": "Serpientes",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:cebras",
+      "kind": "team",
+      "name": "Cebras",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:guepardos",
+      "kind": "team",
+      "name": "Guepardos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:escorpiones",
+      "kind": "team",
+      "name": "Escorpiones",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:bonjuesmuymuymuyhermosa",
+      "kind": "team",
+      "name": "Bonju es Muy Muy Muy Hermosa",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:dinosaurios",
+      "kind": "team",
+      "name": "Dinosaurios",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:gorilas",
+      "kind": "team",
+      "name": "Gorilas",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:cerebro",
+      "kind": "team",
+      "name": "Cerebro",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:fuerza",
+      "kind": "team",
+      "name": "Fuerza",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:belleza",
+      "kind": "team",
+      "name": "Belleza",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:heroes",
+      "kind": "team",
+      "name": "Héroes",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:villanos",
+      "kind": "team",
+      "name": "Villanos",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:fans",
+      "kind": "team",
+      "name": "Fans",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:favoritos",
+      "kind": "team",
+      "name": "Favoritos",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:ganadores",
+      "kind": "team",
+      "name": "Ganadores",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:perdedores",
+      "kind": "team",
+      "name": "Perdedores",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:agua",
+      "kind": "team",
+      "name": "Agua",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:fuego",
+      "kind": "team",
+      "name": "Fuego",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:tierra",
+      "kind": "team",
+      "name": "Tierra",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:aire",
+      "kind": "team",
+      "name": "Aire",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:hombres",
+      "kind": "team",
+      "name": "Hombres",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:mujeres",
+      "kind": "team",
+      "name": "Mujeres",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:lechosas",
+      "kind": "team",
+      "name": "Lechosas",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:travestis",
+      "kind": "team",
+      "name": "Travestis",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:diarrea",
+      "kind": "team",
+      "name": "Diarrea",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:therians",
+      "kind": "team",
+      "name": "Therians",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:trans",
+      "kind": "team",
+      "name": "Trans",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:gays",
+      "kind": "team",
+      "name": "Gays",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "team:lesbianas",
+      "kind": "team",
+      "name": "Lesbianas",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/safari.png"
+    }
+  ],
+  "modes": [
+    {
+      "id": "antarctica",
+      "kind": "mode",
+      "name": "Antarctica",
+      "level": 1,
+      "price": 0,
+      "upcoming": false,
+      "image": "/simulator/game/assets/antarctica.png"
+    },
+    {
+      "id": "safari",
+      "kind": "mode",
+      "name": "Safari",
+      "level": 2,
+      "price": 0,
+      "upcoming": false,
+      "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "cruise",
+      "kind": "mode",
+      "name": "Cruise",
+      "level": 3,
+      "price": 180,
+      "upcoming": false,
+      "image": "/simulator/game/assets/cruiseship.png"
+    },
+    {
+      "id": "house",
+      "kind": "mode",
+      "name": "House",
+      "level": 4,
+      "price": 240,
+      "upcoming": false,
+      "image": "/simulator/game/assets/house.png"
+    },
+    {
+      "id": "traitor",
+      "kind": "mode",
+      "name": "The Traitor",
+      "level": 5,
+      "price": 0,
+      "upcoming": false,
+      "image": "/simulator/game/assets/traitor.png"
+    },
+    {
+      "id": "race",
+      "kind": "mode",
+      "name": "Race",
+      "level": 6,
+      "price": 360,
+      "upcoming": false,
+      "image": "/simulator/game/assets/race.png"
+    },
+    {
+      "id": "world",
+      "kind": "mode",
+      "name": "Vs. The World",
+      "level": 7,
+      "price": 900,
+      "upcoming": false,
+      "image": "/simulator/game/assets/world.png"
+    },
+    {
+      "id": "japan",
+      "kind": "mode",
+      "name": "Japan",
+      "level": 9,
+      "price": 0,
+      "upcoming": true,
+      "image": "/simulator/game/assets/japan.png"
+    }
+  ]
+}

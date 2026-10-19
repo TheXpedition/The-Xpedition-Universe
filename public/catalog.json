@@ -776,7 +776,7 @@
         "desc": "Simula tus propias temporadas.",
         "accent": "var(--sim)",
         "kind": "Simulador",
-        "url": "https://thexpedition.github.io/The-Xpedition-Simulator/",
+        "url": "/simulator/",
         "actionLabel": "Jugar",
         "logo": "TXSimulator Logo Color .png",
         "transparent": "simulator"
@@ -788,7 +788,7 @@
         "desc": "Experimenta la tensión y el drama causado por las mentiras.",
         "accent": "var(--tr)",
         "kind": "Simulador",
-        "url": "https://thexpedition.github.io/The-Traitor-Simulator/",
+        "url": "/simulator/?mode=traitor",
         "actionLabel": "Jugar",
         "logo": "The Traitor Simulator Logo Color .png",
         "transparent": "traitorsim"
@@ -810,7 +810,7 @@
         "desc": "Un simulador social inspirado en la convivencia, los secretos y la presión de una casa al estilo Big Brother.",
         "accent": "var(--txj)",
         "kind": "Simulador",
-        "url": "https://thexpedition.github.io/The-Xpedition-House/",
+        "url": "/simulator/?mode=house",
         "actionLabel": "Jugar",
         "disabled": false
       }

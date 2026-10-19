@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs"
+    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs tests/progression.test.mjs tests/simulator.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",
@@ -18,5 +18,8 @@
     "nsfwjs": "4.3.0",
     "pg": "8.23.1",
     "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "jsdom": "26.1.0"
   }
 }

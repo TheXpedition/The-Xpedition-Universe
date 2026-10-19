@@ -47,6 +47,24 @@ test('registro, sesión, privacidad y contraseñas',async()=>{
   assert.equal((await request(client(),'/auth/register','POST',{name:'QA Alice',email:'new@example.invalid',password:'UnaClaveDePrueba-123'})).status,409);
   assert.equal((await request(client(),'/auth/register','POST',{name:'Dani',email:'dani@example.invalid',password:'UnaClaveDePrueba-123'})).status,409);
 });
+test('el simulador comparte la sesión y mantiene compras y partidas privadas por cuenta',async()=>{
+ assert.equal((await request(null,'/economy')).status,401);
+ assert.equal((await fetch(base+'/simulator/game/',{redirect:'manual'})).status,302);
+ assert.equal((await fetch(base+'/simulator/')).status,200);
+ assert.equal((await fetch(base+'/simulator/game/',{headers:{cookie:alice.cookie}})).status,200);
+ const initial=await request(alice,'/economy?surface=simulator');assert.equal(initial.wallet.tickets,15);assert.equal(initial.wallet.coins,110);
+ const claimed=await request(alice,'/economy/buy','POST',{item:'character:vladimir'});assert.equal(claimed.status,200);assert(claimed.owned.includes('character:vladimir'));
+ assert(!(await request(bob,'/economy')).owned.includes('character:vladimir'));
+ const started=await request(alice,'/game-runs','POST',{mode:'antarctica'});assert.equal(started.status,201);const id=started.run.id;
+ const snapshot={version:1,engine:'game',point:'setup',state:{vars:{selected18:['Dani','Dua Lingo']}}};
+ assert.equal((await request(alice,'/game-runs/'+id,'PUT',{revision:0,episode:0,snapshot})).revision,1);
+ assert.deepEqual((await request(alice,'/game-runs/'+id)).run.snapshot,snapshot);
+ assert.equal((await request(bob,'/game-runs/'+id)).status,404);
+ assert.equal((await request(alice,'/game-runs','POST',{mode:'safari'})).status,403);
+ assert.equal((await request(alice,'/game-runs/'+id+'/abandon','POST',{})).status,200);
+ const csrf=await fetch(base+'/api/economy/buy',{method:'POST',headers:{cookie:alice.cookie,'Content-Type':'application/json',origin:'https://otro.example'},body:JSON.stringify({item:'character:edwin'})});assert.equal(csrf.status,403);
+});
+
 test('perfil, íconos, seguimiento y guardados sobreviven a nuevas sesiones',async()=>{
   const result=await request(alice,'/me','PATCH',{name:'QA Alice Nueva',bio:'Una biografía real.',avatar:'Violeta',saved:['house']});assert.equal(result.user.avatar,'Violeta');assert.equal(result.user.bio,'Una biografía real.');
   for(let i=0;i<2;i++)assert.equal((await request(alice,'/follow/'+bob.user.id,'POST',{follow:true})).status,200);

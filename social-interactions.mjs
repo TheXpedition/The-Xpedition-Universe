@@ -1,7 +1,7 @@
 import {randomUUID} from 'node:crypto';
 import {moderateImage} from './moderation.mjs';
 
-export function createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis}){
+export function createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression}){
   async function summary(kind,id,viewer){
     const table=kind==='comment'?'comment_reactions':'post_reactions',column=kind==='comment'?'comment':'post';
     return (await db.all(`SELECT emoji,COUNT(*) AS count,MAX(CASE WHEN user_id=? THEN 1 ELSE 0 END) AS mine FROM ${table} WHERE ${column}=? GROUP BY emoji ORDER BY count DESC,emoji`,viewer?.id||'',id)).map(r=>({emoji:r.emoji,count:Number(r.count),mine:!!Number(r.mine)}));
@@ -51,7 +51,7 @@ export function createInteractions({db,storage,userFields,safeUser,body,json,fai
       const id=typeof b.id==='string'&&/^[a-f0-9-]{36}$/.test(b.id)?b.id:randomUUID();
       const existing=await db.one('SELECT * FROM post_comments WHERE id=?',id);
       if(existing&&(existing.author!==u.id||existing.post!==comments[1]))fail(409,'No se pudo guardar el comentario.');
-      if(!existing)await db.run('INSERT INTO post_comments(id,post,author,text,created) VALUES(?,?,?,?,?)',id,comments[1],u.id,text,Date.now());
+      if(!existing){await db.run('INSERT INTO post_comments(id,post,author,text,created) VALUES(?,?,?,?,?)',id,comments[1],u.id,text,Date.now());await progression.socialAction(u.id,'comment',comments[1]+':'+text.trim().toLowerCase(),text);}
       const comment=await commentValue(existing||await db.one('SELECT * FROM post_comments WHERE id=?',id),u);
       everyone('post-activity',{post:comments[1],comment:id});json(res,{comment,commentsCount:await commentCount(comments[1])},201);return true;
     }

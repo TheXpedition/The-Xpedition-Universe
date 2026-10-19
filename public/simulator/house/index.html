@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>The Xpedition: House — Simulador Oficial</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-house-1: #f3e8ff;
+  --bg-house-2: #e9d5ff;
+  --bg-house-3: #c084fc;
+  --tile-house: #ffffff;
+  --ink-house: #1e1b4b;
+  --accent-house: #7c3aed;
+  --accent-house-hover: #6d28d9;
+
+  --tr-win: #4169E1;
+  --tr-nom: #FF6347;
+  --tr-saved: #CCFF66;
+  --tr-safe: #f8f9fa;
+  --tr-high: #add8e6;
+  --tr-low: #ffb6c1;
+  --tr-elim: #ff0000;
+}
+
+* { box-sizing: border-box; font-family: 'Rubik', system-ui, sans-serif; }
+html, body { height: 100%; margin: 0; padding: 0; }
+body {
+  color: var(--ink-house);
+  min-height: 100%;
+  background: radial-gradient(1200px 800px at 50% 0%, var(--bg-house-1) 0%, var(--bg-house-2) 50%, var(--bg-house-3) 100%) no-repeat fixed;
+  overflow-x: hidden;
+}
+
+.wrap { max-width: 1240px; margin: 16px auto; padding: 12px 16px; }
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px) saturate(140%);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.08);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; margin-bottom: 20px; }
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo-house { width: 52px; height: 52px; object-fit: contain; background: transparent !important; }
+.h1 { font-size: 24px; font-weight: 800; letter-spacing: .4px; margin: 0; }
+.step-indicator { font-size: 14px; font-weight: 600; color: var(--accent-house); margin-top: 2px; }
+
+.control-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 42px; padding: 0 20px; border-radius: 12px; border: 1px solid #ddd6fe; background: #fff;
+  font-weight: 800; cursor: pointer; color: var(--ink-house); box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+  transition: all 0.2s ease;
+}
+.btn:hover { background: #fbfbfe; transform: translateY(-1px); }
+.btn.primary { background: var(--accent-house); color: #fff; border: none; }
+.btn.primary:hover { background: var(--accent-house-hover); }
+.btn.red { background: #ef4444; color: #fff; border: none; }
+.btn.red:hover { background: #dc2626; }
+.btn:disabled { opacity: .5; cursor: not-allowed; transform: none !important; }
+
+.selector-arriba {
+  display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.85);
+  padding: 14px 20px; border-radius: 14px; border: 1px solid #ddd6fe; margin-bottom: 16px;
+  font-weight: 800;
+}
+.selector-arriba select {
+  height: 38px; padding: 0 12px; border-radius: 8px; border: 1px solid #c084fc;
+  background: #fff; font-weight: 700; color: var(--ink-house); outline: none;
+}
+
+.grid-cast {
+  display: grid; gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+.slot {
+  position: relative; background: var(--tile-house); border: 2px solid #e9d5ff; border-radius: 16px;
+  padding: 12px; box-shadow: 0 4px 12px rgba(124, 58, 237, 0.04); transition: all 0.2s ease;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.slot select {
+  width: 100% !important; max-width: 100% !important; min-width: 100% !important;
+  height: 36px; border-radius: 8px; border: 1px solid #c084fc; background: #fff;
+  font-weight: 600; color: var(--ink-house); outline: none; margin-top: auto;
+}
+.icon {
+  position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 10px;
+  background: #fbfbfe; border: 1px solid #e9d5ff; display: grid;
+  place-items: center; overflow: hidden; margin: 0 auto 10px;
+}
+.icon img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.placeholder { font-size: 24px; font-weight: 800; color: var(--accent-house); }
+.slot .name { font-weight: 800; font-size: 13px; text-align: center; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.stage { display: none; }
+.stage.active { display: block; }
+
+.ev-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px; border: 1px solid #e9d5ff; background: #fff; border-radius: 12px; margin: 8px 0; font-weight: 600; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+.p-chip { display: inline-flex; align-items: center; gap: 6px; background: #f3e8ff; border: 1px solid #d8b4fe; padding: 3px 8px; border-radius: 8px; font-weight: 800; font-size: 13px; color: #5b21b6; }
+.p-chip img { width: 22px; height: 22px; border-radius: 5px; object-fit: cover; }
+
+.golden-container { display: flex; justify-content: center; align-items: center; margin: 15px 0; width: 100%; }
+.golden-chip { border: 3px solid #fbbf24 !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); background: #fffbeb !important; color: #78350f !important; padding: 6px 14px !important; border-radius: 12px !important; }
+.golden-chip select { height: 32px; border-radius: 6px; border: 1px solid #fbbf24; background: #fff; font-weight: 700; color: #78350f; outline: none; margin-left: 8px; }
+
+.sub-seccion { margin-top: 20px; padding-top: 15px; border-top: 1px dashed #d8b4fe; }
+.h4-title { font-size: 16px; font-weight: 800; color: var(--accent-house); margin: 0 0 10px 0; display: flex; align-items: center; gap: 6px; }
+
+.dark-panel {
+  background: radial-gradient(1000px 600px at 50% 50%, #111827 0%, #030712 100%) !important;
+  color: #f5f3ff !important;
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 0 35px rgba(239, 68, 68, 0.2) !important;
+}
+.dark-panel .ev-row { background: #1f2937; border-color: #374151; color: #f5f3ff; }
+.dark-panel .p-chip { background: #374151; border-color: #4b5563; color: #ddd6fe; }
+
+.repechaje-bg {
+  background: radial-gradient(1000px 600px at 50% 50%, #2e1065 0%, #0f052d 100%) !important;
+  color: #f5f3ff !important;
+  border: 2px solid #a78bfa !important;
+  box-shadow: 0 0 30px rgba(167, 139, 250, 0.3) !important;
+}
+.repechaje-bg .ev-row { background: #1e1b4b; border-color: #4c1d95; color: #f5f3ff; }
+
+.final-bg {
+  background: radial-gradient(1200px 800px at 50% 30%, #111827 0%, #030712 100%) !important;
+  color: #ffffff !important;
+  border: 2px solid #fbbf24 !important;
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.25) !important;
+}
+.final-bg .ev-row { background: #1f2937; border-color: #374151; color: #ffffff; }
+.bar-container { background: #374151; border-radius: 8px; height: 16px; width: 100%; overflow: hidden; margin-top: 4px; }
+.bar-fill { background: linear-gradient(90deg, #ef4444, #f43f5e); height: 100%; width: 0%; transition: width 1s ease-in-out; }
+
+.trk-container { overflow-x: auto; margin-top: 15px; display: flex; justify-content: flex-start; }
+.table-trk { border-collapse: collapse; width: auto !important; background: #ffffff; color: #1e1b4b; table-layout: fixed; margin-left: 0; margin-right: auto; }
+.table-trk th, .table-trk td { border: 1px solid #c084fc; padding: 0 !important; text-align: center; font-weight: 800; font-size: 12px; height: 38px; vertical-align: middle; }
+.table-trk th { background: #f3e8ff; }
+
+.col-pos { width: 45px !important; min-width: 45px !important; max-width: 45px !important; }
+.col-name { width: 150px !important; min-width: 150px !important; max-width: 150px !important; text-align: left; padding-left: 8px !important; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.col-sem { width: 55px !important; min-width: 55px !important; max-width: 55px !important; }
+.col-final { width: 95px !important; min-width: 95px !important; max-width: 95px !important; background: #fef3c7 !important; }
+
+.cell { display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 800; text-transform: uppercase; font-size: 11px; margin: 0; padding: 0; }
+.cell.win { background: var(--tr-win); color: #fff; }
+.cell.nom { background: var(--tr-nom); color: #000; }
+.cell.saved { background: var(--tr-saved); color: #000; }
+.cell.safe { background: var(--tr-safe); color: #1f2937; }
+.cell.high { background: var(--tr-high); color: #000; }
+.cell.low { background: var(--tr-low); color: #000; }
+.cell.evic { background: var(--tr-elim); color: #fff; }
+.cell.blank { background: #A9A9A9; color: #A9A9A9; border: none; }
+
+.cell.tr-quit { background: #111111 !important; color: #ffffff !important; }
+.cell.tr-disq { background: #800000 !important; color: #ffffff !important; }
+.cell.tr-evac { background: #FF73F6 !important; color: #000000 !important; }
+
+.cell.winner { background: #D4AF37 !important; color: #000000 !important; }
+.cell.runner { background: #C0C0C0 !important; color: #000000 !important; }
+.cell.third { background: #D2B48C !important; color: #000000 !important; }
+.cell.fourth { background: #7FFFD4 !important; color: #000000 !important; }
+
+.badge-status { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 900; padding: 2px 8px; border-radius: 999px; color: #fff; text-transform: uppercase; z-index: 2; }
+.badge-status.nom { background: #ef4444; }
+.badge-status.saved { background: #84cc16; }
+
+.badge-status.locked { background: #b91c1c; animation: pulseLock 1.5s infinite ease-in-out; display: flex; align-items: center; gap: 4px; }
+.slot.is-locked { border: 2px dashed #b91c1c !important; background: #fef2f2 !important; opacity: 0.85; }
+
+@keyframes pulseLock {
+  0% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50% { transform: translateX(-50%) scale(1.06); opacity: 0.9; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; z-index: 1000; background: #1e1b4b; color: #fff; font-weight: 800; padding: 12px 24px; border-radius: 12px; display: none; }
+.toast.show { display: block; }
+.hide { display: none !important; }
+
+/* --- NUEVA GALA DE NOMINADOS (ESTILO TV) --- */
+.gala-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 24px 16px;
+  justify-items: center;
+  padding: 20px 10px;
+}
+.gala-avatar-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 120px;
+}
+.gala-avatar-circle {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #7c3aed;
+  background: #111827;
+  overflow: visible; /* Permitir que la burbuja de votos sobresalga */
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  transition: all 0.3s ease;
+}
+.gala-avatar-circle.in-placa {
+  border-color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+.gala-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.gala-vote-badge {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #111827;
+  color: #fff;
+  border: 2px solid #7c3aed;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  font-weight: 900;
+  z-index: 5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.gala-avatar-circle.in-placa .gala-vote-badge {
+  border-color: #ef4444;
+  background: #ef4444;
+}
+.gala-player-name {
+  margin-top: 10px;
+  font-weight: 800;
+  font-size: 13px;
+  text-align: center;
+  color: #1e1b4b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e9d5ff;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.gala-player-name.in-placa {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+</style>
+<script src="/simulator/bridge.js"></script><link rel="stylesheet" href="/simulator/engine.css"></head>
+<body>
+
+<header class="wrap glass header" id="mainHeader">
+  <div class="brand">
+    <img src="personajes/logo.png" class="logo-house" alt="Logo">
+    <div>
+      <div class="h1" id="mainTitle">The Xpedition: House — Simulador</div>
+      <div class="step-indicator" id="stepName">Selección de Elenco</div>
+    </div>
+  </div>
+</header>
+
+<section class="wrap glass stage active" id="stage-1">
+  <div class="selector-arriba" style="flex-wrap: wrap; gap: 15px;">
+    <label for="castSize">Participantes:</label>
+    <select id="castSize">
+      <option value="12">12 Participantes</option>
+      <option value="14">14 Participantes</option>
+      <option value="16" selected>16 Participantes</option>
+      <option value="18">18 Participantes</option>
+      <option value="21">21 Participantes</option>
+    </select>
+
+    <label for="incomeSize" style="margin-left: 10px;">Cantidad de Ingresos:</label>
+    <select id="incomeSize">
+      <option value="none" selected>Ninguno</option>
+      <option value="1_elegible">1 Elegible</option>
+      <option value="2_elegibles">2 Elegibles</option>
+      <option value="4_elegibles">4 Elegibles</option>
+      <option value="2_random">2 Random</option>
+      <option value="4_random">4 Random</option>
+    </select>
+
+    <span style="margin-left: auto; color: var(--accent-house);" id="castCountHelp">0/16 seleccionados</span>
+    <button class="btn" id="randomCast">🎲 Random 🎲</button>
+  </div>
+  <div class="grid-cast" id="castGrid"></div>
+  <div class="control-bar" style="justify-content:flex-end; margin-top:15px;">
+    <button class="btn primary" id="nextBtn" disabled>Iniciar Simulación →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-dios-intro">
+  <div style="display:flex; align-items:center; gap:24px; margin-bottom:24px; background: rgba(255,255,255,0.5); padding:20px; border-radius:16px; border:1px solid #ddd6fe;">
+    <div style="width: 100px; height: 100px; min-width: 100px; display: grid; place-items: center;">
+      <img src="personajes/dios.png" style="width:100%; height:100%; object-fit:contain;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2248%22 height=%2248%22 viewBox=%220 0 24 24%22 fill=%22indigo%22><path d=%22M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z=%22/></svg>'">
+    </div>
+    <div style="font-weight:800; font-size:16px; font-style:italic; line-height:1.6; color: var(--ink-house);">
+      "Soy el omnipresente, el creador del formato y los ojos que todo lo ven dentro de esta casa. Bienvenidos a The Xpedition: House. Aquí no hay lugar donde esconderse, cada conversación es grabada y cada estrategia será expuesta ante el público. Preparados o no, las puertas de la convivencia extrema se abren hoy."
+    </div>
+  </div>
+
+  <div class="sub-seccion" style="border-top: 2px dashed #7c3aed;">
+    <div class="h4-title" style="font-size:18px; margin-bottom:14px;">🚪 Introducción</div>
+    <div id="diosIntroIngresosList" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:8px;"></div>
+  </div>
+
+  <div class="control-bar" style="justify-content:flex-end; margin-top:20px;">
+    <button class="btn primary" id="btnOpenDoors">Abrir las puertas de la Casa →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-convivencia">
+  <h3 style="color: var(--accent-house); margin-top:0;">Convivencia y Alianzas</h3>
+  <p style="font-weight:700;">El sistema analiza el estado de ánimo, la afinidad y la lealtad acumulada en las últimas horas.</p>
+  <div class="sub-seccion">
+    <div class="wrap-logs" style="max-height: 400px; overflow-y: auto; padding-right: 6px;">
+       <div class="h4-title">💬 Acontecimientos de la Casa</div>
+       <div id="convivenciaLogs"></div>
+    </div>
+  </div>
+  <div class="sub-seccion">
+    <div class="h4-title">🤝 Relaciones Destacadas del Episodio</div>
+    <div id="relacionesDestacadas"></div>
+  </div>
+  <div class="control-bar" style="margin-top:20px; justify-content:flex-end;">
+    <button class="btn primary" id="btnGoToImmunity">Ir a la Prueba de Inmunidad →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-2">
+  <h3 style="color: var(--accent-house); margin-top:0;">Competencia por la Inmunidad</h3>
+  <div class="control-bar">
+    <label style="font-weight:800;">Selección de Prueba: </label>
+    <select id="challengeSelect" style="height:38px; border-radius:8px; padding:0 8px; font-weight:700; border:1px solid #c084fc; outline:none;"></select>
+    <button class="btn primary" id="runHohBtn">Simular Prueba</button>
+    <button class="btn" id="runHohRandomBtn" style="border-color: var(--accent-house); color: var(--accent-house);">🎲 Random 🎲</button>
+  </div>
+
+  <div id="hohResultBox" class="hide" style="margin-top:15px;">
+    <div class="sub-seccion" style="border-top:none; margin-top:0; padding-top:0;">
+      <div class="h4-title">📋 Eventos del Desafío</div>
+      <div id="eventsList"></div>
+    </div>
+
+    <div class="ev-row" style="border-left: 5px solid var(--tr-win); background:#eff6ff; margin-top:20px; flex-direction: column; align-items: flex-start; gap: 4px;">
+      <div id="hohWinnerContainer">🏆 El líder de la semana es: <span id="hohWinnerName"></span></div>
+    </div>
+
+    <div class="control-bar" style="margin-top: 25px; justify-content:flex-end;">
+      <button class="btn primary" id="goToNominationBtn">Proceder al Confesionario (Nominación) →</button>
+    </div>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-3">
+  <h3 style="color: #ef4444; margin-top:0;">Nominaciones en el Confesionario</h3>
+
+  <div id="allVotesContainer" style="display:flex; flex-direction:column; gap:10px; margin-bottom:20px;"></div>
+
+  <div class="sub-seccion" style="background: rgba(255,255,255,0.9); padding:16px; border-radius:12px; border:2px solid #ef4444;">
+<div class="h4-title" style="color:#ef4444; text-transform: uppercase; letter-spacing: 1px; font-size: 18px;"> GALA DE NOMINACIÓN:</div>
+    <div id="finalScoreSummary" style="display:flex; flex-direction:column; gap:8px;"></div>
+  </div>
+
+  <div class="control-bar" style="justify-content:flex-end; margin-top:15px;">
+    <button class="btn primary" id="seeNomineesBtn">Ir al Poder de Salvación</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-4">
+  <h3 style="color: #06b6d4; margin-top:0;">Poder de Salvación (Veto)</h3>
+  <p style="font-weight:700;" id="vetoIntroText"></p>
+  <div class="grid-cast" id="vetoGrid"></div>
+
+  <div class="control-bar" style="margin-top:20px; justify-content:flex-end; gap:12px;">
+    <button class="btn" id="vetoRandomBtn" style="border-color:#06b6d4; color:#06b6d4;">🎲 Random 🎲</button>
+    <button class="btn primary" id="confirmSalvadoBtn" disabled>Confirmar Salvación e ir a la Gala →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage dark-panel" id="stage-5">
+  <h3 style="color: #ef4444; margin-top:0;">Fase 5: Gala de Eliminación</h3>
+  <p id="galaTypeAnnounce" style="font-weight:800; color:#fbbf24;"></p>
+
+  <div class="sub-seccion">
+    <div class="h4-title" style="color:#f97316;">🎤 Preguntas de Dios y Gala en Vivo</div>
+    <div id="galaInteractionsLogs" style="display:flex; flex-direction:column; gap:10px;"></div>
+  </div>
+
+  <div class="sub-seccion hide" id="porcentajesBox">
+    <div class="h4-title" style="color:#ef4444;">📊 Porcentajes Finales</div>
+    <div id="porcentajesList"></div>
+  </div>
+
+  <div id="evictionMsgBox" class="ev-row hide" style="background: #7f1d1d; border-color:#ef4444; margin-top:15px;"></div>
+
+  <div class="control-bar" style="margin-top:20px; justify-content:flex-end;">
+    <button class="btn primary" id="showPercentagesBtn">Mostrar Porcentajes</button>
+    <button class="btn primary hide" id="goToTrBtn">Ver Historial / Track Record →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-repechaje">
+  <h3 style="color: #a78bfa; margin-top:0;">✨ Gala de Repechaje — ¡El Regreso! ✨</h3>
+  <div id="repechajeIntroBox"></div>
+  <div class="sub-seccion">
+    <div class="h4-title" style="color:#c084fc;">💥 Convivencia en el Set de Eliminados</div>
+    <div id="repechajeLogs"></div>
+  </div>
+
+  <div id="ingressMechanicArea" class="sub-seccion hide" style="text-align: center;">
+     <div class="h4-title" id="ingressTitle" style="color:#fbbf24; justify-content: center;">🚪 Fase de Nuevos Ingresos</div>
+     <div class="control-bar" style="justify-content: center;">
+        <button class="btn" id="btnRevealIngress" style="border-color:#fbbf24; font-weight:800;">Conocer Ingresados</button>
+     </div>
+     <div id="ingressChipsZone" style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 15px;"></div>
+  </div>
+
+  <div id="goldenTicketArea" class="sub-seccion hide" style="text-align: center;">
+     <div class="h4-title" style="color:#fbbf24; justify-content: center;">🎟️ Golden Ticket Exclusivo</div>
+     <div class="control-bar" style="justify-content: center;">
+        <button class="btn" id="btnRevealGolden" style="border-color:#fbbf24; color:#78350f; background:#fffbeb; font-weight:800;">Dar Golden Ticket</button>
+     </div>
+     <div id="goldenChipZone" class="golden-container hide"></div>
+  </div>
+
+  <div class="sub-seccion" id="repechajeEliminationsBox">
+    <div class="h4-title" style="color:#f43f5e;">📋 Descarte de Votos del Público</div>
+    <div id="repechajeElimsList"></div>
+  </div>
+  <div class="sub-seccion hide" id="repechajeFinalTwoBox">
+    <div class="h4-title" style="color:#fbbf24;">⚔️ Cara a Cara Final por el Reingreso</div>
+    <div id="repechajeFinalResult"></div>
+  </div>
+  <div class="control-bar" style="margin-top:20px; justify-content:flex-end;">
+    <button class="btn primary" id="runRepechajeBtn">Abrir Votaciones del Público</button>
+    <button class="btn green hide" id="closeRepechajeBtn">Continuar →</button>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-finalgala">
+  <div id="finalApertura"></div>
+  <div class="sub-seccion" id="finalConvivenciaSec">
+    <div class="h4-title" style="color:#fbbf24;">⏳ Últimas Horas de Tensión y Convivencia Final</div>
+    <div id="finalConvivenciaLogs" style="display:flex; flex-direction:column; gap:8px;"></div>
+  </div>
+  <div class="sub-seccion hide" id="final4toSec">
+    <div id="dios4toMsg"></div>
+    <div class="control-bar"><button class="btn primary" id="btn4to">Revelar 4to Lugar</button></div>
+    <div id="res4to" class="hide" style="margin-top:10px;"></div>
+  </div>
+  <div class="sub-seccion hide" id="final3erSec">
+    <div id="dios3erMsg"></div>
+    <div class="control-bar"><button class="btn primary" id="btn3er">Revelar 3er Lugar</button></div>
+    <div id="res3er" class="hide" style="margin-top:10px;"></div>
+  </div>
+  <div class="sub-seccion hide" id="finalCaraACaraSec">
+    <div id="diosCaraMsg"></div>
+    <div id="caraACaraBox" style="margin-top:15px; padding:15px; background:#1f2937; border-radius:12px; display:flex; flex-direction:column; gap:10px;"></div>
+  </div>
+  <div class="sub-seccion hide" id="finalSobreSec">
+    <div id="diosSobreMsg"></div>
+    <div class="control-bar" style="justify-content:center; margin-top:15px;">
+      <button class="btn primary" id="btnSobre" style="background:#fbbf24; color:#000; font-size:16px; padding:10px 30px;">💥 MOSTRAR GANADOR DE THE XPEDITION: HOUSE 💥</button>
+    </div>
+    <div id="resSobre" class="hide" style="margin-top:20px; padding:20px; border:2px dashed #fbbf24; background:#030712; border-radius:12px;"></div>
+  </div>
+</section>
+
+<section class="wrap glass stage" id="stage-6">
+  <h3 style="color: var(--accent-house); margin-top:0;" id="trTitle">Historial de la Casa (Track Record)</h3>
+  <div class="trk-container">
+    <table class="table-trk">
+      <thead id="trkHead"></thead>
+      <tbody id="trkBody"></tbody>
+    </table>
+  </div>
+  <div class="control-bar" style="margin-top:20px;" id="trControlBar">
+    <button class="btn primary" id="nextWeekBtn">Avanzar a la Siguiente Semana →</button>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ALL_PARTICIPANTS = window.XPBridge.characters();
+
+let RETOS_POOL = ([
+  "Prueba de Resistencia en el Muro", "Circuito de Velocidad y Obstáculos", "Trivia Estricta de Convivencia",
+  "Desafío de Azar y Suerte", "Escape Room de la Casa", "Prueba de Equilibrio sobre Agua",
+  "Juego de Memoria Visual Ciega", "Laberinto a Oscuras en el Patio", "Duelo de Baile Coreográfico e Improvisación",
+  "Pasarela Extravagante y Alta Moda", "Batalla Teatral y Actuación Dramática", "Interpretación Vocal y Lipsync de Alta Tensión",
+  "Prueba de Fuerza, Cuerdas y Tracción", "Desafío de Cocina de Dios bajo Presión", "Torneo de Estrategia Mentiras y Acertijos",
+  "Maratón de Rompecabezas Gigantes", "Prueba de Resistencia de Mantener la Antorcha Encendida", "Desafío de Cultura Pop y Memoria de Reality"
+]).filter(n=>window.XPBridge.owns("challenge",n));
+let retosUsados = [];
+
+const TEXTOS_EVENTOS_RETOS = [
+  "🚨 ¡TENSIÓN! {A} y {B} frenaron la competencia para gritarse de todo por un choque en el circuito.",
+  "👀 {A} acusó formalmente a {B} de haber hecho trampa moviendo las piezas antes de tiempo.",
+  "💋 ¡GIRO INESPERADO! En medio de la euforia por el reto de actuación, {A} y {B} se dieron un beso apasionado frente a las cámaras.",
+  "💥 ¡A LOS GOLPES! La disputa técnica escaló tanto que la producción tuvo que intervenir para separar a {A} y {B}.",
+  "🤭 Entre susurros, {A} y {B} se rieron a carcadas del terrible desempeño de uno de sus compañeros.",
+  "💩 ¡EMERGENCIA MÉDICA! {A} tuvo un ataque severo de diarrea a mitad de la prueba y tuvo que correr directo al baño",
+  "💀 ¡PÁNICO EN EL SET! {A} se desplomó inmóvil en el piso. Todos gritaron, el personal médico no pudo hacer nada, ya que había fallecido.",
+  "⚠️ {A} saboteó disimuladamente la estación de {B} tirándole agua al suelo para hacerlo resbalar.",
+  "🔥 {A} rompió el elemento principal de su prueba en un ataque de frustración y furia.",
+  "🌟 {A} deslum ró al jurado con una interpretación tan magistral que dejó a toda la casa en completo silencio.",
+  "🎭 Durante la sección de moda, {A} tropezó con su propio vestido largo y tiró toda la escenografía.",
+  "🤝 {A} y {B} dejaron de competir entre sí para ayudarse mutuamente, ignorando las reglas del todos contra todos.",
+  "🤢 El esfuerzo físico fue tan destructivo que {A} terminó vomitando a un costado de la pista.",
+  "🤫 {A} descubrió un atajo prohibido dentro del laberinto pero decidió callarse para sacar ventaja oculta.",
+  "📢 Dios interrumpió el reto por los altovoces para darle una severa advertencia a {A} por mala conducta."
+];
+
+const TEXTOS_CONVIVENCIA = {
+  desconocidos: [
+    "{A} y {B} pasaron gran parte de la tarde conversando en el jardín.", "{A} descubrió que comparte varios gustos con {B}.",
+    "{A} invitó a {B} a entrenar juntos en el gimnasio.", "{A} y {B} prepararon la cena para toda la casa.",
+    "{A} comenzó a acercarse más a {B} durante la convivencia.", "{A} y {B} estuvieron riendo juntos durante horas.",
+    "{A} decidió contarle parte de su historia personal a {B}.", "{A} y {B} se quedaron hablando hasta altas horas de la madrugada."
+  ],
+  amigos: [
+    "{A} defendió a {B} durante una discusión grupal.", "{A} decidió compartir información importante con {B}.",
+    "{A} y {B} prometieron cuidarse mutuamente en el juego.", "{A} ayudó a {B} a superar un momento emocional difícil.",
+    "{A} y {B} celebraron juntos después de la prueba.", "{A} confesó que considera a {B} una de las personas más importantes dentro de la casa.",
+    "{A} y {B} hicieron planes para llegar juntos al final.", "{A} eligió pasar toda la tarde con {B} en lugar de convivir con el resto."
+  ],
+  mejores_amigos: [
+    "{A} le confesó a {B} que es la única persona en quien confía completamente.", "{A} rechazó una alianza estratégica para mantenerse leal a {B}.",
+    "{A} y {B} prometieron jamás votarse mutuamente.", "{A} decidió proteger a {B} incluso cuando perjudicaba su propio juego.",
+    "Toda la casa comenzó a ver a {A} y {B} como un dúo inseparable.", "{A} afirmó que sin {B} probablemente ya habría abandonado la competencia."
+  ],
+  rivales: [
+    "{A} criticó discretamente la estrategia de {B}.", "{A} comenzó a desconfiar de las intenciones de {B}.",
+    "{A} y {B} tuvieron diferencias durante una actividad grupal.", "{A} cuestionó las decisiones de {B} frente a otros participantes.",
+    "{A} sospecha que {B} está jugando en ambos bandos.", "{A} considera que {B} es una amenaza para su juego."
+  ],
+  enemigos: [
+    "{A} y {B} tuvieron una discusión explosiva frente a toda la casa.", "{A} acusó a {B} de ser falso.",
+    "{A} aseguró que hará todo lo posible para eliminar a {B}.", "{A} y {B} se negaron a participar juntos en una actividad.",
+    "{A} reveló información comprometedora sobre {B}.", "La tensión entre {A} y {B} alcanzó uno de los puntos más altos."
+  ],
+  traiciones: [
+    "{A} filtró a otros participantes información que {B} le había confiado.", "{A} rompió la alianza que tenía con {B}.",
+    "{B} descubrió que {A} estaba planeando eliminarlo.", "{A} decidió cambio de bando y dejar atrás a sus antiguos aliados.",
+    "{A} expuso públicamente la estrategia secreta de {B}."
+  ],
+  reality: [
+    "{A} se quedó dormido en medio de una conversación importante.", "{A} rompió accidentalmente un objeto de la casa.",
+    "{A} organizó una fiesta improvisada para los participantes.", "{A} sorprendió a todos mostrando un talento oculto.",
+    "{A} pasó gran parte del día cantando por la casa.", "{A} preparó una broma que terminó saliendo mal.",
+    "{A} tuvo una crisis existencial en el confesionario.", "{A} aseguró que ganará la temporada sin importar lo que ocurra.",
+    "{A} comenzó a actuar de forma extraña y despertó rumores.", "{A} recibió burlas amistosas por un error durante una prueba."
+  ]
+};
+
+const TEXTOS_REPECHAJE = [
+  "{A} exige su pase de regreso inmediato para vengarse de su alianza vieja.",
+  "{A} y {B} tuvieron un cruce fuísimo debatiendo quién cavó la tumba de quién.",
+  "{A} asegura que si regresa, el juego de los que están adentro va a colapsar por completo.",
+  "{A} se burla de la ropa de pasarela que usó {B} en el set de eliminados y arman un caos.",
+  "{A} confiesa que estuvo analizando los capítulos afuera y ya sabe exactamente quién es el más falso.",
+  "{A} y {B} armaron un pacto secreto en el hotel de eliminados para destruir la casa si alguno reingresa.",
+  "{A} armó un monólogo entero quejándose de la falta de estrategia del elenco actual.",
+  "{A} llora en el set de eliminados afirmando que su salida fue la injusticia más grande del show.",
+  "{A} y {B} se niegan la palabra y se sientan en extremos opuestos del set por pura tensión."
+];
+
+const PREGUNTAS_POOL = [
+  { p: "¿Sientes que tu permanencia corre peligro por pura estrategia o por un tema de convivencia?", r: { pos: "Por estrategia pura. Saben que soy fuerte y les da pavor verme avanzar hacia las instancias finales.", neg: "Convivencia... Se agarran de cualquier tontería o malentendido en la cocina para armar un complot de la nada.", neu: "Es una mezcla de ambas; en este punto del aislamiento es imposible separar la afinidad del cálculo matemático." } },
+  { p: "¿Quién crees que hizo más méritos para estar sentado en esta placa de nominados?", r: { pos: "Hay personas que llegaron aquí porque otros les hicieron el trabajo. Yo al menos me expuse y jugué de frente.", neg: "Algunos deberían estar aquí conmigo, pero prefirieron esconderse detrás de alianzas y votos cómodos.", neu: "Cada uno llegó por razones distintas. Las nominaciones son parte natural de este juego." } },
+  { p: "¿Te sorprendió ver a alguien en particular votando en tu contra?", r: { pos: "Me sorprendió, pero también me confirmó que me consideran una amenaza real dentro de la competencia.", neg: "Sí. Hay gente que sonríe durante el día y te apuñala por la espalda cuando entra al confesionario.", neu: "Algunas decisiones me llamaron la atención, pero entiendo que cada uno juega como cree conveniente." } },
+  { p: "¿Crees que tus alianzas te han ayudado o perjudicado en esta aventura?", r: { pos: "Me ayudaron muchísimo. Llegar hasta aquí sin aliados habría sido prácticamente imposible.", neg: "Algunas personas me usaron cuando les convenía y después desaparecieron cuando más las necesitaba.", neu: "Han tenido momentos buenos y momentos complicados. Es parte de convivir con tantas personalidades." } },
+  { p: "¿Qué le dirías ahora mismo a las personas que impulsaron tu nominación?", r: { pos: "Gracias por recordarme que sigo siendo un competidor fuerte. Si regreso, volveré con más fuerza.", neg: "Que disfruten mientras puedan porque la memoria de esta casa es larga y las cuentas siempre llegan.", neu: "Que respeto su decisión aunque claramente no la comparta." } },
+  { p: "¿Cuál ha sido el momento más difícil que has vivido dentro de la casa?", r: { pos: "Superar ciertas nominaciones me hizo más fuerte y me enseño que puedo resistir mucha presión.", neg: "Descubrir que personas en quienes confiaba hablaban mal de mí a mis espaldas.", neu: "La convivencia constante desgasta y todos hemos tenido momentos complicados." } },
+  { p: "¿Hay alguien de quien te arrepientas haber confiado?", r: { pos: "Prefiero quedarme con los buenos momentos y aprender de las decepciones.", neg: "Sí, y probablemente esa persona sabe perfectamente que estoy hablando de ella.", neu: "Algunas relaciones cambiaron con el tiempo, pero no considero que confiar haya sido un error." } },
+  { p: "¿Qué te hace merecedor de seguir una semana más en competencia?", r: { pos: "He competido, he dado contenido y nunca dejé de luchar por mi lugar en esta casa.", neg: "Porque muchos de los que siguen aquí han aportado mucho menos que yo y todos lo saben.", neu: "He intentado vivir esta experiencia de la manera más auténtica posible." } },
+  { p: "¿A quién considerarías tu mayor rival en este momento?", r: { pos: "A quien mejor juega. Competir contra los fuertes hace que esta experiencia valga la pena.", neg: "A ciertas personas que llevan semanas intentando sacarme sin tener el valor de enfrentarse directamente.", neu: "Hay varios jugadores fuertes y cualquiera podría convertirse en un rival importante." } },
+  { p: "¿Crees que la casa te ha juzgado injustamente?", r: { pos: "No necesariamente. A veces destacar genera opiniones divididas.", neg: "Absolutamente. Me han atribuido cosas que jamás hice o dije.", neu: "Algunas percepciones fueron equivocadas, pero también entiendo cómo pudieron formarse." } },
+  { p: "Si hoy fuera tu última noche aquí, ¿de qué te sentirías más orgulloso?", r: { pos: "De haber jugado sin miedo y dejar una huella en esta temporada.", neg: "De no haberme rendido a pesar de todos los obstáculos que intentaron ponerme.", neu: "De haber vivido una experiencia única que recordaré durante mucho tiempo." } },
+  { p: "📢 ¿Quién crees que está jugando el mejor juego social dentro de la casa?", r: { pos: "Hay personas muy inteligentes socialmente y eso merece reconocimiento.", neg: "Algunos confunden manipular con tener un buen juego social.", neu: "Cada participante tiene fortalezas distintas y eso hace interesante la competencia." } },
+  { p: "¿Qué aprendiste de esta nominación sobre tu posición dentro del juego?", r: { pos: "Que sigo siendo relevante y que mis movimientos generan impacto.", neg: "Que hay más personas trabajando en mi contra de las que imaginaba.", neu: "Que las dinámicas cambian constantemente y nadie tiene nada asegurado." } },
+  { p: "Si te salvas esta noche, ¿cuál será tu primer movimiento táctico contra quienes te nominaron?", r: { pos: "Ganar el próximo liderazgo y destruir sus estrategias.", neg: "No pienso rebajarme a su nivel de juego sucio, pero les voy a cantar las verdades en la cara frente a todos.", neu: "Analizar fríamente las planillas de puntos y reestructurar mis lazos de afinidad con los neutrales." } }
+];
+
+let currentStage = 1;
+let currentWeek = 1;
+let castSize = 16;
+let activePlayers = [];
+let eliminatedPlayers = [];
+let originalSize = 16;
+let incomeTypeSetting = "none";
+let extraInboundPlayers = [];
+
+let comebackTriggered = false;
+let returnWeekNum = 0;
+let returnedPlayerName = "";
+let goldenPlayerName = "";
+let finalScoresSetted = false;
+
+let hohWinner = "";
+let hohWinnersList = [];
+let doubleHohWeeks = [];
+let doubleEliminationWeek = -1;
+let isDoubleEliminationThisWeek = false;
+
+let nominees = [];
+let salvadoPorVeto = null;
+let pointsTable = {};
+let placanegativa = false;
+let totalPlacaTwistUsed = false;
+let totalPlacaActiveThisWeek = false;
+let emergencyType = "";
+
+let relaciones = {};
+let trackRecord = {};
+let finalPlacements = {};
+let finalCandidates = [];
+let finalPercentages = {};
+
+let lockedNomineesList = [];
+let allLockedForFive = false;
+
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+function shuffle(arr) { return arr.slice().sort(() => Math.random() - 0.5); }
+function slug(s) { return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,""); }
+function imgFor(name) {return window.XPBridge.image(name); return name === "Dios" ? "personajes/dios.png" : `personajes/${slug(name)}.png`; }
+
+function chip(name, customText = "") {
+  const display = customText || name;
+  return `<span class="p-chip"><img src="${imgFor(name)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22 fill=%23ddd /><text x=%2250%%22 y=%2260%%22 font-weight=%22bold%22 font-size=%2212%22 fill=%23555 text-anchor=%22middle%22>👤</text></svg>'"><b>${display}</b></span>`;
+}
+
+function go(stageNum) {
+  $$(".stage").forEach(s => s.classList.remove("active"));
+  const header = $("#mainHeader");
+  header.className = "wrap glass header";
+
+  if (stageNum === "repechaje") {
+    $("#stage-repechaje").classList.add("active");
+    header.classList.add("repechaje-bg");
+    currentStage = "repechaje";
+    return;
+  }
+  if (stageNum === "final") {
+    $("#stage-finalgala").classList.add("active");
+    header.classList.add("final-bg");
+    currentStage = "final";
+    return;
+  }
+  if (stageNum === 5) {
+    $("#stage-5").classList.add("active");
+    header.classList.add("dark-panel");
+    currentStage = 5;
+    return;
+  }
+
+  $(`#stage-${stageNum}`).classList.add("active");
+  currentStage = stageNum;
+
+  if (stageNum === "dios-intro") {
+    $("#stepName").textContent = `Introducción — Semana ${currentWeek}`;
+  } else {
+    const indicators = {1: "Configuración del Elenco", "convivencia": "Convivencia y Alianzas", 2: "Prueba de Inmunidad", 3: "Nominaciones", 4: "Poder de Salvación", 5: "Gala de Eliminación", 6: "Track Record"};
+    $("#stepName").textContent = `${indicators[stageNum]} — Semana ${currentWeek}`;
+  }
+}
+
+function handleCastAndIncomeLogic() {
+  castSize = parseInt($("#castSize").value, 10);
+  originalSize = castSize;
+  const incSel = $("#incomeSize");
+
+  Array.from(incSel.options).forEach(opt => opt.disabled = false);
+
+  if (castSize === 21) {
+    Array.from(incSel.options).forEach(opt => {
+      if (opt.value !== "none" && opt.value !== "1_elegible") opt.disabled = true;
+    });
+    if (incSel.value !== "none" && incSel.value !== "1_elegible") incSel.value = "none";
+  } else {
+    Array.from(incSel.options).forEach(opt => {
+      if (opt.value === "1_elegible") opt.disabled = true;
+    });
+    if (incSel.value === "1_elegible") incSel.value = "none";
+  }
+
+  buildCastGrid();
+  checkSelectionValidity();
+}
+
+function buildCastGrid() {
+  const grid = $("#castGrid");
+  grid.innerHTML = "";
+  castSize = parseInt($("#castSize").value, 10);
+
+  for(let i = 0; i < castSize; i++) {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    slot.innerHTML = `
+      <div class="icon"><span class="placeholder">?</span></div>
+      <div class="name">Elegir participante</div>
+      <select><option value="">— Ninguno —</option>${ALL_PARTICIPANTS.map(p=>`<option value="${p}">${p}</option>`).join("")}</select>
+    `;
+    const sel = slot.querySelector("select");
+    sel.addEventListener("change", () => {
+      const val = sel.value;
+      slot.querySelector(".name").textContent = val || "Elegir participante";
+      if(val) slot.querySelector(".icon").innerHTML = `<img src="${imgFor(val)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'">`;
+      else slot.querySelector(".icon").innerHTML = `<span class="placeholder">?</span>`;
+      checkSelectionValidity();
+      enforceUniqueSelects();
+    });
+    grid.appendChild(slot);
+  }
+}
+
+function enforceUniqueSelects() {
+  const selects = $$("#castGrid select");
+  const selectedValues = selects.map(s => s.value).filter(Boolean);
+  selects.forEach(sel => {
+    Array.from(sel.options).forEach(opt => {
+      if(opt.value && opt.value !== sel.value) opt.disabled = selectedValues.includes(opt.value);
+    });
+  });
+}
+
+function checkSelectionValidity() {
+  const vals = $$("#castGrid select").map(s => s.value).filter(Boolean);
+  $("#castCountHelp").textContent = `${vals.length}/${parseInt($("#castSize").value,10)} seleccionados`;
+  $("#nextBtn").disabled = (vals.length !== parseInt($("#castSize").value, 10));
+}
+
+function actualizarSelectorRetos() {
+  const select = $("#challengeSelect");
+  let disponibles = RETOS_POOL.filter(r => !retosUsados.includes(r));
+  if (disponibles.length === 0) {
+    select.innerHTML = `<option value="Reto Genérico">Prueba de Emergencia (Sin opciones)</option>`;
+  } else {
+    select.innerHTML = disponibles.map(r => `<option value="${r}">${r}</option>`).join("");
+  }
+}
+
+function calcularSemanasEspeciales() {
+  doubleHohWeeks = [];
+  let semanasPosibles = [];
+  let totalSemanasEstimadas = originalSize === 21 ? 22 : 18;
+
+  for(let i = 2; i < totalSemanasEstimadas - 4; i++) {
+    semanasPosibles.push(i);
+  }
+  semanasPosibles = shuffle(semanasPosibles);
+  if(semanasPosibles.length >= 2) {
+    doubleHohWeeks = [semanasPosibles[0], semanasPosibles[1]];
+  }
+
+  doubleEliminationWeek = -1;
+  if(originalSize === 21) {
+    doubleEliminationWeek = shuffle([2, 3, 4, 5, 6])[0];
+  }
+}
+
+function runConvivenciaPhase() {window.XPBridge.checkpoint("runConvivenciaPhase",Array.from(arguments));
+  go("convivencia");
+  actualizarSelectorRetos();
+  $("#hohResultBox").classList.add("hide");
+  $("#runHohBtn").disabled = false;
+  $("#runHohRandomBtn").disabled = false;
+
+  const logsContainer = $("#convivenciaLogs");
+  const relContainer = $("#relacionesDestacadas");
+  logsContainer.innerHTML = ""; relContainer.innerHTML = "";
+
+  let logsCount = 0;
+  let localShuf = shuffle(activePlayers.slice());
+
+  while (localShuf.length >= 2 && logsCount < 10) {
+    const p1 = localShuf.pop(); const p2 = localShuf.pop();
+    const currentAfinity = relaciones[p1][p2] || 50;
+
+    let dice = Math.random() * 100;
+    let template = "";
+
+    if (dice <= 25) {
+      template = shuffle(TEXTOS_CONVIVENCIA.reality)[0];
+    }
+    else if (dice > 25 && dice <= 50) {
+      template = shuffle(TEXTOS_CONVIVENCIA.desconocidos)[0];
+      relaciones[p1][p2] = Math.min(100, currentAfinity + 15);
+      relaciones[p2][p1] = Math.min(100, relaciones[p1][p2]);
+    }
+    else if (dice > 50 && dice <= 70) {
+      template = shuffle(TEXTOS_CONVIVENCIA.rivales)[0];
+      relaciones[p1][p2] = Math.max(0, currentAfinity - 15);
+      relaciones[p2][p1] = Math.max(0, relaciones[p1][p2]);
+    }
+    else if (dice > 70 && dice <= 85) {
+      if (currentWeek === 1) {
+        template = shuffle(TEXTOS_CONVIVENCIA.desconocidos)[0] + " (Sienten una vibra muy cercana).";
+        relaciones[p1][p2] = Math.min(100, currentAfinity + 20);
+        relaciones[p2][p1] = Math.min(100, relaciones[p1][p2]);
+      } else {
+        if (currentAfinity >= 75) {
+          template = shuffle(TEXTOS_CONVIVENCIA.mejores_amigos)[0];
+          relaciones[p1][p2] = Math.min(100, currentAfinity + 15);
+        } else {
+          template = shuffle(TEXTOS_CONVIVENCIA.amigos)[0];
+          relaciones[p1][p2] = Math.min(100, currentAfinity + 20);
+        }
+        relaciones[p2][p1] = Math.min(100, relaciones[p1][p2]);
+      }
+    }
+    else if (dice > 85 && dice <= 95) {
+      template = shuffle(TEXTOS_CONVIVENCIA.traiciones)[0];
+      relaciones[p1][p2] = Math.max(0, currentAfinity - 30);
+      relaciones[p2][p1] = Math.max(0, relaciones[p1][p2]);
+    }
+    else {
+      template = "🕊️ {A} y {B} se acercan para tener una charla, resolver sus problemas y disculparse por los comentarios del pasado.";
+      relaciones[p1][p2] = 55;
+      relaciones[p2][p1] = 55;
+    }
+
+    let logText = template.replaceAll("{A}", chip(p1)).replaceAll("{B}", chip(p2));
+    logsContainer.innerHTML += `<div class="ev-row">${logText}</div>`;
+    logsCount++;
+  }
+
+  let alianzasPintadas = new Set();
+  activePlayers.forEach(p1 => {
+    activePlayers.forEach(p2 => {
+      if (p1 !== p2) {
+        const val = relaciones[p1][p2] || 50;
+        let key = [p1, p2].sort().join("-");
+        if (!alianzasPintadas.has(key)) {
+          if (val >= 88 && currentWeek > 1) {
+            relContainer.innerHTML += `<div class="ev-row">⭐ <b>Mejores Amigos:</b> ${chip(p1)} y ${chip(p2)}</div>`;
+            alianzasPintadas.add(key);
+          }
+          else if (val >= 70 && currentWeek > 1) {
+            relContainer.innerHTML += `<div class="ev-row">💜 <b>Amigos:</b> ${chip(p1)} y ${chip(p2)}</div>`;
+            alianzasPintadas.add(key);
+          }
+          else if (val >= 60) {
+            relContainer.innerHTML += `<div class="ev-row">🤝 <b>Cercanos:</b> ${chip(p1)} y ${chip(p2)}</div>`;
+            alianzasPintadas.add(key);
+          }
+          else if (val <= 18) {
+            relContainer.innerHTML += `<div class="ev-row">💀 <b>Enemigos:</b> ${chip(p1)} y ${chip(p2)}</div>`;
+            alianzasPintadas.add(key);
+          }
+          else if (val <= 38) {
+            relContainer.innerHTML += `<div class="ev-row">⚠️ <b>Rivales:</b> ${chip(p1)} y ${chip(p2)}</div>`;
+            alianzasPintadas.add(key);
+          }
+        }
+      }
+    });
+  });
+}
+
+function ejecutarSimulacionReto(retoNombre) {
+  if (retoNombre && retoNombre !== "Reto Genérico") retosUsados.push(retoNombre);
+  hohWinnersList = [];
+  let isDoubleHoh = doubleHohWeeks.includes(currentWeek) && activePlayers.length > 5;
+
+  let shufPool = shuffle(activePlayers.slice());
+  hohWinner = shufPool[0];
+  hohWinnersList.push(hohWinner);
+
+  if (isDoubleHoh && shufPool.length > 1) hohWinnersList.push(shufPool[1]);
+
+  const winContainer = $("#hohWinnerContainer");
+  if(isDoubleHoh) {
+    winContainer.innerHTML = `🏆 <b>¡GIRO DE INMUNIDAD DOBLE!</b> Los dos ganadores oficiales de esta semana son: ${chip(hohWinnersList[0])} y ${chip(hohWinnersList[1])}`;
+  } else {
+    winContainer.innerHTML = `🏆 El líder de la semana es: <span id="hohWinnerName">${chip(hohWinner)}</span>`;
+  }
+
+  const eventsList = $("#eventsList");
+  eventsList.innerHTML = "";
+
+  let eventosMezclados = shuffle(TEXTOS_EVENTOS_RETOS);
+  let shufPlayers = shuffle(activePlayers.slice());
+  let numeroDeEventos = Math.min(3, activePlayers.length);
+
+  for (let idx = 0; idx < numeroDeEventos; idx++) {
+    let pA = shufPlayers[idx % shufPlayers.length];
+    let pB = shufPlayers[(idx + 1) % shufPlayers.length];
+    if (pA === pB && shufPlayers.length > 1) pB = shufPlayers[(idx + 2) % shufPlayers.length];
+    let logFormateado = eventosMezclados[idx].replaceAll("{A}", chip(pA)).replaceAll("{B}", chip(pB));
+    eventsList.innerHTML += `<div class="ev-row" style="border-left: 4px solid #7c3aed;">${logFormateado}</div>`;
+  }
+
+  eventsList.innerHTML += `<div class="ev-row" style="border-left: 4px solid #a78bfa; background: #faf5ff;">La competencia de <b>"${retoNombre}"</b> requirió destreza absoluta. Tras superar todas las fases complejas del desafío, se definen los cómputos oficiales de inmunidad.</div>`;
+  $("#hohResultBox").classList.remove("hide");
+  $("#runHohBtn").disabled = true;
+  $("#runHohRandomBtn").disabled = true;
+}
+
+function setupVetoStage() {
+  go(4);
+  salvadoPorVeto = null;
+  lockedNomineesList = [];
+  allLockedForFive = false;
+  $("#confirmSalvadoBtn").disabled = true;
+  $("#vetoRandomBtn").disabled = false;
+
+  if (activePlayers.length === 5) {
+    allLockedForFive = true;
+    $("#vetoIntroText").innerHTML = `⚠️ <b>¡ÚLTIMA PLACA!</b> Quedan solo 5 personas en competencia. En esta instancia el Poder de Salvación queda DESACTIVADO. Todos los nominados están bloqueados y la placa avanza intacta. Haz clic en continuar.`;
+    $("#confirmSalvadoBtn").disabled = false;
+    $("#confirmSalvadoBtn").textContent = "Continuar a la Gala con Placa Intacta →";
+    $("#vetoRandomBtn").disabled = true;
+  } else {
+    let shufNoms = shuffle(nominees.slice());
+    let locksToApply = (nominees.length >= 5) ? 2 : 1;
+    for (let i = 0; i < locksToApply; i++) {
+      if (shufNoms[i]) lockedNomineesList.push(shufNoms[i]);
+    }
+    $("#vetoIntroText").innerHTML = `A continuación se despliega la placa oficial generada. Selecciona a un participante disponible para otorgarle la salvación. <br><span style="color:#b91c1c; font-weight:800;">🔒 Los nominados con candado no se pueden salvar.</span>`;
+    $("#confirmSalvadoBtn").textContent = "Confirmar Salvación e ir a la Gala →";
+    let libres = nominees.filter(p => !lockedNomineesList.includes(p));
+    if (libres.length === 0) {
+      $("#vetoRandomBtn").disabled = true;
+      $("#confirmSalvadoBtn").disabled = false;
+    }
+  }
+
+  const grid = $("#vetoGrid");
+  grid.innerHTML = "";
+
+  nominees.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "slot";
+    let isThisLocked = allLockedForFive || lockedNomineesList.includes(p);
+
+    if (isThisLocked) {
+      card.classList.add("is-locked");
+      card.innerHTML = `
+        <div class="badge-status locked">🔒 LOCK</div>
+        <div class="icon"><img src="${imgFor(p)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'"></div>
+        <div class="name">${p}</div>
+      `;
+    } else {
+      card.style.cursor = "pointer";
+      card.innerHTML = `
+        <div class="badge-status saved" style="display:none;">SALVAR</div>
+        <div class="icon"><img src="${imgFor(p)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'"></div>
+        <div class="name">${p}</div>
+      `;
+
+      card.addEventListener("click", () => {
+        if (salvadoPorVeto === p) {
+          salvadoPorVeto = null;
+          card.querySelector(".badge-status").style.display = "none";
+          card.style.borderColor = "#e9d5ff";
+        } else {
+          $$("#vetoGrid .slot:not(.is-locked)").forEach(el => {
+            el.style.borderColor = "#e9d5ff";
+            let badge = el.querySelector(".badge-status.saved");
+            if(badge) badge.style.display = "none";
+          });
+          salvadoPorVeto = p;
+          card.querySelector(".badge-status").style.display = "block";
+          card.style.borderColor = "#84cc16";
+        }
+        $("#confirmSalvadoBtn").disabled = (salvadoPorVeto === null);
+      });
+    }
+    grid.appendChild(card);
+  });
+}
+
+function setupGalaEliminacion() {
+  go(5);
+  $("#porcentajesBox").classList.add("hide");
+  $("#evictionMsgBox").classList.add("hide");
+  $("#goToTrBtn").classList.add("hide");
+  $("#showPercentagesBtn").disabled = false;
+
+  isDoubleEliminationThisWeek = (originalSize === 21 && currentWeek === doubleEliminationWeek);
+  placanegativa = false;
+  if (!isDoubleEliminationThisWeek && (currentWeek === 4 || currentWeek === 8) && activePlayers.length > 5) placanegativa = true;
+
+  if (isDoubleEliminationThisWeek) {
+    $("#galaTypeAnnounce").textContent = "💥 ¡GALA ESPECIAL: DOBLE ELIMINACIÓN! Los dos porcentajes más bajos abandonarán la casa esta noche.";
+  } else {
+    $("#galaTypeAnnounce").textContent = placanegativa ? "⚠️ ¡ALERTA! Esta noche las votaciones en placa corren en NEGATIVO (Voto para Eliminar)." : "✨ Gala Regular: Las votaciones del público corren en POSITIVO (Voto para Salvar).";
+  }
+
+  const logs = $("#galaInteractionsLogs");
+  logs.innerHTML = "";
+  let finalNominees = nominees.filter(p => p !== salvadoPorVeto);
+
+  logs.innerHTML += `<div class="ev-row">Los nominados y el resto de la casa toman asiento en el sillón central.</div>`;
+  if(salvadoPorVeto) logs.innerHTML += `<div class="ev-row">🛡️ Alivio: ${chip(salvadoPorVeto)} observa la gala desde la zona segura gracias al Poder de Salvación.</div>`;
+
+  let preguntasMezcladas = shuffle(PREGUNTAS_POOL);
+  finalNominees.forEach((nom, idx) => {
+    let preguntaObj = preguntasMezcladas[idx % preguntasMezcladas.length];
+    let randType = shuffle(["pos", "neg", "neu"])[0];
+    let respuestaFinal = preguntaObj.r[randType];
+
+    let dialogBox = document.createElement("div");
+    dialogBox.className = "ev-row";
+    dialogBox.style.background = "#111827";
+    dialogBox.style.borderColor = "#fbbf24";
+    dialogBox.style.color = "#fbbf24";
+    dialogBox.style.flexDirection = "column";
+    dialogBox.style.alignItems = "flex-start";
+    dialogBox.style.gap = "8px";
+
+    dialogBox.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="p-chip" style="background:#374151; border-color:#4b5563; color:#f3f4f6;"><img src="personajes/dios.png"><b>Dios</b></span>
+        <span>a ${chip(nom)}: "${preguntaObj.p}"</span>
+      </div>
+      <div style="color:#ffffff; font-style:italic; padding-left:14px;">— "${respuestaFinal}"</div>
+    `;
+    logs.appendChild(dialogBox);
+  });
+
+  emergencyType = "";
+  if (currentWeek > 1 && Math.random() > 0.92) emergencyType = shuffle(["QUIT", "EVAC", "DISQ"])[0];
+}
+
+function obtenerCandidatosIngreso() {
+  const incorporados = [...activePlayers, ...eliminatedPlayers];
+  return ALL_PARTICIPANTS.filter(p => !incorporados.includes(p));
+}
+
+function setupRepechajeGala() {
+  go("repechaje");
+  $("#repechajeEliminationsBox").classList.remove("hide");
+  $("#repechajeFinalTwoBox").classList.add("hide");
+  $("#closeRepechajeBtn").classList.add("hide");
+
+  $("#ingressMechanicArea").classList.add("hide");
+  $("#ingressChipsZone").innerHTML = "";
+  $("#goldenTicketArea").classList.add("hide");
+  $("#goldenChipZone").innerHTML = "";
+
+  goldenPlayerName = "";
+  extraInboundPlayers = [];
+
+  if (incomeTypeSetting !== "none") {
+    $("#ingressMechanicArea").classList.remove("hide");
+    if (incomeTypeSetting === "1_elegible" && originalSize === 21) {
+      $("#ingressTitle").textContent = "🚪 Fase de Nuevos Ingresos (1 Aspirante)";
+      $("#btnRevealIngress").textContent = "Conocer Ingreso";
+    } else {
+      $("#ingressTitle").textContent = `🚪 Fase de Nuevos Ingresos (${incomeTypeSetting.replace("_", " ")})`;
+      $("#btnRevealIngress").textContent = "Conocer Ingresados";
+    }
+    $("#btnRevealIngress").disabled = false;
+    $("#runRepechajeBtn").classList.add("hide");
+    $("#runRepechajeBtn").disabled = true;
+  }
+  else {
+    if (originalSize === 21) {
+      $("#ingressMechanicArea").classList.add("hide");
+      $("#goldenTicketArea").classList.remove("hide");
+      $("#btnRevealGolden").disabled = false;
+      $("#runRepechajeBtn").classList.add("hide");
+    } else {
+      $("#runRepechajeBtn").style.display = "inline-flex";
+      $("#runRepechajeBtn").classList.remove("hide");
+      $("#runRepechajeBtn").disabled = false;
+    }
+  }
+
+  $("#repechajeElimsList").innerHTML = ""; $("#repechajeFinalResult").innerHTML = "";
+
+  const intro = $("#repechajeIntroBox");
+  intro.innerHTML = `<div class="ev-row" style="background:#3b0764; border:1px solid #c084fc;"><img src="personajes/dios.png" style="width:32px; height:32px;"> <b>Dios:</b> "Hoy las puertas de la casa se agitan con el ingreso inminente."</div>`;
+
+  const logs = $("#repechajeLogs");
+  logs.innerHTML = "";
+  let mezclasLogs = shuffle(TEXTOS_REPECHAJE);
+  let shufElim = shuffle(eliminatedPlayers.slice());
+
+  for (let idx = 0; idx < Math.min(5, mezclasLogs.length); idx++) {
+    let pA = shufElim[idx % shufElim.length] || "Eliminado A";
+    let pB = shufElim[(idx + 1) % shufElim.length] || "Eliminado B";
+    if (pA === pB && shufElim.length > 1) pB = shufElim[(idx + 2) % shufElim.length];
+    let textoFormateado = mezclasLogs[idx].replaceAll("{A}", chip(pA)).replaceAll("{B}", chip(pB));
+    logs.innerHTML += `<div class="ev-row">${textoFormateado}</div>`;
+  }
+}
+
+function setupFinalGala() {window.XPBridge.checkpoint("setupFinalGala",Array.from(arguments));
+  go("final");
+  finalCandidates = activePlayers.slice();
+  $("#final4toSec").classList.add("hide"); $("#final3erSec").classList.add("hide"); $("#finalCaraACaraSec").classList.add("hide"); $("#finalSobreSec").classList.add("hide");
+  $("#finalApertura").innerHTML = `<div style="font-weight:800; text-align:center; font-size:16px; color:#f3f4f6;">"¡Bienvenidos a la Gran Final! El voto es POSITIVO."</div>`;
+
+  const convBox = $("#finalConvivenciaLogs");
+  convBox.innerHTML = "";
+  convBox.innerHTML += `<div class="ev-row">⏳ <b>Últimas 24 Horas:</b> Los 4 finalistas recorren la casa recordando el primer día.</div>`;
+  convBox.innerHTML += `<div class="ev-row">⚡ <b>Debate:</b> Los finalistas discuten quién tuvo el juego más influyente de la temporada.</div>`;
+  convBox.innerHTML += `<div class="ev-row">🗣️ <b>Confrontación:</b> Viejas heridas vuelven a abrirse durante una conversación sobre traiciones pasadas.</div>`;
+  convBox.innerHTML += `<div class="ev-row">👑 <b>Confianza:</b> Un finalista afirma sentirse preparado para convertirse en el ganador de la temporada.</div>`;
+  convBox.innerHTML += `<div class="ev-row">🎯 <b>Balance Final:</b> Los participantes analizan qué decisiones los llevaron hasta la Gran Final.</div>`;
+  convBox.innerHTML += `<div class="ev-row">🍾 <b>Brindis:</b> Dios otorga una cena premium para cerrar las rivalidades tácticas.</div>`;
+  $("#final4toSec").classList.remove("hide");
+}
+
+function renderTrackRecordTable() {window.XPBridge.checkpoint("renderTrackRecordTable",Array.from(arguments));
+  $("#trTitle").textContent = `Historial General de la Casa — Semana ${currentWeek}`;
+  const head = $("#trkHead"); const body = $("#trkBody");
+  head.innerHTML = ""; body.innerHTML = "";
+
+  const trh = document.createElement("tr");
+  trh.innerHTML = `<th class="col-pos">Pos</th><th class="col-name">Participante</th>`;
+  for(let i = 1; i <= currentWeek; i++) {
+    trh.innerHTML += `<th class="col-sem">Sem ${i}</th>`;
+  }
+  trh.innerHTML += `<th class="col-final">Final</th>`;
+  head.appendChild(trh);
+
+  const orderedPlayers = []; const allNames = Object.keys(trackRecord);
+
+  if (finalScoresSetted) {
+    const winP = allNames.find(p => finalPlacements[p] === "Winner"); if (winP) orderedPlayers.push(winP);
+    const runP = allNames.find(p => finalPlacements[p] === "Runner Up"); if (runP) orderedPlayers.push(runP);
+    const thirdP = allNames.find(p => finalPlacements[p] === "3rd Place"); if (thirdP) orderedPlayers.push(thirdP);
+    const fourthP = allNames.find(p => finalPlacements[p] === "4th Place"); if (fourthP) orderedPlayers.push(fourthP);
+  }
+
+  activePlayers.forEach(p => { if (!orderedPlayers.includes(p)) orderedPlayers.push(p); });
+  eliminatedPlayers.slice().reverse().forEach(p => { if (!orderedPlayers.includes(p)) orderedPlayers.push(p); });
+
+  orderedPlayers.forEach((p, idx) => {
+    const tr = document.createElement("tr");
+    let posText = idx + 1;
+    if (finalPlacements[p] === "Winner") posText = "👑 1";
+    else if (finalPlacements[p] === "Runner Up") posText = "🥈 2";
+    else if (finalPlacements[p] === "3rd Place") posText = "🥉 3";
+    else if (finalPlacements[p] === "4th Place") posText = "4";
+    else if (activePlayers.includes(p)) posText = "Alive";
+
+    tr.innerHTML = `<td class="col-pos"><b>${posText}</b></td><td class="col-name"><b>${p}</b></td>`;
+    let isCurrentlyDead = false;
+    let deadWeekIndex = -1;
+
+    for(let w = 0; w < currentWeek; w++) {
+      let state = trackRecord[p][w];
+      if (state === "EVIC" || state === "QUIT" || state === "EVAC" || state === "DISQ") {
+        isCurrentlyDead = true;
+        deadWeekIndex = w;
+      }
+      if (comebackTriggered && (p === returnedPlayerName || (originalSize === 21 && p === goldenPlayerName)) && w === (returnWeekNum - 1)) {
+        isCurrentlyDead = false;
+        if (!state || state === "BLANK") {
+          state = "SAFE";
+          trackRecord[p][w] = "SAFE";
+        }
+      }
+      if (isCurrentlyDead && w > deadWeekIndex) state = "BLANK";
+      if(!state) state = "BLANK";
+
+      let cls = "safe";
+      if(state === "WIN") cls = "win";
+      if(state === "NOM") cls = "nom";
+      if(state === "SAVED") cls = "saved";
+      if(state === "HIGH") cls = "high";
+      if(state === "LOW") cls = "low";
+      if(state === "BLANK") cls = "blank";
+      if(state === "EVIC") cls = "evic";
+      if(state === "QUIT") cls = "tr-quit";
+      if(state === "DISQ") cls = "tr-disq";
+      if(state === "EVAC") cls = "tr-evac";
+
+      let displayState = (state === "BLANK") ? "" : state;
+      tr.innerHTML += `<td class="col-sem"><span class="cell ${cls}">${displayState}</span></td>`;
+    }
+
+    let finalState = finalPlacements[p] || "BLANK";
+    let finalCls = "blank";
+    if(finalState === "Winner") finalCls = "winner";
+    if(finalState === "Runner Up") finalCls = "runner";
+    if(finalState === "3rd Place") finalCls = "third";
+    if(finalState === "4th Place") finalCls = "fourth";
+
+    let displayFinal = (finalState === "BLANK") ? "" : finalState;
+    tr.innerHTML += `<td class="col-final"><span class="cell ${finalCls}">${displayFinal}</span></td>`;
+    body.appendChild(tr);
+  });
+
+  const ctrlBar = $("#trControlBar");
+  const existingRestart = $("#restartSimBtn");
+  if (existingRestart) existingRestart.remove();
+
+  if (finalScoresSetted) {
+    const rstBtn = document.createElement("button");
+    rstBtn.className = "btn red";
+    rstBtn.id = "restartSimBtn";
+    rstBtn.style.marginLeft = "auto";
+    rstBtn.innerHTML = "Nueva Temporada";
+    rstBtn.addEventListener("click", () => { window.location.reload(); });
+    ctrlBar.appendChild(rstBtn);
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  handleCastAndIncomeLogic();
+
+  $("#castSize").addEventListener("change", handleCastAndIncomeLogic);
+  $("#incomeSize").addEventListener("change", () => { incomeTypeSetting = $("#incomeSize").value; });
+
+  $("#randomCast").addEventListener("click", () => {
+    const size = parseInt($("#castSize").value, 10);
+    const shuffled = shuffle(ALL_PARTICIPANTS).slice(0, size);
+    $$("#castGrid select").forEach((sel, idx) => { sel.value = shuffled[idx]; sel.dispatchEvent(new Event("change")); });
+  });
+
+  $("#nextBtn").addEventListener("click", () => {
+    activePlayers = $$("#castGrid select").map(s => s.value).filter(Boolean);
+    eliminatedPlayers = [];
+    extraInboundPlayers = [];
+    incomeTypeSetting = $("#incomeSize").value;
+    currentWeek = 1;
+    comebackTriggered = false;
+    totalPlacaTwistUsed = false;
+    returnWeekNum = 0;
+    returnedPlayerName = "";
+    goldenPlayerName = "";
+    finalScoresSetted = false;
+    retosUsados = [];
+
+    calcularSemanasEspeciales();
+
+    relaciones = {};
+    trackRecord = {};
+    finalPlacements = {};
+    activePlayers.forEach(p1 => {
+      trackRecord[p1] = [];
+      finalPlacements[p1] = "BLANK";
+      relaciones[p1] = {};
+      activePlayers.forEach(p2 => { if (p1 !== p2) relaciones[p1][p2] = 50; });
+    });
+
+    actualizarSelectorRetos();
+    $("#hohResultBox").classList.add("hide");
+    $("#runHohBtn").disabled = false;
+    $("#runHohRandomBtn").disabled = false;
+
+    const introListContainer = $("#diosIntroIngresosList");
+    introListContainer.innerHTML = "";
+    activePlayers.forEach(p => {
+      introListContainer.innerHTML += `
+        <div style="display:flex; align-items:center; gap:6px; font-weight:600; font-size:14px; background:#fff; padding:6px 12px; border-radius:8px; border:1px solid #e9d5ff; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+          ${chip(p)} <span style="color:#6b7280; font-weight:700; margin-left:4px;">entró a la casa de The Xpedition.</span>
+        </div>
+      `;
+    });
+    go("dios-intro");
+  });
+
+  $("#btnOpenDoors").addEventListener("click", () => { runConvivenciaPhase(); });
+  $("#btnGoToImmunity").addEventListener("click", () => { go(2); });
+
+  $("#runHohBtn").addEventListener("click", () => {
+    const select = $("#challengeSelect");
+    ejecutarSimulacionReto(select.value);
+  });
+
+  $("#runHohRandomBtn").addEventListener("click", () => {
+    let disponibles = RETOS_POOL.filter(r => !retosUsados.includes(r));
+    let retoFinal = "Reto Genérico";
+    if (disponibles.length > 0) {
+      retoFinal = shuffle(disponibles)[0];
+      $("#challengeSelect").value = retoFinal;
+    }
+    ejecutarSimulacionReto(retoFinal);
+  });
+
+  $("#goToNominationBtn").addEventListener("click", () => {
+    go(3);
+    pointsTable = {};
+    activePlayers.forEach(p => { pointsTable[p] = 0; });
+    const votesContainer = $("#allVotesContainer");
+    const scoreSummary = $("#finalScoreSummary");
+    votesContainer.innerHTML = ""; scoreSummary.innerHTML = "";
+
+    if (activePlayers.length === 5) {
+      votesContainer.innerHTML = `<div class="ev-row" style="background:#fef2f2; border-color:#ef4444; color:#ef4444; font-size:16px; font-weight:800;">⚠️ <b>¡ÚLTIMA PLACA!</b> Todos los participantes sin inmunidad van a la placa.</div>`;
+      nominees = activePlayers.filter(p => !hohWinnersList.includes(p));
+
+      scoreSummary.innerHTML = `<div class="gala-scores-grid"></div>`;
+      const scoresGrid = scoreSummary.querySelector(".gala-scores-grid");
+      nominees.forEach(p => {
+        scoresGrid.innerHTML += `
+          <div class="gala-avatar-card">
+            <div class="gala-avatar-circle in-placa">
+              <img src="${imgFor(p)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'">
+            </div>
+            <div class="gala-player-name in-placa">${p}</div>
+          </div>
+        `;
+      });
+      return;
+    }
+
+    totalPlacaActiveThisWeek = false;
+    if (!totalPlacaTwistUsed && currentWeek > 2 && Math.random() > 0.85) {
+      totalPlacaActiveThisWeek = true; totalPlacaTwistUsed = true;
+    }
+
+    if (totalPlacaActiveThisWeek) {
+      let immunesText = hohWinnersList.map(p => chip(p)).join(" y ");
+      votesContainer.innerHTML = `<div class="ev-row" style="background:#fef2f2; border-color:#ef4444; color:#ef4444; font-size:16px; font-weight:800;">🪴 <b>¡PLACA PLANTA!</b> ¡TODOS QUEDAN EN PLACA MENOS EL LÍDER: ${immunesText}!</div>`;
+      nominees = activePlayers.filter(p => !hohWinnersList.includes(p));
+
+      // Implementación del formato estético general
+      scoreSummary.innerHTML = `<div class="gala-scores-grid"></div>`;
+      const scoresGrid = scoreSummary.querySelector(".gala-scores-grid");
+      nominees.forEach(p => {
+        scoresGrid.innerHTML += `
+          <div class="gala-avatar-card">
+            <div class="gala-avatar-circle in-placa">
+              <img src="${imgFor(p)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'">
+            </div>
+            <div class="gala-player-name in-placa">${p}</div>
+          </div>
+        `;
+      });
+      return;
+    }
+
+    activePlayers.forEach(voter => {
+      let candidates = activePlayers.filter(p => p !== voter && !hohWinnersList.includes(p));
+      candidates.sort((a, b) => {
+        let baseA = relaciones[voter][a] || 50;
+        let baseB = relaciones[voter][b] || 50;
+        let noiseA = Math.random() * 24 - 12;
+        let noiseB = Math.random() * 24 - 12;
+        return (baseA + noiseA) - (baseB + noiseB);
+      });
+      let target2 = candidates[0] || voter;
+      let target1 = candidates[1] || candidates[0] || voter;
+      if(target2 !== voter) pointsTable[target2] += 2;
+      if(target1 !== voter && target1 !== target2) pointsTable[target1] += 1;
+      votesContainer.innerHTML += `<div class="ev-row"><b>Nominación de ${voter}:</b>&nbsp;${chip(voter)} le dio 2 votos a ${chip(target2)} y 1 voto a ${chip(target1)}</div>`;
+    });
+
+    let sortedAll = Object.keys(pointsTable).filter(p => !hohWinnersList.includes(p)).sort((a,b) => pointsTable[b] - pointsTable[a]);
+    let baseCutoff = 4;
+    if (currentWeek <= 5) {
+      baseCutoff = (originalSize >= 16) ? 6 : 5;
+    } else {
+      baseCutoff = activePlayers.length >= 10 ? 4 : 3;
+    }
+
+    nominees = [];
+    if (sortedAll.length > 0) {
+      let thresholdIdx = Math.min(baseCutoff, sortedAll.length) - 1;
+      let cutoffVotes = pointsTable[sortedAll[thresholdIdx]];
+      if (cutoffVotes === 0) {
+        nominees = sortedAll.filter(p => pointsTable[p] > 0);
+        if (nominees.length < 3) nominees = sortedAll.slice(0, Math.min(3, sortedAll.length));
+      } else {
+        nominees = sortedAll.filter(p => pointsTable[p] >= cutoffVotes);
+        if (currentWeek <= 5 && originalSize >= 16 && nominees.length > 8) nominees = sortedAll.slice(0, 5);
+      }
+    }
+
+    // Crear el contenedor grid para las tarjetas estilo TV
+    scoreSummary.innerHTML = `<div class="gala-scores-grid"></div>`;
+    const scoresGrid = scoreSummary.querySelector(".gala-scores-grid");
+
+    sortedAll.forEach(p => {
+      if (pointsTable[p] > 0 || nominees.includes(p)) {
+        const isInPlaca = nominees.includes(p);
+
+        scoresGrid.innerHTML += `
+          <div class="gala-avatar-card">
+            <div class="gala-avatar-circle ${isInPlaca ? 'in-placa' : ''}">
+              <img src="${imgFor(p)}" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23eee%22/><text x=%2250%%22 y=%2255%%22 font-size=%2224%22 text-anchor=%22middle%22>👤</text></svg>'">
+              <div class="gala-vote-badge">${pointsTable[p]}</div>
+            </div>
+            <div class="gala-player-name ${isInPlaca ? 'in-placa' : ''}">${p}</div>
+          </div>
+        `;
+      }
+    });
+  });
+
+  $("#seeNomineesBtn").addEventListener("click", setupVetoStage);
+
+  $("#vetoRandomBtn").addEventListener("click", () => {
+    let libres = nominees.filter(p => !lockedNomineesList.includes(p));
+    if (libres.length === 0) return;
+    salvadoPorVeto = shuffle(libres)[0];
+    $$("#vetoGrid .slot").forEach(el => {
+      el.style.borderColor = "#e9d5ff";
+      if (el.querySelector(".badge-status.saved")) el.querySelector(".badge-status.saved").style.display = "none";
+    });
+    $$("#vetoGrid .slot").forEach(el => {
+      if (el.querySelector(".name")?.textContent === salvadoPorVeto) {
+        el.style.borderColor = "#84cc16";
+        el.querySelector(".badge-status.saved").style.display = "block";
+      }
+    });
+    $("#confirmSalvadoBtn").disabled = false;
+  });
+
+  $("#confirmSalvadoBtn").addEventListener("click", setupGalaEliminacion);
+
+  $("#showPercentagesBtn").addEventListener("click", () => {
+    $("#showPercentagesBtn").disabled = true;
+    const listContainer = $("#porcentajesList");
+    listContainer.innerHTML = ""; $("#porcentajesBox").classList.remove("hide");
+
+    let finalNominees = nominees.filter(p => p !== salvadoPorVeto);
+    let poolPercent = 100; let assigned = [];
+
+    finalNominees.forEach((p, i) => {
+      if (i === finalNominees.length - 1) {
+        assigned.push({ name: p, pct: parseFloat(poolPercent.toFixed(1)) });
+      } else {
+        let portion = parseFloat((Math.random() * (poolPercent / 1.8) + 1).toFixed(1));
+        if (portion >= poolPercent) portion = parseFloat((poolPercent * 0.4).toFixed(1));
+        assigned.push({ name: p, pct: portion }); poolPercent -= portion;
+      }
+    });
+if (placanegativa && !isDoubleEliminationThisWeek) {
+      assigned.sort((a, b) => a.pct - b.pct);
+    } else {
+      assigned.sort((a, b) => b.pct - a.pct);
+    }
+let evictedPlayers = [];
+    if (isDoubleEliminationThisWeek) {
+      evictedPlayers.push(assigned[assigned.length - 1].name);
+      if(assigned.length > 1) evictedPlayers.push(assigned[assigned.length - 2].name);
+    } else {
+      evictedPlayers.push(assigned[assigned.length - 1].name);
+    }
+
+    assigned.forEach(item => {
+      const isEvicted = evictedPlayers.includes(item.name);
+      listContainer.innerHTML += `
+        <div style="margin:10px 0;">
+          <div style="display:flex; justify-content:space-between; font-weight:800;"><span>${chip(item.name)}</span><span style="color:${isEvicted?'#ef4444':'#4ade80'}">${item.pct}% (${isEvicted ? 'EVICTED':'SAFE'})</span></div>
+          <div class="bar-container"><div class="bar-fill" style="width:${item.pct}%; background:${isEvicted?'#ef4444':''};"></div></div>
+        </div>`;
+    });
+
+    const msgBox = $("#evictionMsgBox"); msgBox.classList.remove("hide");
+    let neutros = activePlayers.filter(x => !hohWinnersList.includes(x) && x !== salvadoPorVeto && !nominees.includes(x));
+    let shuffledNeutros = shuffle(neutros);
+    let localHigh1 = shuffledNeutros[0] || null;
+    let localHigh2 = shuffledNeutros[1] || null;
+    let localLow = shuffledNeutros[2] || null;
+    let weekIndex = currentWeek - 1;
+
+if (emergencyType !== "") {
+      let emP = shuffle(activePlayers)[0];
+
+      // Mapeo de mensajes fluidos y personalizados para la gala
+      let emMsg = "";
+      if (emergencyType === "QUIT") {
+        emMsg = `🚨 <b>Giro Extraordinario:</b> ${chip(emP)} ha abandonado la casa por decisión propia.`;
+      } else if (emergencyType === "EVAC") {
+        emMsg = `🚨 <b>Giro Extraordinario:</b> ${chip(emP)} no puede continuar en la competencia y debe evacuar la casa por motivos de salud.`;
+      } else if (emergencyType === "DISQ") {
+        emMsg = `🚨 <b>Giro Extraordinario:</b> Dios le ha pedido a ${chip(emP)} abandonar la casa por romper las reglas del juego.`;
+      } else {
+        emMsg = `🚨 <b>Giro Extraordinario:</b> ${chip(emP)} ha salido de la competencia de manera inesperada.`;
+      }
+
+      msgBox.innerHTML = `<div>${emMsg}</div>`;
+
+      activePlayers.forEach(p => {
+        if (p === emP) trackRecord[p][weekIndex] = emergencyType;
+        else trackRecord[p][weekIndex] = hohWinnersList.includes(p)? "WIN" : (p===salvadoPorVeto?"SAVED":(nominees.includes(p)?"NOM":(p===localLow?"LOW":(p===localHigh1||p===localHigh2?"HIGH":"SAFE"))));
+      });
+      eliminatedPlayers.push(emP); activePlayers = activePlayers.filter(p => p !== emP);
+    } else {
+      const verboAbandona = evictedPlayers.length === 1 ? "abandona la casa por decisión del público." : "abandonan la casa por decisión del público.";
+      msgBox.innerHTML = `<div>❌ ${evictedPlayers.map(x=>chip(x)).join(" y ")} ${verboAbandona}</div>`;
+      activePlayers.forEach(p => {
+        if(evictedPlayers.includes(p)) trackRecord[p][weekIndex] = "EVIC";
+        else trackRecord[p][weekIndex] = hohWinnersList.includes(p)? "WIN" : (p===salvadoPorVeto?"SAVED":(nominees.includes(p)?"NOM":(p===localLow?"LOW":(p===localHigh1||p===localHigh2?"HIGH":"SAFE"))));
+      });
+      evictedPlayers.forEach(x => eliminatedPlayers.push(x));
+      activePlayers = activePlayers.filter(p => !evictedPlayers.includes(p));
+    }
+
+    Object.keys(trackRecord).forEach(p => { if(trackRecord[p][weekIndex] === undefined) trackRecord[p][weekIndex] = "BLANK"; });
+    $("#goToTrBtn").classList.remove("hide");
+  });
+
+  $("#goToTrBtn").addEventListener("click", () => {
+    if (eliminatedPlayers.length >= Math.floor(originalSize / 2) && !comebackTriggered) {
+      comebackTriggered = true; setupRepechajeGala(); return;
+    }
+    if (activePlayers.length === 4) { setupFinalGala(); return; }
+    go(6); renderTrackRecordTable();
+  });
+
+  $("#btnRevealIngress").addEventListener("click", () => {
+    $("#btnRevealIngress").disabled = true;
+    const zone = $("#ingressChipsZone"); zone.innerHTML = "";
+    let poolNoIngresados = obtenerCandidatosIngreso();
+    let totalSolicitado = incomeTypeSetting.startsWith("1")? 1 : (incomeTypeSetting.startsWith("2")? 2 : 4);
+
+    if (incomeTypeSetting.includes("random")) {
+      shuffle(poolNoIngresados).slice(0, totalSolicitado).forEach(p => {
+        extraInboundPlayers.push(p);
+        zone.innerHTML += `<div class="p-chip" style="border:2px solid #7c3aed;">${chip(p)} (Ingresa)</div>`;
+      });
+      if (originalSize === 21 && incomeTypeSetting === "1_elegible") {
+        $("#goldenTicketArea").classList.remove("hide"); $("#btnRevealGolden").disabled = false;
+      } else {
+        $("#runRepechajeBtn").classList.remove("hide"); $("#runRepechajeBtn").style.display="inline-flex"; $("#runRepechajeBtn").disabled = false;
+      }
+    } else {
+      if (incomeTypeSetting === "1_elegible" && originalSize === 21) {
+        zone.innerHTML = `<div class="p-chip" style="border:2px dashed #7c3aed; padding:6px 12px;"><img id="singleIngressImg" src="${imgFor(poolNoIngresados[0])}" style="width:22px; height:22px;"><b>Aspirante:</b><select id="singleIngressSelector"><option value="" selected disabled>— Elegir —</option>${poolNoIngresados.map(p=>`<option value="${p}">${p}</option>`).join("")}</select></div>`;
+        $("#singleIngressSelector").addEventListener("change", (e) => {
+          extraInboundPlayers = [e.target.value]; $("#singleIngressImg").src = imgFor(e.target.value);
+          e.target.disabled = true; $("#goldenTicketArea").classList.remove("hide"); $("#btnRevealGolden").disabled = false;
+        });
+      } else {
+        for (let i = 0; i < totalSolicitado; i++) {
+          zone.innerHTML += `<div class="p-chip" style="border:2px dashed #7c3aed; padding:6px 12px;"><img id="multiImg_${i}" src="${imgFor(poolNoIngresados[0])}" style="width:22px; height:22px;"><select id="multiSel_${i}" class="ingress-multi-dropdown"><option value="" selected disabled>— Elegir —</option>${poolNoIngresados.map(p=>`<option value="${p}">${p}</option>`).join("")}</select></div>`;
+        }
+        $$(".ingress-multi-dropdown").forEach(dropdown => {
+          dropdown.addEventListener("change", (e) => {
+            $(`#${e.target.id.replace("Sel","Img")}`).src = imgFor(e.target.value);
+            let vals = $$(".ingress-multi-dropdown").map(s => s.value).filter(Boolean);
+            if (vals.length === totalSolicitado) {
+              extraInboundPlayers = vals; $$(".ingress-multi-dropdown").forEach(s=>s.disabled=true);
+              $("#runRepechajeBtn").classList.remove("hide"); $("#runRepechajeBtn").style.display="inline-flex"; $("#runRepechajeBtn").disabled = false;
+            }
+          });
+        });
+      }
+    }
+  });
+
+  $("#btnRevealGolden").addEventListener("click", () => {
+    $("#btnRevealGolden").disabled = true;
+    const chipZone = $("#goldenChipZone"); chipZone.classList.remove("hide");
+    chipZone.innerHTML = `<div class="p-chip golden-chip"><img id="goldenChipImg" src="${imgFor(eliminatedPlayers[0])}" style="width:22px; height:22px;"><b>Golden:</b><select id="goldenSelector"><option value="" selected disabled>— Elegir —</option>${eliminatedPlayers.map(p=>`<option value="${p}">${p}</option>`).join("")}</select></div>`;
+    $("#goldenSelector").addEventListener("change", (e) => {
+      goldenPlayerName = e.target.value; $("#goldenChipImg").src = imgFor(goldenPlayerName); e.target.disabled = true;
+      $("#runRepechajeBtn").classList.remove("hide"); $("#runRepechajeBtn").style.display="inline-flex"; $("#runRepechajeBtn").disabled = false;
+    });
+  });
+
+  $("#runRepechajeBtn").addEventListener("click", () => {
+    $("#runRepechajeBtn").classList.add("hide");
+    const listContainer = $("#repechajeElimsList");
+    let poolDeVotos = eliminatedPlayers.filter(p => p !== goldenPlayerName);
+    let candidates = shuffle(poolDeVotos);
+    let poolPercent = 100; let assigned = [];
+
+    if(candidates.length === 0) assigned.push({name: "Ninguno", pct: 100});
+    else {
+      candidates.forEach((c, i) => {
+        if (i === candidates.length - 1) assigned.push({ name: c, pct: parseFloat(poolPercent.toFixed(1)) });
+        else { let portion = parseFloat((Math.random() * (poolPercent / 2) + 1).toFixed(1)); assigned.push({ name: c, pct: portion }); poolPercent -= portion; }
+      });
+    }
+    assigned.sort((a,b) => b.pct - a.pct);
+    returnedPlayerName = assigned[0]?.name || "";
+    returnWeekNum = currentWeek + 1;
+
+    let stepDelay = 0;
+    if(candidates.length > 2) {
+      for (let i = candidates.length - 1; i >= 2; i--) {
+        const cand = assigned[i];
+        setTimeout(() => {
+          listContainer.innerHTML += `<div class="ev-row">👤 <b>Dios:</b> "Sale del Repechaje por menor cantidad de votos..." ${chip(cand.name)} no regresa.</div>`;
+        }, stepDelay);
+        stepDelay += 1000;
+      }
+    }
+
+    setTimeout(() => {
+      $("#repechajeEliminationsBox").classList.add("hide"); $("#repechajeFinalTwoBox").classList.remove("hide");
+
+      let extraAnnounceHtml = "";
+      if (goldenPlayerName) extraAnnounceHtml += `<div class="ev-row" style="border:2px solid #fbbf24; background:#fffbeb;">🌟 Golden Ticket: ${chip(goldenPlayerName)} ingresa directamente a la casa.</div>`;
+      if (extraInboundPlayers.length) extraInboundPlayers.forEach(p => extraAnnounceHtml += `<div class="ev-row" style="border:2px solid #7c3aed; background:#f3e8ff;">🚪 Nuevo Ingreso Confirmado: ${chip(p)} entra oficial.</div>`);
+
+      const top1 = assigned[0] || {name: "Nadie", pct: 0};
+      const top2 = assigned[1] || {name: "Nadie", pct: 0};
+
+      $("#repechajeFinalResult").innerHTML = `
+        ${extraAnnounceHtml}
+        <div class="ev-row" style="margin-top:10px;">El público votó y quien reingresa por decisión del público es...</div>
+        <div style="display:flex; justify-content:space-around; align-items:center; margin-top:15px; padding:20px; background:#2e1065; border-radius:12px;">
+          <div>${chip(top1.name)} <div style="font-size:24px; font-weight:800; color:#4ade80;">${top1.pct}%</div></div>
+          <div>VS</div>
+          <div style="opacity:0.6;">${chip(top2.name)} <div style="font-size:24px; font-weight:800; color:#f43f5e;">${top2.pct}%</div></div>
+        </div>
+      `;
+
+      eliminatedPlayers = eliminatedPlayers.filter(p => p !== returnedPlayerName && p !== goldenPlayerName);
+      activePlayers.push(returnedPlayerName); if(goldenPlayerName) activePlayers.push(goldenPlayerName);
+
+      if(extraInboundPlayers.length) {
+        extraInboundPlayers.forEach(p => {
+          trackRecord[p] = Array(currentWeek).fill("BLANK"); finalPlacements[p] = "BLANK"; relaciones[p] = {};
+          activePlayers.forEach(ex => { relaciones[p][ex] = 50; relaciones[ex][p] = 50; });
+          activePlayers.push(p);
+        });
+      }
+      $("#closeRepechajeBtn").classList.remove("hide");
+    }, stepDelay + 200);
+  });
+
+  $("#closeRepechajeBtn").addEventListener("click", () => {
+    currentWeek++; runConvivenciaPhase();
+  });
+
+  $("#btn4to").addEventListener("click", () => {
+    $("#btn4to").disabled = true;
+    let shuf = shuffle(finalCandidates);
+    finalCandidates.forEach((p,i) => finalPercentages[p] = [12, 22, 31, 35][i]);
+    let sorted = finalCandidates.slice().sort((a,b) => finalPercentages[a] - finalPercentages[b]);
+    finalPlacements[sorted[0]] = "4th Place";
+
+    $("#res4to").classList.remove("hide");
+    finalCandidates.forEach(p => {
+      let is4 = (p === sorted[0]);
+      $("#res4to").innerHTML += `<div style="margin:8px 0;"><div style="display:flex; justify-content:space-between; font-weight:800;"><span>${chip(p)}</span><span style="color:${is4 ? '#ef4444':'#4ade80'}">${finalPercentages[p]}% (${is4 ? 'EVICTED - 4to Lugar':'SAFE'})</span></div><div class="bar-container"><div class="bar-fill" style="width:${finalPercentages[p]}%; background:${is4 ? '#ef4444':''};"></div></div></div>`;
+    });
+    $("#final3erSec").classList.remove("hide");
+  });
+
+  $("#btn3er").addEventListener("click", () => {
+    $("#btn3er").disabled = true;
+    let remaining = finalCandidates.filter(p => finalPlacements[p] !== "4th Place").sort((a,b) => finalPercentages[a] - finalPercentages[b]);
+    finalPlacements[remaining[0]] = "3rd Place";
+    $("#res3er").classList.remove("hide");
+
+    let sum3 = remaining.reduce((acc, p) => acc + finalPercentages[p], 0);
+    remaining.forEach(p => {
+      let pct3 = parseFloat(((finalPercentages[p] / sum3) * 100).toFixed(1));
+      let is3 = (p === remaining[0]);
+      $("#res3er").innerHTML += `<div style="margin:8px 0;"><div style="display:flex; justify-content:space-between; font-weight:800;"><span>${chip(p)}</span><span style="color:${is3 ? '#ef4444':'#4ade80'}">${pct3}% (${is3 ? 'EVICTED - 3er Lugar':'SAFE'})</span></div><div class="bar-container"><div class="bar-fill" style="width:${pct3}%; background:${is3 ? '#ef4444':''};"></div></div></div>`;
+    });
+    $("#finalSobreSec").classList.remove("hide");
+  });
+
+  $("#btnSobre").addEventListener("click", () => {
+    $("#btnSobre").disabled = true;
+    let top2 = finalCandidates.filter(p => !["4th Place", "3rd Place"].includes(finalPlacements[p])).sort((a,b) => finalPercentages[b] - finalPercentages[a]);
+    finalPlacements[top2[0]] = "Winner"; finalPlacements[top2[1]] = "Runner Up"; finalScoresSetted = true;
+
+    let sum2 = finalPercentages[top2[0]] + finalPercentages[top2[1]];
+    let wPct = parseFloat(((finalPercentages[top2[0]] / sum2) * 100).toFixed(1));
+    let rPct = parseFloat((100 - wPct).toFixed(1));
+
+    $("#resSobre").classList.remove("hide");
+    $("#resSobre").innerHTML = `
+      <h3 style="text-align:center; color:#fbbf24; margin-top:0;">🏆 RESULTADOS FINALES 🏆</h3>
+      <div style="background:#111827; padding:14px; border-radius:8px; border:1px solid #fbbf24; margin-bottom:10px;">🥇 ${chip(top2[0])} <span style="float:right; color:#fbbf24; font-weight:800; font-size:16px;">${wPct}% ¡WINNER!</span></div>
+      <div style="background:#111827; padding:14px; border-radius:8px; opacity:0.8;">🥈 ${chip(top2[1])} <span style="float:right; color:#c0c0c0; font-weight:800; font-size:16px;">${rPct}% RUNNER UP</span></div>
+      <div class="control-bar" style="justify-content:center; gap:15px; margin-top:20px;">
+         <button class="btn primary" onclick="go(6); renderTrackRecordTable(); $('#nextWeekBtn').classList.add('hide');">Ver Historial Final →</button>
+      </div>`;
+  });
+
+  $("#nextWeekBtn").addEventListener("click", () => {
+    currentWeek++; hohWinner = ""; hohWinnersList = []; nominees = []; salvadoPorVeto = null;
+    runConvivenciaPhase();
+  });
+});
+</script>
+<script>window.XPState={capture:()=>({vars:{retosUsados,currentStage,currentWeek,castSize,activePlayers,eliminatedPlayers,originalSize,incomeTypeSetting,extraInboundPlayers,comebackTriggered,returnWeekNum,returnedPlayerName,goldenPlayerName,finalScoresSetted,hohWinner,hohWinnersList,doubleHohWeeks,doubleEliminationWeek,isDoubleEliminationThisWeek,nominees,salvadoPorVeto,pointsTable,placanegativa,totalPlacaTwistUsed,totalPlacaActiveThisWeek,emergencyType,relaciones,trackRecord,finalPlacements,finalCandidates,finalPercentages,lockedNomineesList,allLockedForFive},mutable:{},globals:Object.fromEntries([].filter(k=>window.XPBridge.serializable(window[k])).map(k=>[k,window[k]])),world:window.XPWorld?.capture()}),restore:s=>{if(Object.hasOwn(s.vars,"retosUsados"))retosUsados=s.vars.retosUsados;if(Object.hasOwn(s.vars,"currentStage"))currentStage=s.vars.currentStage;if(Object.hasOwn(s.vars,"currentWeek"))currentWeek=s.vars.currentWeek;if(Object.hasOwn(s.vars,"castSize"))castSize=s.vars.castSize;if(Object.hasOwn(s.vars,"activePlayers"))activePlayers=s.vars.activePlayers;if(Object.hasOwn(s.vars,"eliminatedPlayers"))eliminatedPlayers=s.vars.eliminatedPlayers;if(Object.hasOwn(s.vars,"originalSize"))originalSize=s.vars.originalSize;if(Object.hasOwn(s.vars,"incomeTypeSetting"))incomeTypeSetting=s.vars.incomeTypeSetting;if(Object.hasOwn(s.vars,"extraInboundPlayers"))extraInboundPlayers=s.vars.extraInboundPlayers;if(Object.hasOwn(s.vars,"comebackTriggered"))comebackTriggered=s.vars.comebackTriggered;if(Object.hasOwn(s.vars,"returnWeekNum"))returnWeekNum=s.vars.returnWeekNum;if(Object.hasOwn(s.vars,"returnedPlayerName"))returnedPlayerName=s.vars.returnedPlayerName;if(Object.hasOwn(s.vars,"goldenPlayerName"))goldenPlayerName=s.vars.goldenPlayerName;if(Object.hasOwn(s.vars,"finalScoresSetted"))finalScoresSetted=s.vars.finalScoresSetted;if(Object.hasOwn(s.vars,"hohWinner"))hohWinner=s.vars.hohWinner;if(Object.hasOwn(s.vars,"hohWinnersList"))hohWinnersList=s.vars.hohWinnersList;if(Object.hasOwn(s.vars,"doubleHohWeeks"))doubleHohWeeks=s.vars.doubleHohWeeks;if(Object.hasOwn(s.vars,"doubleEliminationWeek"))doubleEliminationWeek=s.vars.doubleEliminationWeek;if(Object.hasOwn(s.vars,"isDoubleEliminationThisWeek"))isDoubleEliminationThisWeek=s.vars.isDoubleEliminationThisWeek;if(Object.hasOwn(s.vars,"nominees"))nominees=s.vars.nominees;if(Object.hasOwn(s.vars,"salvadoPorVeto"))salvadoPorVeto=s.vars.salvadoPorVeto;if(Object.hasOwn(s.vars,"pointsTable"))pointsTable=s.vars.pointsTable;if(Object.hasOwn(s.vars,"placanegativa"))placanegativa=s.vars.placanegativa;if(Object.hasOwn(s.vars,"totalPlacaTwistUsed"))totalPlacaTwistUsed=s.vars.totalPlacaTwistUsed;if(Object.hasOwn(s.vars,"totalPlacaActiveThisWeek"))totalPlacaActiveThisWeek=s.vars.totalPlacaActiveThisWeek;if(Object.hasOwn(s.vars,"emergencyType"))emergencyType=s.vars.emergencyType;if(Object.hasOwn(s.vars,"relaciones"))relaciones=s.vars.relaciones;if(Object.hasOwn(s.vars,"trackRecord"))trackRecord=s.vars.trackRecord;if(Object.hasOwn(s.vars,"finalPlacements"))finalPlacements=s.vars.finalPlacements;if(Object.hasOwn(s.vars,"finalCandidates"))finalCandidates=s.vars.finalCandidates;if(Object.hasOwn(s.vars,"finalPercentages"))finalPercentages=s.vars.finalPercentages;if(Object.hasOwn(s.vars,"lockedNomineesList"))lockedNomineesList=s.vars.lockedNomineesList;if(Object.hasOwn(s.vars,"allLockedForFive"))allLockedForFive=s.vars.allLockedForFive;Object.assign(window,s.globals||{});if(s.world)window.XPWorld?.restore(s.world);},refresh:()=>{ALL_PARTICIPANTS.splice(0,ALL_PARTICIPANTS.length,...window.XPBridge.characters());RETOS_POOL=parent.XPSimulator.data.shop.items.filter(i=>i.kind==="challenge"&&i.modes.includes("house")&&window.XPBridge.owns("challenge",i.value||i.name)).map(i=>i.value||i.name);},engine:"house"};</script><script src="/simulator/engine.js"></script></body>
+</html>
