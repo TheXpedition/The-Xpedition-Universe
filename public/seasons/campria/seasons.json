@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "seasons": {
     "retroverse": {
       "id": "retroverse",
@@ -79,8 +79,139 @@
         "Teseo": "personajes/teseo.png",
         "Stephany": "personajes/stephany.png",
         "Cristian Julio": "personajes/cristianjulio.png",
-        "Gokuh Moreno": "personajes/gokuhmoreno.png"
-      }
+        "Gokuh Moreno": "personajes/gokuhmoreno.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Gustavo": null,
+        "Nahuee": "personajes/nahuee.png",
+        "Luciano": "personajes/luciano.png",
+        "Isaac": "personajes/isaac.png",
+        "Agus": "personajes/agus.png",
+        "Carlos Harrington": "personajes/carlosharrington.png"
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Sebas",
+          "place": "Elenco principal",
+          "image": "personajes/sebas.png"
+        },
+        {
+          "name": "Sadith",
+          "place": "Elenco principal",
+          "image": "personajes/sadith.png"
+        },
+        {
+          "name": "Renzo",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/b9fd8598563345a3.png"
+        },
+        {
+          "name": "Roal",
+          "place": "Elenco principal",
+          "image": "personajes/roal.png"
+        },
+        {
+          "name": "Teseo",
+          "place": "Elenco principal",
+          "image": "personajes/teseo.png"
+        },
+        {
+          "name": "Renata",
+          "place": "Elenco principal",
+          "image": "personajes/renata.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Sebas",
+          "place": "Winner",
+          "image": "personajes/sebas.png"
+        },
+        {
+          "name": "Sadith",
+          "place": "Runner up",
+          "image": "personajes/sadith.png"
+        },
+        {
+          "name": "Roal",
+          "place": "3rd Place",
+          "image": "personajes/roal.png"
+        },
+        {
+          "name": "Renzo",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/b9fd8598563345a3.png"
+        },
+        {
+          "name": "Renata",
+          "place": "5th Place",
+          "image": "personajes/renata.png"
+        },
+        {
+          "name": "Lucas Severo",
+          "place": "6th Place",
+          "image": "personajes/lucassevero.png"
+        },
+        {
+          "name": "Teseo",
+          "place": "7th Place",
+          "image": "personajes/teseo.png"
+        },
+        {
+          "name": "Stephany",
+          "place": "8th Place",
+          "image": "personajes/stephany.png"
+        },
+        {
+          "name": "Cristian Julio",
+          "place": "9th Place",
+          "image": "personajes/cristianjulio.png"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "place": "12th Place",
+          "image": "personajes/gokuhmoreno.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Gustavo",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Nahuee",
+          "place": "Participante",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Participante",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Isaac",
+          "place": "Participante",
+          "image": "personajes/isaac.png"
+        },
+        {
+          "name": "Agus",
+          "place": "Participante",
+          "image": "personajes/agus.png"
+        },
+        {
+          "name": "Carlos Harrington",
+          "place": "Participante",
+          "image": "personajes/carlosharrington.png"
+        }
+      ]
     },
     "popular": {
       "id": "popular",
@@ -160,8 +291,224 @@
         "Stephany": "personajes/stephany.png",
         "Pilar": "personajes/pilar.png",
         "Solf": "seasons/campria/portraits/d630ac11f5a37ad6.png",
-        "Nahuee": "personajes/nahuee.png"
-      }
+        "Nahuee": "personajes/nahuee.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Damian": "personajes/damian.png",
+        "Luciano": "personajes/luciano.png",
+        "Jared": "personajes/jared.png",
+        "Lui Mclean": "personajes/luimclean.png",
+        "Marco": null,
+        "Sophie Bradley": "personajes/sophiebradley.png",
+        "Diego Berguñez": null,
+        "Marcos": "personajes/marcos.png",
+        "Brave": "personajes/brave.png"
+      },
+      "versus": {
+        "format": "elimination",
+        "rounds": [
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Damián"
+              },
+              {
+                "name": "Javi"
+              },
+              {
+                "name": "Pilar"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pilar"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Luis"
+              },
+              {
+                "name": "Atneimip"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Atneimip"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Damián"
+              },
+              {
+                "name": "Luis"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Luis"
+                  }
+                ],
+                "label": "Ganador"
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Damian",
+          "place": "Elenco principal",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Atneimip",
+          "place": "Elenco principal",
+          "image": "personajes/atneimip.png"
+        },
+        {
+          "name": "Mati",
+          "place": "Elenco principal",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        },
+        {
+          "name": "Pilar",
+          "place": "Elenco principal",
+          "image": "personajes/pilar.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Luis",
+          "place": "Winner",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Damián",
+          "place": "Runner up",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Atneimip",
+          "place": "3rd Place",
+          "image": "personajes/atneimip.png"
+        },
+        {
+          "name": "Mati",
+          "place": "4th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Stephany",
+          "place": "7th Place",
+          "image": "personajes/stephany.png"
+        },
+        {
+          "name": "Pilar",
+          "place": "8th Place",
+          "image": "personajes/pilar.png"
+        },
+        {
+          "name": "Solf",
+          "place": "9th Place",
+          "image": "seasons/campria/portraits/d630ac11f5a37ad6.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "11th Place",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Participante",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Jared",
+          "place": "Participante",
+          "image": "personajes/jared.png"
+        },
+        {
+          "name": "Lui Mclean",
+          "place": "Participante",
+          "image": "personajes/luimclean.png"
+        },
+        {
+          "name": "Marco",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Sophie Bradley",
+          "place": "Participante",
+          "image": "personajes/sophiebradley.png"
+        },
+        {
+          "name": "Diego Berguñez",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Marcos",
+          "place": "Participante",
+          "image": "personajes/marcos.png"
+        },
+        {
+          "name": "Brave",
+          "place": "Participante",
+          "image": "personajes/brave.png"
+        }
+      ]
     },
     "comeback": {
       "id": "comeback",
@@ -241,8 +588,311 @@
         "Nahuee": "personajes/nahuee.png",
         "Miguel Lima": "personajes/miguellima.png",
         "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
-        "Violeta": "personajes/violeta.png"
-      }
+        "Violeta": "personajes/violeta.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Felix": "personajes/felix.png",
+        "Mariano": null,
+        "Felipe": "personajes/felipevicente.png",
+        "Joaquín": "personajes/joaquin.png",
+        "Susano": null,
+        "Johanna": null,
+        "Cristian Julio": "personajes/cristianjulio.png",
+        "Pilar": "personajes/pilar.png",
+        "Damián": "personajes/damian.png",
+        "Dani": "personajes/dani.png",
+        "Gokuh Moreno": "personajes/gokuhmoreno.png",
+        "Iker": "personajes/iker.png"
+      },
+      "versus": {
+        "format": "elimination",
+        "rounds": [
+          {
+            "ep": "13",
+            "competitors": [
+              {
+                "name": "Mati"
+              },
+              {
+                "name": "Nahuee"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nahuee"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "14",
+            "competitors": [
+              {
+                "name": "Javi"
+              },
+              {
+                "name": "Luis",
+                "badge": "Ídolo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Javi"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "15",
+            "competitors": [
+              {
+                "name": "Alexia"
+              },
+              {
+                "name": "Mati"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Alexia"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "16",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Mati"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Mati"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "18",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Luis"
+              },
+              {
+                "name": "Nacho"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "18",
+            "competitors": [
+              {
+                "name": "Luis"
+              },
+              {
+                "name": "Nacho"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nacho"
+                  }
+                ],
+                "label": "Ganador"
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Nacho",
+          "place": "Elenco principal",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Elenco principal",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Alexia",
+          "place": "Elenco principal",
+          "image": "personajes/alexia.png"
+        },
+        {
+          "name": "Mati",
+          "place": "Elenco principal",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "Elenco principal",
+          "image": "personajes/nahuee.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Nacho",
+          "place": "Winner",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Runner up",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "3rd Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Mati",
+          "place": "4th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Alexia",
+          "place": "5th Place",
+          "image": "personajes/alexia.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "7th Place",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Miguel Lima",
+          "place": "9th Place",
+          "image": "personajes/miguellima.png"
+        },
+        {
+          "name": "Coronel",
+          "place": "11th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Violeta",
+          "place": "12th Place",
+          "image": "personajes/violeta.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Felix",
+          "place": "Participante",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Mariano",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Felipe",
+          "place": "Participante",
+          "image": "personajes/felipevicente.png"
+        },
+        {
+          "name": "Joaquín",
+          "place": "Participante",
+          "image": "personajes/joaquin.png"
+        },
+        {
+          "name": "Susano",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Johanna",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Cristian Julio",
+          "place": "Participante",
+          "image": "personajes/cristianjulio.png"
+        },
+        {
+          "name": "Pilar",
+          "place": "Participante",
+          "image": "personajes/pilar.png"
+        },
+        {
+          "name": "Damián",
+          "place": "Participante",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Dani",
+          "place": "Participante",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "place": "Participante",
+          "image": "personajes/gokuhmoreno.png"
+        },
+        {
+          "name": "Iker",
+          "place": "Participante",
+          "image": "personajes/iker.png"
+        }
+      ]
     },
     "golden": {
       "id": "golden",
@@ -258,7 +908,7 @@
         {
           "name": "Felix",
           "place": "Winner",
-          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+          "image": "personajes/felix.png"
         },
         {
           "name": "Robin",
@@ -298,7 +948,7 @@
         {
           "name": "Eduard",
           "place": "9th Place",
-          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+          "image": "personajes/eduard.png"
         },
         {
           "name": "Jesus",
@@ -313,7 +963,7 @@
       },
       "poster": "seasons/campria/golden/poster.png",
       "images": {
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Felix": "personajes/felix.png",
         "Robin": "personajes/robin.png",
         "Luis": "personajes/luis.png",
         "Nidia Mirella": "seasons/campria/portraits/5ad36f4dd795be0f.png",
@@ -321,9 +971,371 @@
         "Javi": "personajes/javi.png",
         "Luciano": "personajes/luciano.png",
         "Iker": "personajes/iker.png",
-        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png",
-        "Jesus": "personajes/jesus.png"
-      }
+        "Eduard": "personajes/eduard.png",
+        "Jesus": "personajes/jesus.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Pier": "personajes/pier.png",
+        "Mariano": null,
+        "Alexandro": "personajes/alexandro.png",
+        "Renzo": "personajes/renzo.png",
+        "Gokuh Moreno": "personajes/gokuhmoreno.png",
+        "Morty": null,
+        "Emanuel": "personajes/emanuel.png",
+        "Alexia": "personajes/alexia.png",
+        "Aaron": null,
+        "Gonz": null,
+        "Jesús": "personajes/jesus.png"
+      },
+      "versus": {
+        "format": "elimination",
+        "rounds": [
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Eduard"
+              },
+              {
+                "name": "Jesús"
+              },
+              {
+                "name": "Pier"
+              },
+              {
+                "name": "Robin"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pier"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Eduard"
+              },
+              {
+                "name": "Luis"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Eduard"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Felix"
+              },
+              {
+                "name": "Iker"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Iker"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "12",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano",
+                    "note": "Otra vez"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "12",
+            "competitors": [
+              {
+                "name": "Javi"
+              },
+              {
+                "name": "Robin"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Robin"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "13",
+            "competitors": [
+              {
+                "name": "Felix",
+                "badge": "Ídolo"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pablo"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "14",
+            "competitors": [
+              {
+                "name": "Nidia Mirella"
+              },
+              {
+                "name": "Robin"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nidia Mirella"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "16",
+            "competitors": [
+              {
+                "name": "Felix"
+              },
+              {
+                "name": "Robin"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Felix"
+                  }
+                ],
+                "label": "Ganador"
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Felix",
+          "place": "Elenco principal",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Robin",
+          "place": "Elenco principal",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Nidia Mirella",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/5ad36f4dd795be0f.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "Elenco principal",
+          "image": "personajes/pablo.png"
+        },
+        {
+          "name": "Javi",
+          "place": "Elenco principal",
+          "image": "personajes/javi.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Felix",
+          "place": "Winner",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Robin",
+          "place": "Runner up",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luis",
+          "place": "3rd Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Nidia Mirella",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/5ad36f4dd795be0f.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "5th Place",
+          "image": "personajes/pablo.png"
+        },
+        {
+          "name": "Javi",
+          "place": "6th Place",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "7th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Iker",
+          "place": "8th Place",
+          "image": "personajes/iker.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "9th Place",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Jesus",
+          "place": "10th Place",
+          "image": "personajes/jesus.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Pier",
+          "place": "Participante",
+          "image": "personajes/pier.png"
+        },
+        {
+          "name": "Mariano",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Alexandro",
+          "place": "Participante",
+          "image": "personajes/alexandro.png"
+        },
+        {
+          "name": "Renzo",
+          "place": "Participante",
+          "image": "personajes/renzo.png"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "place": "Participante",
+          "image": "personajes/gokuhmoreno.png"
+        },
+        {
+          "name": "Morty",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Emanuel",
+          "place": "Participante",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Alexia",
+          "place": "Participante",
+          "image": "personajes/alexia.png"
+        },
+        {
+          "name": "Aaron",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Gonz",
+          "place": "Participante",
+          "image": null
+        }
+      ]
     },
     "money": {
       "id": "money",
@@ -359,7 +1371,7 @@
         {
           "name": "Felix",
           "place": "5th Place",
-          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+          "image": "personajes/felix.png"
         },
         {
           "name": "Damián",
@@ -384,7 +1396,7 @@
         {
           "name": "Eduard",
           "place": "12th Place",
-          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+          "image": "personajes/eduard.png"
         }
       ],
       "track": {
@@ -398,13 +1410,126 @@
         "Katy": "personajes/katy.png",
         "Pepi": "personajes/pepi.png",
         "Luis": "personajes/luis.png",
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Felix": "personajes/felix.png",
         "Damián": "personajes/damian.png",
         "Mati": "personajes/mati.png",
         "Jesus": "personajes/jesus.png",
         "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
-        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png"
-      }
+        "Eduard": "personajes/eduard.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Luciano": "personajes/luciano.png",
+        "Joaquin": "personajes/joaquin.png",
+        "Pablo": "personajes/pablo.png"
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Edson",
+          "place": "Elenco principal",
+          "image": "personajes/edson.png"
+        },
+        {
+          "name": "Katy",
+          "place": "Elenco principal",
+          "image": "personajes/katy.png"
+        },
+        {
+          "name": "Pepi",
+          "place": "Elenco principal",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Felix",
+          "place": "Elenco principal",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Mati",
+          "place": "Elenco principal",
+          "image": "personajes/mati.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Edson",
+          "place": "Winner",
+          "image": "personajes/edson.png"
+        },
+        {
+          "name": "Katy",
+          "place": "Runner up",
+          "image": "personajes/katy.png"
+        },
+        {
+          "name": "Pepi",
+          "place": "Runner up",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "place": "4th Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Felix",
+          "place": "5th Place",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Damián",
+          "place": "6th Place",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Mati",
+          "place": "8th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Jesus",
+          "place": "9th Place",
+          "image": "personajes/jesus.png"
+        },
+        {
+          "name": "Coronel",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "12th Place",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Participante",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Joaquin",
+          "place": "Participante",
+          "image": "personajes/joaquin.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "Participante",
+          "image": "personajes/pablo.png"
+        }
+      ]
     },
     "allstars": {
       "id": "allstars",
@@ -451,7 +1576,7 @@
           "name": "Felix",
           "season": "Golden vs Platinum",
           "place": "6th Place",
-          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+          "image": "personajes/felix.png"
         },
         {
           "name": "Iker",
@@ -505,7 +1630,7 @@
           "name": "Eduard",
           "season": "Golden vs Platinum",
           "place": "15th Place",
-          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+          "image": "personajes/eduard.png"
         }
       ],
       "track": {
@@ -520,7 +1645,7 @@
         "Luis": "personajes/luis.png",
         "Robin": "personajes/robin.png",
         "Luciano": "personajes/luciano.png",
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Felix": "personajes/felix.png",
         "Iker": "personajes/iker.png",
         "Renata": "personajes/renata.png",
         "Nacho": "personajes/nacho.png",
@@ -529,8 +1654,550 @@
         "Coronel": "seasons/campria/portraits/321f3dde84252793.png",
         "Jesus": "personajes/jesus.png",
         "Katy": "personajes/katy.png",
-        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png"
-      }
+        "Eduard": "personajes/eduard.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Jesús": "personajes/jesus.png",
+        "Britney Britney": "personajes/britneybritney.png",
+        "Dua Lingo": "personajes/dualingo.png",
+        "Nicki Gorilaj": "personajes/nickigorilaj.png"
+      },
+      "versus": {
+        "format": "all-stars",
+        "rounds": [
+          {
+            "ep": "1",
+            "competitors": [
+              {
+                "name": "Nahuee",
+                "badge": "Top2",
+                "choice": "Eduard"
+              },
+              {
+                "name": "Pepi",
+                "badge": "Top2",
+                "choice": "Eduard"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nahuee"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Eduard"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "2",
+            "competitors": [
+              {
+                "name": "Luciano",
+                "badge": "Top2",
+                "choice": "Coronel"
+              },
+              {
+                "name": "Luis",
+                "badge": "Top2",
+                "choice": "Katy"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Luis"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Katy"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              {
+                "name": "Felix",
+                "badge": "Top2",
+                "choice": "Renata"
+              },
+              {
+                "name": "Nidia Mirella",
+                "badge": "Top2",
+                "choice": "Jesús"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nidia Mirella"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Jesús"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              {
+                "name": "Iker",
+                "badge": "Top2",
+                "choice": "Damián"
+              },
+              {
+                "name": "Luis",
+                "badge": "Top2",
+                "choice": "Renata"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Iker"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Damián"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              {
+                "name": "Luis",
+                "badge": "Top2",
+                "choice": "Luciano"
+              },
+              {
+                "name": "Pepi",
+                "badge": "Top2",
+                "choice": "Luciano"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Luis"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Iker",
+                "badge": "Top2",
+                "choice": "Felix"
+              },
+              {
+                "name": "Nacho",
+                "badge": "Top2",
+                "choice": "Felix"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nacho"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nidia Mirella",
+                    "note": "Renuncia"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Felix",
+                "badge": "Top2",
+                "choice": "Nacho"
+              },
+              {
+                "name": "Renata",
+                "badge": "Top2",
+                "choice": "Nacho"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Renata"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nacho"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "8",
+            "competitors": [
+              {
+                "name": "Nahuee",
+                "badge": "Top2",
+                "choice": "Renata"
+              },
+              {
+                "name": "Robin",
+                "badge": "Top2",
+                "choice": "Pepi"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nahuee"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Renata"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Luciano",
+                "badge": "Top2",
+                "choice": "Pepi"
+              },
+              {
+                "name": "Britney Britney",
+                "badge": "Top2",
+                "choice": "Dua Lingo"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pepi"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Luciano",
+                "badge": "Top2",
+                "choice": "Felix"
+              },
+              {
+                "name": "Luis",
+                "badge": "Top2",
+                "choice": "Felix"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  },
+                  {
+                    "name": "Luis"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Felix"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Pepi",
+                "badge": "Top2",
+                "choice": "Luciano"
+              },
+              {
+                "name": "Britney Britney",
+                "badge": "Top2",
+                "choice": "Nicki Gorilaj"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Pepi"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "14",
+            "competitors": [
+              {
+                "name": "Nahuee",
+                "badge": "Top2"
+              },
+              {
+                "name": "Pepi",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Nahuee"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pepi"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "Elenco principal",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Pepi",
+          "place": "Elenco principal",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Robin",
+          "place": "Elenco principal",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Elenco principal",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Iker",
+          "place": "Elenco principal",
+          "image": "personajes/iker.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Nahuee",
+          "season": "Comeback",
+          "place": "Winner",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Pepi",
+          "season": "Money Race",
+          "place": "Runner up",
+          "image": "personajes/pepi.png"
+        },
+        {
+          "name": "Luis",
+          "season": "Popular vs Fan",
+          "place": "3rd Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Robin",
+          "season": "Golden vs Platinum",
+          "place": "4th Place",
+          "image": "personajes/robin.png"
+        },
+        {
+          "name": "Luciano",
+          "season": "Comeback",
+          "place": "5th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Felix",
+          "season": "Golden vs Platinum",
+          "place": "6th Place",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Iker",
+          "season": "Golden vs Platinum",
+          "place": "7th Place",
+          "image": "personajes/iker.png"
+        },
+        {
+          "name": "Renata",
+          "season": "Retroverse",
+          "place": "8th Place",
+          "image": "personajes/renata.png"
+        },
+        {
+          "name": "Nacho",
+          "season": "Comeback",
+          "place": "9th Place",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Nidia Mirella",
+          "season": "Golden vs Platinum",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/5ad36f4dd795be0f.png"
+        },
+        {
+          "name": "Damián",
+          "season": "Popular vs Fan",
+          "place": "11th Place",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Coronel",
+          "season": "Comeback",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/321f3dde84252793.png"
+        },
+        {
+          "name": "Jesus",
+          "season": "Golden vs Platinum",
+          "place": "13th Place",
+          "image": "personajes/jesus.png"
+        },
+        {
+          "name": "Katy",
+          "season": "Money Race",
+          "place": "14th Place",
+          "image": "personajes/katy.png"
+        },
+        {
+          "name": "Eduard",
+          "season": "Golden vs Platinum",
+          "place": "15th Place",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        }
+      ]
     },
     "elements": {
       "id": "elements",
@@ -551,7 +2218,7 @@
         {
           "name": "Plastique Doll",
           "place": "Runner up",
-          "image": "seasons/campria/portraits/8cc8b8ef43aa35ef.png"
+          "image": "personajes/plastiquedoll.png"
         },
         {
           "name": "Luciano",
@@ -566,7 +2233,7 @@
         {
           "name": "Felix",
           "place": "5th Place",
-          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+          "image": "personajes/felix.png"
         },
         {
           "name": "Ivy",
@@ -592,14 +2259,364 @@
       "poster": "seasons/campria/elements/poster.png",
       "images": {
         "Amanda Lewis": "personajes/amandalewis.png",
-        "Plastique Doll": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
+        "Plastique Doll": "personajes/plastiquedoll.png",
         "Luciano": "personajes/luciano.png",
         "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Felix": "personajes/felix.png",
         "Ivy": "seasons/campria/portraits/bc06bf99c605b469.png",
         "Solf": "seasons/campria/portraits/d630ac11f5a37ad6.png",
-        "Jose Julián": "seasons/campria/portraits/9614998df57f1e52.png"
-      }
+        "Jose Julián": "seasons/campria/portraits/9614998df57f1e52.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Javier": "personajes/javi.png",
+        "Coronel": "personajes/coronel.png",
+        "Eduard": "personajes/eduard.png",
+        "Miguel Antonio": null,
+        "Sebastián": null,
+        "Nacho": "personajes/nacho.png",
+        "Sadith": "personajes/sadith.png",
+        "Sebas": "personajes/sebas.png"
+      },
+      "versus": {
+        "format": "elimination",
+        "rounds": [
+          {
+            "ep": "2",
+            "competitors": [
+              {
+                "name": "Nacho"
+              },
+              {
+                "name": "Sebas"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nacho"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              {
+                "name": "Miguel Antonio"
+              },
+              {
+                "name": "Sebas"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Miguel Antonio"
+                  },
+                  {
+                    "name": "Sebas"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              {
+                "name": "Ivy"
+              },
+              {
+                "name": "Jose Julián"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Jose Julián"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Coronel"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Eduard",
+                    "note": "Quit"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Coronel"
+              },
+              {
+                "name": "Solf"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Coronel"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Ivy"
+              },
+              {
+                "name": "Jose Julián"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Jose Julián"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Ivy"
+              },
+              {
+                "name": "Luciano"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Ivy"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Felix"
+              },
+              {
+                "name": "Luciano"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Felix"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Amanda Lewis"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Alexandro"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "12",
+            "competitors": [
+              {
+                "name": "Amanda Lewis"
+              },
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Plastique Doll"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Amanda Lewis",
+          "place": "Elenco principal",
+          "image": "personajes/amandalewis.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Elenco principal",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Elenco principal",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Felix",
+          "place": "Elenco principal",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Amanda Lewis",
+          "place": "Winner",
+          "image": "personajes/amandalewis.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Runner up",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "3rd Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Felix",
+          "place": "5th Place",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Ivy",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/bc06bf99c605b469.png"
+        },
+        {
+          "name": "Solf",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/d630ac11f5a37ad6.png"
+        },
+        {
+          "name": "Jose Julián",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/9614998df57f1e52.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Javier",
+          "place": "Participante",
+          "image": "personajes/javi.png"
+        },
+        {
+          "name": "Coronel",
+          "place": "Participante",
+          "image": "personajes/coronel.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "Participante",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Miguel Antonio",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Sebastián",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Nacho",
+          "place": "Participante",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Sadith",
+          "place": "Participante",
+          "image": "personajes/sadith.png"
+        }
+      ]
     },
     "andromeda": {
       "id": "andromeda",
@@ -620,7 +2637,7 @@
         {
           "name": "Plastique Doll",
           "place": "Runner up",
-          "image": "personajes/plastiquedollold.png"
+          "image": "personajes/plastiquedoll.png"
         },
         {
           "name": "Alexandro",
@@ -630,12 +2647,12 @@
         {
           "name": "Pier",
           "place": "4th Place",
-          "image": "seasons/campria/portraits/346cf5e97f17f3f0.png"
+          "image": "personajes/pier.png"
         },
         {
           "name": "Dani",
           "place": "6th Place",
-          "image": "seasons/campria/portraits/c9320a90dce6ac7b.png"
+          "image": "personajes/dani.png"
         },
         {
           "name": "Humberto",
@@ -650,7 +2667,7 @@
         {
           "name": "Felix",
           "place": "12th Place",
-          "image": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
+          "image": "personajes/felix.png"
         }
       ],
       "track": {
@@ -661,14 +2678,486 @@
       "poster": "seasons/campria/andromeda/poster.png",
       "images": {
         "Emanuel": "personajes/emanuel.png",
-        "Plastique Doll": "personajes/plastiquedollold.png",
+        "Plastique Doll": "personajes/plastiquedoll.png",
         "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
-        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
-        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Pier": "personajes/pier.png",
+        "Dani": "personajes/dani.png",
         "Humberto": "personajes/humberto.png",
         "Imanol": "personajes/imanolold.png",
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png"
-      }
+        "Felix": "personajes/felix.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Azealia Midnight": "personajes/azealiamidnight.png",
+        "Luciano": "personajes/luciano.png",
+        "Edwin": null,
+        "Azael": "personajes/azael.png",
+        "Alex": null,
+        "Catalina": "personajes/catalina.png",
+        "Mati": "personajes/mati.png",
+        "Javier": "personajes/javi.png",
+        "Amanda Lewis": "personajes/amandalewis.png",
+        "Alex Yohender": "personajes/alexyohender.png"
+      },
+      "versus": {
+        "format": "top2-elimination",
+        "rounds": [
+          {
+            "ep": "1",
+            "competitors": [
+              {
+                "name": "Emanuel",
+                "badge": "Top2"
+              },
+              {
+                "name": "Felix",
+                "badge": "Winner"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Amanda Lewis"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "2",
+            "competitors": [
+              {
+                "name": "Dani",
+                "badge": "Winner"
+              },
+              {
+                "name": "Luciano",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Azealia Midnight"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              {
+                "name": "Alexandro",
+                "badge": "Winner"
+              },
+              {
+                "name": "Pier",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Catalina"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              {
+                "name": "Felix",
+                "badge": "Top2"
+              },
+              {
+                "name": "Humberto",
+                "badge": "Winner"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Alex Yohender"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              {
+                "name": "Emanuel",
+                "badge": "Winner"
+              },
+              {
+                "name": "Plastique Doll",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Felix"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Dani",
+                "badge": "Winner"
+              },
+              {
+                "name": "Imanol",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Azael"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Edwin"
+              },
+              {
+                "name": "Imanol"
+              },
+              {
+                "name": "Luciano"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Edwin"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "8",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Imanol"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Imanol"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Humberto"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Humberto"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Dani",
+                    "note": "Renuncia"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "12",
+            "competitors": [
+              {
+                "name": "Azealia Midnight"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Azealia Midnight"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "13",
+            "competitors": [
+              {
+                "name": "Emanuel"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pier"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "13",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Plastique Doll"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Alexandro"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "13",
+            "competitors": [
+              {
+                "name": "Emanuel"
+              },
+              {
+                "name": "Plastique Doll"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Emanuel"
+                  }
+                ],
+                "label": "Ganador"
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Emanuel",
+          "place": "Elenco principal",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Elenco principal",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Dani",
+          "place": "Elenco principal",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Humberto",
+          "place": "Elenco principal",
+          "image": "personajes/humberto.png"
+        },
+        {
+          "name": "Imanol",
+          "place": "Elenco principal",
+          "image": "personajes/imanolold.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Emanuel",
+          "place": "Winner",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Runner up",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Pier",
+          "place": "4th Place",
+          "image": "personajes/pier.png"
+        },
+        {
+          "name": "Dani",
+          "place": "6th Place",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Humberto",
+          "place": "7th Place",
+          "image": "personajes/humberto.png"
+        },
+        {
+          "name": "Imanol",
+          "place": "8th Place",
+          "image": "personajes/imanolold.png"
+        },
+        {
+          "name": "Felix",
+          "place": "12th Place",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Azealia Midnight",
+          "place": "Participante",
+          "image": "personajes/azealiamidnight.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Participante",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Edwin",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Azael",
+          "place": "Participante",
+          "image": "personajes/azael.png"
+        },
+        {
+          "name": "Alex",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Catalina",
+          "place": "Participante",
+          "image": "personajes/catalina.png"
+        },
+        {
+          "name": "Mati",
+          "place": "Participante",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Javier",
+          "place": "Participante",
+          "image": "personajes/javi.png"
+        }
+      ]
     },
     "apocalypse": {
       "id": "apocalypse",
@@ -684,7 +3173,7 @@
         {
           "name": "Plastique Doll",
           "place": "Winner",
-          "image": "seasons/campria/portraits/8cc8b8ef43aa35ef.png"
+          "image": "personajes/plastiquedoll.png"
         },
         {
           "name": "Alexandro",
@@ -694,7 +3183,7 @@
         {
           "name": "Pier",
           "place": "3rd Place",
-          "image": "seasons/campria/portraits/346cf5e97f17f3f0.png"
+          "image": "personajes/pier.png"
         },
         {
           "name": "Luciano",
@@ -709,7 +3198,7 @@
         {
           "name": "Dani",
           "place": "6th Place",
-          "image": "seasons/campria/portraits/c9320a90dce6ac7b.png"
+          "image": "personajes/dani.png"
         },
         {
           "name": "Marcos",
@@ -734,7 +3223,7 @@
         {
           "name": "Eduard",
           "place": "11th Place",
-          "image": "seasons/campria/portraits/e17e9a927c0b33cb.png"
+          "image": "personajes/eduard.png"
         },
         {
           "name": "Vita",
@@ -789,17 +3278,17 @@
       },
       "poster": "seasons/campria/apocalypse/poster.png",
       "images": {
-        "Plastique Doll": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
+        "Plastique Doll": "personajes/plastiquedoll.png",
         "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
-        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
+        "Pier": "personajes/pier.png",
         "Luciano": "personajes/luciano.png",
         "Luis": "personajes/luis.png",
-        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Dani": "personajes/dani.png",
         "Marcos": "seasons/campria/portraits/4cacb121eff66f9c.png",
         "Emanuel": "personajes/emanuel.png",
         "Pablo": "personajes/pablo.png",
         "Nahuee": "personajes/nahuee.png",
-        "Eduard": "seasons/campria/portraits/e17e9a927c0b33cb.png",
+        "Eduard": "personajes/eduard.png",
         "Vita": "personajes/vita.png",
         "Santi": "personajes/santi.png",
         "Teseo": "personajes/teseo.png",
@@ -809,7 +3298,410 @@
         "Sal Lua": "personajes/sallua.png",
         "Maria Villegas": "personajes/maria.png",
         "Dua Lingo": "personajes/dualingo.png"
-      }
+      },
+      "versus": {
+        "format": "elimination",
+        "rounds": [
+          {
+            "ep": "1",
+            "competitors": [
+              {
+                "name": "Emanuel"
+              },
+              {
+                "name": "Sal Lua"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Sal Lua"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "2",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Oscar"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Oscar"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              {
+                "name": "Marcos"
+              },
+              {
+                "name": "Mati"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Mati"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              {
+                "name": "Maicol"
+              },
+              {
+                "name": "Marcos"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Maicol"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              {
+                "name": "Pier"
+              },
+              {
+                "name": "Teseo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Teseo",
+                    "note": "Renuncia"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Emanuel"
+              },
+              {
+                "name": "Santi"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Santi"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Luis"
+              },
+              {
+                "name": "Nahuee"
+              },
+              {
+                "name": "Vita"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Vita"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Marcos",
+                "badge": "Ídolo",
+                "grayscale": true
+              },
+              {
+                "name": "Nahuee"
+              },
+              {
+                "name": "Pablo"
+              },
+              {
+                "name": "Pier"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Nahuee"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Pablo"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Pablo"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "14",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Luciano"
+              },
+              {
+                "name": "Pier"
+              },
+              {
+                "name": "Plastique Doll"
+              }
+            ],
+            "results": [
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Luciano"
+                  },
+                  {
+                    "name": "Pier"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "14",
+            "competitors": [
+              {
+                "name": "Alexandro"
+              },
+              {
+                "name": "Plastique Doll"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Plastique Doll"
+                  }
+                ],
+                "label": "Ganadora"
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Plastique Doll",
+          "place": "Elenco principal",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "Elenco principal",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Luis",
+          "place": "Elenco principal",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Dani",
+          "place": "Elenco principal",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Marcos",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/4cacb121eff66f9c.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Plastique Doll",
+          "place": "Winner",
+          "image": "personajes/plastiquedoll.png"
+        },
+        {
+          "name": "Alexandro",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/5912118767d97b66.png"
+        },
+        {
+          "name": "Pier",
+          "place": "3rd Place",
+          "image": "personajes/pier.png"
+        },
+        {
+          "name": "Luciano",
+          "place": "4th Place",
+          "image": "personajes/luciano.png"
+        },
+        {
+          "name": "Luis",
+          "place": "5th Place",
+          "image": "personajes/luis.png"
+        },
+        {
+          "name": "Dani",
+          "place": "6th Place",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Marcos",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/4cacb121eff66f9c.png"
+        },
+        {
+          "name": "Emanuel",
+          "place": "8th Place",
+          "image": "personajes/emanuel.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "9th Place",
+          "image": "personajes/pablo.png"
+        },
+        {
+          "name": "Nahuee",
+          "place": "10th Place",
+          "image": "personajes/nahuee.png"
+        },
+        {
+          "name": "Eduard",
+          "place": "11th Place",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Vita",
+          "place": "12th Place",
+          "image": "personajes/vita.png"
+        },
+        {
+          "name": "Santi",
+          "place": "13th Place",
+          "image": "personajes/santi.png"
+        },
+        {
+          "name": "Teseo",
+          "place": "14th Place",
+          "image": "personajes/teseo.png"
+        },
+        {
+          "name": "Maicol",
+          "place": "15th Place",
+          "image": "personajes/maicol.png"
+        },
+        {
+          "name": "Mati",
+          "place": "16th Place",
+          "image": "personajes/mati.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "17th Place",
+          "image": "seasons/campria/portraits/40d41e276595852f.png"
+        },
+        {
+          "name": "Sal Lua",
+          "place": "18th Place",
+          "image": "personajes/sallua.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Judge",
+          "image": "personajes/dualingo.png"
+        }
+      ]
     },
     "newera": {
       "id": "newera",
@@ -881,17 +3773,23 @@
         "Nahuee": "personajes/nahuee.png",
         "Emanuel": "personajes/emanuel.png",
         "Alexandro": "seasons/campria/portraits/5912118767d97b66.png",
-        "Dani": "seasons/campria/portraits/c9320a90dce6ac7b.png",
+        "Dani": "personajes/dani.png",
         "Azael": "personajes/azael.png",
-        "Pier": "seasons/campria/portraits/346cf5e97f17f3f0.png",
+        "Pier": "personajes/pier.png",
         "Carlos Rojas": "personajes/carlosrojas.png",
         "Marcos": "seasons/campria/portraits/4cacb121eff66f9c.png",
         "Luciano": "personajes/luciano.png",
         "Catalina": "seasons/campria/portraits/d9cda072663a35b1.png",
         "Luis": "personajes/luis.png",
         "Ivy": "seasons/campria/portraits/bc06bf99c605b469.png",
-        "Plastique": "seasons/campria/portraits/8cc8b8ef43aa35ef.png",
-        "Pablo": "personajes/pablo.png"
+        "Plastique": "personajes/plastiquedoll.png",
+        "Pablo": "personajes/pablo.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Edd GT": null,
+        "Iker": "personajes/iker.png",
+        "Federico": null,
+        "Eduard": "personajes/eduard.png",
+        "Gabriel": null
       },
       "versus": {
         "format": "assassin",
@@ -1071,7 +3969,126 @@
             ]
           }
         ]
-      }
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Isabel",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/e260bc61066e3478.png"
+        },
+        {
+          "name": "Brave",
+          "place": "Elenco principal",
+          "image": "personajes/brave.png"
+        },
+        {
+          "name": "Beto",
+          "place": "Elenco principal",
+          "image": "personajes/beto.png"
+        },
+        {
+          "name": "Eduardo",
+          "place": "Elenco principal",
+          "image": "personajes/eduardo.png"
+        },
+        {
+          "name": "Nacho",
+          "place": "Elenco principal",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Daphne Blake",
+          "place": "Elenco principal",
+          "image": "personajes/daphneblake.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Brave",
+          "place": "Winner",
+          "image": "personajes/brave.png"
+        },
+        {
+          "name": "Isabel",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/e260bc61066e3478.png"
+        },
+        {
+          "name": "Beto",
+          "place": "Runner up",
+          "image": "personajes/beto.png"
+        },
+        {
+          "name": "Nacho",
+          "place": "4th Place",
+          "image": "personajes/nacho.png"
+        },
+        {
+          "name": "Eduardo",
+          "place": "5th Place",
+          "image": "personajes/eduardo.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/40d41e276595852f.png"
+        },
+        {
+          "name": "Daphne Blake",
+          "place": "8th Place",
+          "image": "personajes/daphneblake.png"
+        },
+        {
+          "name": "Damián",
+          "place": "9th Place",
+          "image": "personajes/damian.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Edd GT",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Carlos Rojas",
+          "place": "Participante",
+          "image": "personajes/carlosrojas.png"
+        },
+        {
+          "name": "Iker",
+          "place": "Participante",
+          "image": "personajes/iker.png"
+        },
+        {
+          "name": "Azael",
+          "place": "Participante",
+          "image": "personajes/azael.png"
+        },
+        {
+          "name": "Federico",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Eduard",
+          "place": "Participante",
+          "image": "personajes/eduard.png"
+        },
+        {
+          "name": "Gabriel",
+          "place": "Participante",
+          "image": null
+        }
+      ]
     },
     "empire": {
       "id": "empire",
@@ -1148,11 +4165,15 @@
         "Carlos": "seasons/campria/portraits/8455a87fd3f71203.png",
         "Eduardo": "seasons/campria/portraits/12f87c014ce5e587.png",
         "Elvin": "seasons/campria/portraits/f2eb8b8576d4cc6f.png",
-        "Felix": "seasons/campria/portraits/fb6d8a07320ea9d0.png",
+        "Felix": "personajes/felix.png",
         "Beto": "seasons/campria/portraits/3c77b62c387f96eb.png",
         "Iker": "personajes/iker.png",
         "Robin": "personajes/robin.png",
-        "Isabel": "seasons/campria/portraits/38d6c47c00e5a272.png"
+        "Isabel": "seasons/campria/portraits/38d6c47c00e5a272.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Esteban": "personajes/esteban.png",
+        "Edwin": null,
+        "Daphne Blake": "personajes/daphneblake.png"
       },
       "versus": {
         "format": "killer",
@@ -1301,7 +4322,121 @@
             ]
           }
         ]
-      }
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Vita",
+          "place": "Elenco principal",
+          "image": "personajes/vita.png"
+        },
+        {
+          "name": "Carlos Harrington",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/8455a87fd3f71203.png"
+        },
+        {
+          "name": "Rodri",
+          "place": "Elenco principal",
+          "image": "personajes/rodri.png"
+        },
+        {
+          "name": "Eris Midnight",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/f28c8e357f348811.png"
+        },
+        {
+          "name": "Lola Mugler",
+          "place": "Elenco principal",
+          "image": "personajes/lolamugler.png"
+        },
+        {
+          "name": "Jere",
+          "place": "Elenco principal",
+          "image": "personajes/jere.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Vita",
+          "place": "Winner",
+          "image": "personajes/vita.png"
+        },
+        {
+          "name": "Rodri",
+          "place": "Runner up",
+          "image": "personajes/rodri.png"
+        },
+        {
+          "name": "Carlos Harrington",
+          "place": "Runner up",
+          "image": "seasons/campria/portraits/8455a87fd3f71203.png"
+        },
+        {
+          "name": "Eris Midnight",
+          "place": "4th Place",
+          "image": "seasons/campria/portraits/f28c8e357f348811.png"
+        },
+        {
+          "name": "Lola Mugler",
+          "place": "5th Place",
+          "image": "personajes/lolamugler.png"
+        },
+        {
+          "name": "Jere",
+          "place": "6th Place",
+          "image": "personajes/jere.png"
+        },
+        {
+          "name": "Santi",
+          "place": "7th Place",
+          "image": "personajes/santi.png"
+        },
+        {
+          "name": "Oscar",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/9b8c7cac8645bc24.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Elvin",
+          "place": "Participante",
+          "image": "seasons/campria/portraits/f2eb8b8576d4cc6f.png"
+        },
+        {
+          "name": "Alexander",
+          "place": "Participante",
+          "image": "seasons/campria/portraits/34a22635ff2069a2.png"
+        },
+        {
+          "name": "Esteban",
+          "place": "Participante",
+          "image": "personajes/esteban.png"
+        },
+        {
+          "name": "Azael",
+          "place": "Participante",
+          "image": "personajes/azael.png"
+        },
+        {
+          "name": "Edwin",
+          "place": "Participante",
+          "image": null
+        },
+        {
+          "name": "Daphne Blake",
+          "place": "Participante",
+          "image": "personajes/daphneblake.png"
+        }
+      ]
     },
     "allstars2": {
       "id": "allstars2",
@@ -1412,8 +4547,515 @@
         "Iker": "seasons/campria/portraits/eb72ae180821d303.png",
         "Renzo": "seasons/campria/portraits/88d7c9ba44629703.png",
         "Azealia Midnight": "seasons/campria/portraits/c2a0bb1419645a35.png",
-        "Marcos": "seasons/campria/portraits/37a375e20b3c931b.png"
-      }
+        "Marcos": "seasons/campria/portraits/37a375e20b3c931b.png",
+        "Maria Villegas": "personajes/maria.png",
+        "Javier": "personajes/javi.png"
+      },
+      "versus": {
+        "format": "all-stars",
+        "rounds": [
+          {
+            "ep": "1",
+            "competitors": [
+              {
+                "name": "Amanda Lewis",
+                "badge": "Top2",
+                "choice": "Eris Midnight"
+              },
+              {
+                "name": "Pablo",
+                "badge": "Top2",
+                "choice": "Maicol"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Pablo"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Maicol"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "2",
+            "competitors": [
+              {
+                "name": "Beto",
+                "badge": "Top2",
+                "choice": "Amanda Lewis"
+              },
+              {
+                "name": "Emanuel",
+                "badge": "Top2",
+                "choice": "Marcos"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Emanuel"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Marcos"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "3",
+            "competitors": [
+              {
+                "name": "Iker",
+                "badge": "Top2",
+                "choice": "Azealia Midnight"
+              },
+              {
+                "name": "Amanda Lewis",
+                "badge": "Top2",
+                "choice": "Elvin"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Iker"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Azealia Midnight"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "4",
+            "competitors": [
+              {
+                "name": "Elvin",
+                "badge": "Top2",
+                "choice": "Renzo"
+              },
+              {
+                "name": "Iker",
+                "badge": "Top2",
+                "choice": "Eduardo"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Elvin"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Renzo"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "5",
+            "competitors": [
+              {
+                "name": "Beto",
+                "badge": "Top2",
+                "choice": "Eris Midnight"
+              },
+              {
+                "name": "Emanuel",
+                "badge": "Top2",
+                "choice": "Iker"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Emanuel"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Iker"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "6",
+            "competitors": [
+              {
+                "name": "Beto",
+                "badge": "Top2",
+                "choice": "Emanuel"
+              },
+              {
+                "name": "Pablo",
+                "badge": "Top2",
+                "choice": "Eduardo"
+              },
+              {
+                "name": "Vita",
+                "badge": "Top2",
+                "choice": "Emanuel"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Vita"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Emanuel"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "7",
+            "competitors": [
+              {
+                "name": "Elvin",
+                "badge": "Top2",
+                "choice": "Amanda Lewis"
+              },
+              {
+                "name": "Maicol",
+                "badge": "Top2",
+                "choice": "Eris Midnight"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Elvin"
+                  },
+                  {
+                    "name": "Maicol"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Eris Midnight"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "8",
+            "competitors": [
+              {
+                "name": "Maicol",
+                "badge": "Top2",
+                "choice": "Elvin"
+              },
+              {
+                "name": "Pablo",
+                "badge": "Top2",
+                "choice": "Elvin"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Maicol"
+                  },
+                  {
+                    "name": "Pablo"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Elvin"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "9",
+            "competitors": [
+              {
+                "name": "Beto",
+                "badge": "Top2",
+                "choice": "Maicol"
+              },
+              {
+                "name": "Amanda Lewis",
+                "badge": "Top2",
+                "choice": "Maicol"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Beto"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Maicol"
+                  },
+                  {
+                    "name": "Eduardo"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "10",
+            "competitors": [
+              {
+                "name": "Beto",
+                "badge": "Top2"
+              },
+              {
+                "name": "Vita",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Beto"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Vita"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "ep": "11",
+            "competitors": [
+              {
+                "name": "Amanda Lewis",
+                "badge": "Top2"
+              },
+              {
+                "name": "Pablo",
+                "badge": "Top2"
+              }
+            ],
+            "results": [
+              {
+                "type": "winner",
+                "people": [
+                  {
+                    "name": "Pablo"
+                  }
+                ]
+              },
+              {
+                "type": "eliminated",
+                "people": [
+                  {
+                    "name": "Amanda Lewis"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Beto",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/a5a18f7e14deb17b.png"
+        },
+        {
+          "name": "Pablo",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/a67c7cbf2347a3f0.png"
+        },
+        {
+          "name": "Amanda Lewis",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/58915d7f397b75a8.png"
+        },
+        {
+          "name": "Vita",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/5e14e551ab47ab61.png"
+        },
+        {
+          "name": "Eduardo",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/0b7e6e3b3ed910f5.png"
+        },
+        {
+          "name": "Elvin",
+          "place": "Elenco principal",
+          "image": "seasons/campria/portraits/a63bc71e89dff75c.png"
+        }
+      ],
+      "participants": [
+        {
+          "name": "Beto",
+          "season": "New Era",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/a5a18f7e14deb17b.png"
+        },
+        {
+          "name": "Pablo",
+          "season": "Golden vs Platinum",
+          "place": "Winner",
+          "image": "seasons/campria/portraits/a67c7cbf2347a3f0.png"
+        },
+        {
+          "name": "Amanda Lewis",
+          "season": "Elements",
+          "place": "3rd/4th Place",
+          "image": "seasons/campria/portraits/58915d7f397b75a8.png"
+        },
+        {
+          "name": "Vita",
+          "season": "Empire of Blood",
+          "place": "3rd/4th Place",
+          "image": "seasons/campria/portraits/5e14e551ab47ab61.png"
+        },
+        {
+          "name": "Eduardo",
+          "season": "New Era",
+          "place": "5th Place",
+          "image": "seasons/campria/portraits/0b7e6e3b3ed910f5.png"
+        },
+        {
+          "name": "Maicol",
+          "season": "Apocalypse",
+          "place": "6th Place",
+          "image": "seasons/campria/portraits/f1130d13c8b821a6.png"
+        },
+        {
+          "name": "Elvin",
+          "season": "Empire of Blood",
+          "place": "7th Place",
+          "image": "seasons/campria/portraits/a63bc71e89dff75c.png"
+        },
+        {
+          "name": "Eris Midnight",
+          "season": "Empire of Blood",
+          "place": "8th Place",
+          "image": "seasons/campria/portraits/2539582d8f08aeea.png"
+        },
+        {
+          "name": "Emanuel",
+          "season": "Andromeda",
+          "place": "9th Place",
+          "image": "seasons/campria/portraits/d4afc8e5512257a0.png"
+        },
+        {
+          "name": "Iker",
+          "season": "All Stars 1",
+          "place": "10th Place",
+          "image": "seasons/campria/portraits/eb72ae180821d303.png"
+        },
+        {
+          "name": "Renzo",
+          "season": "Retroverse",
+          "place": "11th Place",
+          "image": "seasons/campria/portraits/88d7c9ba44629703.png"
+        },
+        {
+          "name": "Azealia Midnight",
+          "season": "Andromeda",
+          "place": "12th Place",
+          "image": "seasons/campria/portraits/c2a0bb1419645a35.png"
+        },
+        {
+          "name": "Marcos",
+          "season": "Apocalypse",
+          "place": "13th Place",
+          "image": "seasons/campria/portraits/37a375e20b3c931b.png"
+        },
+        {
+          "name": "Maria Villegas",
+          "place": "Host",
+          "image": "personajes/maria.png"
+        },
+        {
+          "name": "Javier",
+          "place": "Participante",
+          "image": "personajes/javi.png"
+        }
+      ]
     }
   }
 }

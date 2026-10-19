@@ -243,7 +243,7 @@
         "name": "Diamond Rush 1",
         "meta": "Season 1 · 2015",
         "season": "S1",
-        "desc": "Maria Villegas abre las puertas de Diamond Rush, una nueva competencia del universo Campria donde cada voto vale tanto como un diamante. Luis, Coronel, Felipe y Sophie se enfrentan a alianzas fugaces y decisiones que pueden cambiar el juego en una sola noche.",
+        "desc": "Maria Villegas abre las puertas de Diamond Rush, una nueva competencia del universo Campria donde cada voto vale tanto como un diamante. Luis, Coronel, Felipe y Sophie Bradley se enfrentan a alianzas fugaces y decisiones que pueden cambiar el juego en una sola noche.",
         "accent": "#cbb0f3",
         "kind": "Spin Off",
         "saga": "diamond-rush",
@@ -399,7 +399,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/retroverse",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s1.png",
           "logo": {
@@ -430,7 +430,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/popular",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s2.png",
           "logo": {
@@ -461,7 +461,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/comeback",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s3.png",
           "logo": {
@@ -492,7 +492,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/golden",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s4.png",
           "logo": {
@@ -523,7 +523,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/money",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s5.png",
           "logo": {
@@ -554,7 +554,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/allstars",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s6.png",
           "logo": {
@@ -585,7 +585,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/elements",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s7.png",
           "logo": {
@@ -616,7 +616,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/andromeda",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s8.png",
           "logo": {
@@ -634,7 +634,7 @@
         "universe": "Campria",
         "critics": {
           "source": "The X Critics",
-          "score": 8.1,
+          "score": 8.5,
           "outOf": 10
         }
       },
@@ -647,7 +647,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/apocalypse",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/apocalypse-top.png",
           "logo": {
@@ -678,7 +678,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/newera",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s10.png",
           "logo": {
@@ -709,7 +709,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/empire",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s11.png",
           "logo": {
@@ -740,7 +740,7 @@
         "accent": "var(--c1)",
         "kind": "Campria",
         "url": "#temporada/allstars2",
-        "actionLabel": "Explorar temporada",
+        "actionLabel": "Ir a la temporada",
         "art": {
           "background": "backdrops/campria-s12.png",
           "logo": {
