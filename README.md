@@ -41,7 +41,9 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 ## Funciones
 
-Registro, contraseña, Google, perfiles editables, 147 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 30 contenidos y las 14 colecciones de tops originales.
+Registro, contraseña, Google, perfiles editables, 147 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 33 contenidos y las 14 colecciones de tops originales.
+
+The Xpedition Awards aparece en Inicio debajo de TOP 10 Ganadores y tiene su filtro en Explorar. Las páginas `#premios/edicion-1`, `#premios/edicion-2` y `#premios/edicion-3` reúnen las ediciones de 2022, 2025 y 2026: 30 categorías con 153 nominaciones históricas y las 15 categorías anunciadas para 2026. Los ganadores llevan el trofeo de su edición; Poop Of The Year usa su premio especial. Las ediciones celebradas admiten búsqueda y filtro de ganadores; la tercera conserva los nominados pendientes.
 
 Las tarjetas de Campria abren su ficha con sinopsis, elenco, géneros y títulos relacionados. «Ir a la temporada» abre la temporada en esta misma web mediante `#temporada/retroverse` y las rutas equivalentes. Las doce temporadas reúnen su historia, estadísticas, elenco principal, participantes, arte original y track record con zoom. Diez temporadas incluyen 107 enfrentamientos Versus, con episodios, resultados y elecciones del Top2 en All Stars. New Era y Empire of Blood conservan sus resultados originales. Las notas de The X Critics aparecen en las fichas, las temporadas y las tarjetas del catálogo.
 
@@ -58,7 +60,7 @@ Los accesos de las sagas abren sus catálogos con enlaces directos. Los carrusel
 ## Pruebas
 
 ```sh
-node --test tests/integration.test.mjs
+node --test tests/integration.test.mjs tests/seasons.test.mjs tests/awards.test.mjs
 ```
 
 Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se admite un PostgreSQL **local y aislado** mediante `TEST_DATABASE_URL` para comprobar la persistencia externa. Más detalles en [LEEME.md](LEEME.md).

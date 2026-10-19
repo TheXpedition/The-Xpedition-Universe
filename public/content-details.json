@@ -932,5 +932,32 @@
       "Estrategia",
       "Votaciones"
     ]
+  },
+  "awards-1": {
+    "previewCast": [],
+    "cast": [],
+    "genres": [
+      "Premiación",
+      "Comunidad",
+      "Momentos icónicos"
+    ]
+  },
+  "awards-2": {
+    "previewCast": [],
+    "cast": [],
+    "genres": [
+      "Premiación",
+      "Comunidad",
+      "Momentos icónicos"
+    ]
+  },
+  "awards-3": {
+    "previewCast": [],
+    "cast": [],
+    "genres": [
+      "Premiación",
+      "Comunidad",
+      "Momentos icónicos"
+    ]
   }
 }

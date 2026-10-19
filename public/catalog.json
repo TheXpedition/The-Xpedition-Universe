@@ -809,6 +809,107 @@
         "actionLabel": "Jugar",
         "disabled": false
       }
+    ],
+    "awards": [
+      {
+        "id": "awards-1",
+        "name": "The Xpedition Awards · 1.ª edición",
+        "meta": "1.ª edición · 2022",
+        "season": "1.ª edición",
+        "desc": "La primera noche de premios. Las estrategias, amistades y momentos de Antarctica que dejaron huella en el universo.",
+        "kind": "Awards",
+        "saga": "awards",
+        "universe": "The Xpedition",
+        "url": "#premios/edicion-1",
+        "actionLabel": "Ver la edición",
+        "edition": 1,
+        "year": 2022,
+        "theme": "ice",
+        "upcoming": false,
+        "banner": "awards/edition-1-banner.webp",
+        "trophy": "awards/edition-1-trophy.png",
+        "art": {
+          "background": "awards/edition-1-poster.webp",
+          "logo": {
+            "src": "awards/edition-1-logo.webp",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              0,
+              9,
+              1447,
+              1077
+            ]
+          }
+        },
+        "poopTrophy": "awards/edition-1-poop-trophy.png"
+      },
+      {
+        "id": "awards-2",
+        "name": "The Xpedition Awards · 2.ª edición",
+        "meta": "2.ª edición · 2025",
+        "season": "2.ª edición",
+        "desc": "Una noche para celebrar a quienes hicieron inolvidable el juego: grandes competidores, alianzas, rivalidades y los momentos de 2025.",
+        "kind": "Awards",
+        "saga": "awards",
+        "universe": "The Xpedition",
+        "url": "#premios/edicion-2",
+        "actionLabel": "Ver la edición",
+        "edition": 2,
+        "year": 2025,
+        "theme": "gold",
+        "upcoming": false,
+        "banner": "awards/edition-2-banner.webp",
+        "trophy": "awards/edition-2-trophy.png",
+        "art": {
+          "background": "awards/edition-2-poster.webp",
+          "logo": {
+            "src": "awards/edition-2-logo.webp",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              0,
+              17,
+              1426,
+              1069
+            ]
+          }
+        },
+        "poopTrophy": "awards/edition-2-poop-trophy.png"
+      },
+      {
+        "id": "awards-3",
+        "name": "The Xpedition Awards · 3.ª edición",
+        "meta": "3.ª edición · 2026",
+        "season": "3.ª edición",
+        "desc": "La próxima gran noche del universo. La tercera edición de The Xpedition Awards llegará en 2026.",
+        "kind": "Awards",
+        "saga": "awards",
+        "universe": "The Xpedition",
+        "url": "#premios/edicion-3",
+        "actionLabel": "Ver la edición",
+        "edition": 3,
+        "year": 2026,
+        "theme": "ruby",
+        "upcoming": true,
+        "banner": "awards/edition-3-banner.webp",
+        "trophy": "awards/edition-3-trophy.png",
+        "art": {
+          "background": "awards/edition-3-poster.webp",
+          "logo": {
+            "src": "awards/edition-3-logo.webp",
+            "width": 1448,
+            "height": 1086,
+            "frame": [
+              27,
+              25,
+              1371,
+              1061
+            ]
+          }
+        },
+        "poopTrophy": "awards/edition-3-poop-trophy.png"
+      }
     ]
   },
   "news": [

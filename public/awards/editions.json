@@ -1,0 +1,1466 @@
+{
+  "version": 1,
+  "editions": {
+    "edicion-1": {
+      "id": "awards-1",
+      "edition": 1,
+      "year": 2022,
+      "status": "celebrated",
+      "groups": [
+        {
+          "id": "principales",
+          "name": "Categorías Principales",
+          "categories": [
+            {
+              "id": "fan-favorite",
+              "name": "Fan Favorite",
+              "nominees": [
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Dani",
+                  "people": [
+                    "Dani"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ximena",
+                  "people": [
+                    "Ximena"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-villano",
+              "name": "Mejor Villano",
+              "nominees": [
+                {
+                  "title": "Emanuel",
+                  "people": [
+                    "Emanuel"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Felix",
+                  "people": [
+                    "Felix"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-competidor",
+              "name": "Mejor Competidor",
+              "nominees": [
+                {
+                  "title": "Dani",
+                  "people": [
+                    "Dani"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "congeniality",
+              "name": "Miss/Mr. Congeniality",
+              "nominees": [
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ximena",
+                  "people": [
+                    "Ximena"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Beto",
+                  "people": [
+                    "Beto"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eduardo",
+                  "people": [
+                    "Eduardo"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "poop-of-the-year",
+              "name": "Poop Of The Year",
+              "nominees": [
+                {
+                  "title": "Ivan Serrano",
+                  "people": [
+                    "Ivan Serrano"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Pier",
+                  "people": [
+                    "Pier"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": "",
+                  "winner": true
+                }
+              ],
+              "trophy": "awards/edition-1-poop-trophy.png"
+            }
+          ]
+        },
+        {
+          "id": "generales",
+          "name": "Categorías Generales",
+          "categories": [
+            {
+              "id": "mejor-estrategia",
+              "name": "Mejor Estrategia",
+              "nominees": [
+                {
+                  "title": "Dani",
+                  "people": [
+                    "Dani"
+                  ],
+                  "description": "Filtra información del equipo blanco y juega para ambos lados, salvándose de la nominación más de una vez."
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": "Se hace la mustia derrotada al ser nominada contra Felix e Isabel y termina vencedora."
+                },
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": "Compra un cofre, nomina a Vita a último momento y provoca su eliminación.",
+                  "winner": true
+                },
+                {
+                  "title": "Equipo azul de la segunda fase",
+                  "people": [],
+                  "description": "Nomina a malos participantes para mantener a los suyos en juego. Nominaciones para Vita Molotov, Dani Jara, Ximena AT, Emanuel y Bayron."
+                }
+              ]
+            },
+            {
+              "id": "momento-sorpresivo",
+              "name": "Momento Más Sorpresivo",
+              "nominees": [
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "Elimina a Pierre M. Donovan en el segundo episodio."
+                },
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": "Gana ocho Versus en el Comeback, vence a casi todos los eliminados y regresa al juego."
+                },
+                {
+                  "title": "Ximena",
+                  "people": [
+                    "Ximena"
+                  ],
+                  "description": "Abandona la competencia por motivos personales.",
+                  "winner": true
+                },
+                {
+                  "title": "Felix",
+                  "people": [
+                    "Felix"
+                  ],
+                  "description": "Su primera eliminación, después de ser visto como el líder y la mayor amenaza del equipo blanco."
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": "Elimina a Beto Trujillo."
+                },
+                {
+                  "title": "Angel B. Vanderwood & Bayron",
+                  "people": [
+                    "Angel B. Vanderwood",
+                    "Bayron"
+                  ],
+                  "description": "Angel B. Vanderwood y Bayron Daniel Campos Vega ganan el Versus; no hay eliminación en el episodio."
+                }
+              ]
+            },
+            {
+              "id": "momento-injusto",
+              "name": "Momento Más Injusto",
+              "nominees": [
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": "Su temprana eliminación.",
+                  "winner": true
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": "Su segunda eliminación."
+                },
+                {
+                  "title": "Emanuel",
+                  "people": [
+                    "Emanuel"
+                  ],
+                  "description": "Es eliminado después de dos victorias y cuatro Versus en un mismo episodio."
+                },
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": "Su propio equipo la lincha en la segunda semana."
+                },
+                {
+                  "title": "Peggy & Isabel",
+                  "people": [
+                    "Peggy",
+                    "Isabel"
+                  ],
+                  "description": "Son eliminadxs antes de la final sin oportunidad de un Versus."
+                },
+                {
+                  "title": "Vita",
+                  "people": [
+                    "Vita"
+                  ],
+                  "description": "Es eliminado después de haber sido High en el mismo episodio."
+                }
+              ]
+            },
+            {
+              "id": "momento-iconico",
+              "name": "Momento Más Icónico",
+              "nominees": [
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": "Es nuevamente eliminada y empieza la tercera guerra mundial."
+                },
+                {
+                  "title": "Emanuel",
+                  "people": [
+                    "Emanuel"
+                  ],
+                  "description": "«O de Ombre»."
+                },
+                {
+                  "title": "Emanuel & Isabel",
+                  "people": [
+                    "Emanuel",
+                    "Isabel"
+                  ],
+                  "description": "Son los primeros líderes de la segunda fase y cambian el juego con sus decisiones."
+                },
+                {
+                  "title": "Felix",
+                  "people": [
+                    "Felix"
+                  ],
+                  "description": "Se pelea con el equipo azul y celeste en el desafío de moda."
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": "Le quita puntos a su propio equipo atacando el hielo de Peggy Marianne Lozano.",
+                  "winner": true
+                },
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": "Nomina a Felix Gagenze Garcia Chiok."
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "Nomina a Iñaella Rose Sapphire y todo su equipo se le va encima."
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": "Gana el Versus contra dos blancos originales."
+                }
+              ]
+            },
+            {
+              "id": "rivalidad",
+              "name": "Rivalidad de la Temporada",
+              "nominees": [
+                {
+                  "title": "Andrómeda vs. Emanuel",
+                  "people": [
+                    "Andrómeda",
+                    "Emanuel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Dani vs. Bayron",
+                  "people": [
+                    "Dani",
+                    "Bayron"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Peggy vs. Iñaella Rose",
+                  "people": [
+                    "Peggy",
+                    "Iñaella Rose"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Catalina vs. Eris Midnight",
+                  "people": [
+                    "Catalina",
+                    "Eris Midnight"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Andrómeda vs. Vita",
+                  "people": [
+                    "Andrómeda",
+                    "Vita"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Emanuel contra todos",
+                  "people": [
+                    "Emanuel"
+                  ],
+                  "description": "Emanuel Bagundo vs. Andrómeda, Felix, Isabel, Peggy, Beto, Vita, Catalina, Iñaella Rose e Ignacio Ricci.",
+                  "note": "Premio solo para Emanuel",
+                  "winner": true
+                }
+              ]
+            },
+            {
+              "id": "amistad",
+              "name": "Amistad de la Temporada",
+              "nominees": [
+                {
+                  "title": "Andrómeda & Peggy",
+                  "people": [
+                    "Andrómeda",
+                    "Peggy"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Bayron & Ximena",
+                  "people": [
+                    "Bayron",
+                    "Ximena"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Emanuel & Eris Midnight",
+                  "people": [
+                    "Emanuel",
+                    "Eris Midnight"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Isabel & Beto",
+                  "people": [
+                    "Isabel",
+                    "Beto"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Dani & Vita",
+                  "people": [
+                    "Dani",
+                    "Vita"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Iñaella Rose & Dua Lingo",
+                  "people": [
+                    "Iñaella Rose",
+                    "Dua Lingo"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mayor-amenaza",
+              "name": "Mayor Amenaza",
+              "nominees": [
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Emanuel",
+                  "people": [
+                    "Emanuel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Felix",
+                  "people": [
+                    "Felix"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "edicion-2": {
+      "id": "awards-2",
+      "edition": 2,
+      "year": 2025,
+      "status": "celebrated",
+      "groups": [
+        {
+          "id": "principales",
+          "name": "Categorías Principales",
+          "categories": [
+            {
+              "id": "fan-favorite",
+              "name": "Fan Favorite",
+              "nominees": [
+                {
+                  "title": "Alexandro",
+                  "people": [
+                    "Alexandro"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Lalamila",
+                  "people": [
+                    "Lalamila"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Luciano",
+                  "people": [
+                    "Luciano"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-villano",
+              "name": "Mejor Villano",
+              "nominees": [
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Esteban",
+                  "people": [
+                    "Esteban"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Pier",
+                  "people": [
+                    "Pier"
+                  ],
+                  "description": "",
+                  "winner": true
+                }
+              ]
+            },
+            {
+              "id": "mejor-competidor",
+              "name": "Mejor Competidor",
+              "nominees": [
+                {
+                  "title": "Alexandro",
+                  "people": [
+                    "Alexandro"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Julián",
+                  "people": [
+                    "Julián"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": "",
+                  "winner": true
+                }
+              ]
+            },
+            {
+              "id": "congeniality",
+              "name": "Miss/Mr. Congeniality",
+              "nominees": [
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Oscar",
+                  "people": [
+                    "Oscar"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Greg",
+                  "people": [
+                    "Greg"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Rafael",
+                  "people": [
+                    "Rafael"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "poop-of-the-year",
+              "name": "Poop Of The Year",
+              "nominees": [
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": "Showdown"
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": "The Xpedition Safari",
+                  "winner": true
+                },
+                {
+                  "title": "Garnet",
+                  "people": [
+                    "Garnet"
+                  ],
+                  "description": "The Xpedition Safari"
+                },
+                {
+                  "title": "Greg",
+                  "people": [
+                    "Greg"
+                  ],
+                  "description": "The Xpedition Safari"
+                },
+                {
+                  "title": "Ximena",
+                  "people": [
+                    "Ximena"
+                  ],
+                  "description": "The Traitor 1"
+                }
+              ],
+              "trophy": "awards/edition-2-poop-trophy.png"
+            }
+          ]
+        },
+        {
+          "id": "generales",
+          "name": "Categorías Generales",
+          "categories": [
+            {
+              "id": "mas-gracioso",
+              "name": "Participante Más Gracioso",
+              "nominees": [
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Cocomong",
+                  "people": [
+                    "Cocomong"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Lalamila",
+                  "people": [
+                    "Lalamila"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-evolucion",
+              "name": "Mejor Evolución",
+              "nominees": [
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": "The Xpedition Safari · 2025"
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "The Xpedition Safari · 2025"
+                },
+                {
+                  "title": "Elvin",
+                  "people": [
+                    "Elvin"
+                  ],
+                  "description": "The Xpedition Safari · 2023"
+                },
+                {
+                  "title": "Julián Sanchez",
+                  "people": [
+                    "Julián"
+                  ],
+                  "description": "The Xpedition Safari · 2025",
+                  "winner": true
+                },
+                {
+                  "title": "Rafael",
+                  "people": [
+                    "Rafael"
+                  ],
+                  "description": "Showdown"
+                }
+              ]
+            },
+            {
+              "id": "participante-nuevo",
+              "name": "Mejor Participante Nuevo en 2025",
+              "nominees": [
+                {
+                  "title": "Alexandro Martin",
+                  "people": [
+                    "Alexandro"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Luciano",
+                  "people": [
+                    "Luciano"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Pier",
+                  "people": [
+                    "Pier"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "estratega",
+              "name": "Estratega de la Temporada",
+              "nominees": [
+                {
+                  "title": "Alexandro",
+                  "people": [
+                    "Alexandro"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bryan Montalvo",
+                  "people": [
+                    "Bryan Montalvo"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-lider",
+              "name": "Mejor Líder de The Xpedition Safari",
+              "nominees": [
+                {
+                  "title": "Andrómeda",
+                  "people": [
+                    "Andrómeda"
+                  ],
+                  "description": "Equipo Leones"
+                },
+                {
+                  "title": "Bayron",
+                  "people": [
+                    "Bayron"
+                  ],
+                  "description": "Equipo Cebras"
+                },
+                {
+                  "title": "Bryan Montalvo",
+                  "people": [
+                    "Bryan Montalvo"
+                  ],
+                  "description": "Equipo Serpientes",
+                  "winner": true
+                },
+                {
+                  "title": "Luciano",
+                  "people": [
+                    "Luciano"
+                  ],
+                  "description": "Equipo Escorpiones"
+                },
+                {
+                  "title": "Ximena",
+                  "people": [
+                    "Ximena"
+                  ],
+                  "description": "Equipo Serpientes"
+                }
+              ]
+            },
+            {
+              "id": "uso-de-poder",
+              "name": "Mejor Uso de Poder",
+              "nominees": [
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": "Eliminación de Isabel y Pier."
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": "Eliminación de Lucas Mendez."
+                },
+                {
+                  "title": "Julián",
+                  "people": [
+                    "Julián"
+                  ],
+                  "description": "Eliminación de Ignacio Ricci.",
+                  "winner": true
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": "Multiplicar votos."
+                },
+                {
+                  "title": "Esteban",
+                  "people": [
+                    "Esteban"
+                  ],
+                  "description": "Eliminación de Pier en Showdown."
+                }
+              ]
+            },
+            {
+              "id": "amistad",
+              "name": "Amistad de la Temporada",
+              "nominees": [
+                {
+                  "title": "Andrómeda, Isabel & Peggy",
+                  "people": [
+                    "Andrómeda",
+                    "Isabel",
+                    "Peggy"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Alexandro & Lucas Mendez",
+                  "people": [
+                    "Alexandro",
+                    "Lucas Mendez"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bryan Montalvo, Ximena & Julián",
+                  "people": [
+                    "Bryan Montalvo",
+                    "Ximena",
+                    "Julián"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Iñaella Rose & Daelly",
+                  "people": [
+                    "Iñaella Rose",
+                    "Daelly"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Rafael, Ignacio Ricci & Lalamila",
+                  "people": [
+                    "Rafael",
+                    "Ignacio Ricci",
+                    "Lalamila"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "rivalidad",
+              "name": "Rivalidad de la Temporada",
+              "nominees": [
+                {
+                  "title": "Coronel vs. Daelly",
+                  "people": [
+                    "Coronel",
+                    "Daelly"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Alexandro y Pier vs. Andrómeda y Peggy",
+                  "people": [
+                    "Alexandro",
+                    "Pier",
+                    "Andrómeda",
+                    "Peggy"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bryan Montalvo y Julián vs. Ignacio Ricci",
+                  "people": [
+                    "Bryan Montalvo",
+                    "Julián",
+                    "Ignacio Ricci"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Daelly e Iñaella Rose vs. Lucas Mendez",
+                  "people": [
+                    "Daelly",
+                    "Iñaella Rose",
+                    "Lucas Mendez"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eris Midnight vs. Esteban",
+                  "people": [
+                    "Eris Midnight",
+                    "Esteban"
+                  ],
+                  "description": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "otras",
+          "name": "Otras Categorías",
+          "categories": [
+            {
+              "id": "mayor-amenaza",
+              "name": "Mayor Amenaza",
+              "nominees": [
+                {
+                  "title": "Bryan Montalvo",
+                  "people": [
+                    "Bryan Montalvo"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Julián",
+                  "people": [
+                    "Julián"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "mejor-redencion",
+              "name": "Mejor Redención",
+              "nominees": [
+                {
+                  "title": "Catalina",
+                  "people": [
+                    "Catalina"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Pier",
+                  "people": [
+                    "Pier"
+                  ],
+                  "description": ""
+                }
+              ]
+            },
+            {
+              "id": "momento-safari",
+              "name": "Mejor Momento de Safari",
+              "nominees": [
+                {
+                  "title": "Ignacio Ricci",
+                  "people": [
+                    "Ignacio Ricci"
+                  ],
+                  "description": "Traiciona a Ximena, Julián y Bryan Montalvo."
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": "Usa una carta para eliminar a Lucas Mendez."
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "Todo el drama que causa su eliminación."
+                },
+                {
+                  "title": "Coronel Sanders",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": "Su carta manda a todos a eliminación por votos sorpresa."
+                },
+                {
+                  "title": "Iñaella Rose",
+                  "people": [
+                    "Iñaella Rose"
+                  ],
+                  "description": "Su participación como «Ima Ima Ame».",
+                  "winner": true
+                }
+              ]
+            },
+            {
+              "id": "mejor-episodio",
+              "name": "Mejor Episodio",
+              "nominees": [
+                {
+                  "title": "Safari Fashion Show",
+                  "people": [],
+                  "description": "The Xpedition Safari",
+                  "show": "safari"
+                },
+                {
+                  "title": "Primer Episodio de 2025",
+                  "people": [],
+                  "description": "The Xpedition Safari",
+                  "show": "safari"
+                },
+                {
+                  "title": "Bonju’s Drag Race",
+                  "people": [],
+                  "description": "The Xpedition Safari",
+                  "show": "safari",
+                  "winner": true
+                },
+                {
+                  "title": "The Comeback",
+                  "people": [],
+                  "description": "The Xpedition Safari",
+                  "show": "safari"
+                },
+                {
+                  "title": "Especial de Reunión",
+                  "people": [],
+                  "description": "The Xpedition Showdown",
+                  "show": "safari-showdown"
+                }
+              ]
+            },
+            {
+              "id": "juez-invitado",
+              "name": "Mejor Juez Invitado",
+              "nominees": [
+                {
+                  "title": "Sal Lua",
+                  "people": [
+                    "Sal Lua"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Dani",
+                  "people": [
+                    "Dani"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Vitany Glambert",
+                  "people": [
+                    "Vitany Glambert"
+                  ],
+                  "description": "",
+                  "winner": true
+                },
+                {
+                  "title": "Edna Droga",
+                  "people": [
+                    "Edna Droga"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Dua Lingo",
+                  "people": [
+                    "Dua Lingo"
+                  ],
+                  "description": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "edicion-3": {
+      "id": "awards-3",
+      "edition": 3,
+      "year": 2026,
+      "status": "upcoming",
+      "groups": [
+        {
+          "id": "principales",
+          "name": "Categorías Principales",
+          "categories": [
+            {
+              "id": "principales-1",
+              "name": "Fan Favorite",
+              "nominees": []
+            },
+            {
+              "id": "principales-2",
+              "name": "Mejor Villano",
+              "nominees": []
+            },
+            {
+              "id": "principales-3",
+              "name": "Mejor Competidor",
+              "nominees": []
+            },
+            {
+              "id": "principales-4",
+              "name": "Poop of the Year",
+              "nominees": []
+            }
+          ]
+        },
+        {
+          "id": "estrategia",
+          "name": "Estrategia y Competencia",
+          "categories": [
+            {
+              "id": "estrategia-1",
+              "name": "Estratega del Año",
+              "nominees": []
+            },
+            {
+              "id": "estrategia-2",
+              "name": "Mejor Traidor",
+              "nominees": []
+            },
+            {
+              "id": "estrategia-3",
+              "name": "Mejor Inocente",
+              "nominees": []
+            },
+            {
+              "id": "estrategia-4",
+              "name": "Mayor Amenaza",
+              "nominees": []
+            },
+            {
+              "id": "estrategia-5",
+              "name": "Mejor Superviviente",
+              "nominees": []
+            }
+          ]
+        },
+        {
+          "id": "personalidad",
+          "name": "Personalidad",
+          "categories": [
+            {
+              "id": "personalidad-1",
+              "name": "Participante más Gracioso",
+              "nominees": []
+            },
+            {
+              "id": "personalidad-2",
+              "name": "Mejor Evolución",
+              "nominees": []
+            },
+            {
+              "id": "personalidad-3",
+              "name": "Mejor Participante Revelación",
+              "nominees": []
+            },
+            {
+              "id": "personalidad-4",
+              "name": "Amistad de la Temporada",
+              "nominees": []
+            },
+            {
+              "id": "personalidad-5",
+              "name": "Rivalidad de la Temporada",
+              "nominees": []
+            }
+          ]
+        },
+        {
+          "id": "produccion",
+          "name": "Premios de Producción",
+          "categories": [
+            {
+              "id": "produccion-1",
+              "name": "Mejor Episodio",
+              "nominees": []
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
