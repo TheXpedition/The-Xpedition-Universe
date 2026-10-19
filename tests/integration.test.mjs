@@ -24,6 +24,13 @@ async function stop(){const old=child;if(old&&!old.killed){old.kill();await new 
 const client=()=>({cookie:'',user:null});
 async function request(c,p,method='GET',body){const response=await fetch(base+'/api'+p,{method,headers:{'Content-Type':'application/json',...(c?.cookie?{cookie:c.cookie}:{})},body:body===undefined?undefined:JSON.stringify(body)});if(response.headers.has('set-cookie')&&c)c.cookie=response.headers.get('set-cookie').split(';')[0];const value=await response.json();return {status:response.status,...value};}
 before(start);after(stop);
+
+test('el nivel público coincide con el simulador y no expone saldos ni permite autoconcederse staff',async()=>{
+ const c=client(),r=await request(c,'/auth/register','POST',{name:'Nivel QA',email:'nivelqa@example.invalid',password:'UnaClaveDePrueba-123',staff:true,verified:true});assert.equal(r.status,201);assert.equal(r.user.staff,false);assert.equal(r.user.verified,false);assert.equal(r.user.level,1);
+ const reward=await request(c,'/economy/redeem','POST',{code:'LevelUp'});assert.equal(reward.wallet.level,2);
+ const p=(await request(null,'/profiles')).profiles.find(p=>p.id===r.user.id);assert.equal(p.level,2);assert.equal(p.staff,false);assert.equal(p.verified,false);for(const key of ['coins','tickets','email','xp','public_xp'])assert(!(key in p));
+ assert.equal((await request(c,'/moderation')).status,403);assert.equal((await request(c,'/posts/'+randomUUID(),'DELETE')).status,403);
+});
 test('las cinco previas móviles son ligeras, inician por metadatos y admiten rangos',async()=>{
  for(const name of ['japan','antarctica','safari','traitor-2','showdown-2']){
   const url=base+'/media/'+name+'-preview-mobile.mp4';

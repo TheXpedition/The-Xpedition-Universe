@@ -6,9 +6,9 @@ export function createInteractions({db,storage,userFields,safeUser,body,json,fai
     const table=kind==='comment'?'comment_reactions':'post_reactions',column=kind==='comment'?'comment':'post';
     return (await db.all(`SELECT emoji,COUNT(*) AS count,MAX(CASE WHEN user_id=? THEN 1 ELSE 0 END) AS mine FROM ${table} WHERE ${column}=? GROUP BY emoji ORDER BY count DESC,emoji`,viewer?.id||'',id)).map(r=>({emoji:r.emoji,count:Number(r.count),mine:!!Number(r.mine)}));
   }
-  const commentCount=async id=>Number((await db.one('SELECT COUNT(*) AS count FROM post_comments WHERE post=?',id)).count);
-  async function findPost(id){const p=await db.one('SELECT * FROM posts WHERE id=? AND archived=0',id);if(!p)fail(404,'Publicación no disponible.');return p;}
-  async function findComment(id){const c=await db.one('SELECT * FROM post_comments WHERE id=?',id);if(!c)fail(404,'Comentario no disponible.');await findPost(c.post);return c;}
+  const commentCount=async id=>Number((await db.one("SELECT COUNT(*) AS count FROM post_comments c WHERE post=? AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='comment' AND r.item_id=c.id)",id)).count);
+  async function findPost(id){const p=await db.one("SELECT * FROM posts p WHERE id=? AND archived=0 AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='post' AND r.item_id=p.id)",id);if(!p)fail(404,'Publicación no disponible.');return p;}
+  async function findComment(id){const c=await db.one("SELECT * FROM post_comments c WHERE id=? AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='comment' AND r.item_id=c.id)",id);if(!c)fail(404,'Comentario no disponible.');await findPost(c.post);return c;}
   async function commentValue(c,viewer){return {id:c.id,post:c.post,text:c.text,created:c.created,edited:c.edited,author:userFields(await db.one('SELECT * FROM users WHERE id=?',c.author)),reactions:await summary('comment',c.id,viewer)};}
   async function handle(req,res,url,u){
     const p=url.pathname,method=req.method;
@@ -42,7 +42,7 @@ export function createInteractions({db,storage,userFields,safeUser,body,json,fai
     if(comments&&method==='GET'){
       await findPost(comments[1]);const before=Number(url.searchParams.get('before')||Number.MAX_SAFE_INTEGER),beforeId=String(url.searchParams.get('beforeId')||'');
       if(!Number.isSafeInteger(before)||before<0)fail(400,'Página inválida.');
-      const list=await db.all('SELECT * FROM post_comments WHERE post=? AND (created<? OR (created=? AND id<?)) ORDER BY created DESC,id DESC LIMIT 21',comments[1],before,before,beforeId);
+      const list=await db.all("SELECT * FROM post_comments c WHERE post=? AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='comment' AND r.item_id=c.id) AND (created<? OR (created=? AND id<?)) ORDER BY created DESC,id DESC LIMIT 21",comments[1],before,before,beforeId);
       json(res,{comments:await Promise.all(list.slice(0,20).reverse().map(c=>commentValue(c,u))),hasMore:list.length>20});return true;
     }
     if(comments&&method==='POST'){
@@ -50,6 +50,7 @@ export function createInteractions({db,storage,userFields,safeUser,body,json,fai
       const b=await body(req),text=String(b.text||'').trim();if(!text||text.length>1500)fail(400,'Escribe un comentario de hasta 1500 caracteres.');
       const id=typeof b.id==='string'&&/^[a-f0-9-]{36}$/.test(b.id)?b.id:randomUUID();
       const existing=await db.one('SELECT * FROM post_comments WHERE id=?',id);
+      if(existing&&await db.one("SELECT item_id FROM community_removals WHERE kind='comment' AND item_id=?",id))fail(409,'Este comentario fue retirado por el Staff.');
       if(existing&&(existing.author!==u.id||existing.post!==comments[1]))fail(409,'No se pudo guardar el comentario.');
       if(!existing){await db.run('INSERT INTO post_comments(id,post,author,text,created) VALUES(?,?,?,?,?)',id,comments[1],u.id,text,Date.now());await progression.socialAction(u.id,'comment',comments[1]+':'+text.trim().toLowerCase(),text);}
       const comment=await commentValue(existing||await db.one('SELECT * FROM post_comments WHERE id=?',id),u);

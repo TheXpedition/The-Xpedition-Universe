@@ -64,7 +64,7 @@ Los accesos de las sagas abren sus catálogos con enlaces directos. Los carrusel
 ## Pruebas
 
 ```sh
-node --test tests/integration.test.mjs tests/seasons.test.mjs tests/awards.test.mjs
+npm test
 ```
 
 Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se admite un PostgreSQL **local y aislado** mediante `TEST_DATABASE_URL` para comprobar la persistencia externa. Más detalles en [LEEME.md](LEEME.md).
@@ -74,6 +74,10 @@ Se usa una base de prueba en `work/`, sin modificar cuentas reales. También se 
 Los perfiles pueden compartir texto, una imagen PNG/JPG/WebP de hasta 4 MB o un sticker de la colección. Incluyen sentimientos según los pronombres elegidos y hasta diez menciones a cuentas o personajes. El feed muestra primero las publicaciones recientes. Archivar oculta una publicación y su imagen; el autor puede restaurarla desde su archivo.
 
 Identidad y pronombres se editan en el perfil. La orientación sexual es opcional y privada por defecto; las respuestas públicas del servidor no incluyen una orientación oculta. Las migraciones añaden tablas y columnas sin reiniciar usuarios, sesiones, conversaciones ni archivos existentes.
+
+Los perfiles públicos muestran el nivel calculado con la misma experiencia del simulador, sin publicar monedas ni tickets. `account-roles.mjs` vincula las cuatro verificaciones solicitadas y los dos roles de Staff a identificadores de cuentas existentes; cambiarse el nombre o enviar campos de rol desde el cliente no concede privilegios. Solo esas dos cuentas pueden retirar y restaurar publicaciones y comentarios desde Moderación. `community_removals` guarda quién retiró cada elemento y cuándo; conserva sus textos, adjuntos, reacciones y saldos. La tabla mantiene las mismas restricciones de acceso de PostgreSQL que las demás tablas privadas.
+
+El chat móvil sigue la altura y el desplazamiento del viewport visual al abrir el teclado; los selectores no se cierran durante ese cambio. Los cupones muestran una celebración con los artículos y las cantidades confirmadas por el servidor. Los bonos de cuenta solicitados se registran con claves independientes para aplicarse una sola vez. El favicon PNG es común a la comunidad y los tres motores del simulador, y el título de pestaña es «The Xpedition».
 
 Las imágenes públicas se revisan en el servidor con NSFWJS MobileNetV2, antes de publicarse. La revisión corre en un worker con cola limitada para mantener el chat disponible. No envía imágenes a otro proveedor. Si falla o vence el tiempo de revisión, la imagen no se publica. Es un filtro automático con posibles falsos positivos y negativos; no sustituye la revisión humana. Los stickers aprobados mantienen sus archivos originales.
 

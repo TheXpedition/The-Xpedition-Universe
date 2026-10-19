@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
 // One requested, idempotent account adjustment. No public administrative endpoint.
 export const requestedAdjustment={emailHash:'d0b4d27a6ac152ca229e3726ce7f596e564f322c5238c2a2254e5c13bbe78492',key:'requested-account-adjustment:20261019',xp:43300,coins:10000};
+export const requestedCoinBonus={emailHash:requestedAdjustment.emailHash,key:'requested-account-adjustment:20261019:extra5000',xp:0,coins:5000};
 export async function applyRequestedAccountAdjustment(db,adjustment=requestedAdjustment){
  const users=await db.all('SELECT id,email FROM users');
  const user=users.find(u=>createHash('sha256').update(u.email.trim().toLowerCase()).digest('hex')===adjustment.emailHash);

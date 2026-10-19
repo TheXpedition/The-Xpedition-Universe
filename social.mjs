@@ -63,13 +63,13 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
       const before=Number(url.searchParams.get('before')||Number.MAX_SAFE_INTEGER);
       if(!Number.isSafeInteger(before)||before<0)fail(400,'Página inválida.');
       const beforeId=String(url.searchParams.get('beforeId')||'');
-      const query='SELECT * FROM posts WHERE archived=? AND (created<? OR (created=? AND id<?))'+(author?' AND author=?':'')+' ORDER BY created DESC,id DESC LIMIT 21';
+      const query="SELECT * FROM posts p WHERE NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='post' AND r.item_id=p.id) AND archived=? AND (created<? OR (created=? AND id<?))"+(author?' AND author=?':'')+' ORDER BY created DESC,id DESC LIMIT 21';
       const list=await db.all(query,...[archived?1:0,before,before,beforeId,...(author?[author]:[])]);
       json(res,{posts:await Promise.all(list.slice(0,20).map(post=>postValue(post,u))),hasMore:list.length>20});return true;
     }
     const image=p.match(/^\/api\/post-images\/([a-f0-9-]+)$/);
     if(image&&['GET','HEAD'].includes(method)){
-      const post=await db.one('SELECT * FROM posts WHERE id=? AND archived=0',image[1]);
+      const post=await db.one("SELECT * FROM posts p WHERE id=? AND archived=0 AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='post' AND r.item_id=p.id)",image[1]);
       if(!post?.image)fail(404,'Imagen no disponible.');
       const bytes=await storage.get(post.image);res.writeHead(200,{'Content-Type':'image/png','Content-Length':bytes.length,'Cache-Control':'no-store'});res.end(method==='HEAD'?undefined:bytes);return true;
     }
@@ -104,7 +104,7 @@ export function createSocial({db,storage,characters,details,stickers,userFields,
     }
     const edit=p.match(/^\/api\/posts\/([a-f0-9-]+)$/);
     if(edit&&method==='PATCH'){
-      if(!u)fail(401,'Inicia sesión.');const post=await db.one('SELECT * FROM posts WHERE id=?',edit[1]);
+      if(!u)fail(401,'Inicia sesión.');const post=await db.one("SELECT * FROM posts p WHERE id=? AND NOT EXISTS (SELECT 1 FROM community_removals r WHERE r.kind='post' AND r.item_id=p.id)",edit[1]);
       if(!post||post.author!==u.id)fail(404,'Publicación no disponible.');
       const b=await body(req);if(typeof b.archived!=='boolean')fail(400,'Acción inválida.');
       await db.run('UPDATE posts SET archived=? WHERE id=?',b.archived?1:0,post.id);everyone('posts',{});json(res,{ok:true});return true;

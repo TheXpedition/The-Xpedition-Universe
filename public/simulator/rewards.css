@@ -1,0 +1,49 @@
+.sim-brand{position:relative;padding-left:13px;line-height:1}
+.sim-brand>span{position:absolute;left:0;top:1px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:8px;letter-spacing:.6px;line-height:1;margin:0}
+
+#rewardDialog{width:850px;max-height:calc(100dvh - 28px);overflow:auto;color:#fff5fc;background:radial-gradient(ellipse at 50% 0,#ba4c9673,transparent 65%),linear-gradient(145deg,#3f214e,#291d38);border:1px solid #f3b4e04a;box-shadow:0 25px 120px #0009,0 0 70px #f28cca20}
+#rewardDialog::backdrop{background:#170c2399;backdrop-filter:blur(18px) saturate(.7)}
+.reward-reveal{position:relative;isolation:isolate;padding:42px 34px 30px;overflow:hidden;text-align:center;animation:reward-arrive .45s cubic-bezier(.16,1,.3,1) both}
+.reward-reveal::before{content:'';position:absolute;z-index:-1;inset:-160px;background:repeating-conic-gradient(from 0deg at 50% 43%,#f1a1d40d 0deg 13deg,transparent 13deg 30deg);pointer-events:none}
+.reward-reveal .sim-kicker{color:#f4acd9;font-size:10px;letter-spacing:.22em;margin-bottom:14px}
+.reward-reveal h1{font:800 clamp(30px,5vw,46px)/1.08 Manrope,sans-serif;letter-spacing:-.05em;margin:0 0 13px;text-shadow:0 3px 0 #66174e,0 0 25px #f996dd50}
+.reward-reveal>p{font-size:13px;line-height:1.6;color:#e7bddb;margin-bottom:27px}
+.reward-cards{display:flex;justify-content:center;align-items:stretch;gap:17px;flex-wrap:wrap;position:relative}
+.reward-card{flex:0 1 205px;min-width:0;background:linear-gradient(160deg,#fff7ef,#ffecf7);color:#4a2542;border:2px solid #f4a4d5;border-radius:20px;overflow:hidden;box-shadow:0 12px 35px #190b2955,0 0 25px #f091d320;animation:reward-card .7s cubic-bezier(.16,1,.3,1) var(--delay) both}
+.reward-card-art{aspect-ratio:1;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle,#a46b9d66,#4c2458);border-bottom:1px solid #f5a9d143}
+.reward-card-art::after{content:'';position:absolute;inset:0;background:linear-gradient(120deg,transparent 25%,#fff7 48%,transparent 65%);transform:translateX(-150%);animation:reward-shine .8s ease calc(var(--delay) + .3s) both;pointer-events:none}
+.reward-card-art>img{width:100%;height:100%;object-fit:cover}
+.reward-card-art>.reward-tickets{object-fit:contain;padding:21px;filter:drop-shadow(0 8px 6px #27113566)}
+.reward-team{width:74%;height:74%;border-radius:25%;display:grid;place-items:center;border:3px solid #fff8;box-shadow:0 8px 25px #28103780;background:linear-gradient(#d992d7,#b894e5)}
+.reward-team svg{width:66%;height:66%;fill:#fff;filter:drop-shadow(0 2px 3px #3c284c88)}
+.reward-team.lesbianas{background:linear-gradient(#d52d00 0 20%,#ef7627 20% 40%,#fff 40% 60%,#d162a4 60% 80%,#a30262 80%)}
+.reward-team.gays{background:linear-gradient(#078d70 0 20%,#26ceaa 20% 40%,#fff 40% 60%,#7bade2 60% 80%,#3d1a78 80%)}
+.reward-team.trans{background:linear-gradient(#5bcefa 0 20%,#f5a9b8 20% 40%,#fff 40% 60%,#f5a9b8 60% 80%,#5bcefa 80%)}
+.reward-card-copy{padding:15px 10px 17px}
+.reward-card-copy>span{display:block;font-size:7px;font-weight:800;letter-spacing:.13em;color:#9c5d85;margin-bottom:7px;line-height:1.5}
+.reward-card h2{font:800 17px/1.25 Manrope,sans-serif;letter-spacing:-.035em;margin:0}
+.reward-level{display:grid;place-content:center;position:relative;color:#fff0c4;width:100%;height:100%}
+.reward-level>span{position:absolute;inset:0;display:grid;place-items:center;font-size:155px;line-height:1;color:#f3b8dc77;text-shadow:0 0 25px #ed9bd4}
+.reward-level>b{font:800 58px Manrope,sans-serif;z-index:1;text-shadow:0 4px 0 #602d5b}
+.reward-coins{position:relative;width:130px;height:120px;display:grid;place-items:center;filter:drop-shadow(0 8px 8px #29153a66)}
+.reward-coins>.sim-coin{width:94px;height:94px;font-size:54px;border-width:5px;transform:rotate(-12deg);box-shadow:0 0 0 3px #865224,inset 0 0 0 3px #bc8132}
+.reward-coins>span:not(.sim-coin){position:absolute;font-size:26px;color:#ffdf99;top:0;right:0}
+.reward-coins>span:last-child{top:auto;right:auto;left:0;bottom:0;font-size:19px}
+.reward-reveal>.reward-saved{font-size:11px;margin:24px 0 18px;color:#cba6c7}
+.reward-reveal>.sim-button{min-width:200px;margin:0 auto;background:linear-gradient(135deg,#f7b6dc,#e892cc);color:#4f2045;border:1px solid #ffd8ee;box-shadow:0 6px 20px #160e272b}
+.reward-confetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:3}
+.reward-confetti i{position:absolute;left:var(--x);top:-15px;width:6px;height:13px;border-radius:2px;background:#eaa1d4;animation:reward-confetti 1.9s ease-out var(--delay) both}
+.reward-confetti i:nth-child(3n){background:#ffdda0}.reward-confetti i:nth-child(3n + 1){background:#c9b2ff;width:5px;height:8px}
+@keyframes reward-arrive{from{opacity:0;transform:scale(.93) translateY(18px)}to{opacity:1;transform:none}}
+@keyframes reward-card{from{opacity:0;transform:perspective(700px) rotateY(-40deg) scale(.65) translateY(30px)}to{opacity:1;transform:none}}
+@keyframes reward-shine{to{transform:translateX(150%)}}
+@keyframes reward-confetti{0%{opacity:0;transform:translateY(0) rotate(var(--turn))}10%{opacity:1}100%{opacity:0;transform:translateY(660px) rotate(calc(var(--turn) + 300deg))}}
+@media(max-width:620px){
+ .sim-brand>span{font-size:7px;margin:0;letter-spacing:.6px}
+ #rewardDialog{max-width:calc(100vw - 22px);max-height:calc(100dvh - 22px);border-radius:22px}
+ .reward-reveal{padding:34px 19px 25px}.reward-reveal>p{font-size:12px;margin-bottom:23px}.reward-cards{gap:10px}
+ .reward-card{flex-basis:calc(50% - 6px);max-width:215px;border-radius:16px}.reward-cards[data-count="1"] .reward-card{flex-basis:225px;max-width:225px}
+ .reward-card-copy{padding:12px 8px 14px}.reward-card h2{font-size:14px}.reward-card-copy>span{font-size:6px;letter-spacing:.08em}.reward-level>b{font-size:44px}.reward-level>span{font-size:125px}
+ .reward-coins{transform:scale(.85)}.reward-reveal>.reward-saved{font-size:10px;max-width:245px;margin:22px auto 18px}
+}
+@media(prefers-reduced-motion:reduce){.reward-reveal,.reward-card,.reward-card-art::after,.reward-confetti i{animation:none}.reward-confetti{display:none}.reward-card-art::after{display:none}}

@@ -28,10 +28,11 @@ test('cada personaje tiene un talento único y los cuatro nuevos conservan preci
 test('cupones válidos son atómicos, privados y sirven una sola vez por cuenta',async()=>{
  const u=await user(),v=await user(),before=await progression.wallet(u.id);
  const results=await Promise.all([request(u,'/api/economy/redeem','POST',{code:'Bonju'}),request(u,'/api/economy/redeem','POST',{code:'BONJU'})]);assert.deepEqual(results.map(r=>r.status).sort(),[200,409]);assert.equal((await progression.wallet(u.id)).coins,before.coins+500);assert.equal((await progression.wallet(v.id)).coins,80);
+ assert.equal(results.find(r=>r.status===200).redemption.coins,500);assert.equal(results.find(r=>r.status===200).redemption.items.length,0);
  assert.equal((await request(u,'/api/economy/redeem','POST',{code:'nope'})).status,400);
- for(const code of ['ChatGPT','Moda','LGBTQ'])assert.equal((await request(u,'/api/economy/redeem','POST',{code})).status,200);
+ for(const code of ['ChatGPT','Moda','LGBTQ']){const r=await request(u,'/api/economy/redeem','POST',{code});assert.equal(r.status,200);assert.equal(r.redemption.items.length,code==='LGBTQ'?3:1);for(const item of r.redemption.items){assert(item.name);assert(item.image);assert(!('price' in item));}}
  const inventory=(await progression.view(u.id)).owned;for(const id of ['character:chadgilpete','character:ednadroga','team:lesbianas','team:gays','team:trans'])assert(inventory.includes(id));
- const level=(await progression.wallet(u.id)).level;assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).wallet.level,level+1);assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).status,409);
+ const level=(await progression.wallet(u.id)).level,levelReward=await request(u,'/api/economy/redeem','POST',{code:'LevelUp'});assert.equal(levelReward.wallet.level,level+1);assert.equal(levelReward.redemption.level,level+1);assert(levelReward.redemption.coins>0);assert.equal(levelReward.redemption.tickets,3);assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).status,409);
 });
 test('quitar de colección y desactivar autoguardado conservan inventario y saldo; guardar manualmente funciona',async()=>{
  const u=await user();await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const before=await progression.wallet(u.id);

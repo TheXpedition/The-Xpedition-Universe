@@ -109,8 +109,14 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    checkRate(req,'coupons',15,60000);const b=await body(req),code=gameKey(String(b.code||'').slice(0,40));
    const coupons={chatgpt:{items:['character:chadgilpete'],label:'Chad Gil Pete ya es tuyo'},bonju:{coins:500,label:'500 monedas para tu expedición'},moda:{items:['character:ednadroga'],label:'Edna Droga ya es tuya'},lgbtq:{items:['team:lesbianas','team:gays','team:trans'],label:'Equipos Lesbianas, Gays y Trans desbloqueados'},levelup:{level:true,label:'¡Subiste un nivel!'}};
    const coupon=coupons[code];if(!coupon)fail(400,'Ese cupón no existe. Revisa el código.');
-   await db.transaction(async()=>{const before=await wallet(user.id),reward=await grantRaw(user.id,'coupon:'+code,{coins:coupon.coins||0,xp:coupon.level?before.nextLevelXP-before.xp:0,label:'Cupón · '+coupon.label});if(!reward)fail(409,'Ya utilizaste este cupón en tu cuenta.');for(const id of coupon.items||[]){if(!items.has(id))throw new Error('Cupón mal configurado');await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?) ON CONFLICT DO NOTHING',user.id,id,now());}});
-   json(res,{...await view(user.id),message:coupon.label});return true;
+   const redemption=await db.transaction(async()=>{
+    const before=await wallet(user.id),reward=await grantRaw(user.id,'coupon:'+code,{coins:coupon.coins||0,xp:coupon.level?before.nextLevelXP-before.xp:0,label:'Cupón · '+coupon.label});
+    if(!reward)fail(409,'Ya utilizaste este cupón en tu cuenta.');
+    for(const id of coupon.items||[]){if(!items.has(id))throw new Error('Cupón mal configurado');await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?) ON CONFLICT DO NOTHING',user.id,id,now());}
+    const after=await wallet(user.id);
+    return {items:(coupon.items||[]).map(id=>{const i=items.get(id);return {id:i.id,name:i.name,image:i.image,kind:i.kind};}),coins:after.coins-before.coins,tickets:after.tickets-before.tickets,level:after.level>before.level?after.level:null};
+   });
+   json(res,{...await view(user.id),message:coupon.label,redemption});return true;
   }
   if(p==='/api/economy/buy'&&method==='POST'){
    const b=await body(req),item=items.get(b.item)||shop.modes.find(m=>'mode:'+m.id===b.item);

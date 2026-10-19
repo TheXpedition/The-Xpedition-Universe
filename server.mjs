@@ -1,7 +1,9 @@
 import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
-import {createProgression} from './progression.mjs';
-import {applyRequestedAccountAdjustment} from './account-adjustments.mjs';
+import {createProgression,levelFor} from './progression.mjs';
+import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
+import {accountRole} from './account-roles.mjs';
+import {createModeration} from './community-moderation.mjs';
 import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
@@ -85,12 +87,14 @@ function userFields(u) {
     online: events.has(u.id),
     followers: Number(u.followers || 0),
     following: Number(u.following || 0),
+    level: levelFor(Number(u.public_xp || 0)),
+    ...accountRole(u.id),
     genderIdentity:u.gender_identity||'',pronouns:u.pronouns||'',
     cover:u.cover_file?'/api/profile-covers/'+encodeURIComponent(u.id)+'?v='+u.cover_updated:null,coverPosition:Number(u.cover_position??50),
     ...(Number(u.orientation_visible)?{orientation:u.orientation,orientationVisible:true}:{orientationVisible:false})
   };
 }
-const countedUsers = 'SELECT u.*, (SELECT COUNT(*) FROM follows WHERE target=u.id) AS followers, (SELECT COUNT(*) FROM follows WHERE actor=u.id) AS following, pc.file AS cover_file,pc.position AS cover_position,pc.updated AS cover_updated FROM users u LEFT JOIN profile_covers pc ON pc.user_id=u.id';
+const countedUsers = 'SELECT u.*, COALESCE(pr.xp,0) AS public_xp, (SELECT COUNT(*) FROM follows WHERE target=u.id) AS followers, (SELECT COUNT(*) FROM follows WHERE actor=u.id) AS following, pc.file AS cover_file,pc.position AS cover_position,pc.updated AS cover_updated FROM users u LEFT JOIN profile_covers pc ON pc.user_id=u.id LEFT JOIN user_progression pr ON pr.user_id=u.id';
 async function safeUser(u, own = false) {
   if (!u) return null;
   const counted = u.followers === undefined ? await one(countedUsers + ' WHERE u.id=?', u.id) : u;
@@ -384,6 +388,7 @@ async function api(req, res, url) {
       ok: true
     });
   }
+  if(await moderation.handle(req,res,url,u))return;
   if(await interactions.handle(req,res,url,u))return;
   if(await social.handle(req,res,url,u))return;
   if (!u) fail(401, 'Inicia sesión para continuar.');
@@ -777,8 +782,10 @@ async function serialize(fn){
 }
 const progression=createProgression({db,shop:JSON.parse(fs.readFileSync(path.join(publicDir,'simulator/catalog.json'),'utf8')),catalog,body,json,fail,checkRate,serialize,notify});
 if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta solicitado aplicado una sola vez: nivel mínimo 50 y 10000 monedas adicionales.');
+if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bono adicional solicitado aplicado una sola vez: 5000 monedas.');
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
+const moderation=createModeration({db,json,fail,checkRate,everyone});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   // Image review runs in a worker before taking the write lock so chat stays responsive.
@@ -786,6 +793,7 @@ async function dispatchApi(req,res,url){
   return serialize(()=>api(req,res,url));
 }
 const mimeTypes = {
+  '.ico': 'image/x-icon',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',

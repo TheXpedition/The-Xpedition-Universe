@@ -23,13 +23,21 @@ function quickReactions(){try{const list=JSON.parse(localStorage.getItem('xp-rea
 function clockTime(seconds){if(!Number.isFinite(seconds)||seconds<0)return '0:00';return Math.floor(seconds/60)+':'+String(Math.floor(seconds%60)).padStart(2,'0');}
 
 function syncChatViewport(){
- document.documentElement.style.setProperty('--chat-screen-height',(window.visualViewport?.height||innerHeight)+'px');
- document.documentElement.style.setProperty('--chat-nav-height',($('.topbar')?.getBoundingClientRect().height||84)+'px');
+ const viewport=window.visualViewport,root=document.documentElement,history=$('#chatHistory');
+ const pinned=history&&history.scrollHeight-history.scrollTop-history.clientHeight<100;
+ root.style.setProperty('--chat-screen-height',(viewport?.height||innerHeight)+'px');
+ root.style.setProperty('--chat-screen-top',(viewport?.offsetTop||0)+'px');
+ root.style.setProperty('--chat-screen-left',(viewport?.offsetLeft||0)+'px');
+ root.style.setProperty('--chat-nav-height',($('.topbar')?.getBoundingClientRect().height||84)+'px');
+ document.body.classList.toggle('chat-keyboard-open',!!viewport&&viewport.scale<1.1&&(innerHeight-viewport.height>120||document.activeElement?.matches('input,textarea')&&viewport.height<500));
+ requestAnimationFrame(()=>{if(pinned&&history?.isConnected)history.scrollTop=history.scrollHeight;if(chatPopover)positionChatPopover();});
 }
 new ResizeObserver(syncChatViewport).observe($('.topbar'));
 const originalMessengerPage=renderMessenger;
 renderMessenger=function(){originalMessengerPage();document.body.classList.toggle('chat-fullscreen',!!$('#messenger'));syncChatViewport();};
-window.visualViewport?.addEventListener('resize',syncChatViewport);window.addEventListener('resize',()=>{syncChatViewport();closeChatPopover(false);});
+window.visualViewport?.addEventListener('resize',syncChatViewport);window.visualViewport?.addEventListener('scroll',syncChatViewport);window.addEventListener('resize',syncChatViewport);
+document.addEventListener('focusin',event=>{if(event.target.closest('.messenger,#chatPopover'))syncChatViewport();});
+document.addEventListener('focusout',event=>{if(event.target.closest('.messenger,#chatPopover'))requestAnimationFrame(syncChatViewport);});
 window.addEventListener('hashchange',()=>{closeChatPopover(false);syncChatViewport();});syncChatViewport();
 
 function voiceMarkup(src,label,durationMs=0){
@@ -57,7 +65,7 @@ function messageHtml(m){
  const own=m.sender.id===state.user.id,c=state.conversations.find(c=>c.id===state.active),seen=own&&c?.members.filter(u=>u.id!==state.user.id).every(u=>u.readAt>=m.created);
  const reactions=[...new Set(m.reactions.map(r=>r.emoji))];
  const body=m.type==='deleted'?'Mensaje eliminado':m.type==='audio'?voiceMarkup(m.url,'Nota de voz de '+m.sender.name,m.durationMs):['image','video'].includes(m.type)?chatMediaMarkup(m):m.type==='sticker'?`<img class="${m.type==='sticker'?'chat-sticker':'chat-image'}" src="${esc(m.url)}" alt="${m.type==='sticker'?'Sticker':'Imagen'} enviado por ${esc(m.sender.name)}" ${m.type==='image'?`data-action="view-image" data-id="${m.id}"`:''} loading="lazy">`:linkify(m.text);
- return `<article class="message-row ${own?'own':''}" id="message-${m.id}" data-message-id="${m.id}">${!own?avatar(m.sender,'tiny'):''}<div class="message-wrap">${!own&&c?.type==='group'?`<div class="message-name">${esc(m.sender.name)}</div>`:''}<div class="bubble ${m.type==='deleted'?'deleted':''} ${m.type==='audio'?'voice-bubble':''} ${m.type==='sticker'?'sticker-bubble':''} ${['image','video'].includes(m.type)?'image-bubble':''}">${m.reply?`<button class="message-reply" data-action="jump-message" data-id="${m.reply.id}"><strong>${esc(m.reply.name)}</strong>${esc(m.reply.text.slice(0,100))}</button>`:''}${body}${m.type!=='text'&&m.type!=='deleted'&&m.text?`<div class="media-caption">${linkify(m.text)}</div>`:''}</div>${m.type!=='deleted'?`<div class="message-tools"><button class="icon-button" data-chat="reaction" data-id="${m.id}" aria-label="Reaccionar al mensaje">${icon('smile')}</button><button class="icon-button" data-action="message-options" data-id="${m.id}" aria-label="Opciones de mensaje">${icon('more')}</button></div>`:''}${reactions.length?`<div class="message-reactions">${reactions.map(emoji=>`<button class="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)?'mine':''}" data-action="react" data-id="${m.id}" data-emoji="${esc(emoji)}" aria-label="Reacción ${esc(emoji)}" aria-pressed="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)}"><span>${esc(emoji)}</span><small>${m.reactions.filter(r=>r.emoji===emoji).length}</small></button>`).join('')}</div>`:''}<div class="message-meta"><time datetime="${new Date(m.created).toISOString()}">${time(m.created)}</time>${m.edited&&m.type!=='deleted'?'<span>· editado</span>':''}${own?`<span class="${seen?'read':''}" title="${seen?'Leído por todos':'Enviado al servidor'}">${icon(seen?'checks':'check')}</span>`:''}</div></div></article>`;
+ return `<article class="message-row ${own?'own':''}" id="message-${m.id}" data-message-id="${m.id}">${!own?avatar(m.sender,'tiny'):''}<div class="message-wrap">${!own&&c?.type==='group'?`<div class="message-name">${esc(m.sender.name)}</div>`:''}<div class="message-surface"><div class="bubble ${m.type==='deleted'?'deleted':''} ${m.type==='audio'?'voice-bubble':''} ${m.type==='sticker'?'sticker-bubble':''} ${['image','video'].includes(m.type)?'image-bubble':''}">${m.reply?`<button class="message-reply" data-action="jump-message" data-id="${m.reply.id}"><strong>${esc(m.reply.name)}</strong>${esc(m.reply.text.slice(0,100))}</button>`:''}${body}${m.type!=='text'&&m.type!=='deleted'&&m.text?`<div class="media-caption">${linkify(m.text)}</div>`:''}</div>${reactions.length?`<div class="message-reactions">${reactions.map(emoji=>`<button class="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)?'mine':''}" data-action="react" data-id="${m.id}" data-emoji="${esc(emoji)}" aria-label="Reacción ${esc(emoji)}" aria-pressed="${m.reactions.some(r=>r.emoji===emoji&&r.user_id===state.user.id)}"><span>${esc(emoji)}</span><small>${m.reactions.filter(r=>r.emoji===emoji).length}</small></button>`).join('')}</div>`:''}</div>${m.type!=='deleted'?`<div class="message-tools"><button class="icon-button" data-chat="reaction" data-id="${m.id}" aria-label="Reaccionar al mensaje">${icon('smile')}</button><button class="icon-button" data-action="message-options" data-id="${m.id}" aria-label="Opciones de mensaje">${icon('more')}</button></div>`:''}<div class="message-meta"><time datetime="${new Date(m.created).toISOString()}">${time(m.created)}</time>${m.edited&&m.type!=='deleted'?'<span>· editado</span>':''}${own?`<span class="${seen?'read':''}" title="${seen?'Leído por todos':'Enviado al servidor'}">${icon(seen?'checks':'check')}</span>`:''}</div></div></article>`;
 }
 function renderMessages(scroll=false){
  const history=$('#chatHistory');if(!history||!state.user)return;
@@ -72,7 +80,7 @@ function renderMessages(scroll=false){
    if(old.dataset.body!==body){$('audio',old)?.pause();$('.bubble',old).replaceWith($('.bubble',fresh));old.dataset.body=body;}
    for(const selector of ['.message-tools','.message-reactions','.message-meta']){
     const a=$(selector,old),b=$(selector,fresh);if(a?.outerHTML===b?.outerHTML)continue;
-    if(a&&b)a.replaceWith(b);else if(a)a.remove();else if(b)$('.message-wrap',old).insertBefore(b,selector==='.message-reactions'?$('.message-meta',old):null);
+    if(a&&b)a.replaceWith(b);else if(a)a.remove();else if(b){if(selector==='.message-reactions')$('.message-surface',old).append(b);else $('.message-wrap',old).append(b);}
    }
    wanted.push(old);
   }else{fresh.dataset.body=body;wanted.push(fresh);}
@@ -88,9 +96,12 @@ function renderMessages(scroll=false){
 function closeChatPopover(restoreFocus=true){const focus=popoverAnchor;chatPopover?.remove();chatPopover=null;popoverAnchor=null;popoverContext=null;if(restoreFocus&&focus?.isConnected)focus.focus({preventScroll:true});}
 function positionChatPopover(){
  if(!chatPopover||!popoverAnchor?.isConnected){closeChatPopover(false);return;}
+ const viewport=window.visualViewport,leftEdge=viewport?.offsetLeft||0,topEdge=viewport?.offsetTop||0,screenWidth=viewport?.width||innerWidth,screenHeight=viewport?.height||innerHeight;
+ chatPopover.style.maxHeight=Math.max(120,screenHeight-20)+'px';
  const box=popoverAnchor.getBoundingClientRect(),width=chatPopover.offsetWidth,height=chatPopover.offsetHeight;
- const left=Math.max(10,Math.min(innerWidth-width-10,box.left+box.width/2-width/2)),top=box.top-height-12>12?box.top-height-12:Math.min(innerHeight-height-12,box.bottom+12);
- chatPopover.style.left=left+'px';chatPopover.style.top=Math.max(12,top)+'px';
+ const left=Math.max(leftEdge+10,Math.min(leftEdge+screenWidth-width-10,box.left+box.width/2-width/2)),above=box.top-height-12;
+ const top=above>=topEdge+10?above:Math.min(topEdge+screenHeight-height-10,box.bottom+12);
+ chatPopover.style.left=left+'px';chatPopover.style.top=Math.max(topEdge+10,top)+'px';
 }
 function showChatPopover(anchor,html,context,label='Reacciones'){
  closeChatPopover(false);popoverAnchor=anchor;popoverContext=context;chatPopover=document.createElement('div');chatPopover.id='chatPopover';chatPopover.className='chat-popover';chatPopover.setAttribute('role','dialog');chatPopover.setAttribute('aria-label',label);chatPopover.innerHTML=html;document.body.append(chatPopover);positionChatPopover();$('button,input',chatPopover)?.focus({preventScroll:true});
@@ -108,7 +119,7 @@ function emojiPickerMarkup(){
 }
 function emojiItems(items,context=popoverContext){return items.length?items.map(e=>`<button data-chat="pick-emoji" data-emoji="${esc(e.emoji)}" aria-label="${esc(e.name)}" title="${esc(e.name)}">${esc(e.emoji)}</button>`).join(''):'<p class="picker-help">No encontramos ese emoji.</p>';}
 function refreshEmojiPicker(){if(!chatPopover)return;chatPopover.innerHTML=emojiPickerMarkup();positionChatPopover();$(popoverContext.mode==='custom'?'.custom-reactions .selected':'.emoji-categories .selected',chatPopover)?.focus({preventScroll:true});}
-async function openEmojiComposer(anchor){await chatAssetsReady;if(!anchor.isConnected)return;emojiQuery='';emojiCategory=0;showChatPopover(anchor,'',{mode:'composer'},'Elegir emoji');refreshEmojiPicker();$('#chatEmojiSearch')?.focus({preventScroll:true});}
+async function openEmojiComposer(anchor){await chatAssetsReady;if(!anchor.isConnected)return;emojiQuery='';emojiCategory=0;showChatPopover(anchor,'',{mode:'composer'},'Elegir emoji');refreshEmojiPicker();if(!matchMedia('(max-width:750px)').matches)$('#chatEmojiSearch')?.focus({preventScroll:true});}
 function messageOptions(id){
  const m=state.messages.find(m=>m.id===id);if(!m)return;const anchor=$(`[data-message-id="${id}"] [data-action="message-options"]`);
  showChatPopover(anchor,`<div class="message-menu"><button data-chat="reaction-menu" data-id="${id}">${icon('smile')} Reaccionar</button><button data-action="reply" data-id="${id}">${icon('back')} Responder</button>${m.sender.id===state.user.id?`${m.type==='text'?`<button data-action="edit-message" data-id="${id}">${icon('edit')} Editar mensaje</button>`:''}<button class="danger" data-action="delete-message" data-id="${id}">${icon('close')} Eliminar para todos</button>`:''}</div>`,{mode:'menu',id},'Opciones del mensaje');
@@ -190,7 +201,7 @@ document.addEventListener('click',async event=>{
   if(action==='reaction')openReactions(id,button);
   if(action==='composer-emoji'){if(popoverContext?.mode==='composer'&&popoverAnchor===button)closeChatPopover();else await openEmojiComposer(button);}
   if(action==='reaction-menu'){const anchor=popoverAnchor;openReactions(id,anchor);}
-  if(action==='reaction-more'){await chatAssetsReady;emojiQuery='';emojiCategory=0;popoverContext.mode='expanded';refreshEmojiPicker();$('#chatEmojiSearch')?.focus();}
+  if(action==='reaction-more'){const context=popoverContext;await chatAssetsReady;if(!context||context!==popoverContext||!chatPopover)return;emojiQuery='';emojiCategory=0;context.mode='expanded';refreshEmojiPicker();if(!matchMedia('(max-width:750px)').matches)$('#chatEmojiSearch')?.focus({preventScroll:true});}
   if(action==='close-picker')closeChatPopover();
   if(action==='customize-reactions'){popoverContext.mode=popoverContext.mode==='custom'?'expanded':'custom';customSlot=0;refreshEmojiPicker();}
   if(action==='custom-slot'){customSlot=Number(button.dataset.slot);refreshEmojiPicker();}
@@ -220,7 +231,7 @@ document.addEventListener('click',async event=>{
 document.addEventListener('click',event=>{if(event.target.closest('#chatPopover [data-action]'))closeChatPopover(false);},true);
 document.addEventListener('input',event=>{if(event.target.id==='chatEmojiSearch'){emojiQuery=event.target.value;const items=emojiList().filter(e=>norm(e.name+' '+e.emoji).includes(norm(emojiQuery)));$('#chatEmojiResults').innerHTML=emojiItems(emojiQuery?items:emojiGroups[emojiCategory].items);}});
 document.addEventListener('keydown',event=>{if(!chatPopover)return;if(event.key==='Escape'){event.preventDefault();closeChatPopover();}else if(event.key==='Tab'){const focusable=$$('button,input',chatPopover),first=focusable[0],last=focusable.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}}});
-document.addEventListener('scroll',event=>{if(chatPopover&&!event.target.closest?.('#chatPopover'))closeChatPopover(false);},true);
+document.addEventListener('scroll',event=>{if(chatPopover&&!event.target.closest?.('#chatPopover'))positionChatPopover();},true);
 let longPress=null,suppressMessageClickUntil=0;
 document.addEventListener('click',event=>{if(Date.now()<suppressMessageClickUntil&&event.target.closest('.message-row')){event.preventDefault();event.stopImmediatePropagation();}},true);
 document.addEventListener('pointerdown',event=>{const row=event.target.closest('.message-row');if(event.pointerType!=='touch'||!row||event.target.closest('button,input,a,audio'))return;longPress={x:event.clientX,y:event.clientY,timer:setTimeout(()=>{openReactions(row.dataset.messageId,$('.bubble',row));suppressMessageClickUntil=Date.now()+750;longPress=null;},450)};});
