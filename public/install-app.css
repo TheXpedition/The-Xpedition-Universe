@@ -1,0 +1,24 @@
+.xp-installed [data-install-app],[data-install-native][hidden]{display:none!important}
+.site-footer nav{display:flex;align-items:center;flex-wrap:wrap;gap:14px 24px}
+.xp-install-link{font:inherit;letter-spacing:inherit;color:#c1addf;background:transparent;border:0;padding:8px 0;cursor:pointer;text-align:left}
+.xp-install-link:hover{color:#fff}
+.xp-install-dialog{box-sizing:border-box;width:480px;max-width:calc(100vw - 28px);max-height:calc(100dvh - 28px);padding:0;border:1px solid #bba0ed30;border-radius:26px;background:#14111d;color:#f8f5ff;box-shadow:0 24px 100px #0009;overflow-y:auto;overscroll-behavior:contain;font-family:Manrope,Arial,sans-serif}
+.xp-install-dialog::backdrop{background:#08060dc7;backdrop-filter:blur(10px)}
+.xp-install-panel{position:relative;padding:35px 32px 23px;background:radial-gradient(ellipse at 90% 0,#7550a429,transparent 60%)}
+.xp-install-close{position:absolute;right:16px;top:16px;display:grid;place-items:center;border:1px solid #fff2;border-radius:50%;width:36px;height:36px;background:#ffffff08;color:#e2d8f0;font-size:24px;cursor:pointer}
+.xp-install-logo{display:block;width:72px;height:72px;object-fit:contain;margin-bottom:22px}
+.xp-install-eyebrow{display:block;color:#bca4d9;font-size:9px;font-weight:800;letter-spacing:.18em;margin-bottom:10px}
+.xp-install-panel h2{font:800 31px/1.12 Manrope,Arial,sans-serif;letter-spacing:-.045em;margin:0 0 15px;color:#fff}
+.xp-install-panel p{font-size:12px;line-height:1.75;color:#b6abca;margin:0 0 18px}
+.xp-install-tag{display:inline-block;font-size:9px;font-weight:700;color:#ddc7f4;background:#a979dc13;border:1px solid #a979dc26;border-radius:20px;padding:7px 11px;margin-bottom:10px}
+.xp-install-primary{display:flex;justify-content:space-between;align-items:center;width:100%;padding:15px 18px;background:#d3b5f5;color:#241334;border:0;border-radius:12px;font:800 12px Manrope,Arial,sans-serif;cursor:pointer;margin:12px 0 18px}
+.xp-install-primary:disabled{opacity:.6;cursor:wait}
+.xp-install-steps{list-style:none;counter-reset:install;display:grid;gap:15px;padding:0;margin:20px 0 23px}
+.xp-install-steps li{counter-increment:install;position:relative;padding-left:39px;color:#aca0bf;font-size:11px;line-height:1.8;min-height:27px}
+.xp-install-steps li::before{content:counter(install);position:absolute;left:0;top:1px;display:grid;place-items:center;width:26px;height:26px;background:#a67cc118;border:1px solid #b595d22b;border-radius:9px;color:#dab6f1;font-size:11px;font-weight:800}
+.xp-install-steps strong{color:#ede3fa;font-weight:700}
+.xp-install-panel .xp-install-note{border-top:1px solid #fff1;padding-top:16px;font-size:10px;color:#7f738f;margin:0}
+.xp-install-panel .xp-install-status{font-size:11px;color:#ddc2f3;margin:12px 0 0}
+.xp-install-status:empty{display:none}
+.xp-install-dialog button:focus-visible,.xp-install-link:focus-visible{outline:2px solid #d4afff;outline-offset:4px}
+@media(max-width:520px){.xp-install-panel{padding:30px 23px 23px}.xp-install-panel h2{font-size:29px}.xp-install-steps li{font-size:12px}.site-footer nav{gap:7px 18px}}

@@ -1,6 +1,15 @@
 {
   "name": "The Xpedition",
   "short_name": "The Xpedition",
+  "id": "/",
+  "start_url": "/#inicio",
+  "scope": "/",
+  "lang": "es",
+  "description": "Tu comunidad, tus historias y los simuladores de The Xpedition en una sola app gratuita.",
+  "display": "standalone",
+  "theme_color": "#08090d",
+  "background_color": "#08090d",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/brand/xpedition-transparent-v2-44.png",
