@@ -157,8 +157,9 @@
         "desc": "Un destino extremo. Una expedición que lo cambió todo.",
         "accent": "var(--txa)",
         "kind": "Temporada",
-        "url": "https://thexpedition.github.io/The-Xpedition-Antarctica/",
-        "actionLabel": "Ir a la temporada"
+        "url": "#temporada/antarctica",
+        "actionLabel": "Ir a la temporada",
+        "integrated": true
       },
       {
         "id": "safari",
@@ -167,10 +168,9 @@
         "desc": "El instinto animal se despierta. Sobrevivir es la única regla.",
         "accent": "var(--txs)",
         "kind": "Temporada",
-        "url": "https://thexpedition.github.io/The-Xpedition-Safari/",
+        "url": "#temporada/safari",
         "actionLabel": "Ir a la temporada",
-        "logo": "The Traitor Simulator Logo Color .png",
-        "transparent": ""
+        "integrated": true
       },
       {
         "id": "japan",

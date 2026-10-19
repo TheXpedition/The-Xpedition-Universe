@@ -1,0 +1,1920 @@
+{
+  "version": 1,
+  "seasons": {
+    "antarctica": {
+      "id": "antarctica",
+      "franchise": "The Xpedition",
+      "number": 1,
+      "years": "2022",
+      "heading": "Donde comenzó la expedición.",
+      "description": "La primera expedición del universo lleva a dieciocho participantes a un territorio de hielo. Tres equipos, alianzas que cambian y duelos de eliminación marcan el camino a la final. Revive el recorrido de Dani, el comeback y cada enfrentamiento de Antarctica.",
+      "stats": {
+        "Estreno": "2022",
+        "Participantes": "18",
+        "Equipos": "3",
+        "Ganadora": "Dani"
+      },
+      "poster": "seasons/xpedition/antarctica/banner-original.webp",
+      "track": {
+        "src": "seasons/xpedition/antarctica/track-record.png",
+        "width": 1143,
+        "height": 601
+      },
+      "images": {
+        "Dani": "personajes/dani.png",
+        "Andromeda": "seasons/xpedition/antarctica/andromeda.webp",
+        "Bayron": "seasons/xpedition/antarctica/bayron.webp",
+        "Felix": "personajes/felix.png",
+        "Isabel": "seasons/xpedition/antarctica/isabel.webp",
+        "Peggy": "seasons/xpedition/antarctica/peggy.webp",
+        "Eris Midnight": "seasons/xpedition/antarctica/erismidnight.webp",
+        "Emanuel": "seasons/xpedition/antarctica/emanuel.webp",
+        "Ximena": "seasons/xpedition/antarctica/ximena.webp",
+        "Beto": "seasons/xpedition/antarctica/beto.webp",
+        "Vita": "seasons/xpedition/antarctica/vita.webp",
+        "Catalina": "seasons/xpedition/antarctica/catalina.webp",
+        "Eduardo": "seasons/xpedition/antarctica/eduardo.webp",
+        "Daelly": "seasons/xpedition/antarctica/daelly.webp",
+        "Iñaella Rose": "seasons/xpedition/antarctica/inaellarose.webp",
+        "Ignacio Ricci": "seasons/xpedition/antarctica/ignacioricci.webp",
+        "Ivan Serrano": "seasons/xpedition/antarctica/ivanserrano.webp",
+        "Pier": "personajes/pier.png",
+        "Bonju": "seasons/xpedition/antarctica/bonju.webp",
+        "Dua Lingo": "seasons/xpedition/antarctica/dualingo.webp"
+      },
+      "participants": [
+        {
+          "name": "Dani",
+          "place": "Winner",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Andromeda",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/antarctica/andromeda.webp"
+        },
+        {
+          "name": "Bayron",
+          "place": "3rd Place",
+          "image": "seasons/xpedition/antarctica/bayron.webp"
+        },
+        {
+          "name": "Felix",
+          "place": "4th Place",
+          "image": "personajes/felix.png"
+        },
+        {
+          "name": "Isabel",
+          "place": "5th/6th Place",
+          "image": "seasons/xpedition/antarctica/isabel.webp"
+        },
+        {
+          "name": "Peggy",
+          "place": "5th/6th Place",
+          "image": "seasons/xpedition/antarctica/peggy.webp"
+        },
+        {
+          "name": "Eris Midnight",
+          "place": "7th Place",
+          "image": "seasons/xpedition/antarctica/erismidnight.webp"
+        },
+        {
+          "name": "Emanuel",
+          "place": "8th Place",
+          "image": "seasons/xpedition/antarctica/emanuel.webp"
+        },
+        {
+          "name": "Ximena",
+          "place": "9th Place",
+          "image": "seasons/xpedition/antarctica/ximena.webp"
+        },
+        {
+          "name": "Beto",
+          "place": "10th Place",
+          "image": "seasons/xpedition/antarctica/beto.webp"
+        },
+        {
+          "name": "Vita",
+          "place": "11th Place",
+          "image": "seasons/xpedition/antarctica/vita.webp"
+        },
+        {
+          "name": "Catalina",
+          "place": "12th Place",
+          "image": "seasons/xpedition/antarctica/catalina.webp"
+        },
+        {
+          "name": "Eduardo",
+          "place": "13th Place",
+          "image": "seasons/xpedition/antarctica/eduardo.webp"
+        },
+        {
+          "name": "Daelly",
+          "place": "14th Place",
+          "image": "seasons/xpedition/antarctica/daelly.webp"
+        },
+        {
+          "name": "Iñaella Rose",
+          "place": "15th Place",
+          "image": "seasons/xpedition/antarctica/inaellarose.webp"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "place": "16th Place",
+          "image": "seasons/xpedition/antarctica/ignacioricci.webp"
+        },
+        {
+          "name": "Ivan Serrano",
+          "place": "17th Place",
+          "image": "seasons/xpedition/antarctica/ivanserrano.webp"
+        },
+        {
+          "name": "Pier",
+          "place": "18th Place",
+          "image": "personajes/pier.png"
+        },
+        {
+          "name": "Bonju",
+          "place": "Host",
+          "image": "seasons/xpedition/antarctica/bonju.webp"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Staff",
+          "image": "seasons/xpedition/antarctica/dualingo.webp"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Bonju",
+          "place": "Host",
+          "image": "seasons/xpedition/antarctica/bonju.webp"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Staff",
+          "image": "seasons/xpedition/antarctica/dualingo.webp"
+        },
+        {
+          "name": "Dani",
+          "place": "Winner",
+          "image": "personajes/dani.png"
+        },
+        {
+          "name": "Andromeda",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/antarctica/andromeda.webp"
+        },
+        {
+          "name": "Bayron",
+          "place": "3rd Place",
+          "image": "seasons/xpedition/antarctica/bayron.webp"
+        },
+        {
+          "name": "Felix",
+          "place": "4th Place",
+          "image": "personajes/felix.png"
+        }
+      ],
+      "teams": [
+        {
+          "name": "Equipo Blanco",
+          "symbol": "Pingüinos",
+          "color": "#e7f6ff",
+          "image": "seasons/xpedition/antarctica/equipo-pinguinos.webp"
+        },
+        {
+          "name": "Equipo Celeste",
+          "symbol": "Krill",
+          "color": "#55d6f2",
+          "image": "seasons/xpedition/antarctica/equipo-krill.webp"
+        },
+        {
+          "name": "Equipo Azul",
+          "symbol": "Focas",
+          "color": "#4a7ee7",
+          "image": "seasons/xpedition/antarctica/equipo-focas.webp"
+        }
+      ],
+      "versus": {
+        "format": "xpedition",
+        "rounds": [
+          {
+            "ep": "1",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Emanuel",
+              "Ignacio Ricci",
+              "Iñaella Rose",
+              "Daelly"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Daelly"
+            ]
+          },
+          {
+            "ep": "2",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Felix",
+              "Beto",
+              "Daelly",
+              "Pier"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Pier"
+            ]
+          },
+          {
+            "ep": "3",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Ignacio Ricci",
+              "Emanuel",
+              "Eris Midnight",
+              "Ivan Serrano"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Ivan Serrano"
+            ]
+          },
+          {
+            "ep": "4",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Andromeda",
+              "Vita",
+              "Peggy",
+              "Ignacio Ricci"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Ignacio Ricci"
+            ]
+          },
+          {
+            "ep": "5",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Bayron",
+              "Emanuel",
+              "Eduardo",
+              "Iñaella Rose"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Iñaella Rose"
+            ]
+          },
+          {
+            "ep": "6",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Peggy",
+              "Ximena",
+              "Daelly"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Daelly"
+            ]
+          },
+          {
+            "ep": "7",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Peggy",
+              "Isabel",
+              "Felix"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Felix"
+            ]
+          },
+          {
+            "ep": "8",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Andromeda",
+              "Bayron",
+              "Eduardo"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Eduardo"
+            ]
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 1,
+            "competitors": [
+              "Catalina",
+              "Pier"
+            ],
+            "winners": [
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 2,
+            "competitors": [
+              "Catalina",
+              "Ivan Serrano"
+            ],
+            "winners": [
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 3,
+            "competitors": [
+              "Catalina",
+              "Ignacio Ricci"
+            ],
+            "winners": [
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 4,
+            "competitors": [
+              "Catalina",
+              "Iñaella Rose"
+            ],
+            "winners": [
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 5,
+            "competitors": [
+              "Catalina",
+              "Daelly"
+            ],
+            "winners": [
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "9",
+            "year": "2022",
+            "kind": "comeback",
+            "step": 6,
+            "competitors": [
+              "Felix",
+              "Catalina",
+              "Eduardo"
+            ],
+            "winners": [
+              "Felix",
+              "Catalina"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "10",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Emanuel",
+              "Vita",
+              "Eris Midnight",
+              "Catalina"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Catalina"
+            ]
+          },
+          {
+            "ep": "11",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Felix",
+              "Andromeda",
+              "Vita"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Vita"
+            ]
+          },
+          {
+            "ep": "12",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Eris Midnight",
+              "Beto"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Beto"
+            ]
+          },
+          {
+            "ep": "13",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Andromeda",
+              "Eris Midnight",
+              "Ximena"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Ximena"
+            ]
+          },
+          {
+            "ep": "14",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Peggy",
+              "Isabel",
+              "Andromeda",
+              "Dani",
+              "Emanuel"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Emanuel"
+            ]
+          },
+          {
+            "ep": "15",
+            "year": "2022",
+            "kind": "tie",
+            "competitors": [
+              "Bayron",
+              "Eris Midnight"
+            ],
+            "winners": [],
+            "eliminated": []
+          },
+          {
+            "ep": "16",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Dani",
+              "Felix",
+              "Eris Midnight"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Eris Midnight"
+            ]
+          },
+          {
+            "ep": "18",
+            "year": "2022",
+            "kind": "elimination",
+            "competitors": [
+              "Bayron",
+              "Andromeda",
+              "Dani",
+              "Felix"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Felix"
+            ]
+          },
+          {
+            "ep": "18",
+            "year": "2022",
+            "kind": "final",
+            "competitors": [
+              "Dani",
+              "Andromeda"
+            ],
+            "winners": [
+              "Dani"
+            ],
+            "eliminated": []
+          }
+        ]
+      },
+      "source": {
+        "page": "https://thexpedition.github.io/The-Xpedition-Antarctica/",
+        "sha256": "aad27142bf6d399d904b6488bc0ebea869fb916a9dd9a8792273b36a559ec502",
+        "originalParticipants": [
+          {
+            "name": "Dani",
+            "placement": "Winner",
+            "badge": null
+          },
+          {
+            "name": "Andromeda",
+            "placement": "Runner Up",
+            "badge": null
+          },
+          {
+            "name": "Bayron",
+            "placement": "3rd Place",
+            "badge": null
+          },
+          {
+            "name": "Felix",
+            "placement": "4th Place",
+            "badge": null
+          },
+          {
+            "name": "Isabel",
+            "placement": "5th/6th Place",
+            "badge": null
+          },
+          {
+            "name": "Peggy",
+            "placement": "5th/6th Place",
+            "badge": null
+          },
+          {
+            "name": "Eris Midnight",
+            "placement": "7th Place",
+            "badge": null
+          },
+          {
+            "name": "Emanuel",
+            "placement": "8th Place",
+            "badge": null
+          },
+          {
+            "name": "Ximena",
+            "placement": "9th Place",
+            "badge": null
+          },
+          {
+            "name": "Beto",
+            "placement": "10th Place",
+            "badge": null
+          },
+          {
+            "name": "Vita",
+            "placement": "11th Place",
+            "badge": null
+          },
+          {
+            "name": "Catalina",
+            "placement": "12th Place",
+            "badge": null
+          },
+          {
+            "name": "Eduardo",
+            "placement": "13th Place",
+            "badge": null
+          },
+          {
+            "name": "Daelly",
+            "placement": "14th Place",
+            "badge": null
+          },
+          {
+            "name": "Iñaella Rose",
+            "placement": "15th Place",
+            "badge": null
+          },
+          {
+            "name": "Ignacio Ricci",
+            "placement": "16th Place",
+            "badge": null
+          },
+          {
+            "name": "Ivan Serrano",
+            "placement": "17th Place",
+            "badge": null
+          },
+          {
+            "name": "Pier",
+            "placement": "18th Place",
+            "badge": null
+          },
+          {
+            "name": "Bonju",
+            "placement": null,
+            "badge": "host"
+          },
+          {
+            "name": "Dua Lengua",
+            "placement": null,
+            "badge": "staff"
+          }
+        ],
+        "versus": [
+          {
+            "year": "2022",
+            "episodes": [
+              {
+                "ep": "1",
+                "players": [
+                  "Emanuel",
+                  "Ignacio Ricci",
+                  "Iñaella Rose",
+                  "Daelly"
+                ]
+              },
+              {
+                "ep": "2",
+                "players": [
+                  "Felix",
+                  "Beto",
+                  "Daelly",
+                  "Pier"
+                ]
+              },
+              {
+                "ep": "3",
+                "players": [
+                  "Ignacio Ricci",
+                  "Emanuel",
+                  "Eris Midnight",
+                  "Ivan Serrano"
+                ]
+              },
+              {
+                "ep": "4",
+                "players": [
+                  "Andromeda",
+                  "Vita",
+                  "Peggy",
+                  "Ignacio Ricci"
+                ]
+              },
+              {
+                "ep": "5",
+                "players": [
+                  "Bayron",
+                  "Emanuel",
+                  "Eduardo",
+                  "Iñaella Rose"
+                ]
+              },
+              {
+                "ep": "6",
+                "players": [
+                  "Peggy",
+                  "Ximena",
+                  "Daelly"
+                ]
+              },
+              {
+                "ep": "7",
+                "players": [
+                  "Peggy",
+                  "Isabel",
+                  "Felix"
+                ]
+              },
+              {
+                "ep": "8",
+                "players": [
+                  "Andromeda",
+                  "Bayron",
+                  "Eduardo"
+                ]
+              },
+              {
+                "ep": "9",
+                "isComeback": true,
+                "duels": [
+                  {
+                    "p2": "Pier",
+                    "p1": "Catalina",
+                    "winner": "Catalina"
+                  },
+                  {
+                    "p1": "Catalina",
+                    "p2": "Ivan Serrano",
+                    "winner": "Catalina"
+                  },
+                  {
+                    "p1": "Catalina",
+                    "p2": "Ignacio Ricci",
+                    "winner": "Catalina"
+                  },
+                  {
+                    "p1": "Catalina",
+                    "p2": "Iñaella Rose",
+                    "winner": "Catalina"
+                  },
+                  {
+                    "p1": "Catalina",
+                    "p2": "Daelly",
+                    "winner": "Catalina"
+                  },
+                  {
+                    "p2": "Catalina",
+                    "p3": "Eduardo",
+                    "p1": "Felix",
+                    "winners": [
+                      "Felix",
+                      "Catalina"
+                    ]
+                  }
+                ]
+              },
+              {
+                "ep": "10",
+                "players": [
+                  "Emanuel",
+                  "Vita",
+                  "Eris Midnight",
+                  "Catalina"
+                ]
+              },
+              {
+                "ep": "11",
+                "players": [
+                  "Isabel",
+                  "Felix",
+                  "Andrómeda",
+                  "Vita"
+                ]
+              },
+              {
+                "ep": "12",
+                "players": [
+                  "Eris Midnight",
+                  "Beto"
+                ]
+              },
+              {
+                "ep": "13",
+                "players": [
+                  "Andromeda",
+                  "Eris Midnight",
+                  "Ximena"
+                ]
+              },
+              {
+                "ep": "14",
+                "players": [
+                  "Peggy",
+                  "Isabel",
+                  "Andromeda",
+                  "Dani",
+                  "Emanuel"
+                ]
+              },
+              {
+                "ep": "15",
+                "isEmpate": true,
+                "players": [
+                  "Bayron",
+                  "Eris Midnight"
+                ]
+              },
+              {
+                "ep": "16",
+                "players": [
+                  "Dani",
+                  "Felix",
+                  "Eris Midnight"
+                ]
+              },
+              {
+                "ep": "18",
+                "players": [
+                  "Bayron",
+                  "Andromeda",
+                  "Dani",
+                  "Felix"
+                ]
+              },
+              {
+                "ep": "18",
+                "players": [
+                  "Dani",
+                  "Andromeda"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "safari": {
+      "id": "safari",
+      "franchise": "The Xpedition",
+      "number": 2,
+      "years": "2023 / 2025",
+      "heading": "El instinto cambia el juego.",
+      "description": "Dos etapas, una misma expedición. Safari reúne a veintiocho participantes entre 2023 y 2025 en una competencia de equipos, estrategia y supervivencia. Explora los cinco equipos, los duelos y los dos comebacks que cambiaron su recorrido.",
+      "stats": {
+        "Etapas": "2023 / 2025",
+        "Participantes": "28",
+        "Equipos": "5",
+        "Finalistas": "Coronel · Peggy"
+      },
+      "poster": "seasons/xpedition/safari/banner-original.webp",
+      "track": {
+        "src": "seasons/xpedition/safari/track-record.png",
+        "width": 1609,
+        "height": 901
+      },
+      "images": {
+        "Coronel": "seasons/xpedition/safari/coronel.webp",
+        "Peggy": "seasons/xpedition/safari/peggy.webp",
+        "Julián": "seasons/xpedition/safari/julian.webp",
+        "Alexandro": "seasons/xpedition/safari/alexandro.webp",
+        "Isabel": "seasons/xpedition/safari/isabel.webp",
+        "Pier": "personajes/pier.png",
+        "Bryan Montalvo": "seasons/xpedition/safari/bryanmontalvo.webp",
+        "Daelly": "seasons/xpedition/safari/daelly.webp",
+        "Andromeda": "seasons/xpedition/safari/andromeda.webp",
+        "Luciano": "seasons/xpedition/safari/luciano.webp",
+        "Iñaella Rose": "seasons/xpedition/safari/inaellarose.webp",
+        "Ximena": "seasons/xpedition/safari/ximena.webp",
+        "Ignacio Ricci": "seasons/xpedition/safari/ignacioricci.webp",
+        "Lucas Mendez": "seasons/xpedition/safari/lucasmendez.webp",
+        "Greg": "seasons/xpedition/safari/greg.webp",
+        "Garnet": "seasons/xpedition/safari/garnet.webp",
+        "Elvin": "seasons/xpedition/safari/elvin.webp",
+        "Bayron": "seasons/xpedition/safari/bayron.webp",
+        "Oscar": "seasons/xpedition/safari/oscar.webp",
+        "Sandro": "seasons/xpedition/safari/sandro.webp",
+        "Esteban": "seasons/xpedition/safari/esteban.webp",
+        "Rafael": "seasons/xpedition/safari/rafael.webp",
+        "Emmy Mango": "seasons/xpedition/safari/emmymango.webp",
+        "Lalamila": "seasons/xpedition/safari/lalamila.webp",
+        "Cocomong": "seasons/xpedition/safari/cocomong.webp",
+        "Azealia Midnight": "seasons/xpedition/safari/azealiamidnight.webp",
+        "Eris Midnight": "seasons/xpedition/safari/erismidnight.webp",
+        "Catalina": "seasons/xpedition/safari/catalina.webp",
+        "Bonju": "seasons/xpedition/safari/bonju.webp",
+        "Dua Lingo": "seasons/xpedition/safari/dualingo.webp"
+      },
+      "participants": [
+        {
+          "name": "Coronel",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/safari/coronel.webp"
+        },
+        {
+          "name": "Peggy",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/safari/peggy.webp"
+        },
+        {
+          "name": "Julián",
+          "place": "3rd Place",
+          "image": "seasons/xpedition/safari/julian.webp"
+        },
+        {
+          "name": "Alexandro",
+          "place": "4th Place",
+          "image": "seasons/xpedition/safari/alexandro.webp"
+        },
+        {
+          "name": "Isabel",
+          "place": "5th/6th Place",
+          "image": "seasons/xpedition/safari/isabel.webp"
+        },
+        {
+          "name": "Pier",
+          "place": "5th/6th Place",
+          "image": "personajes/pier.png"
+        },
+        {
+          "name": "Bryan Montalvo",
+          "place": "7th Place",
+          "image": "seasons/xpedition/safari/bryanmontalvo.webp"
+        },
+        {
+          "name": "Daelly",
+          "place": "8th Place",
+          "image": "seasons/xpedition/safari/daelly.webp"
+        },
+        {
+          "name": "Andromeda",
+          "place": "9th Place",
+          "image": "seasons/xpedition/safari/andromeda.webp"
+        },
+        {
+          "name": "Luciano",
+          "place": "10th Place",
+          "image": "seasons/xpedition/safari/luciano.webp"
+        },
+        {
+          "name": "Iñaella Rose",
+          "place": "11th Place",
+          "image": "seasons/xpedition/safari/inaellarose.webp"
+        },
+        {
+          "name": "Ximena",
+          "place": "12th Place",
+          "image": "seasons/xpedition/safari/ximena.webp"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "place": "13th Place",
+          "image": "seasons/xpedition/safari/ignacioricci.webp"
+        },
+        {
+          "name": "Lucas Mendez",
+          "place": "14th Place",
+          "image": "seasons/xpedition/safari/lucasmendez.webp"
+        },
+        {
+          "name": "Greg",
+          "place": "15th Place",
+          "image": "seasons/xpedition/safari/greg.webp"
+        },
+        {
+          "name": "Garnet",
+          "place": "16th Place",
+          "image": "seasons/xpedition/safari/garnet.webp"
+        },
+        {
+          "name": "Elvin",
+          "place": "17th Place",
+          "image": "seasons/xpedition/safari/elvin.webp"
+        },
+        {
+          "name": "Bayron",
+          "place": "18th Place",
+          "image": "seasons/xpedition/safari/bayron.webp"
+        },
+        {
+          "name": "Oscar",
+          "place": "19th Place",
+          "image": "seasons/xpedition/safari/oscar.webp"
+        },
+        {
+          "name": "Sandro",
+          "place": "20th Place",
+          "image": "seasons/xpedition/safari/sandro.webp"
+        },
+        {
+          "name": "Esteban",
+          "place": "21st Place",
+          "image": "seasons/xpedition/safari/esteban.webp"
+        },
+        {
+          "name": "Rafael",
+          "place": "22nd Place",
+          "image": "seasons/xpedition/safari/rafael.webp"
+        },
+        {
+          "name": "Emmy Mango",
+          "place": "23rd Place",
+          "image": "seasons/xpedition/safari/emmymango.webp"
+        },
+        {
+          "name": "Lalamila",
+          "place": "24th Place",
+          "image": "seasons/xpedition/safari/lalamila.webp"
+        },
+        {
+          "name": "Cocomong",
+          "place": "25th Place",
+          "image": "seasons/xpedition/safari/cocomong.webp"
+        },
+        {
+          "name": "Azealia Midnight",
+          "place": "26th Place",
+          "image": "seasons/xpedition/safari/azealiamidnight.webp"
+        },
+        {
+          "name": "Eris Midnight",
+          "place": "27th Place",
+          "image": "seasons/xpedition/safari/erismidnight.webp"
+        },
+        {
+          "name": "Catalina",
+          "place": "28th Place",
+          "image": "seasons/xpedition/safari/catalina.webp"
+        },
+        {
+          "name": "Bonju",
+          "place": "Host",
+          "image": "seasons/xpedition/safari/bonju.webp"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Staff",
+          "image": "seasons/xpedition/safari/dualingo.webp"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Bonju",
+          "place": "Host",
+          "image": "seasons/xpedition/safari/bonju.webp"
+        },
+        {
+          "name": "Dua Lingo",
+          "place": "Staff",
+          "image": "seasons/xpedition/safari/dualingo.webp"
+        },
+        {
+          "name": "Coronel",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/safari/coronel.webp"
+        },
+        {
+          "name": "Peggy",
+          "place": "Runner Up",
+          "image": "seasons/xpedition/safari/peggy.webp"
+        },
+        {
+          "name": "Julián",
+          "place": "3rd Place",
+          "image": "seasons/xpedition/safari/julian.webp"
+        },
+        {
+          "name": "Alexandro",
+          "place": "4th Place",
+          "image": "seasons/xpedition/safari/alexandro.webp"
+        }
+      ],
+      "teams": [
+        {
+          "name": "Equipo Leones",
+          "symbol": "Leones",
+          "color": "#daae42",
+          "image": "seasons/xpedition/safari/equipo-leones.webp"
+        },
+        {
+          "name": "Equipo Serpientes",
+          "symbol": "Serpientes",
+          "color": "#68ae66",
+          "image": "seasons/xpedition/safari/equipo-serpientes.webp"
+        },
+        {
+          "name": "Equipo Cebras",
+          "symbol": "Cebras",
+          "color": "#d2d2cc",
+          "image": "seasons/xpedition/safari/equipo-cebras.webp"
+        },
+        {
+          "name": "Equipo Guepardos",
+          "symbol": "Guepardos",
+          "color": "#d96b5c",
+          "image": "seasons/xpedition/safari/equipo-guepardos.webp"
+        },
+        {
+          "name": "Equipo Escorpiones",
+          "symbol": "Escorpiones",
+          "color": "#d99a62",
+          "image": "seasons/xpedition/safari/equipo-escorpiones.webp"
+        }
+      ],
+      "versus": {
+        "format": "xpedition",
+        "rounds": [
+          {
+            "ep": "1",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Ignacio Ricci",
+              "Bryan Montalvo",
+              "Cocomong",
+              "Catalina"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Catalina"
+            ]
+          },
+          {
+            "ep": "2",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Azealia Midnight",
+              "Cocomong",
+              "Sandro",
+              "Eris Midnight"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Eris Midnight"
+            ]
+          },
+          {
+            "ep": "3",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Andromeda",
+              "Elvin",
+              "Garnet",
+              "Lalamila",
+              "Azealia Midnight"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Azealia Midnight"
+            ]
+          },
+          {
+            "ep": "4",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Rafael",
+              "Esteban",
+              "Cocomong"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Cocomong"
+            ]
+          },
+          {
+            "ep": "5",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Emmy Mango",
+              "Bayron",
+              "Julián",
+              "Lalamila",
+              "Garnet"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Garnet"
+            ]
+          },
+          {
+            "ep": "6",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Bryan Montalvo",
+              "Julián",
+              "Ximena",
+              "Sandro"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Sandro"
+            ]
+          },
+          {
+            "ep": "7",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Julián",
+              "Bryan Montalvo",
+              "Bayron",
+              "Lalamila"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Lalamila"
+            ]
+          },
+          {
+            "ep": "8",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Sandro",
+              "Esteban",
+              "Oscar"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Oscar"
+            ]
+          },
+          {
+            "ep": "9",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Bayron",
+              "Andromeda",
+              "Oscar",
+              "Esteban"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Esteban"
+            ]
+          },
+          {
+            "ep": "10",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Ignacio Ricci",
+              "Sandro"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Sandro"
+            ]
+          },
+          {
+            "ep": "11",
+            "year": "2023",
+            "kind": "comeback-ranking",
+            "competitors": [
+              "Garnet",
+              "Esteban",
+              "Eris Midnight",
+              "Sandro",
+              "Lalamila",
+              "Azealia Midnight",
+              "Cocomong",
+              "Catalina"
+            ],
+            "winners": [
+              "Garnet"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "12",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Ignacio Ricci",
+              "Ximena",
+              "Bayron",
+              "Oscar"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Bayron",
+              "Oscar"
+            ]
+          },
+          {
+            "ep": "13",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Coronel",
+              "Elvin",
+              "Andromeda"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Andromeda"
+            ]
+          },
+          {
+            "ep": "14",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Coronel",
+              "Elvin"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Elvin"
+            ]
+          },
+          {
+            "ep": "15",
+            "year": "2023",
+            "kind": "elimination",
+            "competitors": [
+              "Isabel",
+              "Bryan Montalvo",
+              "Garnet"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Garnet"
+            ]
+          },
+          {
+            "ep": "16",
+            "year": "2025",
+            "kind": "victory",
+            "competitors": [
+              "Coronel",
+              "Lucas Mendez"
+            ],
+            "winners": [],
+            "eliminated": []
+          },
+          {
+            "ep": "17",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Julián",
+              "Peggy",
+              "Greg"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Greg"
+            ]
+          },
+          {
+            "ep": "18",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Daelly",
+              "Luciano",
+              "Ximena",
+              "Lucas Mendez"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Lucas Mendez"
+            ]
+          },
+          {
+            "ep": "19",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Alexandro",
+              "Iñaella Rose",
+              "Ignacio Ricci"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Ignacio Ricci"
+            ]
+          },
+          {
+            "ep": "20",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Iñaella Rose",
+              "Isabel",
+              "Bryan Montalvo",
+              "Ximena"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Ximena"
+            ]
+          },
+          {
+            "ep": "21",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Julián",
+              "Luciano",
+              "Iñaella Rose"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Iñaella Rose"
+            ]
+          },
+          {
+            "ep": "22",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Peggy",
+              "Luciano"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Luciano"
+            ]
+          },
+          {
+            "ep": "23",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Pier",
+              "Isabel",
+              "Bryan Montalvo",
+              "Alexandro",
+              "Andromeda"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Andromeda"
+            ]
+          },
+          {
+            "ep": "24",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Julián",
+              "Coronel",
+              "Peggy",
+              "Bryan Montalvo"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Bryan Montalvo"
+            ]
+          },
+          {
+            "ep": "25",
+            "year": "2025",
+            "kind": "comeback-ranking",
+            "competitors": [
+              "Bryan Montalvo",
+              "Lucas Mendez",
+              "Luciano",
+              "Ignacio Ricci",
+              "Andromeda",
+              "Ximena",
+              "Iñaella Rose",
+              "Greg"
+            ],
+            "winners": [
+              "Bryan Montalvo"
+            ],
+            "eliminated": []
+          },
+          {
+            "ep": "28",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Julián",
+              "Alexandro"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Alexandro"
+            ]
+          },
+          {
+            "ep": "30",
+            "year": "2025",
+            "kind": "elimination",
+            "competitors": [
+              "Coronel",
+              "Peggy",
+              "Julián"
+            ],
+            "winners": [],
+            "eliminated": [
+              "Julián"
+            ]
+          }
+        ]
+      },
+      "source": {
+        "page": "The-Xpedition-Safari-main/index.html",
+        "sha256": "7cadd4d4c87704862f2f77e80d2c1bf74af3b642cc30e0c04b5440b5682ec0e6",
+        "originalParticipants": [
+          {
+            "name": "Coronel",
+            "placement": "Runner Up",
+            "badge": null
+          },
+          {
+            "name": "Peggy",
+            "placement": "Runner Up",
+            "badge": null
+          },
+          {
+            "name": "Julián",
+            "placement": "3rd Place",
+            "badge": null
+          },
+          {
+            "name": "Alexandro",
+            "placement": "4th Place",
+            "badge": null
+          },
+          {
+            "name": "Isabel",
+            "placement": "5th/6th Place",
+            "badge": null
+          },
+          {
+            "name": "Pier",
+            "placement": "5th/6th Place",
+            "badge": null
+          },
+          {
+            "name": "Bryan Montalvo",
+            "placement": "7th Place",
+            "badge": null
+          },
+          {
+            "name": "Daelly",
+            "placement": "8th Place",
+            "badge": null
+          },
+          {
+            "name": "Andromeda",
+            "placement": "9th Place",
+            "badge": null
+          },
+          {
+            "name": "Luciano",
+            "placement": "10th Place",
+            "badge": null
+          },
+          {
+            "name": "Iñaella Rose",
+            "placement": "11th Place",
+            "badge": null
+          },
+          {
+            "name": "Ximena",
+            "placement": "12th Place",
+            "badge": null
+          },
+          {
+            "name": "Ignacio Ricci",
+            "placement": "13th Place",
+            "badge": null
+          },
+          {
+            "name": "Lucas Mendez",
+            "placement": "14th Place",
+            "badge": null
+          },
+          {
+            "name": "Greg",
+            "placement": "15th Place",
+            "badge": null
+          },
+          {
+            "name": "Garnet",
+            "placement": "16th Place",
+            "badge": null
+          },
+          {
+            "name": "Elvin",
+            "placement": "17th Place",
+            "badge": null
+          },
+          {
+            "name": "Bayron",
+            "placement": "18th Place",
+            "badge": null
+          },
+          {
+            "name": "Oscar",
+            "placement": "19th Place",
+            "badge": null
+          },
+          {
+            "name": "Sandro",
+            "placement": "20th Place",
+            "badge": null
+          },
+          {
+            "name": "Esteban",
+            "placement": "21st Place",
+            "badge": null
+          },
+          {
+            "name": "Rafael",
+            "placement": "22nd Place",
+            "badge": null
+          },
+          {
+            "name": "Emmy Mango",
+            "placement": "23rd Place",
+            "badge": null
+          },
+          {
+            "name": "Lalamila",
+            "placement": "24th Place",
+            "badge": null
+          },
+          {
+            "name": "Cocomong",
+            "placement": "25th Place",
+            "badge": null
+          },
+          {
+            "name": "Azealia Midnight",
+            "placement": "26th Place",
+            "badge": null
+          },
+          {
+            "name": "Eris Midnight",
+            "placement": "27th Place",
+            "badge": null
+          },
+          {
+            "name": "Catalina",
+            "placement": "28th Place",
+            "badge": null
+          },
+          {
+            "name": "Bonju",
+            "placement": null,
+            "badge": "host"
+          },
+          {
+            "name": "Dua Lengua",
+            "placement": null,
+            "badge": "staff"
+          }
+        ],
+        "versus": [
+          {
+            "year": "2023",
+            "episodes": [
+              {
+                "ep": "1",
+                "players": [
+                  "Ignacio Ricci",
+                  "Bryan Montalvo",
+                  "Cocomong",
+                  "Catalina"
+                ]
+              },
+              {
+                "ep": "2",
+                "players": [
+                  "Azealia Midnight",
+                  "Cocomong",
+                  "Sandro",
+                  "Eris Midnight"
+                ]
+              },
+              {
+                "ep": "3",
+                "players": [
+                  "Andromeda",
+                  "Elvin",
+                  "Garnet",
+                  "Lalamila",
+                  "Azealia Midnight"
+                ]
+              },
+              {
+                "ep": "4",
+                "players": [
+                  "Isabel",
+                  "Rafael",
+                  "Esteban",
+                  "Cocomong"
+                ]
+              },
+              {
+                "ep": "5",
+                "players": [
+                  "Emmy Mango",
+                  "Bayron",
+                  "Julián",
+                  "Lalamila",
+                  "Garnet"
+                ]
+              },
+              {
+                "ep": "6",
+                "players": [
+                  "Bryan Montalvo",
+                  "Julián",
+                  "Ximena",
+                  "Sandro"
+                ]
+              },
+              {
+                "ep": "7",
+                "players": [
+                  "Julián",
+                  "Bryan Montalvo",
+                  "Bayron",
+                  "Lalamila"
+                ]
+              },
+              {
+                "ep": "8",
+                "players": [
+                  "Isabel",
+                  "Sandro",
+                  "Esteban",
+                  "Oscar"
+                ]
+              },
+              {
+                "ep": "9",
+                "players": [
+                  "Bayron",
+                  "Andromeda",
+                  "Oscar",
+                  "Esteban"
+                ]
+              },
+              {
+                "ep": "10",
+                "players": [
+                  "Isabel",
+                  "Ignacio Ricci",
+                  "Sandro"
+                ]
+              },
+              {
+                "ep": "11",
+                "isComeback": true,
+                "winner": "Garnet",
+                "list": [
+                  "Garnet",
+                  "Esteban",
+                  "Eris Midnight",
+                  "Sandro",
+                  "Lalamila",
+                  "Azealia Midnight",
+                  "Cocomong",
+                  "Catalina"
+                ]
+              },
+              {
+                "ep": "12",
+                "players": [
+                  "Ignacio Ricci",
+                  "Ximena",
+                  "Bayron",
+                  "Oscar"
+                ],
+                "doubleElim": true
+              },
+              {
+                "ep": "13",
+                "players": [
+                  "Coronel",
+                  "Elvin",
+                  "Andromeda"
+                ]
+              },
+              {
+                "ep": "14",
+                "players": [
+                  "Isabel",
+                  "Coronel",
+                  "Elvin"
+                ]
+              },
+              {
+                "ep": "15",
+                "players": [
+                  "Isabel",
+                  "Bryan Montalvo",
+                  "Garnet"
+                ]
+              }
+            ]
+          },
+          {
+            "year": "2025",
+            "episodes": [
+              {
+                "ep": "16",
+                "players": [
+                  "Coronel",
+                  "Lucas Mendez"
+                ],
+                "isDueloVictoria": true
+              },
+              {
+                "ep": "17",
+                "players": [
+                  "Julián",
+                  "Peggy",
+                  "Greg"
+                ]
+              },
+              {
+                "ep": "18",
+                "players": [
+                  "Daelly",
+                  "Luciano",
+                  "Ximena",
+                  "Lucas Mendez"
+                ]
+              },
+              {
+                "ep": "19",
+                "players": [
+                  "Alexandro",
+                  "Iñaella Rose",
+                  "Ignacio Ricci"
+                ]
+              },
+              {
+                "ep": "20",
+                "players": [
+                  "Iñaella Rose",
+                  "Isabel",
+                  "Bryan Montalvo",
+                  "Ximena"
+                ]
+              },
+              {
+                "ep": "21",
+                "players": [
+                  "Julián",
+                  "Luciano",
+                  "Iñaella Rose"
+                ]
+              },
+              {
+                "ep": "22",
+                "players": [
+                  "Peggy",
+                  "Luciano"
+                ]
+              },
+              {
+                "ep": "23",
+                "players": [
+                  "Pier",
+                  "Isabel",
+                  "Bryan Montalvo",
+                  "Alexandro",
+                  "Andromeda"
+                ]
+              },
+              {
+                "ep": "24",
+                "players": [
+                  "Julián",
+                  "Coronel",
+                  "Peggy",
+                  "Bryan Montalvo"
+                ]
+              },
+              {
+                "ep": "25",
+                "isComeback": true,
+                "winner": "Bryan Montalvo",
+                "list": [
+                  "Bryan Montalvo",
+                  "Lucas Mendez",
+                  "Luciano",
+                  "Ignacio Ricci",
+                  "Andromeda",
+                  "Ximena",
+                  "Iñaella Rose",
+                  "Greg"
+                ]
+              },
+              {
+                "ep": "28",
+                "players": [
+                  "Julián",
+                  "Alexandro"
+                ]
+              },
+              {
+                "ep": "30",
+                "players": [
+                  "Coronel",
+                  "Peggy",
+                  "Julián"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@
 let campriaArchivePromise=null;
 const seasonView={id:null,tab:'resumen',record:null,item:null};
 const seasonInitials=name=>name.trim().split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase();
-const seasonTabs=record=>[['resumen','Resumen'],['participantes','Participantes'],['track-record','Track record'],...(record.versus?[['versus','Versus']]:[])];
+const seasonTabs=record=>record.franchise==='The Xpedition'?xpeditionSeasonTabs(record):[['resumen','Resumen'],['participantes','Participantes'],['track-record','Track record'],...(record.versus?[['versus','Versus']]:[])];
 function criticsBadge(item){
  if(!item.critics)return '';
  const score=Number(item.critics.score).toFixed(1);
@@ -14,6 +14,7 @@ async function loadCampriaArchive(){
  return campriaArchivePromise;
 }
 async function renderSeasonPage(id){
+ if(['antarctica','safari'].includes(id))return renderXpeditionSeason(id);
  if($('#modal').open)closeModal();
  const item=state.catalog.content.campria.find(x=>x.id===id);
  if(!item){$('#main').innerHTML=empty('Esta temporada no está disponible.','Explora las doce temporadas de Campria.','go-explore','Ver temporadas');return;}
@@ -36,6 +37,7 @@ async function renderSeasonPage(id){
 function seasonPlacement(value){
  if(value==='Host')return 'Presentación';
  if(value==='Judge')return 'Jurado';
+ if(value==='Staff')return 'Staff';
  if(/^winner$/i.test(value))return '1.er lugar';
  if(/^runner[ -]?up$/i.test(value))return '2.º lugar';
  const positions=value.match(/\d+/g);if(positions)return positions.map(n=>n+'.º').join(' / ')+' lugar';
@@ -52,6 +54,7 @@ function seasonParticipantCard(person){
 }
 function seasonPanel(){
  const {record,item,tab}=seasonView;
+ if(record.franchise==='The Xpedition')return xpeditionSeasonPanel();
  if(tab==='resumen')return `<div class="ch-overview"><article class="ch-story"><div class="eyebrow">LA HISTORIA DE LA TEMPORADA</div><h2>Acerca de ${esc(item.name)}</h2><p>${esc(record.description)}</p><div class="ch-genres">${(state.catalog.details[item.id]?.genres||[]).map(g=>`<span>${esc(g)}</span>`).join('')}</div><div class="ch-story-credits"><span>UNIVERSO</span><strong>Campria</strong><span>PRESENTACIÓN</span><strong>${castNames(['Maria Villegas'])}</strong></div></article><figure class="ch-original-poster"><button data-season-action="poster" aria-label="Ampliar póster original de ${esc(item.name)}"><img src="${esc(record.poster)}" alt="Póster original de ${esc(item.name)}" loading="lazy"><span>${icon('search')} Ampliar póster</span></button><figcaption>El arte de ${esc(item.name)}</figcaption></figure></div><div class="ch-section-head"><div><div class="eyebrow">LOS ROSTROS DE LA TEMPORADA</div><h2>Elenco Principal</h2></div><button class="link-button" data-season-action="tab" data-tab="participantes">Ver participantes ${icon('arrow')}</button></div><div class="ch-participants-preview">${record.mainCast.map(seasonParticipantCard).join('')}</div>${record.versus?`<button class="ch-extra-banner" data-season-action="tab" data-tab="versus"><span>${icon('game')} <span><strong>Los duelos que cambiaron el juego.</strong><small>${record.versus.rounds.length} enfrentamientos · Explora Versus</small></span></span>${icon('arrow')}</button>`:''}`;
  if(tab==='participantes'){
   const cast=state.catalog.details[item.id]?.cast||[];
