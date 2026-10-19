@@ -449,7 +449,22 @@
                   ],
                   "description": "Emanuel Bagundo vs. Andrómeda, Felix, Isabel, Peggy, Beto, Vita, Catalina, Iñaella Rose e Ignacio Ricci.",
                   "note": "Premio solo para Emanuel",
-                  "winner": true
+                  "winner": true,
+                  "nominationCredits": [
+                    "Emanuel",
+                    "Andrómeda",
+                    "Felix",
+                    "Isabel",
+                    "Peggy",
+                    "Beto",
+                    "Vita",
+                    "Catalina",
+                    "Iñaella Rose",
+                    "Ignacio Ricci"
+                  ],
+                  "awardRecipients": [
+                    "Emanuel"
+                  ]
                 }
               ]
             },

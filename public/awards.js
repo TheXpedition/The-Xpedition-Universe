@@ -115,9 +115,11 @@ function awardProfileTotals(archive){
  const totals=new Map();
  const add=(name,nominations,awards)=>{const key=castKey(awardIdentity(name)),current=totals.get(key)||{nominations:0,awards:0};current.nominations+=nominations;current.awards+=awards;totals.set(key,current);};
  for(const edition of Object.values(archive.editions))for(const group of edition.groups)for(const category of group.categories)for(const nominee of category.nominees){
-  const people=[...nominee.people,...(category.production||group.id==='produccion'?['Bonju']:[])];
+  const production=category.production||group.id==='produccion'?['Bonju']:[];
+  const people=[...(nominee.nominationCredits||nominee.people),...production];
   const credited=new Map(people.map(name=>[castKey(awardIdentity(name)),name]));
-  for(const name of credited.values())add(name,1,nominee.winner?1:0);
+  const recipients=new Set([...(nominee.awardRecipients||nominee.people),...production].map(name=>castKey(awardIdentity(name))));
+  for(const [key,name] of credited)add(name,1,nominee.winner&&recipients.has(key)?1:0);
  }
  for(const [name,extra] of Object.entries(archive.profileExtras||{}))add(name,extra.nominations,extra.awards);
  return totals;

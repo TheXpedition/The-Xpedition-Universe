@@ -123,9 +123,17 @@ test('Eris sustituye a Angel en el dúo y los cinco integrantes reciben la nomin
 
 test('los perfiles cuentan cada nominación individual, repetida, de grupo y de dúo sin deduplicar categorías',()=>{
  const {context:c}=context(),totals=c.awardProfileTotals(archive);
- for(const [name,nominations,awards] of [['Eris Midnight',10,2],['Dani',7,1],['Vita',4,0],['Emanuel',9,2],['Bayron',10,1],['Ximena',8,3],['Iñaella Rose',11,3]]){
+ for(const [name,nominations,awards] of [['Eris Midnight',10,2],['Dani',7,1],['Vita',5,0],['Emanuel',9,2],['Bayron',10,1],['Ximena',8,3],['Iñaella Rose',12,3]]){
   const actual=totals.get(castKey(name));assert.equal(actual.nominations,nominations,name);assert.equal(actual.awards,awards,name);
  }
+});
+
+test('la rivalidad de Emanuel nomina a todos los involucrados y entrega el premio solo a Emanuel',()=>{
+ const nominee=archive.editions['edicion-1'].groups.find(g=>g.id==='generales').categories.find(c=>c.id==='rivalidad').nominees.find(n=>n.winner);
+ const {context:c}=context();
+ const totals=c.awardProfileTotals({editions:{one:{groups:[{id:'generales',categories:[{nominees:[nominee]}]}]}}});
+ assert.equal(totals.size,10);
+ for(const [key,total] of totals){assert.equal(total.nominations,1);assert.equal(total.awards,key==='emanuel'?1:0);}
 });
 
 test('Bonju recibe producción y extras; Maria Villegas y Dua Lingo conservan sus extras adicionales',()=>{
