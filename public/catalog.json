@@ -1787,6 +1787,12 @@
       "image": "personajes/joaquin.png"
     },
     {
+      "name": "Jose Julián",
+      "image": "personajes/josejulian.png",
+      "pronouns": "el",
+      "genderIdentity": "Hombre"
+    },
+    {
       "name": "Jose Serna",
       "image": "personajes/joseserna.png"
     },
@@ -1887,6 +1893,12 @@
       "image": "personajes/melrz.png"
     },
     {
+      "name": "Meow",
+      "image": "personajes/meow.png",
+      "pronouns": "elle",
+      "genderIdentity": "No Binario"
+    },
+    {
       "name": "Miguel Lima",
       "image": "personajes/miguellima.png"
     },
@@ -1905,6 +1917,12 @@
     {
       "name": "Nahuee",
       "image": "personajes/nahuee.png"
+    },
+    {
+      "name": "Neila Drag",
+      "image": "personajes/neiladrag.png",
+      "pronouns": "ella",
+      "genderIdentity": "Mujer"
     },
     {
       "name": "Nicki Gorilaj",
@@ -1969,6 +1987,12 @@
     {
       "name": "Roal",
       "image": "personajes/roal.png"
+    },
+    {
+      "name": "Robert",
+      "image": "personajes/robert.png",
+      "pronouns": "el",
+      "genderIdentity": "Hombre"
     },
     {
       "name": "Robin",

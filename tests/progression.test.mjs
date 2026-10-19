@@ -6,6 +6,8 @@ import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {openDatabase} from '../database.mjs';
 import {createProgression,levelFor} from '../progression.mjs';
+import {applyRequestedAccountAdjustment} from '../account-adjustments.mjs';
+import {createHash} from 'node:crypto';
 process.env.DATABASE_URL='';process.env.PERSISTENCE_MODE='local';
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'xpedition-economy-')),db=await openDatabase(dir);
 const shop=JSON.parse(fs.readFileSync(new URL('../public/simulator/catalog.json',import.meta.url))),catalog=JSON.parse(fs.readFileSync(new URL('../public/catalog.json',import.meta.url)));
@@ -15,14 +17,56 @@ const advance=seconds=>clock+=seconds*1000;
 async function user(){const id=randomUUID();await db.run('INSERT INTO users(id,name,name_key,email,avatar,bio,created) VALUES(?,?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani','Mi próxima aventura empieza aquí.',clock);const user=await db.one('SELECT * FROM users WHERE id=?',id);await progression.bootstrap(user);return user;}
 async function request(user,url,method='GET',payload={}){const res={};try{const action=()=>progression.handle({method,payload},res,new URL(url,'https://test.invalid'),user);if(method==='GET')await action();else await serialize(action);return {status:res.status,...res.result};}catch(e){if(!e.status)throw e;return {status:e.status,error:e.message};}}
 after(()=>db.close());
+const playableSnapshot={version:1,engine:'game',point:'core:3',state:{vars:{selected18:['Dani','Dua Lingo']}}};
+async function savedRun(u){const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const saved=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:0,snapshot:playableSnapshot,episode:0});assert.equal(saved.saved,true);return {...run,revision:saved.revision};}
 
-test('el catálogo incluye los 152 personajes, los 36 iniciales y solo cuatro regalos para reclamar',()=>{
- const chars=shop.items.filter(i=>i.kind==='character');assert.equal(chars.length,152);assert.equal(chars.filter(i=>i.starter).length,36);
+test('cada personaje tiene un talento único y los cuatro nuevos conservan precio, identidad e icono',()=>{
+ const chars=shop.items.filter(i=>i.kind==='character');assert.equal(new Set(chars.map(i=>i.talent.toLowerCase())).size,chars.length);
+ for(const name of ['Jose Julián','Meow','Neila Drag','Robert']){const c=chars.find(i=>i.name===name);assert.equal(c.price,65);assert.equal(c.starter,false);assert(fs.existsSync(new URL('../public'+c.image,import.meta.url)));}
+ assert.equal(chars.find(i=>i.name==='Meow').pronouns,'They / Them');assert.equal(chars.find(i=>i.name==='Meow').gender,'F');
+});
+test('cupones válidos son atómicos, privados y sirven una sola vez por cuenta',async()=>{
+ const u=await user(),v=await user(),before=await progression.wallet(u.id);
+ const results=await Promise.all([request(u,'/api/economy/redeem','POST',{code:'Bonju'}),request(u,'/api/economy/redeem','POST',{code:'BONJU'})]);assert.deepEqual(results.map(r=>r.status).sort(),[200,409]);assert.equal((await progression.wallet(u.id)).coins,before.coins+500);assert.equal((await progression.wallet(v.id)).coins,80);
+ assert.equal((await request(u,'/api/economy/redeem','POST',{code:'nope'})).status,400);
+ for(const code of ['ChatGPT','Moda','LGBTQ'])assert.equal((await request(u,'/api/economy/redeem','POST',{code})).status,200);
+ const inventory=(await progression.view(u.id)).owned;for(const id of ['character:chadgilpete','character:ednadroga','team:lesbianas','team:gays','team:trans'])assert(inventory.includes(id));
+ const level=(await progression.wallet(u.id)).level;assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).wallet.level,level+1);assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).status,409);
+});
+test('quitar de colección y desactivar autoguardado conservan inventario y saldo; guardar manualmente funciona',async()=>{
+ const u=await user();await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const before=await progression.wallet(u.id);
+ await request(u,'/api/economy/preferences','POST',{item:'character:vladimir',enabled:false,autosave:false});const view=await progression.view(u.id);assert(view.owned.includes('character:vladimir'));assert(view.preferences.hidden.includes('character:vladimir'));assert.equal(view.preferences.autosave,false);assert.deepEqual(view.wallet,before);
+ assert.equal((await request(u,'/api/economy/preferences','POST',{item:'character:bonju',enabled:false})).status,400);
+ const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;
+ const unsaved=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:0,snapshot:playableSnapshot,episode:0});assert.equal(unsaved.saved,false);assert.equal((await request(u,'/api/game-runs')).runs.length,0);
+ const manual=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:unsaved.revision,snapshot:playableSnapshot,episode:0,manual:true});assert.equal(manual.saved,true);assert.equal((await request(u,'/api/game-runs')).runs.length,1);
+ await request(u,'/api/economy/preferences','POST',{item:'character:vladimir',enabled:true});assert(!(await progression.view(u.id)).preferences.hidden.includes('character:vladimir'));
+});
+test('la selección inicial vacía no aparece guardada ni impide empezar otra temporada',async()=>{
+ const u=await user(),run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;
+ const saved=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:0,snapshot:{version:1,point:'setup',state:{vars:{selected18:[]}}},episode:0});assert.equal(saved.saved,false);assert.equal((await progression.view(u.id)).activeRun,null);assert.deepEqual((await request(u,'/api/game-runs')).runs,[]);assert.equal((await request(u,'/api/game-runs','POST',{mode:'antarctica'})).status,201);
+});
+test('archivar, continuar y eliminar partidas mantienen monedas, tickets y todas las otras cuentas',async()=>{
+ const u=await user(),v=await user(),run=await savedRun(u),before=await progression.wallet(u.id),other=await progression.wallet(v.id);
+ await request(u,'/api/game-runs/'+run.id+'/abandon','POST');assert.equal((await request(u,'/api/game-runs')).runs[0].status,'archived');const resumed=await request(u,'/api/game-runs/'+run.id+'/resume','POST');assert.equal(resumed.run.status,'active');assert.deepEqual(resumed.run.snapshot,playableSnapshot);
+ assert.equal((await request(v,'/api/game-runs/'+run.id,'DELETE')).status,404);assert.equal((await request(u,'/api/game-runs/'+run.id,'DELETE')).status,200);assert.deepEqual((await request(u,'/api/game-runs')).runs,[]);assert.deepEqual(await progression.wallet(u.id),before);assert.deepEqual(await progression.wallet(v.id),other);
+});
+test('una partida archivada vence a las 24 horas y la actividad reciente muestra solo diez registros',async()=>{
+ const u=await user(),run=await savedRun(u);await request(u,'/api/game-runs/'+run.id+'/abandon','POST');advance(86399);assert.equal((await request(u,'/api/game-runs')).runs.length,1);advance(1);assert.equal((await request(u,'/api/game-runs/'+run.id+'/resume','POST')).status,404);assert.equal((await request(u,'/api/game-runs')).runs.length,0);
+ for(let i=0;i<15;i++){advance(1);await progression.grant(u.id,'history:'+i,{label:'Registro '+i});}const history=(await request(u,'/api/economy/history')).history;assert.equal(history.length,10);assert.equal(history[0].label,'Registro 14');
+});
+test('el ajuste solicitado solo aumenta la cuenta exacta una vez y conserva todos los tickets y otros saldos',async()=>{
+ const u=await user(),v=await user(),before=await progression.wallet(u.id),other=await progression.wallet(v.id),adjustment={emailHash:createHash('sha256').update(u.email).digest('hex'),key:'test-owner-adjustment',xp:43300,coins:10000};
+ assert.equal(await applyRequestedAccountAdjustment(db,adjustment),true);assert.equal(await applyRequestedAccountAdjustment(db,adjustment),false);const after=await progression.wallet(u.id);assert.equal(after.level,50);assert.equal(after.coins,before.coins+10000);assert.equal(after.tickets,before.tickets);assert.deepEqual(await progression.wallet(v.id),other);
+});
+
+test('el catálogo incluye los 156 personajes, los 36 iniciales y solo cuatro regalos para reclamar',()=>{
+ const chars=shop.items.filter(i=>i.kind==='character');assert.equal(chars.length,156);assert.equal(chars.filter(i=>i.starter).length,36);
  assert.deepEqual(chars.filter(i=>!i.starter&&!i.price).map(i=>i.name).sort(),['Alex Yohender','Daniel Sims','Lily Louvre','Vladimir']);
  assert(chars.find(i=>i.name==='Dua Lingo').starter);assert(!chars.find(i=>i.name==='Bonju').starter);
  const premium=['Bonju','Dios','Britney Britney','Jiafei','Heidi Cum','Ariana Glande','Chad Gil Pete','Candy Cookies','Vitany Glambert','Cassandra Louvre','Maria Isabel','Eduardo Buñuelo'];
  assert(chars.filter(i=>premium.includes(i.name)).every(i=>i.price>=220&&i.premium));assert(chars.filter(i=>!i.premium&&!i.starter&&i.price).every(i=>i.price===65));
- for(const i of chars)assert(['Ella / She','Él / He'].includes(i.pronouns));
+ for(const i of chars)assert(['Ella / She','Él / He','They / Them'].includes(i.pronouns));
  assert.equal(chars.find(i=>i.name==='Britney Britney').talent,'Hacer Playback');assert.equal(chars.find(i=>i.name==='Gustavo').talent,'Cobrar la Renta');assert.equal(chars.find(i=>i.name==='Emily Waldorf').talent,'Servir café en el aeropuerto');
 });
 test('bienvenida y visita diaria se acreditan una sola vez, sin mezclar tickets con monedas',async()=>{
@@ -45,17 +89,17 @@ test('reclamar, comprar en paralelo, precios del servidor y saldo insuficiente c
 });
 test('solo Antarctica está abierta al inicio, Safari se abre en 2, Traitor en 5 y World es la compra más cara',async()=>{
  const u=await user();assert(await progression.canPlay(u.id,'antarctica'));for(const m of ['safari','traitor','cruise','house','race','world','japan'])assert(!await progression.canPlay(u.id,m));
- await progression.grant(u.id,'qa:level2',{xp:60});assert.equal(levelFor(60),2);assert(await progression.canPlay(u.id,'safari'));
- await progression.grant(u.id,'qa:level5',{xp:520,coins:1500});assert(await progression.canPlay(u.id,'traitor'));assert(!await progression.canPlay(u.id,'house'));
+ await progression.grant(u.id,'qa:level2',{xp:60});assert.equal(levelFor(60),2);assert(!await progression.canPlay(u.id,'safari'));await request(u,'/api/economy/buy','POST',{item:'mode:safari'});assert(await progression.canPlay(u.id,'safari'));
+ await progression.grant(u.id,'qa:level5',{xp:520,coins:1500});assert(!await progression.canPlay(u.id,'traitor'));await request(u,'/api/economy/buy','POST',{item:'mode:traitor'});assert(await progression.canPlay(u.id,'traitor'));assert(!await progression.canPlay(u.id,'house'));
  assert.equal((await request(u,'/api/economy/buy','POST',{item:'mode:house'})).status,200);assert(await progression.canPlay(u.id,'house'));
  assert(shop.modes.filter(m=>m.id!=='world').every(m=>m.price<shop.modes.find(m=>m.id==='world').price));assert(!await progression.canPlay(u.id,'japan'));
 });
 test('partidas privadas, una partida activa y conflictos de revisión impiden sobrescribir otra ventana',async()=>{
  const u=await user(),v=await user();assert.equal((await request(null,'/api/economy')).status,401);assert.equal((await request(u,'/api/game-runs','POST',{mode:'world'})).status,403);
  const started=await request(u,'/api/game-runs','POST',{mode:'antarctica'}),id=started.run.id;
- assert.equal((await request(u,'/api/game-runs','POST',{mode:'antarctica'})).status,409);assert.equal((await request(v,'/api/game-runs/'+id)).status,404);
- const snap={version:1,engine:'game',point:'setup',state:{vars:{selected18:['Dani','Dua Lingo']}}};
- assert.equal((await request(u,'/api/game-runs/'+id,'PUT',{revision:0,snapshot:snap,episode:0})).revision,1);
+ assert.equal((await request(v,'/api/game-runs/'+id)).status,404);
+ const snap={version:1,engine:'game',point:'core:3',state:{vars:{selected18:['Dani','Dua Lingo']}}};
+ assert.equal((await request(u,'/api/game-runs/'+id,'PUT',{revision:0,snapshot:snap,episode:0})).revision,1);assert.equal((await request(u,'/api/game-runs','POST',{mode:'antarctica'})).status,409);
  assert.equal((await request(u,'/api/game-runs/'+id,'PUT',{revision:0,snapshot:{...snap,point:'stale'},episode:0})).status,409);
  assert.deepEqual((await request(u,'/api/game-runs/'+id)).run.snapshot,snap);
  assert.equal((await request(u,'/api/game-runs/'+id+'/abandon','POST')).status,200);assert.equal((await request(u,'/api/game-runs')).runs[0].status,'archived');
@@ -72,13 +116,13 @@ test('tiempo activo limitado por el reloj del servidor y finalizaciones repetida
  assert.equal((await request(u,'/api/game-runs/'+run.id+'/finish','POST',{winner:'Dani'})).status,409);
  await request(u,'/api/economy/activity','POST',{surface:'simulator',route:'simuladores',seconds:999999,run:run.id});
  assert.equal(Number((await db.one('SELECT active_seconds FROM game_runs WHERE id=?',run.id)).active_seconds),0);
- for(let episode=1;episode<=4;episode++){advance(20);await request(u,'/api/economy/activity','POST',{surface:'simulator',route:'simuladores',seconds:20,run:run.id});assert.equal((await request(u,'/api/game-runs/'+run.id,'PUT',{revision:episode-1,episode,snapshot:{version:1,engine:'game',point:'core:6'}})).status,200);}
+ for(let episode=1;episode<=4;episode++){advance(20);await request(u,'/api/economy/activity','POST',{surface:'simulator',route:'simuladores',seconds:20,run:run.id});assert.equal((await request(u,'/api/game-runs/'+run.id,'PUT',{revision:episode-1,episode,snapshot:{version:1,engine:'game',point:'core:6',state:{vars:{selected18:['Dani']}}}})).status,200);}
  const before=await progression.wallet(u.id);const won=await request(u,'/api/game-runs/'+run.id+'/finish','POST',{winner:'Dani'});assert(won.rewarded);assert.equal(won.wallet.tickets-before.tickets,43);assert.equal(won.wallet.level,2);
  const repeated=await request(u,'/api/game-runs/'+run.id+'/finish','POST',{winner:'Dani'});assert(repeated.alreadyFinished);assert.deepEqual(repeated.wallet,won.wallet);
 });
 test('Vs. The World congela los representantes elegidos y el bonus en solitario es mayor',async()=>{
  async function finishWorld(reps){const u=await user();await progression.grant(u.id,'qa:unlock',{xp:1320,coins:2000});await request(u,'/api/economy/buy','POST',{item:'mode:world'});const run=(await request(u,'/api/game-runs','POST',{mode:'world'})).run;
-  for(let episode=1;episode<=4;episode++){advance(20);await request(u,'/api/economy/activity','POST',{surface:'simulator',route:'simuladores',seconds:20,run:run.id});await request(u,'/api/game-runs/'+run.id,'PUT',{revision:episode-1,episode,representatives:episode===1?reps:['Dua Lingo'],snapshot:{version:1,engine:'game',point:'world:renderTrack'}});}
+  for(let episode=1;episode<=4;episode++){advance(20);await request(u,'/api/economy/activity','POST',{surface:'simulator',route:'simuladores',seconds:20,run:run.id});await request(u,'/api/game-runs/'+run.id,'PUT',{revision:episode-1,episode,representatives:episode===1?reps:['Dua Lingo'],snapshot:{version:1,engine:'game',point:'world:renderTrack',state:{world:{reps}}}});}
   assert.deepEqual(JSON.parse((await db.one('SELECT representatives FROM game_runs WHERE id=?',run.id)).representatives),reps);
   const before=await progression.wallet(u.id),after=await request(u,'/api/game-runs/'+run.id+'/finish','POST',{winner:reps[0]});return after.wallet.tickets-before.tickets;
  }
@@ -91,5 +135,5 @@ test('publicaciones, comentarios y grupos tienen límites diarios y deduplican e
 });
 test('monedas, inventario y partidas permanecen al reabrir la base de datos',async()=>{
  const u=await user();await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const reopened=await openDatabase(dir);
- try{assert.equal((await reopened.one('SELECT tickets FROM user_progression WHERE user_id=?',u.id)).tickets,18);assert(await reopened.one('SELECT 1 FROM economy_inventory WHERE user_id=? AND item_id=?',u.id,'character:vladimir'));assert(await reopened.one('SELECT 1 FROM game_runs WHERE id=? AND user_id=?',run.id,u.id));}finally{await reopened.close();}
+ try{assert.equal((await reopened.one('SELECT tickets FROM user_progression WHERE user_id=?',u.id)).tickets,17);assert(await reopened.one('SELECT 1 FROM economy_inventory WHERE user_id=? AND item_id=?',u.id,'character:vladimir'));assert(await reopened.one('SELECT 1 FROM game_runs WHERE id=? AND user_id=?',run.id,u.id));}finally{await reopened.close();}
 });

@@ -26,7 +26,9 @@ export function popularityOrder(characters,details){
   const priority=new Set(['antarctica','safari','traitor-showdown'].flatMap(id=>details[id]?.cast||[]).map(key));
   const used=new Set([...first,...last].map(key));
   const rest=characters.filter(c=>!used.has(key(c.name))).sort((a,b)=>Number(priority.has(key(b.name)))-Number(priority.has(key(a.name)))||a.name.localeCompare(b.name,'es'));
-  return [...first.map(n=>available.get(key(n))),...rest,...last.map(n=>available.get(key(n)))].filter(Boolean);
+  const newcomers=['Jose Julián','Meow','Neila Drag','Robert'],newKeys=new Set(newcomers.map(key));
+  const ordered=[...first.map(n=>available.get(key(n))),...rest,...last.map(n=>available.get(key(n)))].filter(c=>c&&!newKeys.has(key(c.name)));
+  ordered.splice(Math.floor(ordered.length*.63),0,...newcomers.map(n=>available.get(key(n))).filter(Boolean));return ordered;
 }
 export function createSocial({db,storage,characters,details,stickers,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression}){
   const order=popularityOrder(characters,details),ids=new Set(characters.map(c=>c.id));

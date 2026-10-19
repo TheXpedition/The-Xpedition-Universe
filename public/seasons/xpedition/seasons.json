@@ -21,10 +21,10 @@
         "height": 601
       },
       "images": {
-        "Dani": "personajes/dani.png",
+        "Dani": "seasons/xpedition/antarctica/dani-original.webp",
         "Andromeda": "seasons/xpedition/antarctica/andromeda.webp",
         "Bayron": "seasons/xpedition/antarctica/bayron.webp",
-        "Felix": "personajes/felix.png",
+        "Felix": "seasons/xpedition/antarctica/felix-original.webp",
         "Isabel": "seasons/xpedition/antarctica/isabel.webp",
         "Peggy": "seasons/xpedition/antarctica/peggy.webp",
         "Eris Midnight": "seasons/xpedition/antarctica/erismidnight.webp",
@@ -38,7 +38,7 @@
         "Iñaella Rose": "seasons/xpedition/antarctica/inaellarose.webp",
         "Ignacio Ricci": "seasons/xpedition/antarctica/ignacioricci.webp",
         "Ivan Serrano": "seasons/xpedition/antarctica/ivanserrano.webp",
-        "Pier": "personajes/pier.png",
+        "Pier": "seasons/xpedition/antarctica/pier-original.webp",
         "Bonju": "seasons/xpedition/antarctica/bonju.webp",
         "Dua Lingo": "seasons/xpedition/antarctica/dualingo.webp"
       },
@@ -46,7 +46,7 @@
         {
           "name": "Dani",
           "place": "Winner",
-          "image": "personajes/dani.png"
+          "image": "seasons/xpedition/antarctica/dani-original.webp"
         },
         {
           "name": "Andromeda",
@@ -61,7 +61,7 @@
         {
           "name": "Felix",
           "place": "4th Place",
-          "image": "personajes/felix.png"
+          "image": "seasons/xpedition/antarctica/felix-original.webp"
         },
         {
           "name": "Isabel",
@@ -131,7 +131,7 @@
         {
           "name": "Pier",
           "place": "18th Place",
-          "image": "personajes/pier.png"
+          "image": "seasons/xpedition/antarctica/pier-original.webp"
         },
         {
           "name": "Bonju",
@@ -158,7 +158,7 @@
         {
           "name": "Dani",
           "place": "Winner",
-          "image": "personajes/dani.png"
+          "image": "seasons/xpedition/antarctica/dani-original.webp"
         },
         {
           "name": "Andromeda",
@@ -173,7 +173,7 @@
         {
           "name": "Felix",
           "place": "4th Place",
-          "image": "personajes/felix.png"
+          "image": "seasons/xpedition/antarctica/felix-original.webp"
         }
       ],
       "teams": [
@@ -853,7 +853,7 @@
         "Julián": "seasons/xpedition/safari/julian.webp",
         "Alexandro": "seasons/xpedition/safari/alexandro.webp",
         "Isabel": "seasons/xpedition/safari/isabel.webp",
-        "Pier": "personajes/pier.png",
+        "Pier": "seasons/xpedition/safari/pier-original.webp",
         "Bryan Montalvo": "seasons/xpedition/safari/bryanmontalvo.webp",
         "Daelly": "seasons/xpedition/safari/daelly.webp",
         "Andromeda": "seasons/xpedition/safari/andromeda.webp",
@@ -908,7 +908,7 @@
         {
           "name": "Pier",
           "place": "5th/6th Place",
-          "image": "personajes/pier.png"
+          "image": "seasons/xpedition/safari/pier-original.webp"
         },
         {
           "name": "Bryan Montalvo",

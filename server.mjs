@@ -1,6 +1,7 @@
 import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
 import {createProgression} from './progression.mjs';
+import {applyRequestedAccountAdjustment} from './account-adjustments.mjs';
 import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
@@ -27,7 +28,8 @@ const characters = catalog.characters.map(c => ({
   avatar: c.name,
   bio: `Personaje del universo The Xpedition.`,
   stats: catalog.stats[c.name] || ({}),
-  character: true
+  character: true,
+  pronouns:c.pronouns||'',genderIdentity:c.genderIdentity||''
 }));
 const characterIds = new Set(characters.map(c => c.id));
 const scrypt = promisify(scryptCb);
@@ -774,6 +776,8 @@ async function serialize(fn){
   try{return await fn();}finally{release();}
 }
 const progression=createProgression({db,shop:JSON.parse(fs.readFileSync(path.join(publicDir,'simulator/catalog.json'),'utf8')),catalog,body,json,fail,checkRate,serialize,notify});
+if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta solicitado aplicado una sola vez: nivel mínimo 50 y 10000 monedas adicionales.');
+await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){

@@ -5,6 +5,11 @@ export function levelFor(xp){let level=1;while(xp>=(xpThresholds[level]??3300+(l
 export const dayKey=time=>new Date(time-5*3600000).toISOString().slice(0,10);
 const digest=value=>createHash('sha256').update(value).digest('hex').slice(0,32);
 export const gameKey=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+export function hasPlayableCast(snapshot){
+ if(!snapshot||snapshot.version!==1||!snapshot.state||snapshot.point==='setup'||snapshot.point==='world:renderCast')return false;
+ const v=snapshot.state.vars||{},w=snapshot.state.world;
+ return !!(v.selected18?.length||v.activePlayers?.length||v.selectedPlayers?.length||v.cast?.length||v.raceSeason?.teams?.length||w?.cast?.length||w?.reps?.filter(Boolean).length);
+}
 
 export function createProgression({db,shop,catalog,body,json,fail,checkRate,serialize,notify,now=Date.now}){
  const items=new Map(shop.items.map(item=>[item.id,item]));
@@ -64,13 +69,17 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
   return limited(uid,type,rule.limit,key,{tickets:rule.tickets,label:rule.label});
  }
  async function inventory(uid){return new Set((await db.all('SELECT item_id FROM economy_inventory WHERE user_id=?',uid)).map(row=>row.item_id));}
+ async function preferences(uid){const row=await db.one('SELECT autosave,hidden FROM simulator_preferences WHERE user_id=?',uid);return {autosave:row?!!Number(row.autosave):true,hidden:JSON.parse(row?.hidden||'[]')};}
+ async function expireArchives(uid){await db.run("UPDATE game_runs SET status='expired' WHERE user_id=? AND status='archived' AND updated<=?",uid,now()-86400000);}
  async function canPlay(uid,mode){const item=modes.get(mode);if(!item||item.upcoming)return false;const w=await wallet(uid);return w.level>=item.level&&(!item.price||(await inventory(uid)).has('mode:'+mode));}
  async function view(uid){
   const w=await wallet(uid),owned=await inventory(uid);
-  return {wallet:w,owned:[...owned],shop,activeRun:await activeRun(uid)};
+  await expireArchives(uid);
+  return {wallet:w,owned:[...owned],preferences:await preferences(uid),shop,activeRun:await activeRun(uid)};
  }
  async function activeRun(uid){
-  const row=await db.one("SELECT id,mode,revision,updated,episode FROM game_runs WHERE user_id=? AND status='active' ORDER BY updated DESC LIMIT 1",uid);
+  const rows=await db.all("SELECT id,mode,status,snapshot,revision,updated,episode FROM game_runs WHERE user_id=? AND status='active' ORDER BY updated DESC",uid);
+  const row=rows.find(row=>hasPlayableCast(JSON.parse(row.snapshot)));if(row)delete row.snapshot;
   return row?{...row,updated:Number(row.updated),revision:Number(row.revision),episode:Number(row.episode)}:null;
  }
  async function owned(uid,kind,value){const key=gameKey(value),alias=shop.aliases[key]||key,item=items.get(kind+':'+alias);return !!item&&(item.starter||(await inventory(uid)).has(item.id));}
@@ -87,7 +96,21 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    });json(res,result);return true;
   }
   if(p==='/api/economy/history'&&method==='GET'){
-   json(res,{history:await db.all('SELECT tickets,coins,xp,label,created FROM economy_rewards WHERE user_id=? ORDER BY created DESC LIMIT 40',user.id)});return true;
+   json(res,{history:await db.all('SELECT tickets,coins,xp,label,created FROM economy_rewards WHERE user_id=? ORDER BY created DESC,event_key DESC LIMIT 10',user.id)});return true;
+  }
+  if(p==='/api/economy/preferences'&&method==='POST'){
+   const b=await body(req),pref=await preferences(user.id);
+   if(b.autosave!==undefined){if(typeof b.autosave!=='boolean')fail(400,'Elige el estado del guardado automático.');pref.autosave=b.autosave;}
+   if(b.item!==undefined){const item=items.get(b.item);if(item?.kind!=='character'||typeof b.enabled!=='boolean'||!await owned(user.id,'character',item.name))fail(400,'Elige un personaje de tu colección.');const hidden=new Set(pref.hidden);if(b.enabled)hidden.delete(item.id);else hidden.add(item.id);pref.hidden=[...hidden];}
+   await db.run('INSERT INTO simulator_preferences(user_id,autosave,hidden) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET autosave=?,hidden=?',user.id,pref.autosave?1:0,JSON.stringify(pref.hidden),pref.autosave?1:0,JSON.stringify(pref.hidden));
+   json(res,{preferences:pref});return true;
+  }
+  if(p==='/api/economy/redeem'&&method==='POST'){
+   checkRate(req,'coupons',15,60000);const b=await body(req),code=gameKey(String(b.code||'').slice(0,40));
+   const coupons={chatgpt:{items:['character:chadgilpete'],label:'Chad Gil Pete ya es tuyo'},bonju:{coins:500,label:'500 monedas para tu expedición'},moda:{items:['character:ednadroga'],label:'Edna Droga ya es tuya'},lgbtq:{items:['team:lesbianas','team:gays','team:trans'],label:'Equipos Lesbianas, Gays y Trans desbloqueados'},levelup:{level:true,label:'¡Subiste un nivel!'}};
+   const coupon=coupons[code];if(!coupon)fail(400,'Ese cupón no existe. Revisa el código.');
+   await db.transaction(async()=>{const before=await wallet(user.id),reward=await grantRaw(user.id,'coupon:'+code,{coins:coupon.coins||0,xp:coupon.level?before.nextLevelXP-before.xp:0,label:'Cupón · '+coupon.label});if(!reward)fail(409,'Ya utilizaste este cupón en tu cuenta.');for(const id of coupon.items||[]){if(!items.has(id))throw new Error('Cupón mal configurado');await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?) ON CONFLICT DO NOTHING',user.id,id,now());}});
+   json(res,{...await view(user.id),message:coupon.label});return true;
   }
   if(p==='/api/economy/buy'&&method==='POST'){
    const b=await body(req),item=items.get(b.item)||shop.modes.find(m=>'mode:'+m.id===b.item);
@@ -130,18 +153,33 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    const b=await body(req),mode=String(b.mode||'');
    if(!await canPlay(user.id,mode))fail(403,'Esta temporada aún está bloqueada. Revisa tu nivel y la tienda.');
    const active=await activeRun(user.id);if(active)fail(409,'Ya tienes una partida sin terminar. Puedes continuarla o archivarla.',{run:active});
+   await db.run("UPDATE game_runs SET status='discarded' WHERE user_id=? AND status='active'",user.id);
    const id=randomUUID();
    await db.run("INSERT INTO game_runs(id,user_id,mode,status,snapshot,revision,episode,decisions,active_seconds,created,updated,last_reward) VALUES(?,?,?,'active','{}',0,0,0,0,?,?,?)",id,user.id,mode,now(),now(),now());
-   await limited(user.id,'started',8,id,{tickets:1,label:'Una nueva expedición'});
-   json(res,{run:await activeRun(user.id),wallet:await wallet(user.id)},201);return true;
+   json(res,{run:{id,mode,status:'active',revision:0,episode:0,updated:now()},wallet:await wallet(user.id)},201);return true;
   }
   if(p==='/api/game-runs'&&method==='GET'){
-   json(res,{runs:await db.all('SELECT id,mode,status,revision,episode,updated,winner FROM game_runs WHERE user_id=? ORDER BY updated DESC LIMIT 30',user.id)});return true;
+   await expireArchives(user.id);
+   const rows=await db.all("SELECT id,mode,status,snapshot,revision,episode,updated,winner FROM game_runs WHERE user_id=? AND status IN ('active','archived','finished') ORDER BY updated DESC",user.id);
+   json(res,{runs:rows.filter(row=>hasPlayableCast(JSON.parse(row.snapshot))).slice(0,30).map(({snapshot,...row})=>({...row,episode:JSON.parse(snapshot).progress?.completed??row.episode,expiresAt:row.status==='archived'?Number(row.updated)+86400000:null}))});return true;
   }
-  const match=p.match(/^\/api\/game-runs\/([a-f0-9-]+)(?:\/(decision|finish|abandon))?$/);
+  const match=p.match(/^\/api\/game-runs\/([a-f0-9-]+)(?:\/(decision|finish|abandon|resume))?$/);
   if(match){
-   const run=await db.one('SELECT * FROM game_runs WHERE id=? AND user_id=?',match[1],user.id);if(!run)fail(404,'Partida no encontrada.');
+   await expireArchives(user.id);
+   const run=await db.one('SELECT * FROM game_runs WHERE id=? AND user_id=?',match[1],user.id);if(!run||['deleted','expired','discarded'].includes(run.status))fail(404,'Partida no encontrada.');
+   if(method==='DELETE'&&!match[2]){await db.run("UPDATE game_runs SET status='deleted',revision=revision+1 WHERE id=? AND user_id=?",run.id,user.id);json(res,{ok:true});return true;}
+   if(method==='POST'&&match[2]==='resume'){
+    if(run.status==='finished')fail(409,'La temporada terminó. Puedes consultar el guardado.');
+    const active=await activeRun(user.id);if(active&&active.id!==run.id)fail(409,'Archiva tu partida actual para continuar esta.');
+    if(run.status==='archived')await db.run("UPDATE game_runs SET status='active',revision=revision+1,updated=? WHERE id=? AND user_id=?",now(),run.id,user.id);
+    const updated=await db.one('SELECT * FROM game_runs WHERE id=? AND user_id=?',run.id,user.id);json(res,{run:{...updated,snapshot:JSON.parse(updated.snapshot)}});return true;
+   }
    if(method==='GET'&&!match[2]){json(res,{run:{...run,snapshot:JSON.parse(run.snapshot)}});return true;}
+   if(method==='PUT'&&!match[2]&&run.status==='finished'){
+    const b=await body(req),snapshot=JSON.stringify(b.snapshot);if(!b.manual||!hasPlayableCast(b.snapshot)||b.snapshot.progress?.winner!==run.winner||snapshot.length>800000)fail(409,'Esta temporada ya terminó.');
+    const saved=await db.run('UPDATE game_runs SET snapshot=?,revision=revision+1,updated=? WHERE id=? AND user_id=? AND revision=?',snapshot,now(),run.id,user.id,b.revision);
+    if(!saved.changes)fail(409,'La partida se actualizó en otra ventana.');json(res,{revision:Number(run.revision)+1,wallet:await wallet(user.id),saved:true});return true;
+   }
    if(run.status!=='active'){
     if(match[2]==='finish'&&run.status==='finished'){json(res,{wallet:await wallet(user.id),alreadyFinished:true});return true;}
     fail(409,'Esta partida ya está cerrada.');
@@ -150,6 +188,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    if(method==='PUT'&&!match[2]){
     if(!Number.isInteger(b.revision)||b.revision!==Number(run.revision))fail(409,'La partida se ha actualizado en otra ventana. Vuelve a cargarla.');
     const snapshot=JSON.stringify(b.snapshot);if(!b.snapshot||b.snapshot.version!==1||snapshot.length>800000)fail(400,'Guardado inválido.');
+    if(!hasPlayableCast(b.snapshot)){json(res,{revision:Number(run.revision),wallet:await wallet(user.id),saved:false});return true;}
     const episode=Number(b.episode||0);if(!Number.isInteger(episode)||episode<0||episode>100||episode>Number(run.episode)+1)fail(400,'El progreso del episodio no es válido.');
     let reps=JSON.parse(run.representatives||'[]');
     if(!reps.length&&Array.isArray(b.representatives)&&b.representatives.length){
@@ -158,10 +197,12 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
      reps=[...new Set(b.representatives)];
     }
     const advanced=episode>Number(run.episode)&&now()-Number(run.last_reward)>=15000;
-    const saved=await db.run('UPDATE game_runs SET snapshot=?,revision=revision+1,episode=?,updated=?,last_reward=?,representatives=? WHERE id=? AND user_id=? AND revision=?',snapshot,episode,now(),advanced?now():Number(run.last_reward),JSON.stringify(reps),run.id,user.id,run.revision);
+    const persist=b.manual===true||(b.persist!==false&&(await preferences(user.id)).autosave);
+    const saved=await db.run('UPDATE game_runs SET snapshot=?,revision=revision+1,episode=?,updated=?,last_reward=?,representatives=? WHERE id=? AND user_id=? AND revision=?',persist?snapshot:run.snapshot,episode,persist?now():Number(run.updated),advanced?now():Number(run.last_reward),JSON.stringify(reps),run.id,user.id,run.revision);
     if(!saved.changes)fail(409,'La partida se ha actualizado en otra ventana. Vuelve a cargarla.');
     if(advanced)await grant(user.id,'episode:'+run.id+':'+episode,{tickets:2,coins:6,xp:12,label:'Episodio '+episode+' completado'});
-    json(res,{revision:Number(run.revision)+1,wallet:await wallet(user.id),savedAt:now()});return true;
+    await limited(user.id,'started',8,run.id,{tickets:1,label:'Una nueva expedición'});
+    json(res,{revision:Number(run.revision)+1,wallet:await wallet(user.id),saved:persist,savedAt:persist?now():null});return true;
    }
    if(method==='POST'&&match[2]==='decision'){
     if(Number(run.decisions)>=40||now()-Number(run.last_decision||run.created)<1200){json(res,{wallet:await wallet(user.id)});return true;}

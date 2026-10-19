@@ -3,7 +3,370 @@
   "aliases": {
     "mariavillegas": "maria",
     "miguelantonio": "mykez",
-    "sophie": "sophiebradley"
+    "sophie": "sophiebradley",
+    "adrianapereira": "adrianapereira",
+    "agus": "agus",
+    "alexyohender": "alexyohender",
+    "alexandro": "alexandro",
+    "alexia": "alexia",
+    "alice": "alice",
+    "amandalewis": "amandalewis",
+    "andersonmoreno": "andersonmoreno",
+    "andromeda": "andromeda",
+    "arisalgado": "arisalgado",
+    "arianaglande": "arianaglande",
+    "ashley": "ashley",
+    "atneimip": "atneimip",
+    "azael": "azael",
+    "azealiamidnight": "azealiamidnight",
+    "bayron": "bayron",
+    "beto": "beto",
+    "bodegabodeguita": "bodegabodeguita",
+    "bonju": "bonju",
+    "brave": "brave",
+    "britneybritney": "britneybritney",
+    "brunomacri": "brunomacri",
+    "bryanmontalvo": "bryanmontalvo",
+    "candycookies": "candycookies",
+    "carlosharrington": "carlosharrington",
+    "carlosrojas": "carlosrojas",
+    "carmine": "carmine",
+    "cassandralouvre": "cassandralouvre",
+    "cassiecasu": "cassiecasu",
+    "catalina": "catalina",
+    "chadgilpete": "chadgilpete",
+    "christopher": "christopher",
+    "cinthiacarral": "cinthiacarral",
+    "cocomong": "cocomong",
+    "coronel": "coronel",
+    "cristianjulio": "cristianjulio",
+    "daelly": "daelly",
+    "damian": "damian",
+    "dani": "dani",
+    "danielsims": "danielsims",
+    "daphneblake": "daphneblake",
+    "dios": "dios",
+    "doppel": "doppel",
+    "dualingo": "dualingo",
+    "ednadroga": "ednadroga",
+    "edson": "edson",
+    "eduard": "eduard",
+    "eduardo": "eduardo",
+    "eduardobunuelo": "eduardobunuelo",
+    "edwin": "edwin",
+    "elian": "elian",
+    "elias": "elias",
+    "elvin": "elvin",
+    "emanuel": "emanuel",
+    "emilywaldorf": "emilywaldorf",
+    "emmymango": "emmymango",
+    "erismidnight": "erismidnight",
+    "esteban": "esteban",
+    "felipevicente": "felipevicente",
+    "felix": "felix",
+    "gabahochbaum": "gabahochbaum",
+    "gabrielsab": "gabrielsab",
+    "garnet": "garnet",
+    "gokuhmoreno": "gokuhmoreno",
+    "greg": "greg",
+    "gustavo": "gustavo",
+    "heidicum": "heidicum",
+    "humberto": "humberto",
+    "ianesteban": "ianesteban",
+    "ignacioricci": "ignacioricci",
+    "iker": "iker",
+    "imanol": "imanol",
+    "inaellarose": "inaellarose",
+    "isaac": "isaac",
+    "isabel": "isabel",
+    "ivanserrano": "ivanserrano",
+    "ivy": "ivy",
+    "jared": "jared",
+    "javi": "javi",
+    "jere": "jere",
+    "jesus": "jesus",
+    "jeyson": "jeyson",
+    "jiafei": "jiafei",
+    "joaquin": "joaquin",
+    "joseserna": "joseserna",
+    "julian": "julian",
+    "julie": "julie",
+    "kareli": "kareli",
+    "katy": "katy",
+    "kimcamila": "kimcamila",
+    "lalamila": "lalamila",
+    "leandro": "leandro",
+    "lilylouvre": "lilylouvre",
+    "lolamugler": "lolamugler",
+    "lucasmendez": "lucasmendez",
+    "lucassevero": "lucassevero",
+    "luciano": "luciano",
+    "luimclean": "luimclean",
+    "luis": "luis",
+    "maicol": "maicol",
+    "marcos": "marcos",
+    "mariaisabel": "mariaisabel",
+    "marialuna": "marialuna",
+    "marianito": "marianito",
+    "mariano": "mariano",
+    "maryhao": "maryhao",
+    "mati": "mati",
+    "melrz": "melrz",
+    "miguellima": "miguellima",
+    "misskopp": "misskopp",
+    "mykez": "mykez",
+    "nacho": "nacho",
+    "nahuee": "nahuee",
+    "nickigorilaj": "nickigorilaj",
+    "nidiamirella": "nidiamirella",
+    "oceanharmony": "oceanharmony",
+    "oscar": "oscar",
+    "pablo": "pablo",
+    "paulagarcia": "paulagarcia",
+    "paulisqueen": "paulisqueen",
+    "peggy": "peggy",
+    "pepi": "pepi",
+    "pier": "pier",
+    "pilar": "pilar",
+    "plastiquedoll": "plastiquedoll",
+    "rafael": "rafael",
+    "renata": "renata",
+    "renzo": "renzo",
+    "roal": "roal",
+    "robin": "robin",
+    "rodri": "rodri",
+    "sadith": "sadith",
+    "sallua": "sallua",
+    "samuelgamert": "samuelgamert",
+    "sandro": "sandro",
+    "santi": "santi",
+    "sebas": "sebas",
+    "silvanyadlemberth": "silvanyadlemberth",
+    "solf": "solf",
+    "sophiaasdero": "sophiaasdero",
+    "sophiebradley": "sophiebradley",
+    "stalinmango": "stalinmango",
+    "stephany": "stephany",
+    "teseo": "teseo",
+    "valeryocampo": "valeryocampo",
+    "violeta": "violeta",
+    "vita": "vita",
+    "vitanyglambert": "vitanyglambert",
+    "vladimir": "vladimir",
+    "ximena": "ximena",
+    "xinaro": "xinaro",
+    "rapidez": "rapidez",
+    "estrategia": "estrategia",
+    "creatividad": "creatividad",
+    "inteligencia": "inteligencia",
+    "agilidad": "agilidad",
+    "busqueda": "busqueda",
+    "duelos": "duelos",
+    "moda": "moda",
+    "musica": "musica",
+    "culturaconocimiento": "culturaconocimiento",
+    "showdetalentos": "showdetalentos",
+    "rap": "rap",
+    "townofsalem": "townofsalem",
+    "noticiero": "noticiero",
+    "eldespiertaton": "eldespiertaton",
+    "suerte": "suerte",
+    "bonjuchef": "bonjuchef",
+    "quienmatoabonju": "quienmatoabonju",
+    "bonjudragrace": "bonjudragrace",
+    "topmodel": "topmodel",
+    "wipeout": "wipeout",
+    "expedicionturisticaenlaantartida": "expedicionturisticaenlaantartida",
+    "batalladebaile": "batalladebaile",
+    "covers": "covers",
+    "sillasmusicales": "sillasmusicales",
+    "entrevistadetrabajo": "entrevistadetrabajo",
+    "romperhielos": "romperhielos",
+    "excluir": "excluir",
+    "robaunbonjuroit": "robaunbonjuroit",
+    "labomba": "labomba",
+    "gimnasio": "gimnasio",
+    "safarishowdown": "safarishowdown",
+    "roast": "roast",
+    "finalsafari": "finalsafari",
+    "lapurga": "lapurga",
+    "retoderegreso": "retoderegreso",
+    "parejas": "parejas",
+    "pruebaderesistenciaenelmuro": "pruebaderesistenciaenelmuro",
+    "circuitodevelocidadyobstaculos": "circuitodevelocidadyobstaculos",
+    "triviaestrictadeconvivencia": "triviaestrictadeconvivencia",
+    "desafiodeazarysuerte": "desafiodeazarysuerte",
+    "escaperoomdelacasa": "escaperoomdelacasa",
+    "pruebadeequilibriosobreagua": "pruebadeequilibriosobreagua",
+    "juegodememoriavisualciega": "juegodememoriavisualciega",
+    "laberintoaoscurasenelpatio": "laberintoaoscurasenelpatio",
+    "duelodebailecoreograficoeimprovisacion": "duelodebailecoreograficoeimprovisacion",
+    "pasarelaextravaganteyaltamoda": "pasarelaextravaganteyaltamoda",
+    "batallateatralyactuaciondramatica": "batallateatralyactuaciondramatica",
+    "interpretacionvocalylipsyncdealtatension": "interpretacionvocalylipsyncdealtatension",
+    "pruebadefuerzacuerdasytraccion": "pruebadefuerzacuerdasytraccion",
+    "desafiodecocinadediosbajopresion": "desafiodecocinadediosbajopresion",
+    "torneodeestrategiamentirasyacertijos": "torneodeestrategiamentirasyacertijos",
+    "maratonderompecabezasgigantes": "maratonderompecabezasgigantes",
+    "pruebaderesistenciademantenerlaantorchaencendida": "pruebaderesistenciademantenerlaantorchaencendida",
+    "desafiodeculturapopymemoriadereality": "desafiodeculturapopymemoriadereality",
+    "snatchgame": "snatchgame",
+    "standup": "standup",
+    "improv": "improv",
+    "talentshow": "talentshow",
+    "design": "design",
+    "theball": "theball",
+    "roomdecor": "roomdecor",
+    "missuniverse": "missuniverse",
+    "makeover": "makeover",
+    "photoshoot": "photoshoot",
+    "runwaypairs": "runwaypairs",
+    "modeling": "modeling",
+    "themusical": "themusical",
+    "musicalgroups": "musicalgroups",
+    "dancing": "dancing",
+    "lipsync": "lipsync",
+    "rappinroast": "rappinroast",
+    "singing": "singing",
+    "rumix": "rumix",
+    "karaoke": "karaoke",
+    "actingchallenge": "actingchallenge",
+    "trailer": "trailer",
+    "voiceover": "voiceover",
+    "politicaldebate": "politicaldebate",
+    "commercial": "commercial",
+    "podcast": "podcast",
+    "interview": "interview",
+    "stripers": "stripers",
+    "pinguinos": "pinguinos",
+    "focas": "focas",
+    "krills": "krills",
+    "leones": "leones",
+    "serpientes": "serpientes",
+    "cebras": "cebras",
+    "guepardos": "guepardos",
+    "escorpiones": "escorpiones",
+    "bonjuesmuymuymuyhermosa": "bonjuesmuymuymuyhermosa",
+    "dinosaurios": "dinosaurios",
+    "gorilas": "gorilas",
+    "cerebro": "cerebro",
+    "fuerza": "fuerza",
+    "belleza": "belleza",
+    "heroes": "heroes",
+    "villanos": "villanos",
+    "fans": "fans",
+    "favoritos": "favoritos",
+    "ganadores": "ganadores",
+    "perdedores": "perdedores",
+    "agua": "agua",
+    "fuego": "fuego",
+    "tierra": "tierra",
+    "aire": "aire",
+    "hombres": "hombres",
+    "mujeres": "mujeres",
+    "lechosas": "lechosas",
+    "travestis": "travestis",
+    "diarrea": "diarrea",
+    "therians": "therians",
+    "trans": "trans",
+    "gays": "gays",
+    "lesbianas": "lesbianas",
+    "josejulian": "josejulian",
+    "meow": "meow",
+    "neiladrag": "neiladrag",
+    "robert": "robert",
+    "esposos": "esposos",
+    "novios": "novios",
+    "prometidos": "prometidos",
+    "exes": "exes",
+    "padreehijo": "padreehijo",
+    "madreehija": "madreehija",
+    "hermanos": "hermanos",
+    "hermanas": "hermanas",
+    "mellizos": "mellizos",
+    "primos": "primos",
+    "mejoresamigos": "mejoresamigos",
+    "roomies": "roomies",
+    "desconocidos": "desconocidos",
+    "porristas": "porristas",
+    "modelos": "modelos",
+    "actores": "actores",
+    "reinasdebelleza": "reinasdebelleza",
+    "companerosdecirco": "companerosdecirco",
+    "influencers": "influencers",
+    "homosexuales": "homosexuales",
+    "dragqueens": "dragqueens",
+    "cantantes": "cantantes",
+    "frikis": "frikis",
+    "gordos": "gordos",
+    "desnutridos": "desnutridos",
+    "robamaridos": "robamaridos",
+    "bomberos": "bomberos",
+    "doctores": "doctores",
+    "oficialesdepolicia": "oficialesdepolicia",
+    "profesores": "profesores",
+    "artistas": "artistas",
+    "abogados": "abogados",
+    "bailarines": "bailarines",
+    "empresarios": "empresarios",
+    "realitystars": "realitystars",
+    "area51": "area51",
+    "argentina": "argentina",
+    "atlantis": "atlantis",
+    "australia": "australia",
+    "bolivia": "bolivia",
+    "brasil": "brasil",
+    "canada": "canada",
+    "cataratasdelniagara": "cataratasdelniagara",
+    "chile": "chile",
+    "china": "china",
+    "desiertodelsahara": "desiertodelsahara",
+    "egipto": "egipto",
+    "emiratosarabesunidos": "emiratosarabesunidos",
+    "espana": "espana",
+    "estadosunidos": "estadosunidos",
+    "finlandia": "finlandia",
+    "francia": "francia",
+    "grecia": "grecia",
+    "india": "india",
+    "indonesia": "indonesia",
+    "inglaterra": "inglaterra",
+    "islandia": "islandia",
+    "jamaica": "jamaica",
+    "japon": "japon",
+    "lasbahamas": "lasbahamas",
+    "lasvegas": "lasvegas",
+    "marruecos": "marruecos",
+    "mexico": "mexico",
+    "namekusei": "namekusei",
+    "nuevazelanda": "nuevazelanda",
+    "peru": "peru",
+    "rumania": "rumania",
+    "rusia": "rusia",
+    "suecia": "suecia",
+    "tanzania": "tanzania",
+    "venezuela": "venezuela",
+    "vietnam": "vietnam",
+    "zimbabue": "zimbabue",
+    "venecia": "venecia",
+    "capadocia": "capadocia",
+    "marte": "marte",
+    "seul": "seul",
+    "noruega": "noruega",
+    "madagascar": "madagascar",
+    "colombia": "colombia",
+    "tailandia": "tailandia",
+    "wonderland": "wonderland",
+    "cuba": "cuba",
+    "alemania": "alemania",
+    "narnia": "narnia",
+    "guatemala": "guatemala",
+    "hungria": "hungria",
+    "fiyi": "fiyi",
+    "petra": "petra",
+    "suiza": "suiza",
+    "filipinas": "filipinas",
+    "gymcamila": "gymcamila"
   },
   "items": [
     {
@@ -160,7 +523,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Silbar"
+      "talent": "Doblar servilletas"
     },
     {
       "id": "character:azael",
@@ -172,7 +535,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Preparar limonada"
     },
     {
       "id": "character:azealiamidnight",
@@ -184,7 +547,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Tejer bufandas"
     },
     {
       "id": "character:bayron",
@@ -196,7 +559,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Imitar acentos"
     },
     {
       "id": "character:beto",
@@ -208,7 +571,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Hacer beatbox"
     },
     {
       "id": "character:bodegabodeguita",
@@ -220,7 +583,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Armar un rompecabezas"
+      "talent": "Resolver un cubo Rubik"
     },
     {
       "id": "character:bonju",
@@ -232,7 +595,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Montar en bicicleta"
     },
     {
       "id": "character:brave",
@@ -244,7 +607,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Patinar"
     },
     {
       "id": "character:britneybritney",
@@ -268,7 +631,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Coser botones"
     },
     {
       "id": "character:bryanmontalvo",
@@ -280,7 +643,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Hornear galletas"
     },
     {
       "id": "character:candycookies",
@@ -304,7 +667,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Silbar"
+      "talent": "Tocar la guitarra"
     },
     {
       "id": "character:carlosrojas",
@@ -316,7 +679,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Tocar el piano"
     },
     {
       "id": "character:carmine",
@@ -328,7 +691,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Tocar la batería"
     },
     {
       "id": "character:cassandralouvre",
@@ -340,7 +703,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Ella / She",
-      "talent": "Contar chistes"
+      "talent": "Tocar el violín"
     },
     {
       "id": "character:cassiecasu",
@@ -352,7 +715,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Tocar la flauta"
     },
     {
       "id": "character:catalina",
@@ -364,7 +727,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Armar un rompecabezas"
+      "talent": "Tocar la armónica"
     },
     {
       "id": "character:chadgilpete",
@@ -376,7 +739,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Él / He",
-      "talent": "Saltar la cuerda"
+      "talent": "Hacer origami"
     },
     {
       "id": "character:christopher",
@@ -388,7 +751,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Bailar salsa"
     },
     {
       "id": "character:cinthiacarral",
@@ -400,7 +763,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Bailar bachata"
     },
     {
       "id": "character:cocomong",
@@ -412,7 +775,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Bailar tango"
     },
     {
       "id": "character:coronel",
@@ -424,7 +787,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Bailar flamenco"
     },
     {
       "id": "character:cristianjulio",
@@ -448,7 +811,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Silbar"
+      "talent": "Bailar tap"
     },
     {
       "id": "character:damian",
@@ -460,7 +823,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Bailar ballet"
     },
     {
       "id": "character:dani",
@@ -472,7 +835,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Zapatear"
     },
     {
       "id": "character:danielsims",
@@ -484,7 +847,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Cantar ópera"
     },
     {
       "id": "character:daphneblake",
@@ -496,7 +859,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer café"
+      "talent": "Cantar rap"
     },
     {
       "id": "character:dios",
@@ -508,7 +871,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Él / He",
-      "talent": "Armar un rompecabezas"
+      "talent": "Hacer rimas"
     },
     {
       "id": "character:doppel",
@@ -520,7 +883,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Recitar poesía"
     },
     {
       "id": "character:dualingo",
@@ -532,7 +895,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Imitar sonidos"
+      "talent": "Contar historias de terror"
     },
     {
       "id": "character:ednadroga",
@@ -544,7 +907,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Narrar un partido"
     },
     {
       "id": "character:edson",
@@ -556,7 +919,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Imitar a un locutor"
     },
     {
       "id": "character:eduard",
@@ -568,7 +931,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Hacer ventriloquia"
     },
     {
       "id": "character:eduardo",
@@ -580,7 +943,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Equilibrar una cuchara"
     },
     {
       "id": "character:eduardobunuelo",
@@ -616,7 +979,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Caminar de manos"
     },
     {
       "id": "character:elias",
@@ -628,7 +991,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Hacer el pino"
     },
     {
       "id": "character:elvin",
@@ -640,7 +1003,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Hacer una voltereta"
     },
     {
       "id": "character:emanuel",
@@ -652,7 +1015,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Armar un rompecabezas"
+      "talent": "Hacer un puente"
     },
     {
       "id": "character:emilywaldorf",
@@ -676,7 +1039,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Imitar sonidos"
+      "talent": "Tocar los pies con la cabeza"
     },
     {
       "id": "character:erismidnight",
@@ -688,7 +1051,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Mover las orejas"
     },
     {
       "id": "character:esteban",
@@ -700,7 +1063,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Levantar una ceja"
     },
     {
       "id": "character:felipevicente",
@@ -712,7 +1075,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Enrollar la lengua"
     },
     {
       "id": "character:felix",
@@ -724,7 +1087,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Caminar sobre una cuerda"
     },
     {
       "id": "character:gabahochbaum",
@@ -748,7 +1111,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Soplar burbujas"
     },
     {
       "id": "character:garnet",
@@ -760,7 +1123,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Inflar globos"
     },
     {
       "id": "character:gokuhmoreno",
@@ -772,7 +1135,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Contar chistes"
+      "talent": "Hacer figuras con globos"
     },
     {
       "id": "character:greg",
@@ -784,7 +1147,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Pintar acuarelas"
     },
     {
       "id": "character:gustavo",
@@ -808,7 +1171,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Pintar retratos"
     },
     {
       "id": "character:humberto",
@@ -820,7 +1183,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Dibujar caricaturas"
     },
     {
       "id": "character:ianesteban",
@@ -832,7 +1195,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Dibujar mapas"
     },
     {
       "id": "character:ignacioricci",
@@ -844,7 +1207,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Escribir caligrafía"
     },
     {
       "id": "character:iker",
@@ -856,7 +1219,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Escribir con la mano contraria"
     },
     {
       "id": "character:imanol",
@@ -868,7 +1231,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Escribir al revés"
     },
     {
       "id": "character:inaellarose",
@@ -880,7 +1243,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Silbar"
+      "talent": "Memorizar matrículas"
     },
     {
       "id": "character:isaac",
@@ -892,7 +1255,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Recordar cumpleaños"
     },
     {
       "id": "character:isabel",
@@ -904,7 +1267,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Resolver sudokus"
     },
     {
       "id": "character:ivanserrano",
@@ -916,7 +1279,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Jugar ajedrez"
     },
     {
       "id": "character:ivy",
@@ -928,7 +1291,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer café"
+      "talent": "Jugar damas"
     },
     {
       "id": "character:jared",
@@ -952,7 +1315,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Saltar la cuerda"
+      "talent": "Apilar cartas"
     },
     {
       "id": "character:jere",
@@ -964,7 +1327,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Hacer dominó en cadena"
     },
     {
       "id": "character:jesus",
@@ -976,7 +1339,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Lanzar dardos"
     },
     {
       "id": "character:jeyson",
@@ -988,7 +1351,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Encestar desde lejos"
     },
     {
       "id": "character:jiafei",
@@ -1012,7 +1375,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Dar toques al balón"
     },
     {
       "id": "character:joseserna",
@@ -1024,7 +1387,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Silbar"
+      "talent": "Hacer piruetas con un lápiz"
     },
     {
       "id": "character:julian",
@@ -1036,7 +1399,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Girar un plato"
     },
     {
       "id": "character:julie",
@@ -1048,7 +1411,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Equilibrar libros"
     },
     {
       "id": "character:kareli",
@@ -1060,7 +1423,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Contar chistes"
+      "talent": "Lanzar un frisbi"
     },
     {
       "id": "character:katy",
@@ -1072,7 +1435,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer café"
+      "talent": "Bailar hula hula"
     },
     {
       "id": "character:kimcamila",
@@ -1084,7 +1447,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Armar un rompecabezas"
+      "talent": "Usar un yo-yo"
     },
     {
       "id": "character:lalamila",
@@ -1096,7 +1459,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Tirar una peonza"
     },
     {
       "id": "character:leandro",
@@ -1108,7 +1471,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Saltar en un pie"
     },
     {
       "id": "character:lilylouvre",
@@ -1120,7 +1483,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Hacer sombras con las manos"
     },
     {
       "id": "character:lolamugler",
@@ -1132,7 +1495,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Dibujar una estrella"
+      "talent": "Imitar un robot"
     },
     {
       "id": "character:lucasmendez",
@@ -1144,7 +1507,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Hacer mimo"
     },
     {
       "id": "character:lucassevero",
@@ -1156,7 +1519,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Actuar una telenovela"
     },
     {
       "id": "character:luciano",
@@ -1168,7 +1531,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Silbar"
+      "talent": "Inventar trabalenguas"
     },
     {
       "id": "character:luimclean",
@@ -1180,7 +1543,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Hablar al revés"
     },
     {
       "id": "character:luis",
@@ -1192,7 +1555,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Decir el abecedario al revés"
     },
     {
       "id": "character:maicol",
@@ -1204,7 +1567,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Contar en números romanos"
     },
     {
       "id": "character:marcos",
@@ -1216,7 +1579,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Calcular mentalmente"
     },
     {
       "id": "character:maria",
@@ -1228,7 +1591,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Armar un rompecabezas"
+      "talent": "Encontrar diferencias"
     },
     {
       "id": "character:mariaisabel",
@@ -1240,7 +1603,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Él / He",
-      "talent": "Saltar la cuerda"
+      "talent": "Reconocer banderas"
     },
     {
       "id": "character:marialuna",
@@ -1264,7 +1627,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Reconocer canciones"
     },
     {
       "id": "character:mariano",
@@ -1276,7 +1639,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Adivinar ingredientes"
     },
     {
       "id": "character:maryhao",
@@ -1288,7 +1651,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Preparar un sándwich"
+      "talent": "Decorar pasteles"
     },
     {
       "id": "character:mati",
@@ -1300,7 +1663,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Hacer sushi"
     },
     {
       "id": "character:melrz",
@@ -1312,7 +1675,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Silbar"
+      "talent": "Hacer empanadas"
     },
     {
       "id": "character:miguellima",
@@ -1324,7 +1687,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer un avión de papel"
+      "talent": "Hacer arepas"
     },
     {
       "id": "character:misskopp",
@@ -1336,7 +1699,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Preparar guacamole"
     },
     {
       "id": "character:mykez",
@@ -1360,7 +1723,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Preparar chocolate caliente"
     },
     {
       "id": "character:nahuee",
@@ -1372,7 +1735,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Armar un rompecabezas"
+      "talent": "Hacer palomitas"
     },
     {
       "id": "character:nickigorilaj",
@@ -1384,7 +1747,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Pelar una naranja de una vez"
     },
     {
       "id": "character:nidiamirella",
@@ -1396,7 +1759,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Imitar sonidos"
+      "talent": "Cortar verduras rápido"
     },
     {
       "id": "character:oceanharmony",
@@ -1408,7 +1771,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Trenzar cabello"
     },
     {
       "id": "character:oscar",
@@ -1420,7 +1783,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Hacer peinados"
     },
     {
       "id": "character:pablo",
@@ -1432,7 +1795,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Maquillar ojos"
     },
     {
       "id": "character:paulagarcia",
@@ -1444,7 +1807,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Bailar sin música"
+      "talent": "Pintar uñas"
     },
     {
       "id": "character:paulisqueen",
@@ -1456,7 +1819,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Silbar"
+      "talent": "Cortar patrones de costura"
     },
     {
       "id": "character:peggy",
@@ -1468,7 +1831,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer un avión de papel"
+      "talent": "Diseñar sombreros"
     },
     {
       "id": "character:pepi",
@@ -1480,7 +1843,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Personalizar zapatos"
     },
     {
       "id": "character:pier",
@@ -1492,7 +1855,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Hacer pulseras"
     },
     {
       "id": "character:pilar",
@@ -1504,7 +1867,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer café"
+      "talent": "Hacer collares"
     },
     {
       "id": "character:plastiquedoll",
@@ -1516,7 +1879,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Armar un rompecabezas"
+      "talent": "Modelar plastilina"
     },
     {
       "id": "character:rafael",
@@ -1528,7 +1891,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Saltar la cuerda"
+      "talent": "Modelar arcilla"
     },
     {
       "id": "character:renata",
@@ -1540,7 +1903,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Imitar sonidos"
+      "talent": "Tallar jabón"
     },
     {
       "id": "character:renzo",
@@ -1552,7 +1915,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Hacer mosaicos"
     },
     {
       "id": "character:roal",
@@ -1564,7 +1927,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Dibujar una estrella"
+      "talent": "Armar una maqueta"
     },
     {
       "id": "character:robin",
@@ -1576,7 +1939,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Construir castillos de arena"
     },
     {
       "id": "character:rodri",
@@ -1588,7 +1951,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Bailar sin música"
+      "talent": "Hacer una cometa"
     },
     {
       "id": "character:sadith",
@@ -1600,7 +1963,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Silbar"
+      "talent": "Remendar ropa"
     },
     {
       "id": "character:sallua",
@@ -1612,7 +1975,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer un avión de papel"
+      "talent": "Planchar camisas"
     },
     {
       "id": "character:samuelgamert",
@@ -1624,7 +1987,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Chasquear los dedos"
+      "talent": "Doblar camisetas rápido"
     },
     {
       "id": "character:sandro",
@@ -1636,7 +1999,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Ordenar una maleta"
     },
     {
       "id": "character:santi",
@@ -1648,7 +2011,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Hacer café"
+      "talent": "Envolver regalos"
     },
     {
       "id": "character:sebas",
@@ -1660,7 +2023,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Armar un rompecabezas"
+      "talent": "Hacer moños"
     },
     {
       "id": "character:silvanyadlemberth",
@@ -1672,7 +2035,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Hacer nudos marineros"
     },
     {
       "id": "character:solf",
@@ -1684,7 +2047,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Imitar sonidos"
+      "talent": "Abrir cocos"
     },
     {
       "id": "character:sophiaasdero",
@@ -1696,7 +2059,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Hacer malabares con dos pelotas"
+      "talent": "Trepar árboles"
     },
     {
       "id": "character:sophiebradley",
@@ -1708,7 +2071,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Dibujar una estrella"
+      "talent": "Hacer jardinería"
     },
     {
       "id": "character:stalinmango",
@@ -1720,7 +2083,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Preparar un sándwich"
+      "talent": "Identificar plantas"
     },
     {
       "id": "character:stephany",
@@ -1732,7 +2095,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Bailar sin música"
+      "talent": "Imitar pájaros"
     },
     {
       "id": "character:teseo",
@@ -1744,7 +2107,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Silbar"
+      "talent": "Silbar con hojas"
     },
     {
       "id": "character:valeryocampo",
@@ -1768,7 +2131,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Chasquear los dedos"
+      "talent": "Afinar copas de cristal"
     },
     {
       "id": "character:vita",
@@ -1780,7 +2143,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Él / He",
-      "talent": "Contar chistes"
+      "talent": "Hacer música con cucharas"
     },
     {
       "id": "character:vitanyglambert",
@@ -1792,7 +2155,7 @@
       "level": 1,
       "premium": true,
       "pronouns": "Ella / She",
-      "talent": "Hacer café"
+      "talent": "Hacer percusión corporal"
     },
     {
       "id": "character:vladimir",
@@ -1816,7 +2179,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Saltar la cuerda"
+      "talent": "Tocar las maracas"
     },
     {
       "id": "character:xinaro",
@@ -1828,7 +2191,7 @@
       "level": 1,
       "premium": false,
       "pronouns": "Ella / She",
-      "talent": "Imitar sonidos"
+      "talent": "Tocar el ukelele"
     },
     {
       "id": "challenge:rapidez",
@@ -3229,6 +3592,1273 @@
       "price": 45,
       "level": 1,
       "image": "/simulator/game/assets/safari.png"
+    },
+    {
+      "id": "character:josejulian",
+      "kind": "character",
+      "name": "Jose Julián",
+      "image": "/personajes/josejulian.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "gender": "M",
+      "talent": "Comer Pejelagartos"
+    },
+    {
+      "id": "character:meow",
+      "kind": "character",
+      "name": "Meow",
+      "image": "/personajes/meow.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "They / Them",
+      "gender": "F",
+      "talent": "Estafar"
+    },
+    {
+      "id": "character:neiladrag",
+      "kind": "character",
+      "name": "Neila Drag",
+      "image": "/personajes/neiladrag.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Ella / She",
+      "gender": "F",
+      "talent": "Coreografía de Ay, Mi Gatito Meow Meow"
+    },
+    {
+      "id": "character:robert",
+      "kind": "character",
+      "name": "Robert",
+      "image": "/personajes/robert.png",
+      "starter": false,
+      "price": 65,
+      "level": 1,
+      "premium": false,
+      "pronouns": "Él / He",
+      "gender": "M",
+      "talent": "Show de Magia"
+    },
+    {
+      "id": "team:esposos",
+      "kind": "team",
+      "name": "Esposos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:novios",
+      "kind": "team",
+      "name": "Novios",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:prometidos",
+      "kind": "team",
+      "name": "Prometidos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:exes",
+      "kind": "team",
+      "name": "Exes",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:padreehijo",
+      "kind": "team",
+      "name": "Padre e Hijo",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:madreehija",
+      "kind": "team",
+      "name": "Madre e Hija",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:hermanos",
+      "kind": "team",
+      "name": "Hermanos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:hermanas",
+      "kind": "team",
+      "name": "Hermanas",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:mellizos",
+      "kind": "team",
+      "name": "Mellizos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:primos",
+      "kind": "team",
+      "name": "Primos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:mejoresamigos",
+      "kind": "team",
+      "name": "Mejores Amigos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:roomies",
+      "kind": "team",
+      "name": "Roomies",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:desconocidos",
+      "kind": "team",
+      "name": "Desconocidos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:porristas",
+      "kind": "team",
+      "name": "Porristas",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:modelos",
+      "kind": "team",
+      "name": "Modelos",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:actores",
+      "kind": "team",
+      "name": "Actores",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:reinasdebelleza",
+      "kind": "team",
+      "name": "Reinas de Belleza",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:companerosdecirco",
+      "kind": "team",
+      "name": "Compañeros de Circo",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:influencers",
+      "kind": "team",
+      "name": "Influencers",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:stripers",
+      "kind": "team",
+      "name": "Stripers",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:homosexuales",
+      "kind": "team",
+      "name": "Homosexuales",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:dragqueens",
+      "kind": "team",
+      "name": "Drag Queens",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:cantantes",
+      "kind": "team",
+      "name": "Cantantes",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:frikis",
+      "kind": "team",
+      "name": "Frikis",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:gordos",
+      "kind": "team",
+      "name": "Gordos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:desnutridos",
+      "kind": "team",
+      "name": "Desnutridos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:robamaridos",
+      "kind": "team",
+      "name": "Roba Maridos",
+      "starter": false,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:bomberos",
+      "kind": "team",
+      "name": "Bomberos",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:doctores",
+      "kind": "team",
+      "name": "Doctores",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:oficialesdepolicia",
+      "kind": "team",
+      "name": "Oficiales de Policía",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:profesores",
+      "kind": "team",
+      "name": "Profesores",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:artistas",
+      "kind": "team",
+      "name": "Artistas",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:abogados",
+      "kind": "team",
+      "name": "Abogados",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:bailarines",
+      "kind": "team",
+      "name": "Bailarines",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:empresarios",
+      "kind": "team",
+      "name": "Empresarios",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "team:realitystars",
+      "kind": "team",
+      "name": "Reality Stars",
+      "starter": true,
+      "price": 45,
+      "level": 1,
+      "image": "/simulator/game/assets/race.png",
+      "category": "race"
+    },
+    {
+      "id": "challenge:area51",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Área 51",
+      "value": "Área 51",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "area51",
+      "image": "/simulator/game/paises/area51.png"
+    },
+    {
+      "id": "challenge:argentina",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Argentina",
+      "value": "Argentina",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "argentina",
+      "image": "/simulator/game/paises/argentina.png"
+    },
+    {
+      "id": "challenge:atlantis",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Atlantis",
+      "value": "Atlantis",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "atlantis",
+      "image": "/simulator/game/paises/atlantis.png"
+    },
+    {
+      "id": "challenge:australia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Australia",
+      "value": "Australia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "australia",
+      "image": "/simulator/game/paises/australia.png"
+    },
+    {
+      "id": "challenge:bolivia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Bolivia",
+      "value": "Bolivia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "bolivia",
+      "image": "/simulator/game/paises/bolivia.png"
+    },
+    {
+      "id": "challenge:brasil",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Brasil",
+      "value": "Brasil",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "brazil",
+      "image": "/simulator/game/paises/brazil.png"
+    },
+    {
+      "id": "challenge:canada",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Canadá",
+      "value": "Canadá",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "canada",
+      "image": "/simulator/game/paises/canada.png"
+    },
+    {
+      "id": "challenge:cataratasdelniagara",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Cataratas del Niágara",
+      "value": "Cataratas del Niágara",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "cataratasdelniagara",
+      "image": "/simulator/game/paises/cataratasdelniagara.png"
+    },
+    {
+      "id": "challenge:chile",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Chile",
+      "value": "Chile",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "chile",
+      "image": "/simulator/game/paises/chile.png"
+    },
+    {
+      "id": "challenge:china",
+      "kind": "challenge",
+      "category": "location",
+      "name": "China",
+      "value": "China",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "china",
+      "image": "/simulator/game/paises/china.png"
+    },
+    {
+      "id": "challenge:desiertodelsahara",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Desierto del Sahara",
+      "value": "Desierto del Sahara",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "desiertodelsahara",
+      "image": "/simulator/game/paises/desiertodelsahara.png"
+    },
+    {
+      "id": "challenge:egipto",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Egipto",
+      "value": "Egipto",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "egipto",
+      "image": "/simulator/game/paises/egipto.png"
+    },
+    {
+      "id": "challenge:emiratosarabesunidos",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Emiratos Árabes Unidos",
+      "value": "Emiratos Árabes Unidos",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "emiratosarabesunidos",
+      "image": "/simulator/game/paises/emiratosarabesunidos.png"
+    },
+    {
+      "id": "challenge:espana",
+      "kind": "challenge",
+      "category": "location",
+      "name": "España",
+      "value": "España",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "españa",
+      "image": "/simulator/game/paises/españa.png"
+    },
+    {
+      "id": "challenge:estadosunidos",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Estados Unidos",
+      "value": "Estados Unidos",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "estadosunidos",
+      "image": "/simulator/game/paises/estadosunidos.png"
+    },
+    {
+      "id": "challenge:finlandia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Finlandia",
+      "value": "Finlandia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "finlandia",
+      "image": "/simulator/game/paises/finlandia.png"
+    },
+    {
+      "id": "challenge:francia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Francia",
+      "value": "Francia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "francia",
+      "image": "/simulator/game/paises/francia.png"
+    },
+    {
+      "id": "challenge:grecia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Grecia",
+      "value": "Grecia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "grecia",
+      "image": "/simulator/game/paises/grecia.png"
+    },
+    {
+      "id": "challenge:india",
+      "kind": "challenge",
+      "category": "location",
+      "name": "India",
+      "value": "India",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "india",
+      "image": "/simulator/game/paises/india.png"
+    },
+    {
+      "id": "challenge:indonesia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Indonesia",
+      "value": "Indonesia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "Indonesia",
+      "image": "/simulator/game/paises/Indonesia.png"
+    },
+    {
+      "id": "challenge:inglaterra",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Inglaterra",
+      "value": "Inglaterra",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "inglaterra",
+      "image": "/simulator/game/paises/inglaterra.png"
+    },
+    {
+      "id": "challenge:islandia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Islandia",
+      "value": "Islandia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "islandia",
+      "image": "/simulator/game/paises/islandia.png"
+    },
+    {
+      "id": "challenge:jamaica",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Jamaica",
+      "value": "Jamaica",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "jamaica",
+      "image": "/simulator/game/paises/jamaica.png"
+    },
+    {
+      "id": "challenge:japon",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Japón",
+      "value": "Japón",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "japon",
+      "image": "/simulator/game/paises/japon.png"
+    },
+    {
+      "id": "challenge:lasbahamas",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Las Bahamas",
+      "value": "Las Bahamas",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "lasbahamas",
+      "image": "/simulator/game/paises/lasbahamas.png"
+    },
+    {
+      "id": "challenge:lasvegas",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Las Vegas",
+      "value": "Las Vegas",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "lasvegas",
+      "image": "/simulator/game/paises/lasvegas.png"
+    },
+    {
+      "id": "challenge:marruecos",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Marruecos",
+      "value": "Marruecos",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "marruecos",
+      "image": "/simulator/game/paises/marruecos.png"
+    },
+    {
+      "id": "challenge:mexico",
+      "kind": "challenge",
+      "category": "location",
+      "name": "México",
+      "value": "México",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "mexico",
+      "image": "/simulator/game/paises/mexico.png"
+    },
+    {
+      "id": "challenge:namekusei",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Namekusei",
+      "value": "Namekusei",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "namekusei",
+      "image": "/simulator/game/paises/namekusei.png"
+    },
+    {
+      "id": "challenge:nuevazelanda",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Nueva Zelanda",
+      "value": "Nueva Zelanda",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "nuevazelanda",
+      "image": "/simulator/game/paises/nuevazelanda.png"
+    },
+    {
+      "id": "challenge:peru",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Perú",
+      "value": "Perú",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "peru",
+      "image": "/simulator/game/paises/peru.png"
+    },
+    {
+      "id": "challenge:rumania",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Rumania",
+      "value": "Rumania",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "rumania",
+      "image": "/simulator/game/paises/rumania.png"
+    },
+    {
+      "id": "challenge:rusia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Rusia",
+      "value": "Rusia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "rusia",
+      "image": "/simulator/game/paises/rusia.png"
+    },
+    {
+      "id": "challenge:suecia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Suecia",
+      "value": "Suecia",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "suecia",
+      "image": "/simulator/game/paises/suecia.png"
+    },
+    {
+      "id": "challenge:tanzania",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Tanzania",
+      "value": "Tanzania",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "tanzania",
+      "image": "/simulator/game/paises/tanzania.png"
+    },
+    {
+      "id": "challenge:venezuela",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Venezuela",
+      "value": "Venezuela",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "venezuela",
+      "image": "/simulator/game/paises/venezuela.png"
+    },
+    {
+      "id": "challenge:vietnam",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Vietnam",
+      "value": "Vietnam",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "vietnam",
+      "image": "/simulator/game/paises/vietnam.png"
+    },
+    {
+      "id": "challenge:zimbabue",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Zimbabue",
+      "value": "Zimbabue",
+      "starter": true,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "zimbabue",
+      "image": "/simulator/game/paises/zimbabue.png"
+    },
+    {
+      "id": "challenge:venecia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Venecia",
+      "value": "Venecia",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "venecia",
+      "image": "/simulator/game/paises/venecia.png"
+    },
+    {
+      "id": "challenge:capadocia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Capadocia",
+      "value": "Capadocia",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "capadocia",
+      "image": "/simulator/game/paises/capadocia.png"
+    },
+    {
+      "id": "challenge:marte",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Marte",
+      "value": "Marte",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "marte",
+      "image": "/simulator/game/paises/marte.png"
+    },
+    {
+      "id": "challenge:seul",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Seúl",
+      "value": "Seúl",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "seul",
+      "image": "/simulator/game/paises/seul.png"
+    },
+    {
+      "id": "challenge:noruega",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Noruega",
+      "value": "Noruega",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "noruega",
+      "image": "/simulator/game/paises/noruega.png"
+    },
+    {
+      "id": "challenge:madagascar",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Madagascar",
+      "value": "Madagascar",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "madagascar",
+      "image": "/simulator/game/paises/madagascar.png"
+    },
+    {
+      "id": "challenge:colombia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Colombia",
+      "value": "Colombia",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "colombia",
+      "image": "/simulator/game/paises/colombia.png"
+    },
+    {
+      "id": "challenge:tailandia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Tailandia",
+      "value": "Tailandia",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "tailandia",
+      "image": "/simulator/game/paises/tailandia.png"
+    },
+    {
+      "id": "challenge:wonderland",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Wonderland",
+      "value": "Wonderland",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "wonderland",
+      "image": "/simulator/game/paises/wonderland.png"
+    },
+    {
+      "id": "challenge:cuba",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Cuba",
+      "value": "Cuba",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "cuba",
+      "image": "/simulator/game/paises/cuba.png"
+    },
+    {
+      "id": "challenge:alemania",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Alemania",
+      "value": "Alemania",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "alemania",
+      "image": "/simulator/game/paises/alemania.png"
+    },
+    {
+      "id": "challenge:narnia",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Narnia",
+      "value": "Narnia",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "narnia",
+      "image": "/simulator/game/paises/narnia.png"
+    },
+    {
+      "id": "challenge:guatemala",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Guatemala",
+      "value": "Guatemala",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "guatemala",
+      "image": "/simulator/game/paises/guatemala.png"
+    },
+    {
+      "id": "challenge:hungria",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Hungría",
+      "value": "Hungría",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "hungria",
+      "image": "/simulator/game/paises/hungria.png"
+    },
+    {
+      "id": "challenge:fiyi",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Fiyi",
+      "value": "Fiyi",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "fiyi",
+      "image": "/simulator/game/paises/fiyi.png"
+    },
+    {
+      "id": "challenge:petra",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Petra",
+      "value": "Petra",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "petra",
+      "image": "/simulator/game/paises/petra.png"
+    },
+    {
+      "id": "challenge:suiza",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Suiza",
+      "value": "Suiza",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "suiza",
+      "image": "/simulator/game/paises/suiza.png"
+    },
+    {
+      "id": "challenge:filipinas",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Filipinas",
+      "value": "Filipinas",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "filipinas",
+      "image": "/simulator/game/paises/filipinas.png"
+    },
+    {
+      "id": "challenge:gymcamila",
+      "kind": "challenge",
+      "category": "location",
+      "name": "Gym Camila",
+      "value": "Gym Camila",
+      "starter": false,
+      "price": 60,
+      "level": 1,
+      "modes": [
+        "race"
+      ],
+      "file": "gymcamila",
+      "image": "/simulator/game/paises/gymcamila.png"
     }
   ],
   "modes": [
@@ -3246,7 +4876,7 @@
       "kind": "mode",
       "name": "Safari",
       "level": 2,
-      "price": 0,
+      "price": 120,
       "upcoming": false,
       "image": "/simulator/game/assets/safari.png"
     },
@@ -3273,7 +4903,7 @@
       "kind": "mode",
       "name": "The Traitor",
       "level": 5,
-      "price": 0,
+      "price": 300,
       "upcoming": false,
       "image": "/simulator/game/assets/traitor.png"
     },
@@ -3300,9 +4930,280 @@
       "kind": "mode",
       "name": "Japan",
       "level": 9,
-      "price": 0,
+      "price": 600,
       "upcoming": true,
       "image": "/simulator/game/assets/japan.png"
+    }
+  ],
+  "raceTeams": [
+    "Esposos",
+    "Novios",
+    "Prometidos",
+    "Exes",
+    "Padre e Hijo",
+    "Madre e Hija",
+    "Hermanos",
+    "Hermanas",
+    "Mellizos",
+    "Primos",
+    "Mejores Amigos",
+    "Roomies",
+    "Desconocidos",
+    "Porristas",
+    "Modelos",
+    "Actores",
+    "Reinas de Belleza",
+    "Compañeros de Circo",
+    "Influencers",
+    "Stripers",
+    "Homosexuales",
+    "Lesbianas",
+    "Trans",
+    "Drag Queens",
+    "Cantantes",
+    "Frikis",
+    "Gordos",
+    "Desnutridos",
+    "Roba Maridos",
+    "Bomberos",
+    "Doctores",
+    "Oficiales de Policía",
+    "Profesores",
+    "Artistas",
+    "Abogados",
+    "Bailarines",
+    "Empresarios",
+    "Reality Stars",
+    "Travestis"
+  ],
+  "countries": [
+    {
+      "name": "Área 51",
+      "file": "area51"
+    },
+    {
+      "name": "Argentina",
+      "file": "argentina"
+    },
+    {
+      "name": "Atlantis",
+      "file": "atlantis"
+    },
+    {
+      "name": "Australia",
+      "file": "australia"
+    },
+    {
+      "name": "Bolivia",
+      "file": "bolivia"
+    },
+    {
+      "name": "Brasil",
+      "file": "brazil"
+    },
+    {
+      "name": "Canadá",
+      "file": "canada"
+    },
+    {
+      "name": "Cataratas del Niágara",
+      "file": "cataratasdelniagara"
+    },
+    {
+      "name": "Chile",
+      "file": "chile"
+    },
+    {
+      "name": "China",
+      "file": "china"
+    },
+    {
+      "name": "Desierto del Sahara",
+      "file": "desiertodelsahara"
+    },
+    {
+      "name": "Egipto",
+      "file": "egipto"
+    },
+    {
+      "name": "Emiratos Árabes Unidos",
+      "file": "emiratosarabesunidos"
+    },
+    {
+      "name": "España",
+      "file": "españa"
+    },
+    {
+      "name": "Estados Unidos",
+      "file": "estadosunidos"
+    },
+    {
+      "name": "Finlandia",
+      "file": "finlandia"
+    },
+    {
+      "name": "Francia",
+      "file": "francia"
+    },
+    {
+      "name": "Grecia",
+      "file": "grecia"
+    },
+    {
+      "name": "India",
+      "file": "india"
+    },
+    {
+      "name": "Indonesia",
+      "file": "Indonesia"
+    },
+    {
+      "name": "Inglaterra",
+      "file": "inglaterra"
+    },
+    {
+      "name": "Islandia",
+      "file": "islandia"
+    },
+    {
+      "name": "Jamaica",
+      "file": "jamaica"
+    },
+    {
+      "name": "Japón",
+      "file": "japon"
+    },
+    {
+      "name": "Las Bahamas",
+      "file": "lasbahamas"
+    },
+    {
+      "name": "Las Vegas",
+      "file": "lasvegas"
+    },
+    {
+      "name": "Marruecos",
+      "file": "marruecos"
+    },
+    {
+      "name": "México",
+      "file": "mexico"
+    },
+    {
+      "name": "Namekusei",
+      "file": "namekusei"
+    },
+    {
+      "name": "Nueva Zelanda",
+      "file": "nuevazelanda"
+    },
+    {
+      "name": "Perú",
+      "file": "peru"
+    },
+    {
+      "name": "Rumania",
+      "file": "rumania"
+    },
+    {
+      "name": "Rusia",
+      "file": "rusia"
+    },
+    {
+      "name": "Suecia",
+      "file": "suecia"
+    },
+    {
+      "name": "Tanzania",
+      "file": "tanzania"
+    },
+    {
+      "name": "Venezuela",
+      "file": "venezuela"
+    },
+    {
+      "name": "Vietnam",
+      "file": "vietnam"
+    },
+    {
+      "name": "Zimbabue",
+      "file": "zimbabue"
+    },
+    {
+      "name": "Venecia",
+      "file": "venecia"
+    },
+    {
+      "name": "Capadocia",
+      "file": "capadocia"
+    },
+    {
+      "name": "Marte",
+      "file": "marte"
+    },
+    {
+      "name": "Seúl",
+      "file": "seul"
+    },
+    {
+      "name": "Noruega",
+      "file": "noruega"
+    },
+    {
+      "name": "Madagascar",
+      "file": "madagascar"
+    },
+    {
+      "name": "Colombia",
+      "file": "colombia"
+    },
+    {
+      "name": "Tailandia",
+      "file": "tailandia"
+    },
+    {
+      "name": "Wonderland",
+      "file": "wonderland"
+    },
+    {
+      "name": "Cuba",
+      "file": "cuba"
+    },
+    {
+      "name": "Alemania",
+      "file": "alemania"
+    },
+    {
+      "name": "Narnia",
+      "file": "narnia"
+    },
+    {
+      "name": "Guatemala",
+      "file": "guatemala"
+    },
+    {
+      "name": "Hungría",
+      "file": "hungria"
+    },
+    {
+      "name": "Fiyi",
+      "file": "fiyi"
+    },
+    {
+      "name": "Petra",
+      "file": "petra"
+    },
+    {
+      "name": "Suiza",
+      "file": "suiza"
+    },
+    {
+      "name": "Filipinas",
+      "file": "filipinas"
+    },
+    {
+      "name": "Gym Camila",
+      "file": "gymcamila"
     }
   ]
 }

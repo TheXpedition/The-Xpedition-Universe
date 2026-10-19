@@ -56,7 +56,7 @@ test('el simulador comparte la sesión y mantiene compras y partidas privadas po
  const claimed=await request(alice,'/economy/buy','POST',{item:'character:vladimir'});assert.equal(claimed.status,200);assert(claimed.owned.includes('character:vladimir'));
  assert(!(await request(bob,'/economy')).owned.includes('character:vladimir'));
  const started=await request(alice,'/game-runs','POST',{mode:'antarctica'});assert.equal(started.status,201);const id=started.run.id;
- const snapshot={version:1,engine:'game',point:'setup',state:{vars:{selected18:['Dani','Dua Lingo']}}};
+ const snapshot={version:1,engine:'game',point:'core:3',state:{vars:{selected18:['Dani','Dua Lingo']}}};
  assert.equal((await request(alice,'/game-runs/'+id,'PUT',{revision:0,episode:0,snapshot})).revision,1);
  assert.deepEqual((await request(alice,'/game-runs/'+id)).run.snapshot,snapshot);
  assert.equal((await request(bob,'/game-runs/'+id)).status,404);
@@ -177,7 +177,7 @@ test('publicaciones, menciones, stickers, archivo recuperable y orden reciente',
 });
 test('popularidad inicial, visitas únicas y cambios graduales',async()=>{
   let p=(await request(client(),'/profiles')).profiles.filter(p=>p.character).sort((a,b)=>a.popularityRank-b.popularityRank);
-  assert.equal(p.length,152);assert.equal(new Set(p.map(p=>p.id)).size,152);
+  assert.equal(p.length,156);assert.equal(new Set(p.map(p=>p.id)).size,156);
   assert.deepEqual(p.slice(0,15).map(p=>p.name),['Bonju','Jiafei','Dua Lingo','Dani','Britney Britney','Isabel','Luciano','Andromeda','Alexandro','Coronel','Nicki Gorilaj','Pepi','Nidia Mirella','Mel Rz','Edna Droga']);
   assert.equal(p.at(-1).name,'Vladimir');assert.equal(p.at(-2).name,'Gustavo');
   const last=p.at(-1);for(let i=0;i<3;i++)assert.equal((await request(alice,'/characters/'+last.id+'/view','POST',{})).status,200);

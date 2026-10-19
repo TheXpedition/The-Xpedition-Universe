@@ -41,7 +41,7 @@ La carpeta `data/` contiene los datos privados locales y está excluida de Git. 
 
 ## Funciones
 
-Registro, contraseña, Google, perfiles editables, 152 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 33 contenidos y las 14 colecciones de tops originales.
+Registro, contraseña, Google, perfiles editables, 156 personajes, seguimiento, favoritos, noticias, chats privados, grupos, presencia, lectura, escritura, respuestas, reacciones, edición, imágenes y notas de voz. Catálogo con 33 contenidos y las 14 colecciones de tops originales.
 
 El simulador en `/simulator/` comparte la cuenta y exige sesión para jugar. Incluye tienda, colección personal, monedas, niveles, tickets del universo y partidas privadas con guardado automático y recuperación. Safari se abre en nivel 2 y The Traitor en nivel 5. Consulta [SIMULADOR.md](SIMULADOR.md) para precios, recompensas, funcionamiento de los puntos de control y pruebas.
 

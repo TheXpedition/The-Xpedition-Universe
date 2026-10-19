@@ -38,7 +38,7 @@ test('Antarctica y Safari conservan el elenco completo y abren en rutas internas
   assert.deepEqual(new Set(record.participants.map(p=>p.name)),new Set(details[id].cast));
   assert.deepEqual(record.mainCast.map(p=>p.name),details[id].previewCast);
   assert.equal(record.teams.length,id==='antarctica'?3:5);
-  for(const name of ['Pier','Dani','Felix'])if(record.images[name])assert.equal(record.images[name],catalog.characters.find(c=>c.name===name).image);
+  for(const name of id==='antarctica'?['Pier','Dani','Felix']:['Pier'])assert(record.images[name].endsWith('-original.webp'));
  }
  assert.equal(archive.seasons.antarctica.participants[0].place,'Winner');
  // Safari's source ends with two finalists. Do not invent a winner.

@@ -4,15 +4,15 @@
 
 ## Catálogo y desbloqueos
 
-La fuente de precios, talentos, pronombres y artículos iniciales es `public/simulator/catalog.json`. Incluye los 152 personajes actuales. Los elencos de Safari y Antarctica, más Dua Lingo, forman los 36 personajes disponibles desde el inicio. Bonju es anfitriona y personaje especial de tienda. Vladimir, Lily Louvre, Daniel Sims y Alex Yohender se reclaman por cero monedas. Los otros personajes normales cuestan 65 monedas; once especiales cuestan 220 y Bonju 300.
+La fuente de precios, talentos, pronombres y artículos iniciales es `public/simulator/catalog.json`. Incluye los 156 personajes actuales. Los elencos de Safari y Antarctica, más Dua Lingo, forman los 36 personajes disponibles desde el inicio. Bonju es anfitriona y personaje especial de tienda. Vladimir, Lily Louvre, Daniel Sims y Alex Yohender se reclaman por cero monedas. Los otros personajes normales cuestan 65 monedas; once especiales cuestan 220 y Bonju 300.
 
 | Temporada | Nivel | Monedas |
 | --- | ---: | ---: |
 | Antarctica | 1 | Incluida |
-| Safari | 2 | Incluida |
+| Safari | 2 | 120 monedas |
 | Cruise | 3 | 180 |
 | House | 4 | 240 |
-| The Traitor | 5 | Incluida |
+| The Traitor | 5 | 300 monedas |
 | Race | 6 | 360 |
 | Vs. The World | 7 | 900 |
 | Japan | — | Próximamente |
@@ -48,6 +48,16 @@ El juego se simula en el navegador. El servidor verifica cuenta, propiedad de la
 `npm ci` y `npm test`. Las pruebas usan cuentas y bases aisladas. Cubren sesión compartida, privacidad, precios, regalos, idempotencia, bloqueos, saldo insuficiente, límites, finales, bonus de delegación y persistencia. Los motores se ejecutan en JSDOM para comprobar recuperación de Antarctica, Safari, Cruise, Race, House y The Traitor, así como representantes y estadísticas de Vs. The World. También se verifica que el primer episodio terminado conserva sus resultados y puede avanzar después de reabrirlo.
 
 Los recursos de los motores provienen de los archivos locales proporcionados para esta integración; los PNG grandes se optimizaron en las copias publicadas.
+
+## Cuenta, cupones y partidas
+
+Las preferencias se guardan en `simulator_preferences`, una tabla nueva: no sustituye saldos, inventario ni datos de la comunidad. Desactivar el autoguardado conserva el progreso económico de la sesión, pero solo Guardar partida ahora actualiza el guardado. Poner o Quitar un personaje cambia las opciones futuras y mantiene su propiedad. La pantalla inicial de selección no se registra como partida guardada hasta confirmar el elenco.
+
+Los cupones ChatGPT, Bonju, Moda, LGBTQ y LevelUp se validan y entregan dentro de una transacción del servidor. La clave de recompensa por cuenta y cupón impide repetirlos, incluso con solicitudes simultáneas. Antártica permanece incluida; Safari cuesta 120 monedas y The Traitor 300, además de sus niveles 2 y 5. Los destinos de Race aparecen en Retos y los cinco tipos de dupla de pago se validan contra el inventario.
+
+Las archivadas pueden continuar durante 24 horas. Al vencer o al eliminarlas se retiran de los guardados sin afectar compras, tickets o monedas; las completadas no vencen. Solo se muestran los diez eventos económicos más recientes. `account-adjustments.mjs` contiene el ajuste solicitado por el propietario, identificado por hash de correo y aplicado una sola vez con una clave idempotente. Aumenta monedas y XP sin modificar tickets ni otras cuentas.
+
+Los mensajes entrantes emiten dos notas cortas con Web Audio después de la primera interacción que habilita el audio en el navegador. Se excluyen mensajes propios y duplicados entre pestañas. La misma integración funciona en la comunidad y en el simulador con la sesión compartida.
 
 ## Presentación adaptable
 
