@@ -89,7 +89,7 @@ async function publishPost(e){
 }
 async function postStickerPicker(){
   await chatAssetsReady;
-  modal(`<h2 id="modalTitle">Un sticker para tu historia.</h2><p class="modal-intro">Elige uno de la colección. ♥ Tus favoritos van primero.</p><div class="post-sticker-picker">${stickerTiles('post')}</div>`,true,'post-sticker');
+  modal(`<h2 id="modalTitle">Un sticker para tu historia.</h2><p class="modal-intro">Transparentes primero, después los de imagen completa. ♥ Favoritos dentro de cada grupo.</p><div class="post-sticker-picker">${stickerTiles('post')}</div>`,true,'post-sticker');
 }
 function postMentionPicker(){
   modal('<h2 id="modalTitle">Menciona a tu gente.</h2><p class="modal-intro">Personas de la comunidad y personajes del universo. Hasta 10 por publicación.</p><label class="search-field">'+icon('search')+'<input id="mentionSearch" aria-label="Buscar persona o personaje" placeholder="Busca un nombre…"></label><div class="mention-results" id="mentionResults"></div>',false,'post-mention');

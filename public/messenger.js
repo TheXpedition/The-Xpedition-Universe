@@ -7,7 +7,7 @@ let emojiGroups=[],chatStickers=[],chatPopover=null,popoverAnchor=null,popoverCo
 const chatAssetsReady=Promise.all([fetch('chat-emojis.json').then(r=>r.json()),fetch('stickers.json').then(r=>r.json())]).then(([emojis,stickers])=>{emojiGroups=emojis;chatStickers=stickers;}).catch(()=>{emojiGroups=[{name:'Reacciones',items:defaultReactions.map(emoji=>({emoji,name:emoji}))}];});
 const emojiList=()=>emojiGroups.flatMap(g=>g.items);
 const stickerFavorites=()=>new Set(state.user?.stickerFavorites||[]);
-function orderedStickers(){const favorites=stickerFavorites();return [...chatStickers.filter(s=>favorites.has(s.id)),...chatStickers.filter(s=>!favorites.has(s.id))];}
+function orderedStickers(){const favorites=stickerFavorites();return [...chatStickers].sort((a,b)=>Number(!!b.transparent)-Number(!!a.transparent)||Number(favorites.has(b.id))-Number(favorites.has(a.id)));}
 function stickerTiles(mode='chat'){
  const favorites=stickerFavorites();
  return orderedStickers().map(s=>{const favorite=favorites.has(s.id),action=mode==='post'?`data-social="choose-post-sticker" data-id="${esc(s.id)}" data-src="${esc(s.src)}"`:`data-chat="send-sticker" data-sticker="${esc(s.id)}"`;return `<div class="sticker-tile" data-sticker-id="${esc(s.id)}"><button class="sticker-select" ${action} aria-label="${mode==='post'?'Elegir':'Enviar'} ${esc(s.name)}"><img src="${esc(s.src)}" alt="${esc(s.name)}" loading="lazy"></button><button class="sticker-favorite ${favorite?'selected':''}" data-chat="favorite-sticker" data-sticker="${esc(s.id)}" aria-label="${favorite?'Quitar de':'Añadir a'} favoritos: ${esc(s.name)}" aria-pressed="${favorite}" title="${favorite?'Quitar de favoritos':'Me encanta'}">${icon('heart')}</button></div>`;}).join('');
@@ -127,7 +127,7 @@ function messageOptions(id){
 }
 async function openStickers(anchor){
  await chatAssetsReady;if(!anchor.isConnected)return;
- showChatPopover(anchor,`<div class="chat-picker sticker-picker"><div class="picker-heading"><strong>Stickers del universo</strong><button data-chat="close-picker" aria-label="Cerrar stickers">${icon('close')}</button></div><p class="sticker-hint">Toca uno para enviarlo · ♥ Tus favoritos van primero</p><div class="sticker-grid">${stickerTiles()}</div></div>`,{mode:'stickers'},'Enviar stickers');
+ showChatPopover(anchor,`<div class="chat-picker sticker-picker"><div class="picker-heading"><strong>Stickers del universo</strong><button data-chat="close-picker" aria-label="Cerrar stickers">${icon('close')}</button></div><p class="sticker-hint">Transparentes primero · ♥ Favoritos dentro de cada grupo</p><div class="sticker-grid">${stickerTiles()}</div></div>`,{mode:'stickers'},'Enviar stickers');
 }
 async function sendSticker(id,button){
  if(state.sending||state.recording||!state.active)return;const chat=state.active;state.sending=true;button.disabled=true;

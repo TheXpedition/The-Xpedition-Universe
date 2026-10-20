@@ -4,17 +4,24 @@ import fs from 'node:fs';
 import {JSDOM} from 'jsdom';
 
 const emojis=JSON.parse(fs.readFileSync(new URL('../public/chat-emojis.json',import.meta.url),'utf8'));
-function messenger(){
+function messenger(stickers=[]){
  const dom=new JSDOM('<header class="topbar"></header><main><section class="messenger" id="messenger"><div id="chatHistory"></div><textarea id="messageInput"></textarea><button id="anchor" data-chat="reaction" data-id="one">Reaccionar</button></section></main>',{url:'https://test.invalid/#mensajes',runScripts:'outside-only',pretendToBeVisual:true}),w=dom.window;
  w.state={user:{id:'viewer'},active:'chat',messages:[{id:'one',type:'text',text:'Hola',sender:{id:'other',name:'Chat QA'},created:Date.now(),reactions:[{user_id:'viewer',emoji:'❤️'}]}],conversations:[{id:'chat',type:'dm',members:[]}]};
  w.icons={};w.$=(s,root=w.document)=>root.querySelector(s);w.$$=(s,root=w.document)=>[...root.querySelectorAll(s)];w.startStream=()=>{};w.renderMessenger=()=>{};w.ResizeObserver=class{observe(){}};w.matchMedia=()=>({matches:true});
  w.icon=()=>'<svg></svg>';w.avatar=()=>'';w.esc=s=>String(s);w.linkify=s=>s;w.norm=s=>String(s||'').toLowerCase();w.time=()=>'';w.date=()=>'';w.messagePreview=m=>m.text;w.toast=message=>{throw new Error(message);};
- w.fetch=async url=>({json:async()=>url==='chat-emojis.json'?emojis:[]});w.visualViewport=new w.EventTarget();Object.assign(w.visualViewport,{height:844,width:390,offsetTop:0,offsetLeft:0,scale:1});
+ w.fetch=async url=>({json:async()=>url==='chat-emojis.json'?emojis:stickers});w.visualViewport=new w.EventTarget();Object.assign(w.visualViewport,{height:844,width:390,offsetTop:0,offsetLeft:0,scale:1});
  Object.defineProperty(w,'innerHeight',{value:844,configurable:true});Object.defineProperty(w,'innerWidth',{value:390,configurable:true});
- w.eval(fs.readFileSync(new URL('../public/messenger.js',import.meta.url),'utf8')+'\nwindow.messengerTest={renderMessages};');
+ w.eval(fs.readFileSync(new URL('../public/messenger.js',import.meta.url),'utf8')+'\nwindow.messengerTest={renderMessages,stickerTiles};');
  return {dom,w};
 }
 const settle=()=>new Promise(resolve=>setTimeout(resolve,25));
+
+test('todos los transparentes preceden a los cuadros aun con favoritos, en chat y publicaciones',async()=>{
+ const stickers=JSON.parse(fs.readFileSync(new URL('../public/stickers.json',import.meta.url),'utf8')),opaque=stickers.find(s=>!s.transparent),transparent=stickers.filter(s=>s.transparent).at(-1),{dom,w}=messenger(stickers);
+ try{w.state.user.stickerFavorites=[opaque.id,transparent.id];await settle();
+  for(const mode of ['chat','post']){const root=w.document.createElement('div');root.innerHTML=w.messengerTest.stickerTiles(mode);const ids=[...root.querySelectorAll('[data-sticker-id]')].map(el=>el.dataset.stickerId),boundary=stickers.filter(s=>s.transparent).length;assert.equal(ids.length,77);assert.equal(ids[0],transparent.id);assert.equal(ids[boundary],opaque.id);assert(ids.slice(0,boundary).every(id=>stickers.find(s=>s.id===id).transparent));assert(ids.slice(boundary).every(id=>!stickers.find(s=>s.id===id).transparent));}
+ }finally{dom.window.close();}
+});
 
 test('abrir + en móvil mantiene el selector al redimensionar, enfocar búsqueda y desplazar el viewport',async()=>{
  const {dom,w}=messenger();try{

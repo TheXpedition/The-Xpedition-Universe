@@ -1,252 +1,464 @@
 [
   {
-    "id": "9461eefa9b19f0a2",
-    "name": "Sticker 01",
-    "src": "stickers/1.png"
-  },
-  {
-    "id": "33761a265dade9a0",
-    "name": "Sticker 02",
-    "src": "stickers/2.png"
-  },
-  {
-    "id": "c64f368c086e61e2",
-    "name": "Sticker 03",
-    "src": "stickers/3.png"
-  },
-  {
     "id": "a6ffb1ed11bae54f",
     "name": "Sticker 04",
-    "src": "stickers/4.png"
+    "src": "stickers/4.png",
+    "transparent": true
   },
   {
     "id": "b8ab0997527adc51",
     "name": "Sticker 05",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_25%20p.m-1.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_25%20p.m-1.png",
+    "transparent": true
   },
   {
     "id": "55d24aa15a0e59b5",
     "name": "Sticker 06",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_33%20p.m-2.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_33%20p.m-2.png",
+    "transparent": true
   },
   {
     "id": "ee72c7d010e5a8d3",
     "name": "Sticker 07",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_34%20p.m-3.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_34%20p.m-3.png",
+    "transparent": true
   },
   {
     "id": "77858514d625bb7c",
     "name": "Sticker 08",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_35%20p.m-4.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_35%20p.m-4.png",
+    "transparent": true
   },
   {
     "id": "2115605ea84b84ba",
     "name": "Sticker 09",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_36%20p.m-5.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_36%20p.m-5.png",
+    "transparent": true
   },
   {
     "id": "afcb3f77d1f3adfc",
     "name": "Sticker 10",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_37%20p.m-6.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_37%20p.m-6.png",
+    "transparent": true
   },
   {
     "id": "033798136962a8b4",
     "name": "Sticker 11",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_38%20p.m-7.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_38%20p.m-7.png",
+    "transparent": true
   },
   {
     "id": "54918589b41312c9",
     "name": "Sticker 12",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_38%20p.m-8.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_38%20p.m-8.png",
+    "transparent": true
   },
   {
     "id": "44b7b1615a26bfec",
     "name": "Sticker 13",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_39%20p.m-9.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_39%20p.m-9.png",
+    "transparent": true
   },
   {
     "id": "3d528dde8188d651",
     "name": "Sticker 14",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_40%20p.m-10.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_31_40%20p.m-10.png",
+    "transparent": true
   },
   {
     "id": "ed198da8f460fb8f",
     "name": "Sticker 15",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_23%20p.m-1.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_23%20p.m-1.png",
+    "transparent": true
   },
   {
     "id": "8996a04168d1173a",
     "name": "Sticker 16",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_24%20p.m-2.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_24%20p.m-2.png",
+    "transparent": true
   },
   {
     "id": "d650c512ec23b7ce",
     "name": "Sticker 17",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_25%20p.m-3.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_25%20p.m-3.png",
+    "transparent": true
   },
   {
     "id": "6fd4638abf8ed63f",
     "name": "Sticker 18",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_26%20p.m-4.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_33_26%20p.m-4.png",
+    "transparent": true
   },
   {
     "id": "6bff555f90ac385b",
     "name": "Sticker 19",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_28%20p.m-1.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_28%20p.m-1.png",
+    "transparent": true
   },
   {
     "id": "dcbd6447c9582618",
     "name": "Sticker 20",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_29%20p.m-2.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_29%20p.m-2.png",
+    "transparent": true
   },
   {
     "id": "c74f0480d2e9e7b8",
     "name": "Sticker 21",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_30%20p.m-3.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_30%20p.m-3.png",
+    "transparent": true
   },
   {
     "id": "648d34cd737f14b8",
     "name": "Sticker 22",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_31%20p.m-4.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_31%20p.m-4.png",
+    "transparent": true
   },
   {
     "id": "2cde326d691ac59d",
     "name": "Sticker 23",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_32%20p.m-5.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_32%20p.m-5.png",
+    "transparent": true
   },
   {
     "id": "de4ff803dea786cd",
     "name": "Sticker 24",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_33%20p.m-6.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_33%20p.m-6.png",
+    "transparent": true
   },
   {
     "id": "416b841c8cc9361d",
     "name": "Sticker 25",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_34%20p.m-7.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_34%20p.m-7.png",
+    "transparent": true
   },
   {
     "id": "8ab04601f3cee4db",
     "name": "Sticker 26",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_35%20p.m-8.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_35%20p.m-8.png",
+    "transparent": true
   },
   {
     "id": "d00ff34e8cf44ca9",
     "name": "Sticker 27",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_36%20p.m-9.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_36%20p.m-9.png",
+    "transparent": true
   },
   {
     "id": "96477ddb9f3aedde",
     "name": "Sticker 28",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_38%20p.m-10.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2007_42_38%20p.m-10.png",
+    "transparent": true
   },
   {
     "id": "2036c909fec2d88d",
     "name": "Sticker 29",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_24%20p.m-1.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_24%20p.m-1.png",
+    "transparent": true
   },
   {
     "id": "42eb1d20f2d7b78b",
     "name": "Sticker 30",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_25%20p.m-2.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_25%20p.m-2.png",
+    "transparent": true
   },
   {
     "id": "f1ad571f25d3897c",
     "name": "Sticker 31",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_27%20p.m-3.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_27%20p.m-3.png",
+    "transparent": true
   },
   {
     "id": "5fedfc99b7339fca",
     "name": "Sticker 32",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_28%20p.m-4.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_28%20p.m-4.png",
+    "transparent": true
   },
   {
     "id": "8adb57d4f179849f",
     "name": "Sticker 33",
-    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_29%20p.m-5.png"
+    "src": "stickers/Imagen%20de%20ChatGPT%2017%20oct%202026%2C%2008_05_29%20p.m-5.png",
+    "transparent": true
   },
   {
     "id": "5f66b60f28a25ccb",
     "name": "Sticker 34",
-    "src": "stickers/vita.png"
+    "src": "stickers/vita.png",
+    "transparent": true
   },
   {
     "id": "cab39a970e9b8c25",
     "name": "nuevo",
-    "src": "stickers/nuevo.png"
+    "src": "stickers/nuevo.png",
+    "transparent": true
   },
   {
     "id": "aabc9c851be9584e",
     "name": "nuevo2",
-    "src": "stickers/nuevo2.png"
+    "src": "stickers/nuevo2.png",
+    "transparent": true
   },
   {
     "id": "1c0797aa8532aab5",
     "name": "nuevo3",
-    "src": "stickers/nuevo3.png"
+    "src": "stickers/nuevo3.png",
+    "transparent": true
   },
   {
     "id": "7aa6d47745ee2699",
     "name": "Nuevos (1)",
-    "src": "stickers/nuevos-1.png"
+    "src": "stickers/nuevos-1.png",
+    "transparent": true
   },
   {
     "id": "d60f01949b8d2968",
     "name": "Nuevos (2)",
-    "src": "stickers/nuevos-2.png"
+    "src": "stickers/nuevos-2.png",
+    "transparent": true
   },
   {
     "id": "2ef307daf1ee4dca",
     "name": "Nuevos (3)",
-    "src": "stickers/nuevos-3.png"
+    "src": "stickers/nuevos-3.png",
+    "transparent": true
   },
   {
     "id": "ed959dce823ee124",
     "name": "Nuevos (4)",
-    "src": "stickers/nuevos-4.png"
+    "src": "stickers/nuevos-4.png",
+    "transparent": true
   },
   {
     "id": "d5587390108a9e7c",
     "name": "Nuevos (5)",
-    "src": "stickers/nuevos-5.png"
+    "src": "stickers/nuevos-5.png",
+    "transparent": true
   },
   {
     "id": "31b0e256314ceb08",
     "name": "Nuevos (6)",
-    "src": "stickers/nuevos-6.png"
+    "src": "stickers/nuevos-6.png",
+    "transparent": true
   },
   {
     "id": "875df86c8f62d1bb",
     "name": "Nuevos (7)",
-    "src": "stickers/nuevos-7.png"
+    "src": "stickers/nuevos-7.png",
+    "transparent": true
   },
   {
     "id": "89daee1d88ad4de3",
     "name": "Nuevos (8)",
-    "src": "stickers/nuevos-8.png"
+    "src": "stickers/nuevos-8.png",
+    "transparent": true
   },
   {
     "id": "31ffc3b737f70068",
     "name": "Nuevos (9)",
-    "src": "stickers/nuevos-9-transparente.png"
-  },
-  {
-    "id": "1b3ea64c0c6e4263",
-    "name": "Nuevos (10)",
-    "src": "stickers/nuevos-10.png"
-  },
-  {
-    "id": "ba91282d676060d6",
-    "name": "Nuevos (11)",
-    "src": "stickers/nuevos-11.png"
+    "src": "stickers/nuevos-9-transparente.png",
+    "transparent": true
   },
   {
     "id": "33ebf6e625ab5688",
     "name": "Nuevos (12)",
-    "src": "stickers/nuevos-12.png"
+    "src": "stickers/nuevos-12.png",
+    "transparent": true
   },
   {
     "id": "95eef7da5f4b92e3",
     "name": "Nuevos (13)",
-    "src": "stickers/nuevos-13.png"
+    "src": "stickers/nuevos-13.png",
+    "transparent": true
+  },
+  {
+    "id": "861305b919d82df4",
+    "name": "a1",
+    "src": "stickers/a1.webp",
+    "transparent": true
+  },
+  {
+    "id": "9461eefa9b19f0a2",
+    "name": "Sticker 01",
+    "src": "stickers/1.png",
+    "transparent": false
+  },
+  {
+    "id": "33761a265dade9a0",
+    "name": "Sticker 02",
+    "src": "stickers/2.png",
+    "transparent": false
+  },
+  {
+    "id": "c64f368c086e61e2",
+    "name": "Sticker 03",
+    "src": "stickers/3.png",
+    "transparent": false
+  },
+  {
+    "id": "1b3ea64c0c6e4263",
+    "name": "Nuevos (10)",
+    "src": "stickers/nuevos-10.png",
+    "transparent": false
+  },
+  {
+    "id": "ba91282d676060d6",
+    "name": "Nuevos (11)",
+    "src": "stickers/nuevos-11.png",
+    "transparent": false
+  },
+  {
+    "id": "ca503d12778f0369",
+    "name": "a2",
+    "src": "stickers/a2.webp",
+    "transparent": false
+  },
+  {
+    "id": "be1f7e3db6b80cc5",
+    "name": "a3",
+    "src": "stickers/a3.webp",
+    "transparent": false
+  },
+  {
+    "id": "589786dad6fe220d",
+    "name": "a4",
+    "src": "stickers/a4.webp",
+    "transparent": false
+  },
+  {
+    "id": "17ed7c7cf675010e",
+    "name": "a5",
+    "src": "stickers/a5.webp",
+    "transparent": false
+  },
+  {
+    "id": "9abd3735c0edf272",
+    "name": "a6",
+    "src": "stickers/a6.webp",
+    "transparent": false
+  },
+  {
+    "id": "6001a1d5757dfd38",
+    "name": "a7",
+    "src": "stickers/a7.webp",
+    "transparent": false
+  },
+  {
+    "id": "670c14084f735b39",
+    "name": "a8",
+    "src": "stickers/a8.webp",
+    "transparent": false
+  },
+  {
+    "id": "dcccd8a45f38cf4f",
+    "name": "a9",
+    "src": "stickers/a9.webp",
+    "transparent": false
+  },
+  {
+    "id": "cc6463df6eb0b823",
+    "name": "a10",
+    "src": "stickers/a10.webp",
+    "transparent": false
+  },
+  {
+    "id": "d0cda4071b2a8f13",
+    "name": "a11",
+    "src": "stickers/a11.webp",
+    "transparent": false
+  },
+  {
+    "id": "3249b873ebf6c302",
+    "name": "a12",
+    "src": "stickers/a12.webp",
+    "transparent": false
+  },
+  {
+    "id": "e0c3df8451a5edb1",
+    "name": "a13",
+    "src": "stickers/a13.webp",
+    "transparent": false
+  },
+  {
+    "id": "e56633a1301e1ebd",
+    "name": "a14",
+    "src": "stickers/a14.webp",
+    "transparent": false
+  },
+  {
+    "id": "5d499d22dfcf2884",
+    "name": "a15",
+    "src": "stickers/a15.webp",
+    "transparent": false
+  },
+  {
+    "id": "c1d82117c3ec3b3e",
+    "name": "a16",
+    "src": "stickers/a16.webp",
+    "transparent": false
+  },
+  {
+    "id": "e3193f8c03644cb3",
+    "name": "a17",
+    "src": "stickers/a17.webp",
+    "transparent": false
+  },
+  {
+    "id": "8da06379ba8057af",
+    "name": "a18",
+    "src": "stickers/a18.webp",
+    "transparent": false
+  },
+  {
+    "id": "92cbc5836da2f87d",
+    "name": "a19",
+    "src": "stickers/a19.webp",
+    "transparent": false
+  },
+  {
+    "id": "7c3eeb0c2e648ec3",
+    "name": "a20",
+    "src": "stickers/a20.webp",
+    "transparent": false
+  },
+  {
+    "id": "85f722ca70900a51",
+    "name": "a21",
+    "src": "stickers/a21.webp",
+    "transparent": false
+  },
+  {
+    "id": "ad9e2cf65e0ec291",
+    "name": "a22",
+    "src": "stickers/a22.webp",
+    "transparent": false
+  },
+  {
+    "id": "5aabd1cc3de7e3e4",
+    "name": "a23",
+    "src": "stickers/a23.webp",
+    "transparent": false
+  },
+  {
+    "id": "d620538e20e1a365",
+    "name": "a24",
+    "src": "stickers/a24.webp",
+    "transparent": false
+  },
+  {
+    "id": "f6b0307db8d59aa4",
+    "name": "a25",
+    "src": "stickers/a25.webp",
+    "transparent": false
+  },
+  {
+    "id": "466eaccb35946db3",
+    "name": "a26",
+    "src": "stickers/a26.webp",
+    "transparent": false
+  },
+  {
+    "id": "4ccd80f129bb0fd6",
+    "name": "a27",
+    "src": "stickers/a27.webp",
+    "transparent": false
   }
 ]

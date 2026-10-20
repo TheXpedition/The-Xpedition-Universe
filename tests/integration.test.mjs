@@ -127,7 +127,7 @@ test('grupos, permisos, nuevos miembros y salida',async()=>{
   await request(alice,'/conversations/'+group,'DELETE',{});const remaining=(await request(bob,'/conversations')).conversations.find(c=>c.id===group);assert(remaining.members.some(m=>m.role==='admin'));assert.equal((await request(alice,'/conversations/'+group+'/messages')).status,404);
 });
 test('stickers originales, selección validada y reacciones personalizadas',async()=>{
-  assert.equal(stickerCatalog.length,50);
+  assert.equal(stickerCatalog.length,77);
   const result=await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:stickerCatalog[0].id});assert.equal(result.status,201);keptSticker=result.message;assert.equal(keptSticker.stickerId,stickerCatalog[0].id);
   const file=await fetch(base+keptSticker.url);assert.equal(file.status,200);assert.deepEqual(Buffer.from(await file.arrayBuffer()),fs.readFileSync(path.join(root,'public',decodeURIComponent(stickerCatalog[0].src))));
   assert.equal((await request(alice,'/conversations/'+chat+'/messages','POST',{type:'sticker',stickerId:'https://example.com/no.png'})).status,400);
