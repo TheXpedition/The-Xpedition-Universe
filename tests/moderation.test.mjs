@@ -44,7 +44,7 @@ test('el bono adicional suma 5000 una sola vez, conserva nivel, tickets y el res
 
 test('verificaciones del Staff persisten sin conceder permisos de moderación',async()=>{
  const staff={id:'92354719-8816-4e25-9199-0dc9a99f7da1'},target=await user();
- for(const id of ['af5cf74b-2f10-41a6-953d-8a4b5649e076','3994216a-dd05-4fcd-8986-c6d043e66e86'])assert.deepEqual(accountRole(id),{verified:true,staff:false});
+ for(const id of ['af5cf74b-2f10-41a6-953d-8a4b5649e076','3994216a-dd05-4fcd-8986-c6d043e66e86','aa958fd5-8d40-463e-b7c9-c74877fe0db4'])assert.deepEqual(accountRole(id),{verified:true,staff:false});
  const url='/api/moderation/profiles/'+target.id+'/verification';
  assert.equal((await request(target,url,'PUT',{verified:true,staff:true})).status,403);
  assert.equal((await request(staff,url,'PUT',{verified:'true'})).status,400);
