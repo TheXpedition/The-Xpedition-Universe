@@ -31,6 +31,9 @@ CREATE TABLE IF NOT EXISTS community_removals(kind TEXT NOT NULL,item_id TEXT NO
 CREATE TABLE IF NOT EXISTS profile_verifications(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,verified INTEGER NOT NULL,moderator TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS moderation_actions(id TEXT PRIMARY KEY,moderator TEXT NOT NULL REFERENCES users(id),action TEXT NOT NULL,subject TEXT NOT NULL,details TEXT NOT NULL DEFAULT '{}',created INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS moderation_actions_created ON moderation_actions(created);
+CREATE TABLE IF NOT EXISTS arcade_access(game_id TEXT PRIMARY KEY,public_enabled INTEGER NOT NULL DEFAULT 0 CHECK(public_enabled IN (0,1)),updated_by TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS arcade_runs(id TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,game_id TEXT NOT NULL,level INTEGER NOT NULL,difficulty TEXT NOT NULL,status TEXT NOT NULL,snapshot TEXT NOT NULL,revision INTEGER NOT NULL DEFAULT 0,last_batch TEXT NOT NULL DEFAULT '',active_ticks INTEGER NOT NULL DEFAULT 0,created INTEGER NOT NULL,updated INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS arcade_runs_user ON arcade_runs(user_id,game_id,status,level);
 CREATE TABLE IF NOT EXISTS user_progression(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,tickets INTEGER NOT NULL DEFAULT 0,coins INTEGER NOT NULL DEFAULT 0,xp INTEGER NOT NULL DEFAULT 0);
 CREATE TABLE IF NOT EXISTS economy_rewards(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,event_key TEXT NOT NULL,tickets INTEGER NOT NULL DEFAULT 0,coins INTEGER NOT NULL DEFAULT 0,xp INTEGER NOT NULL DEFAULT 0,label TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(user_id,event_key));
 CREATE TABLE IF NOT EXISTS economy_inventory(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,item_id TEXT NOT NULL,acquired INTEGER NOT NULL,PRIMARY KEY(user_id,item_id));
@@ -43,11 +46,11 @@ CREATE TABLE IF NOT EXISTS casting_entries(season TEXT NOT NULL,user_id TEXT NOT
 CREATE INDEX IF NOT EXISTS casting_entries_state ON casting_entries(season,state,finished);`;
 
 const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0'],['sticker_favorites',"TEXT NOT NULL DEFAULT '[]'"]];
-const tables = ['users','sessions','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','profile_verifications','moderation_actions','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs','casting_seasons','casting_entries'];
+const tables = ['users','sessions','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','profile_verifications','moderation_actions','arcade_access','arcade_runs','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs','casting_seasons','casting_entries'];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|arcade_access|arcade_runs|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';

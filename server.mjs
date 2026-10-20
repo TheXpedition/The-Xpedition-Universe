@@ -5,6 +5,7 @@ import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adju
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
 import {createCasting} from './casting.mjs';
+import {createArcade} from './arcade.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
 import {createInteractions} from './social-interactions.mjs';
@@ -395,6 +396,7 @@ async function api(req, res, url) {
       ok: true
     });
   }
+  if(await arcade.handle(req,res,url,u))return;
   if(await casting.handle(req,res,url,u))return;
   if(await moderation.handle(req,res,url,u))return;
   if(await interactions.handle(req,res,url,u))return;
@@ -797,6 +799,7 @@ await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND 
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
 const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields});
 const casting=createCasting({db,json,fail,checkRate,body,progression,catalog});
+const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   // Casting reads can advance expired questions. Serialize them with other writes.
@@ -818,7 +821,8 @@ const mimeTypes = {
   '.webp': 'image/webp',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
-  '.mp4': 'video/mp4'
+  '.mp4': 'video/mp4',
+  '.wav': 'audio/wav'
 };
 const server = http.createServer(async (req, res) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -832,14 +836,27 @@ const server = http.createServer(async (req, res) => {
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
     if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
-    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
+    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
+    // Check the resolved filename, including encoded Windows separators and case aliases.
+    const arcadeFile=/^simulator\/ice-breaker(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));
+    if(arcadeFile){
+      res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');
+      const game=await arcade.access('ice-breaker',await getSession(req));
+      if(!game.canPlay){
+        if(path.extname(filename)==='.html'){
+          const html='<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Juego cerrado · The Xpedition</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#080e1b;color:#e8f4f7;font:16px system-ui"><main style="max-width:460px;padding:32px"><p style="color:#8ae2e3">THE XPEDITION · PRUEBA PRIVADA</p><h1>Esta expedición sigue bajo llave.</h1><p style="line-height:1.7">Ice Breaker está cerrado al público. Solo el staff puede probarlo hasta que lo habilite desde Moderación.</p><a style="color:#8ae2e3" href="/#simuladores">← Volver a Simuladores</a></main></body></html>';
+          res.writeHead(403,{'Content-Type':'text/html; charset=utf-8','Content-Length':Buffer.byteLength(html)});return res.end(req.method==='HEAD'?undefined:html);
+        }
+        fail(403,'Este juego está cerrado al público. Solo el staff puede acceder.');
+      }
+    }
     if(filename===path.join(publicDir,'index.html')&&monetization.adsense.publisher){const html=fs.readFileSync(filename,'utf8').replace('</head>','<meta name="google-adsense-account" content="'+monetization.adsense.publisher+'"></head>');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(html)});return res.end(req.method==='HEAD'?undefined:html);}
     const size = fs.statSync(filename).size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': (/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': arcadeFile?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
