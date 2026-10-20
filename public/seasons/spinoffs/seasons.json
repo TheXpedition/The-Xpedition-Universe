@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "seasons": {
     "desafio-india": {
       "id": "desafio-india",
@@ -571,9 +571,9 @@
         }
       ],
       "track": {
-        "src": "seasons/spinoffs/safari-showdown/track-record.png",
-        "width": 1175,
-        "height": 541
+        "src": "seasons/spinoffs/safari-showdown/track-record-20261020.png",
+        "width": 1142,
+        "height": 761
       },
       "stats": {
         "Temporada": "1",
@@ -656,7 +656,584 @@
             }
           ]
         ],
-        "trackSha256": "131c313acf75937113e8350f4981682a92a5f9770033b59da9ed7ab4c6ad2a43"
+        "trackSha256": "b7b3c38192eb37341fbe66eadcbd746fc8190803102e7843514f8563286213bb",
+        "originalTrackSha256": "131c313acf75937113e8350f4981682a92a5f9770033b59da9ed7ab4c6ad2a43",
+        "trackUpdatedBy": "Creador: imagen adjunta del 20 de octubre de 2026"
+      },
+      "tournament": {
+        "episodeCount": 16,
+        "complete": true,
+        "groups": [
+          {
+            "id": "rojo",
+            "name": "Rojo",
+            "color": "#ef777c",
+            "episodes": [
+              1,
+              2,
+              3
+            ],
+            "people": [
+              "Alexandro",
+              "Bayron",
+              "Garnet",
+              "Greg",
+              "Isabel",
+              "Rafael"
+            ],
+            "advanced": [
+              "Alexandro",
+              "Isabel",
+              "Rafael"
+            ],
+            "eliminated": [
+              "Bayron",
+              "Garnet",
+              "Greg"
+            ]
+          },
+          {
+            "id": "amarillo",
+            "name": "Amarillo",
+            "color": "#edce70",
+            "episodes": [
+              4,
+              5,
+              6
+            ],
+            "people": [
+              "Andromeda",
+              "Eris Midnight",
+              "Esteban",
+              "Ignacio Ricci",
+              "Lalamila",
+              "Pier"
+            ],
+            "advanced": [
+              "Eris Midnight",
+              "Ignacio Ricci",
+              "Lalamila"
+            ],
+            "eliminated": [
+              "Andromeda",
+              "Esteban",
+              "Pier"
+            ]
+          },
+          {
+            "id": "verde",
+            "name": "Verde",
+            "color": "#82c9a0",
+            "episodes": [
+              7,
+              8,
+              9
+            ],
+            "people": [
+              "Bryan Montalvo",
+              "Catalina",
+              "Iñaella Rose",
+              "Lucas Mendez",
+              "Luciano",
+              "Oscar"
+            ],
+            "advanced": [
+              "Lucas Mendez",
+              "Luciano",
+              "Oscar"
+            ],
+            "eliminated": [
+              "Bryan Montalvo",
+              "Catalina",
+              "Iñaella Rose"
+            ]
+          }
+        ],
+        "episodes": [
+          {
+            "number": 1,
+            "challenge": "La Bomba",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Rafael",
+                  "Isabel"
+                ],
+                "winner": "Rafael"
+              }
+            ],
+            "bracket": "rojo",
+            "votes": [
+              {
+                "from": "Alexandro",
+                "to": "Garnet"
+              },
+              {
+                "from": "Bayron",
+                "to": "Alexandro"
+              },
+              {
+                "from": "Garnet",
+                "to": "Alexandro"
+              },
+              {
+                "from": "Greg",
+                "to": null
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 2,
+            "challenge": "¿Quién Es?",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Alexandro",
+                  "Rafael"
+                ],
+                "winner": "Rafael"
+              }
+            ],
+            "bracket": "rojo",
+            "votes": [
+              {
+                "from": "Bayron",
+                "to": "Garnet"
+              },
+              {
+                "from": "Garnet",
+                "to": "Bayron"
+              },
+              {
+                "from": "Greg",
+                "to": "Bayron"
+              },
+              {
+                "from": "Isabel",
+                "to": "Greg"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 3,
+            "challenge": "Guess The Song",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Alexandro",
+                  "Isabel"
+                ],
+                "winner": null,
+                "noWinner": true
+              }
+            ],
+            "bracket": "rojo",
+            "votes": [
+              {
+                "from": "Bayron",
+                "to": "Garnet"
+              },
+              {
+                "from": "Garnet",
+                "to": "Greg"
+              },
+              {
+                "from": "Greg",
+                "to": "Bayron"
+              },
+              {
+                "from": "Rafael",
+                "to": "Greg"
+              }
+            ],
+            "status": "complete",
+            "eliminated": [
+              "Bayron",
+              "Garnet",
+              "Greg"
+            ]
+          },
+          {
+            "number": 4,
+            "challenge": "Branding",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Lalamila",
+                  "Pier"
+                ],
+                "winner": "Lalamila"
+              }
+            ],
+            "bracket": "amarillo",
+            "votes": [
+              {
+                "from": "Andromeda",
+                "to": "Eris Midnight"
+              },
+              {
+                "from": "Eris Midnight",
+                "to": "Andromeda"
+              },
+              {
+                "from": "Esteban",
+                "to": "Eris Midnight"
+              },
+              {
+                "from": "Ignacio Ricci",
+                "to": "Andromeda"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 5,
+            "challenge": "Bonju Chef",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Eris Midnight",
+                  "Pier"
+                ],
+                "winner": "Eris Midnight"
+              }
+            ],
+            "bracket": "amarillo",
+            "votes": [
+              {
+                "from": "Andromeda",
+                "to": "Ignacio Ricci"
+              },
+              {
+                "from": "Esteban",
+                "to": "Eris Midnight"
+              },
+              {
+                "from": "Ignacio Ricci",
+                "to": "Andromeda"
+              },
+              {
+                "from": "Lalamila",
+                "to": "Ignacio Ricci"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 6,
+            "challenge": "¿Quién quiere ser millonario?",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Eris Midnight",
+                  "Ignacio Ricci"
+                ],
+                "winner": "Ignacio Ricci"
+              }
+            ],
+            "bracket": "amarillo",
+            "votes": [
+              {
+                "from": "Andromeda",
+                "to": "Lalamila"
+              },
+              {
+                "from": "Esteban",
+                "to": "Lalamila"
+              },
+              {
+                "from": "Lalamila",
+                "to": "Andromeda"
+              },
+              {
+                "from": "Pier",
+                "to": "Esteban"
+              }
+            ],
+            "status": "complete",
+            "eliminated": [
+              "Andromeda",
+              "Esteban",
+              "Pier"
+            ]
+          },
+          {
+            "number": 7,
+            "challenge": "Rapidez",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Oscar",
+                  "Lucas Mendez"
+                ],
+                "winner": "Oscar"
+              }
+            ],
+            "bracket": "verde",
+            "votes": [
+              {
+                "from": "Bryan Montalvo",
+                "to": "Luciano"
+              },
+              {
+                "from": "Catalina",
+                "to": "Lucas Mendez"
+              },
+              {
+                "from": "Iñaella Rose",
+                "to": null
+              },
+              {
+                "from": "Luciano",
+                "to": "Bryan Montalvo"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 8,
+            "challenge": "Maria Dice",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Catalina",
+                  "Luciano"
+                ],
+                "winner": "Luciano"
+              }
+            ],
+            "bracket": "verde",
+            "votes": [
+              {
+                "from": "Bryan Montalvo",
+                "to": "Lucas Mendez"
+              },
+              {
+                "from": "Iñaella Rose",
+                "to": "Luciano"
+              },
+              {
+                "from": "Lucas Mendez",
+                "to": "Oscar"
+              },
+              {
+                "from": "Oscar",
+                "to": "Lucas Mendez"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 9,
+            "challenge": "Búsqueda",
+            "phase": "brackets",
+            "duels": [
+              {
+                "people": [
+                  "Catalina",
+                  "Bryan Montalvo"
+                ],
+                "winner": "Catalina"
+              }
+            ],
+            "bracket": "verde",
+            "votes": [
+              {
+                "from": "Iñaella Rose",
+                "to": "Luciano"
+              },
+              {
+                "from": "Lucas Mendez",
+                "to": "Oscar"
+              },
+              {
+                "from": "Luciano",
+                "to": "Bryan Montalvo"
+              },
+              {
+                "from": "Oscar",
+                "to": "Lucas Mendez"
+              }
+            ],
+            "status": "complete",
+            "eliminated": [
+              "Bryan Montalvo",
+              "Catalina",
+              "Iñaella Rose"
+            ]
+          },
+          {
+            "number": 10,
+            "challenge": "Eliminarse del Chat",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Eris Midnight",
+                  "Rafael"
+                ],
+                "winner": "Rafael"
+              }
+            ],
+            "status": "complete",
+            "wildcard": [
+              "Esteban"
+            ]
+          },
+          {
+            "number": 11,
+            "challenge": "Verdad o Reto",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Oscar",
+                  "Lucas Mendez"
+                ],
+                "winner": "Oscar"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 12,
+            "challenge": "Guess the Movie",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Oscar",
+                  "Luciano"
+                ],
+                "winner": "Luciano"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 13,
+            "challenge": "Concentración",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Rafael",
+                  "Oscar"
+                ],
+                "winner": "Rafael"
+              }
+            ],
+            "status": "complete",
+            "quit": [
+              "Isabel"
+            ]
+          },
+          {
+            "number": 14,
+            "challenge": "Sonidos ASMR",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Ignacio Ricci",
+                  "Lalamila"
+                ],
+                "winner": "Ignacio Ricci"
+              }
+            ],
+            "status": "complete"
+          },
+          {
+            "number": 15,
+            "challenge": "Moda",
+            "phase": "semifinales",
+            "duels": [
+              {
+                "people": [
+                  "Eris Midnight",
+                  "Lucas Mendez"
+                ],
+                "winner": "Eris Midnight"
+              }
+            ],
+            "status": "complete",
+            "eliminated": [
+              "Lucas Mendez",
+              "Luciano",
+              "Lalamila",
+              "Alexandro",
+              "Esteban"
+            ]
+          },
+          {
+            "number": 16,
+            "challenge": "Duelos",
+            "phase": "final",
+            "status": "complete",
+            "duels": [
+              {
+                "people": [
+                  "Eris Midnight",
+                  "Ignacio Ricci"
+                ],
+                "winner": "Eris Midnight",
+                "eliminated": "Eris Midnight"
+              },
+              {
+                "people": [
+                  "Rafael",
+                  "Oscar"
+                ],
+                "winner": "Oscar",
+                "eliminated": "Oscar"
+              },
+              {
+                "people": [
+                  "Rafael",
+                  "Ignacio Ricci"
+                ],
+                "winner": "Rafael",
+                "eliminated": "Rafael"
+              }
+            ],
+            "champion": "Ignacio Ricci"
+          }
+        ],
+        "semifinalists": [
+          "Alexandro",
+          "Isabel",
+          "Rafael",
+          "Eris Midnight",
+          "Ignacio Ricci",
+          "Lalamila",
+          "Lucas Mendez",
+          "Luciano",
+          "Oscar"
+        ],
+        "wildcard": "Esteban",
+        "finalists": [
+          "Eris Midnight",
+          "Ignacio Ricci",
+          "Rafael",
+          "Oscar"
+        ],
+        "champion": "Ignacio Ricci",
+        "rules": {
+          "top": 2,
+          "duel": 1,
+          "vote": 1
+        },
+        "provenance": "Información de la temporada proporcionada por su creador, 20 de octubre de 2026."
       }
     },
     "traitor-showdown": {
@@ -1070,9 +1647,9 @@
         }
       ],
       "track": {
-        "src": "seasons/spinoffs/traitor-showdown/track-record.png",
-        "width": 710,
-        "height": 2107
+        "src": "seasons/spinoffs/traitor-showdown/track-record-20261020.png",
+        "width": 1323,
+        "height": 1103
       },
       "stats": {
         "Temporada": "2",
@@ -1247,7 +1824,372 @@
             ]
           }
         ],
-        "trackSha256": "d67b679f2c6b0e407fed584bfd553885a17e8bcdcddfb083280e51e06a3034bc"
+        "trackSha256": "6c2c4854caedc855b1bd7097751aba347c07d4b4d35361ee913ce1e94f03b809",
+        "originalTrackSha256": "d67b679f2c6b0e407fed584bfd553885a17e8bcdcddfb083280e51e06a3034bc",
+        "trackUpdatedBy": "Creador: imagen adjunta del 20 de octubre de 2026"
+      },
+      "tournament": {
+        "episodeCount": 20,
+        "complete": false,
+        "groups": [
+          {
+            "id": "naranja",
+            "name": "Naranja",
+            "color": "#f5aa68",
+            "episodes": [
+              1,
+              2,
+              3
+            ],
+            "people": [
+              "Ari Salgado",
+              "Bayron",
+              "Christopher",
+              "Daelly",
+              "Elias",
+              "Esteban",
+              "Gabriel Sab",
+              "Julián",
+              "Mary Hao"
+            ],
+            "stars": {
+              "Ari Salgado": 3,
+              "Bayron": 5,
+              "Christopher": 6,
+              "Daelly": 4,
+              "Elias": 4,
+              "Esteban": 3,
+              "Gabriel Sab": 3,
+              "Julián": 3,
+              "Mary Hao": 5
+            },
+            "duels": [
+              {
+                "people": [
+                  "Ari Salgado",
+                  "Esteban"
+                ],
+                "winner": "Ari Salgado"
+              },
+              {
+                "people": [
+                  "Bayron",
+                  "Mary Hao"
+                ],
+                "winner": "Mary Hao"
+              },
+              {
+                "people": [
+                  "Daelly",
+                  "Adriana Pereira",
+                  "Gabriel Sab"
+                ],
+                "winner": "Adriana Pereira"
+              }
+            ],
+            "reveal": [
+              {
+                "from": "Ari Salgado",
+                "to": "Julián"
+              },
+              {
+                "from": "Bayron",
+                "to": "Christopher"
+              },
+              {
+                "from": "Christopher",
+                "to": "Bayron"
+              },
+              {
+                "from": "Esteban",
+                "to": "Christopher"
+              },
+              {
+                "from": "Julián",
+                "to": "Mary Hao"
+              },
+              {
+                "from": "Mary Hao",
+                "to": "Bayron"
+              }
+            ],
+            "verdict": {
+              "people": [
+                "Adriana Pereira",
+                "Daelly"
+              ],
+              "advanced": "Adriana Pereira",
+              "by": "Bonju"
+            },
+            "status": "complete"
+          },
+          {
+            "id": "rosa",
+            "name": "Rosa",
+            "color": "#ef8cbd",
+            "episodes": [
+              4,
+              5,
+              6
+            ],
+            "people": [
+              "Luciano",
+              "Ivy",
+              "Marianito",
+              "Sal Lua",
+              "Eduard",
+              "Felix",
+              "Isabel",
+              "Marcos",
+              "Coronel"
+            ],
+            "status": "partial"
+          },
+          {
+            "id": "morado",
+            "name": "Morado",
+            "color": "#b39aee",
+            "episodes": [
+              7,
+              8,
+              9
+            ],
+            "people": [
+              "Carlos Harrington",
+              "Peggy",
+              "Bodega Bodeguita",
+              "Alice",
+              "Leandro",
+              "Catalina",
+              "Andromeda",
+              "Greg",
+              "Renzo"
+            ],
+            "status": "partial"
+          }
+        ],
+        "episodes": [
+          {
+            "number": 1,
+            "challenge": "Pop Culture",
+            "phase": "brackets",
+            "status": "complete",
+            "bracket": "naranja",
+            "duels": [
+              {
+                "people": [
+                  "Ari Salgado",
+                  "Esteban"
+                ],
+                "winner": "Ari Salgado"
+              }
+            ]
+          },
+          {
+            "number": 2,
+            "challenge": "Llaves",
+            "phase": "brackets",
+            "status": "complete",
+            "bracket": "naranja",
+            "duels": [
+              {
+                "people": [
+                  "Bayron",
+                  "Mary Hao"
+                ],
+                "winner": "Mary Hao"
+              }
+            ]
+          },
+          {
+            "number": 3,
+            "challenge": "Moda",
+            "phase": "brackets",
+            "status": "complete",
+            "bracket": "naranja",
+            "duels": [
+              {
+                "people": [
+                  "Daelly",
+                  "Adriana Pereira",
+                  "Gabriel Sab"
+                ],
+                "winner": "Adriana Pereira"
+              }
+            ]
+          },
+          {
+            "number": 4,
+            "challenge": "Rappin’ Roast",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "rosa"
+          },
+          {
+            "number": 5,
+            "challenge": "La Bomba",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "rosa"
+          },
+          {
+            "number": 6,
+            "challenge": "Bonju Dice",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "rosa"
+          },
+          {
+            "number": 7,
+            "challenge": "Crear una Marca de Ropa",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "morado"
+          },
+          {
+            "number": 8,
+            "challenge": "Guess the Movie",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "morado"
+          },
+          {
+            "number": 9,
+            "challenge": "Criminal Case",
+            "phase": "brackets",
+            "status": "partial",
+            "bracket": "morado"
+          },
+          {
+            "number": 10,
+            "challenge": "Musical Groups",
+            "phase": "fase-2",
+            "status": "partial"
+          },
+          {
+            "number": 11,
+            "challenge": "Top Model",
+            "phase": "fase-2",
+            "status": "partial"
+          },
+          {
+            "number": 12,
+            "challenge": "Canciones Retro",
+            "phase": "fase-2",
+            "status": "partial"
+          },
+          {
+            "number": 13,
+            "challenge": "Cajas de la Suerte",
+            "phase": "fase-2",
+            "status": "partial"
+          },
+          {
+            "number": 14,
+            "challenge": "Comerciales",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 15,
+            "challenge": "Funeral de Pomni",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 16,
+            "challenge": "The Xpedition Cruise",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 17,
+            "challenge": "Bonju Chef",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 18,
+            "challenge": "Look Sync",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 19,
+            "challenge": "Lanza y Esquiva",
+            "phase": "semifinales",
+            "status": "partial"
+          },
+          {
+            "number": 20,
+            "challenge": "Final",
+            "phase": "final",
+            "status": "upcoming"
+          }
+        ],
+        "semifinalists": [],
+        "finalists": [],
+        "champion": null,
+        "provenance": "Avance de la temporada proporcionado por su creador, 20 de octubre de 2026.",
+        "sourceNotes": {
+          "crossedBracketHeadings": true,
+          "repeatedRevealAndStars": true,
+          "identityToConfirm": [
+            "Elias",
+            "Adriana Pereira"
+          ],
+          "originalDuelBlocks": [
+            [
+              {
+                "people": [
+                  "Eduard",
+                  "Felix",
+                  "Marcos"
+                ],
+                "winner": "Eduard"
+              },
+              {
+                "people": [
+                  "Luciano",
+                  "Sal Lua"
+                ],
+                "winner": "Sal Lua"
+              },
+              {
+                "people": [
+                  "Isabel",
+                  "Ivy",
+                  "Marianito"
+                ],
+                "winner": "Marianito"
+              }
+            ],
+            [
+              {
+                "people": [
+                  "Ari Salgado",
+                  "Esteban"
+                ],
+                "winner": "Ari Salgado"
+              },
+              {
+                "people": [
+                  "Bayron",
+                  "Mary Hao"
+                ],
+                "winner": "Mary Hao"
+              },
+              {
+                "people": [
+                  "Daelly",
+                  "Adriana Pereira",
+                  "Gabriel Sab"
+                ],
+                "winner": "Adriana Pereira"
+              }
+            ]
+          ]
+        }
       }
     }
   }

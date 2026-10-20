@@ -6,9 +6,9 @@ function spinoffCredits(record){
  if(!presenters.length&&!staff.length)return '';
  return `<div class="sd-host">${presenters.length?`Presenta ${castNames(presenters)}`:''}${staff.length?`<span class="sd-credit-separator" aria-hidden="true"> · </span>Staff ${castNames(staff)}`:''}</div>`;
 }
-function spinoffSeasonTabs(record){return [['resumen','Resumen'],['participantes','Participantes'],...(record.brackets?[['brackets','Brackets'],['track-record','Track record']]:[['arte','Arte del especial']])];}
+function spinoffSeasonTabs(record){if(record.franchise==='Showdown')return showdownSeasonTabs();return [['resumen','Resumen'],['participantes','Participantes'],['arte','Arte del especial']];}
 async function loadSpinoffArchive(){
- if(!spinoffArchivePromise)spinoffArchivePromise=fetch('seasons/spinoffs/seasons.json?v=1').then(response=>{if(!response.ok)throw new Error('No se pudo abrir el especial.');return response.json();}).catch(error=>{spinoffArchivePromise=null;throw error;});
+ if(!spinoffArchivePromise)spinoffArchivePromise=fetch('seasons/spinoffs/seasons.json?v=2').then(response=>{if(!response.ok)throw new Error('No se pudo abrir el especial.');return response.json();}).catch(error=>{spinoffArchivePromise=null;throw error;});
  return spinoffArchivePromise;
 }
 async function renderSpinoffSeason(id){
@@ -21,6 +21,7 @@ async function renderSpinoffSeason(id){
   const requested=location.hash.split('/')[2]||'resumen',tabs=spinoffSeasonTabs(record),showdown=record.franchise==='Showdown';
   Object.assign(seasonView,{id,item,record,tab:tabs.some(([key])=>key===requested)?requested:'resumen'});
   document.title='The Xpedition';
+  if(showdown){renderShowdownPage();return;}
   const sibling=showdown?state.catalog.content.spinoffs.find(entry=>entry.saga==='showdown'&&entry.id!==id):null;
   $('#main').innerHTML=`<div class="season-page sd-page sd-${esc(record.theme)}">
    <nav class="ch-breadcrumb" aria-label="Ruta del especial"><a href="#explorar/${showdown?'showdown':'todos'}">${icon('back')} ${showdown?'Showdown':'Los spin-offs'}</a><span aria-hidden="true">/</span><span>${esc(item.name)}</span></nav>
@@ -38,6 +39,7 @@ function spinoffBrackets(record,compact=false){
 }
 function spinoffSeasonPanel(){
  const {record,item,tab}=seasonView,showdown=record.franchise==='Showdown';
+ if(showdown)return showdownSeasonPanel();
  if(tab==='resumen')return `<div class="sd-overview"><article class="sd-story"><div class="eyebrow">${showdown?'EL ENCUENTRO DE LAS ESTRELLAS':'ACERCA DEL ESPECIAL'}</div><h2>${esc(record.heading)}</h2><p>${esc(record.description)}</p><div class="ch-genres">${state.catalog.details[item.id].genres.map(g=>`<span>${esc(g)}</span>`).join('')}</div>${showdown?`<div class="sd-tournament-note"><span aria-hidden="true">✦</span><div><strong>Tres brackets. Un mismo escenario.</strong><p>Revisa los grupos y consulta el recorrido completo en el track record.</p></div></div><button class="link-button" data-season-action="tab" data-tab="brackets">Abrir los brackets ${icon('arrow')}</button>`:''}</article><figure class="sd-original-poster"><button data-season-action="poster" aria-label="Ampliar póster de ${esc(item.name)}"><img src="${esc(record.poster)}" alt="Póster de ${esc(item.name)}" loading="lazy"><span>${icon('search')} Ver póster</span></button></figure></div><div class="ch-section-head"><div><div class="eyebrow">LOS ROSTROS DE ESTA HISTORIA</div><h2>Elenco Principal</h2></div><button class="link-button" data-season-action="tab" data-tab="participantes">Ver elenco completo ${icon('arrow')}</button></div><div class="sd-main-cast">${record.mainCast.map(seasonParticipantCard).join('')}</div>${showdown?`<button class="ch-extra-banner" data-season-action="tab" data-tab="track-record"><span>${icon('game')}<span><strong>La historia del torneo, ronda a ronda.</strong><small>Consulta el track record original de ${esc(item.name)}.</small></span></span>${icon('arrow')}</button>`:''}`;
  if(tab==='participantes')return `<div class="ch-section-head"><div><div class="eyebrow">EL ELENCO COMPLETO</div><h2>Participantes de ${esc(item.name)}</h2><p>${record.participants.length} nombres forman parte de esta historia.</p></div><label class="search-field ch-person-search">${icon('search')}<input id="seasonParticipantSearch" type="search" placeholder="Buscar participante…" aria-label="Buscar participante"></label></div><div class="ch-participants-grid">${record.participants.map(seasonParticipantCard).join('')}</div><p id="seasonParticipantEmpty" class="ch-empty" hidden>No encontramos a ese participante.</p><div class="ch-full-cast"><h3>Elenco completo</h3><p>${castNames(state.catalog.details[item.id].cast)}</p></div>`;
  if(tab==='brackets')return `<div class="ch-section-head"><div><div class="eyebrow">EL TORNEO</div><h2>Los brackets de ${esc(item.name)}</h2><p>Los grupos y sus símbolos conservan la información del torneo original.</p></div></div>${spinoffBrackets(record)}`;
