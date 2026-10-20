@@ -48,7 +48,7 @@ test('las cuatro páginas abren dentro de la web y sus pestañas, búsquedas y v
 test('Showdown 1 asigna X Vote al episodio elegible y conserva abstenciones, resultados y progresión',()=>{
  const t=archive.seasons['safari-showdown'].tournament;
  assert.equal(t.episodes.length,16);assert.equal(t.episodes[14].duels[0].winner,'Eris Midnight');assert.equal(t.champion,'Ignacio Ricci');
- assert.deepEqual(t.episodes[15].duels.map(d=>d.winner),['Eris Midnight','Oscar','Rafael']);
+ assert.deepEqual(t.episodes[15].duels.map(d=>d.winner),['Ignacio Ricci','Rafael','Ignacio Ricci']);
  assert.deepEqual(t.episodes[15].duels.map(d=>d.eliminated),['Eris Midnight','Oscar','Rafael']);
  assert.equal(t.episodes[2].duels[0].noWinner,true);assert.equal(t.episodes[2].duels[0].winner,null);
  assert.deepEqual(t.episodes[9].wildcard,['Esteban']);assert.deepEqual(t.episodes[12].quit,['Isabel']);
@@ -70,6 +70,21 @@ test('Showdown 2 conserva solo el primer bracket completo y mantiene el resto pe
  for(const group of t.groups.slice(1)){assert.equal(group.status,'partial');assert.equal(group.stars,undefined);assert.equal(group.duels,undefined);assert.equal(group.reveal,undefined);}
  for(const ep of t.episodes.slice(3,19)){assert.equal(ep.status,'partial');assert.equal(ep.duels,undefined);}
  assert.deepEqual(t.episodes.filter(ep=>ep.phase==='fase-2').map(ep=>ep.number),[10,11,12,13]);
+});
+
+test('la renuncia de Isabel tiene retrato y cada etiqueta de la final pertenece al participante correcto',async()=>{
+ const {dom,w}=browser('safari-showdown');try{
+  w.location.hash='#temporada/safari-showdown/episodios/13';await w.renderSeasonPage('safari-showdown');
+  const quit=w.document.querySelector('.sh-quit');assert(quit);assert.match(quit.textContent,/Isabel abandona la competencia/);assert.equal(quit.querySelector('img').getAttribute('src'),archive.seasons['safari-showdown'].participants.find(p=>p.name==='Isabel').image);
+  w.location.hash='#temporada/safari-showdown/episodios/16';await w.renderSeasonPage('safari-showdown');
+  const matches=[...w.document.querySelectorAll('.sh-duel')];assert.equal(matches.length,3);
+  for(const [index,winner,eliminated] of [[0,'Ignacio Ricci','Eris Midnight'],[1,'Rafael','Oscar'],[2,'Ignacio Ricci','Rafael']]){
+   const match=matches[index],winnerCard=match.querySelector(`[data-contender="${winner}"]`),outCard=match.querySelector(`[data-contender="${eliminated}"]`);
+   assert(winnerCard.classList.contains('is-winner'));assert.match(winnerCard.querySelector('.sh-duel-status').textContent,/Ganador del Versus/);assert.equal(winnerCard.querySelector('.sh-out-badge'),null);
+   assert(!outCard.classList.contains('is-winner'));assert.match(outCard.querySelector('.sh-duel-status').textContent,/Eliminado de la final/);assert.equal(outCard.querySelectorAll('.sh-duel-badge').length,1);
+  }
+  assert.match(w.document.querySelector('.sh-final-winner').textContent,/Ignacio Ricci/);
+ }finally{dom.window.close();}
 });
 
 test('el navegador de episodios, los marcadores y los enlaces directos funcionan sin mezclar temporadas',async()=>{

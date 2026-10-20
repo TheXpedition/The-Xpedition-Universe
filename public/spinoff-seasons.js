@@ -8,7 +8,7 @@ function spinoffCredits(record){
 }
 function spinoffSeasonTabs(record){if(record.franchise==='Showdown')return showdownSeasonTabs();return [['resumen','Resumen'],['participantes','Participantes'],['arte','Arte del especial']];}
 async function loadSpinoffArchive(){
- if(!spinoffArchivePromise)spinoffArchivePromise=fetch('seasons/spinoffs/seasons.json?v=2').then(response=>{if(!response.ok)throw new Error('No se pudo abrir el especial.');return response.json();}).catch(error=>{spinoffArchivePromise=null;throw error;});
+ if(!spinoffArchivePromise)spinoffArchivePromise=fetch('seasons/spinoffs/seasons.json?v=3').then(response=>{if(!response.ok)throw new Error('No se pudo abrir el especial.');return response.json();}).catch(error=>{spinoffArchivePromise=null;throw error;});
  return spinoffArchivePromise;
 }
 async function renderSpinoffSeason(id){
