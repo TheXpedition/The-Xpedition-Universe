@@ -297,11 +297,12 @@
         "Luciano": "personajes/luciano.png",
         "Jared": "personajes/jared.png",
         "Lui Mclean": "personajes/luimclean.png",
-        "Marco": null,
+        "Marco": "seasons/shared/persona-sin-foto.webp",
         "Sophie Bradley": "personajes/sophiebradley.png",
-        "Diego Berguñez": null,
+        "Diego Berguñez": "seasons/shared/persona-sin-foto.webp",
         "Marcos": "personajes/marcos.png",
-        "Brave": "personajes/brave.png"
+        "Brave": "personajes/brave.png",
+        "Oso Odisea": "seasons/shared/persona-sin-foto.webp"
       },
       "versus": {
         "format": "elimination",
@@ -410,6 +411,11 @@
           "name": "Pilar",
           "place": "Elenco principal",
           "image": "personajes/pilar.png"
+        },
+        {
+          "name": "Oso Odisea",
+          "place": "Elenco principal",
+          "image": "seasons/shared/persona-sin-foto.webp"
         }
       ],
       "participants": [
@@ -486,7 +492,7 @@
         {
           "name": "Marco",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Sophie Bradley",
@@ -496,7 +502,7 @@
         {
           "name": "Diego Berguñez",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Marcos",
@@ -594,8 +600,8 @@
         "Mariano": "personajes/mariano.png",
         "Felipe": "personajes/felipevicente.png",
         "Joaquín": "personajes/joaquin.png",
-        "Susano": null,
-        "Johanna": null,
+        "Susano": "seasons/shared/persona-sin-foto.webp",
+        "Johanna": "seasons/shared/persona-sin-foto.webp",
         "Cristian Julio": "personajes/cristianjulio.png",
         "Pilar": "personajes/pilar.png",
         "Damián": "personajes/damian.png",
@@ -855,12 +861,12 @@
         {
           "name": "Susano",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Johanna",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Cristian Julio",
@@ -979,11 +985,11 @@
         "Alexandro": "personajes/alexandro.png",
         "Renzo": "personajes/renzo.png",
         "Gokuh Moreno": "personajes/gokuhmoreno.png",
-        "Morty": null,
+        "Morty": "seasons/shared/persona-sin-foto.webp",
         "Emanuel": "personajes/emanuel.png",
         "Alexia": "personajes/alexia.png",
-        "Aaron": null,
-        "Gonz": null,
+        "Aaron": "seasons/shared/persona-sin-foto.webp",
+        "Gonz": "seasons/shared/persona-sin-foto.webp",
         "Jesús": "personajes/jesus.png"
       },
       "versus": {
@@ -1313,7 +1319,7 @@
         {
           "name": "Morty",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Emanuel",
@@ -1328,12 +1334,12 @@
         {
           "name": "Aaron",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Gonz",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         }
       ]
     },
@@ -2271,7 +2277,7 @@
         "Coronel": "personajes/coronel.png",
         "Eduard": "personajes/eduard.png",
         "Myke Z": "personajes/mykez.png",
-        "Sebastián": null,
+        "Sebastián": "seasons/shared/persona-sin-foto.webp",
         "Nacho": "personajes/nacho.png",
         "Sadith": "personajes/sadith.png",
         "Sebas": "personajes/sebas.png"
@@ -2604,7 +2610,7 @@
         {
           "name": "Sebastián",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Nacho",
@@ -2690,7 +2696,7 @@
         "Luciano": "personajes/luciano.png",
         "Edwin": "personajes/edwin.png",
         "Azael": "personajes/azael.png",
-        "Alex": null,
+        "Alex": "seasons/shared/persona-sin-foto.webp",
         "Catalina": "personajes/catalina.png",
         "Mati": "personajes/mati.png",
         "Javier": "personajes/javi.png",
@@ -3140,7 +3146,7 @@
         {
           "name": "Alex",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Catalina",
@@ -3785,11 +3791,11 @@
         "Plastique": "personajes/plastiquedoll.png",
         "Pablo": "personajes/pablo.png",
         "Maria Villegas": "personajes/maria.png",
-        "Edd GT": null,
+        "Edd GT": "seasons/shared/persona-sin-foto.webp",
         "Iker": "personajes/iker.png",
-        "Federico": null,
+        "Federico": "seasons/shared/persona-sin-foto.webp",
         "Eduard": "personajes/eduard.png",
-        "Gabriel": null
+        "Gabriel": "seasons/shared/persona-sin-foto.webp"
       },
       "versus": {
         "format": "assassin",
@@ -4056,7 +4062,7 @@
         {
           "name": "Edd GT",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Carlos Rojas",
@@ -4076,7 +4082,7 @@
         {
           "name": "Federico",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         },
         {
           "name": "Eduard",
@@ -4086,7 +4092,7 @@
         {
           "name": "Gabriel",
           "place": "Participante",
-          "image": null
+          "image": "seasons/shared/persona-sin-foto.webp"
         }
       ]
     },

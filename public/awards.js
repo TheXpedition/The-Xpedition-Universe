@@ -70,7 +70,7 @@ function awardMainCategory(category,index,item,pending=false){
  return `<section class="aw-category aw-main-category ${pending?'aw-pending-category':''}" aria-labelledby="award-${esc(category.id)}" data-category-name="${esc(norm(category.name))}"><div class="aw-main-stage"><img class="aw-stage-background" src="${esc(item.stage)}" alt="" loading="lazy"><div class="aw-main-heading"><span>${String(index+1).padStart(2,'0')}</span><div><h3 id="award-${esc(category.id)}">${esc(category.name)}</h3><p>${esc(subtitle)}</p></div></div><span class="aw-edition-badge">${item.edition===1?'❄':item.edition===2?'✧':'✦'} EDICIÓN ${item.edition}</span>${winnerHtml}</div>${others.length?`<div class="aw-main-others"><p>OTROS NOMINADOS</p><div class="aw-nominees">${others.map(nominee=>awardNominee(nominee,item)).join('')}</div></div>`:''}</section>`;
 }
 function awardPerson(name){
- const canonical=awardIdentity(name),profile=castProfile(canonical),image=state.catalog.characters.find(person=>castKey(person.name)===castKey(canonical))?.image;
+ const canonical=awardIdentity(name),profile=castProfile(canonical),image=state.catalog.characters.find(person=>castKey(person.name)===castKey(canonical))?.image||(name==='Victoria Olaya'?'seasons/shared/victoria-olaya.webp':'seasons/shared/persona-sin-foto.webp');
  const portrait=image?`<img src="${esc(image)}" alt="" loading="lazy" decoding="async">`:`<span class="aw-initials" aria-hidden="true">${esc(awardInitials(name))}</span>`;
  return profile?`<button class="aw-person" data-action="profile" data-id="${esc(profile.id)}" aria-label="Ver perfil de ${esc(name)}">${portrait}</button>`:`<span class="aw-person" aria-label="${esc(name)}">${portrait}</span>`;
 }

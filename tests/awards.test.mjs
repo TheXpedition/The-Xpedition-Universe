@@ -110,7 +110,8 @@ test('la tercera edición muestra sus quince categorías anunciadas sin inventar
 test('los retratos de Andrómeda se enlazan al personaje correcto sin confundir nombres',()=>{
  const {context:c}=context();
  const html=c.awardPerson('Andrómeda');assert(html.includes(catalog.characters.find(p=>p.name==='Andromeda').image));
- assert(!c.awardPerson('Angel B. Vanderwood').includes('<img')); // Unknown portraits use initials.
+ assert(c.awardPerson('Angel B. Vanderwood').includes('seasons/shared/persona-sin-foto.webp'));
+ assert(!c.awardPerson('Angel B. Vanderwood').includes('data-action="profile"'));
 });
 
 test('Eris sustituye a Angel en el dúo y los cinco integrantes reciben la nominación del equipo azul',()=>{

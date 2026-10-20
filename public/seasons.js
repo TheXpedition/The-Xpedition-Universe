@@ -45,11 +45,11 @@ function seasonPlacement(value){
  return value;
 }
 function seasonPortrait(name,record=seasonView.record){
- return record.images[name]||character(name)?.image||castProfile(name)&&imageFor(castProfile(name).name);
+ return record?.images?.[name]||character(name)?.image||(castProfile(name)&&imageFor(castProfile(name).name))||'seasons/shared/persona-sin-foto.webp';
 }
 function seasonParticipantCard(person){
  const profile=castProfile(person.name),placement=seasonPlacement(person.place),winner=/^winner$/i.test(person.place);
- const picture=person.image?`<img src="${esc(person.image)}" alt="" loading="lazy" decoding="async">`:`<span class="ch-initials">${esc(seasonInitials(person.name))}</span>`;
+ const picture=`<img src="${esc(person.image||seasonPortrait(person.name))}" alt="" loading="lazy" decoding="async">`;
  const body=`<div class="ch-person-image">${picture}<span class="ch-placement ${winner?'ch-winner':''}">${winner?'<span aria-hidden="true">★</span> ':''}${esc(placement)}</span></div><div class="ch-person-copy"><h3>${esc(person.name)}</h3>${person.season?`<p>${esc(person.season)}</p>`:''}${profile?'<span class="ch-person-link">Ver perfil ↗</span>':''}</div>`;
  return `<article class="ch-person-card" data-person-search="${esc(norm(person.name+' '+(person.season||'')))}">${profile?`<button data-action="profile" data-id="${esc(profile.id)}" aria-label="Ver perfil de ${esc(person.name)}">${body}</button>`:`<div>${body}</div>`}</article>`;
 }

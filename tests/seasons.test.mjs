@@ -25,6 +25,13 @@ const castKey=name=>norm(name).replace(/[^a-z0-9]/g,'');
 const aliases={mariavillegas:'Maria',marcosjc:'Marcos',jeremias:'Jere',javier:'Javi',felipe:'Felipe Vicente',plastique:'Plastique Doll',sophie:'Sophie Bradley'};
 const identity=name=>castKey(aliases[castKey(name)]||name);
 const names=people=>people.map(p=>p.name);
+test('Oso Odisea aparece en el principal de Popular y las fichas sin retrato tienen la imagen genérica sin crear personajes',()=>{
+ const fallback='seasons/shared/persona-sin-foto.webp';
+ assert.equal(archive.seasons.popular.mainCast.find(p=>p.name==='Oso Odisea').image,fallback);assert(details.popular.previewCast.includes('Oso Odisea'));
+ for(const season of Object.values(archive.seasons))for(const person of [...season.participants,...season.mainCast,...season.protagonists])assert(person.image,season.id+' · '+person.name);
+ for(const name of ['Oso Odisea','Victoria Olaya','Camila Francisca','Ducky','Robinson Lewis'])assert(!catalog.characters.some(p=>p.name===name));
+ const context=renderContext(),card=context.seasonParticipantCard({name:'Sin retrato QA',place:'Participante',image:null});assert(card.includes(fallback));assert(!card.includes('data-action="profile"'));
+});
 const round=(id,ep)=>archive.seasons[id].versus.rounds.find(r=>r.ep===String(ep));
 const result=(round,type)=>round.results.find(r=>r.type===type).people;
 

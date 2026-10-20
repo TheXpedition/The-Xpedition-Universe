@@ -14,12 +14,12 @@
         {
           "name": "Maria Villegas",
           "image": "personajes/maria.png",
-          "place": "Participante"
+          "place": "Presentadora"
         },
         {
           "name": "Coronel",
           "image": "personajes/coronel.png",
-          "place": "Participante"
+          "place": "Staff"
         },
         {
           "name": "Ivy",
@@ -43,7 +43,7 @@
         },
         {
           "name": "Ducky",
-          "image": null,
+          "image": "seasons/shared/persona-sin-foto.webp",
           "place": "Participante"
         },
         {
@@ -113,12 +113,27 @@
         },
         {
           "name": "Robinson Lewis",
-          "image": null,
+          "image": "seasons/shared/persona-sin-foto.webp",
           "place": "Participante"
         },
         {
           "name": "Carlos Rojas",
           "image": "personajes/carlosrojas.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Victoria Olaya",
+          "image": "seasons/shared/victoria-olaya.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Camila Francisca",
+          "image": "seasons/shared/persona-sin-foto.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Cassie Casu",
+          "image": "personajes/cassiecasu.png",
           "place": "Participante"
         }
       ],
@@ -126,12 +141,12 @@
         {
           "name": "Maria Villegas",
           "image": "personajes/maria.png",
-          "place": "Elenco principal"
+          "place": "Presentadora"
         },
         {
           "name": "Coronel",
           "image": "personajes/coronel.png",
-          "place": "Elenco principal"
+          "place": "Staff"
         },
         {
           "name": "Ivy",
@@ -151,9 +166,17 @@
       ],
       "stats": {
         "Estreno": "2015",
-        "Elenco completo": "22",
+        "Elenco completo": "25",
         "Elenco principal": "5",
         "Identidad": "India"
+      },
+      "credits": {
+        "presenters": [
+          "Maria Villegas"
+        ],
+        "staff": [
+          "Coronel"
+        ]
       }
     },
     "baw": {
@@ -261,7 +284,7 @@
         {
           "name": "Maria Villegas",
           "image": "personajes/maria.png",
-          "place": "Elenco principal"
+          "place": "Presentadora"
         },
         {
           "name": "Alexandro",
@@ -294,6 +317,12 @@
         "Elenco completo": "18",
         "Elenco principal": "6",
         "Identidad": "Blanco y negro"
+      },
+      "credits": {
+        "presenters": [
+          "Maria Villegas"
+        ],
+        "staff": []
       }
     },
     "safari-showdown": {
