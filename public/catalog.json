@@ -839,6 +839,35 @@
           "score": 5.4,
           "outOf": 10
         }
+      },
+      {
+        "id": "apocalypse-ii",
+        "name": "Apocalypse II",
+        "meta": "S13 · 2026",
+        "season": "S13",
+        "desc": "Cinco años después, Campria regresa. Su entrega número 13 continúa Apocalypse, considerada la mejor temporada de la franquicia. Maria Villegas, Bonju y Dua Lingo vuelven ante una amenaza que creían haber dejado atrás: un nuevo apocalipsis tendrá que ser enfrentado. Esta vez, tú puedes formar parte de la historia.",
+        "accent": "#ee3929",
+        "kind": "Campria",
+        "universe": "Campria",
+        "upcoming": true,
+        "integrated": true,
+        "url": "#audicion/apocalypse-ii",
+        "actionLabel": "Audicionar",
+        "art": {
+          "background": "seasons/campria/apocalypse-ii/banner.webp",
+          "poster": "seasons/campria/apocalypse-ii/poster.webp",
+          "logo": {
+            "src": "seasons/campria/apocalypse-ii/logo.webp",
+            "width": 1600,
+            "height": 552,
+            "frame": [
+              0,
+              0,
+              1600,
+              552
+            ]
+          }
+        }
       }
     ],
     "simulators": [

@@ -51,7 +51,7 @@ function renderContext(){
 }
 
 test('las doce temporadas de Campria se abren dentro de la web y tienen su archivo completo',()=>{
- assert.deepEqual(catalog.content.campria.map(x=>x.id),ids);
+ assert.deepEqual(catalog.content.campria.filter(x=>!x.upcoming).map(x=>x.id),ids);
  assert.deepEqual(Object.keys(archive.seasons),ids);
  for(const [i,id] of ids.entries()){
   const item=catalog.content.campria[i],season=archive.seasons[id];
@@ -64,8 +64,8 @@ test('las doce temporadas de Campria se abren dentro de la web y tienen su archi
 });
 
 test('las notas publicadas de The X Critics coinciden con las doce notas proporcionadas',()=>{
- assert.deepEqual(catalog.content.campria.map(x=>x.critics.score),[7.2,7.5,8.6,8.2,5.7,8.9,7.4,8.5,9.3,7.8,6.9,5.4]);
- for(const item of catalog.content.campria){assert.equal(item.critics.source,'The X Critics');assert.equal(item.critics.outOf,10);}
+ assert.deepEqual(catalog.content.campria.filter(x=>!x.upcoming).map(x=>x.critics.score),[7.2,7.5,8.6,8.2,5.7,8.9,7.4,8.5,9.3,7.8,6.9,5.4]);
+ for(const item of catalog.content.campria.filter(x=>!x.upcoming)){assert.equal(item.critics.source,'The X Critics');assert.equal(item.critics.outOf,10);}
 });
 
 test('todos los retratos, pósteres y track records existen con rutas válidas también en Linux',()=>{
@@ -108,7 +108,7 @@ test('New Era y Empire of Blood conservan sus treinta Versus y los episodios de 
 test('las tarjetas recuperan la ficha completa antes de abrir la temporada dentro de la web',()=>{
  const context=renderContext();
  vm.runInContext(streaming.slice(streaming.indexOf('function relatedContent('),streaming.indexOf("document.addEventListener('click'",streaming.indexOf('contentModal=function'))),context);
- for(const item of catalog.content.campria){
+ for(const item of catalog.content.campria.filter(x=>!x.upcoming)){
   let html;
   context.modal=body=>{html=body;};context.contentModal(item.id);
   assert(html.includes('data-content-id="'+item.id+'"'));

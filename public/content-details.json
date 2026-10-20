@@ -1034,5 +1034,22 @@
       "Especial",
       "Competencia virtual"
     ]
+  },
+  "apocalypse-ii": {
+    "previewCast": [
+      "Maria Villegas",
+      "Bonju",
+      "Dua Lingo"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Bonju",
+      "Dua Lingo"
+    ],
+    "genres": [
+      "Competencia virtual",
+      "Apocalipsis",
+      "Regreso"
+    ]
   }
 }

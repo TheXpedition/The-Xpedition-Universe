@@ -134,7 +134,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
   }
   if(p==='/api/economy/activity'&&method==='POST'){
    const b=await body(req),surface=b.surface==='simulator'?'simulator':'web';
-   const validRoutes=new Set(['inicio','explorar','temporada','premios','comunidad','noticias','simuladores','guardados','universo','perfil','mensajes','buscar','privacidad']);
+   const validRoutes=new Set(['inicio','explorar','temporada','premios','comunidad','noticias','simuladores','guardados','universo','perfil','mensajes','buscar','privacidad','audicion']);
    const route=String(b.route||'inicio').split('/')[0];if(!validRoutes.has(route))fail(400,'Página inválida.');
    const key=String(b.route||'inicio').slice(0,100);
    const previous=await db.one('SELECT active_seconds,updated FROM activity_days WHERE user_id=? AND day=? AND surface=?',user.id,day(),surface);

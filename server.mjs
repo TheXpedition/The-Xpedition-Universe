@@ -4,6 +4,7 @@ import {createProgression,levelFor} from './progression.mjs';
 import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
+import {createCasting} from './casting.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
 import {createInteractions} from './social-interactions.mjs';
@@ -394,6 +395,7 @@ async function api(req, res, url) {
       ok: true
     });
   }
+  if(await casting.handle(req,res,url,u))return;
   if(await moderation.handle(req,res,url,u))return;
   if(await interactions.handle(req,res,url,u))return;
   if(await social.handle(req,res,url,u))return;
@@ -794,13 +796,17 @@ if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bo
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
 const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields});
+const casting=createCasting({db,json,fail,checkRate,body,progression,catalog});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
+  // Casting reads can advance expired questions. Serialize them with other writes.
+  if(url.pathname.startsWith('/api/casting/')||url.pathname.startsWith('/api/moderation/auditions'))return serialize(()=>api(req,res,url));
   // Image review runs in a worker before taking the write lock so chat stays responsive.
   if(['GET','HEAD'].includes(req.method)||(req.method==='POST'&&['/api/posts','/api/me/cover'].includes(url.pathname)))return api(req,res,url);
   return serialize(()=>api(req,res,url));
 }
 const mimeTypes = {
+  '.mjs': 'text/javascript; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
@@ -833,7 +839,7 @@ const server = http.createServer(async (req, res) => {
     const size = fs.statSync(filename).size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': (/\.(html|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': (/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
