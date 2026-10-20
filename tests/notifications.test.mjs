@@ -14,4 +14,7 @@ test('los mensajes recibidos suenan tras interactuar, sin duplicar ni sonar para
  await listeners.message(message('incoming','sender'));assert.deepEqual(notes,[740,988]);
  await listeners.message(message('incoming','sender'));assert.equal(notes.length,2);
  await listeners.message(message('second','sender'));assert.equal(notes.length,4);
+ context.window.XpeditionPush={active:true};await listeners.message(message('push-duplicate','sender'));assert.equal(notes.length,4);
+ context.window.XpeditionPush.active=false;context.window.XpeditionMessageSound.setEnabled(false);await listeners.message(message('muted','sender'));assert.equal(notes.length,4);
+ context.window.XpeditionMessageSound.setEnabled(true);audio.state='interrupted';await events.touchend();assert.equal(audio.state,'running');await listeners.message(message('muted','sender'));assert.equal(notes.length,6);
 });

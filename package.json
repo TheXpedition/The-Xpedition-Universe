@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "node server.mjs",
-    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs tests/progression.test.mjs tests/simulator.test.mjs tests/notifications.test.mjs tests/community-polish.test.mjs tests/moderation.test.mjs tests/monetization.test.mjs tests/install-app.test.mjs"
+    "test": "node --test tests/integration.test.mjs tests/seasons.test.mjs tests/xpedition-seasons.test.mjs tests/awards.test.mjs tests/progression.test.mjs tests/simulator.test.mjs tests/notifications.test.mjs tests/community-polish.test.mjs tests/moderation.test.mjs tests/monetization.test.mjs tests/install-app.test.mjs tests/push-notifications.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.118.0",
@@ -17,7 +17,8 @@
     "@tensorflow/tfjs-backend-wasm": "4.22.0",
     "nsfwjs": "4.3.0",
     "pg": "8.23.1",
-    "sharp": "0.35.5"
+    "sharp": "0.35.5",
+    "web-push": "3.6.7"
   },
   "devDependencies": {
     "jsdom": "26.1.0"

@@ -96,6 +96,7 @@ function route(){
   const [view,id]=location.hash.slice(1).split('/');state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
   const routes={inicio:renderHome,explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  if(state.route==='mensajes'&&id)state.active=decodeURIComponent(id);
   (routes[state.route]||renderHome)();window.scrollTo({top:0,behavior:'instant'});
 }
 const go = hash => {if(location.hash==='#'+hash)route();else location.hash=hash;};
@@ -141,9 +142,9 @@ function googleLogin(){
   }).finally(()=>{if(button?.isConnected)button.disabled=false;});
 }
 async function authenticated(user){state.user=user;await Promise.all([refreshProfiles(),refreshConversations(),refreshNews()]);startStream();route();}
-async function logout(){await api('/auth/logout',{method:'POST',body:{}});cancelRecording();stopStream();state.user=null;state.conversations=[];state.messages=[];state.active=null;state.reply=null;clearAttachment();closeModal();route();toast('Sesión cerrada. Hasta la próxima aventura.');}
+async function logout(){await api('/auth/logout',{method:'POST',body:{}});cancelRecording();stopStream();state.user=null;window.dispatchEvent(new CustomEvent('xp:session',{detail:{id:null}}));state.conversations=[];state.messages=[];state.active=null;state.reply=null;clearAttachment();closeModal();route();toast('Sesión cerrada. Hasta la próxima aventura.');}
 function accountMenu(){
-  if($('.account-menu')){$('.account-menu').remove();return;}const menu=document.createElement('div');menu.className='account-menu';menu.innerHTML=`<div class="menu-user"><strong>${esc(state.user.name)}</strong><small>${esc(state.user.email)}</small></div><button data-action="my-profile">${icon('users')} Mi perfil</button><button data-action="avatar">${icon('image')} Cambiar ícono</button><button data-action="edit-profile">${icon('edit')} Editar perfil</button><button data-action="go-messages">${icon('chat')} Mis conversaciones</button><button type="button" data-install-app>↓ Instalar app</button><button data-action="password">${icon('lock')} Cambiar contraseña</button>${state.user.staff?'<button data-moderation="panel">✦ Moderación</button>':''}<button data-action="logout" style="color:var(--danger)">${icon('logout')} Cerrar sesión</button>`;$('.topbar').append(menu);
+  if($('.account-menu')){$('.account-menu').remove();return;}const menu=document.createElement('div');menu.className='account-menu';menu.innerHTML=`<div class="menu-user"><strong>${esc(state.user.name)}</strong><small>${esc(state.user.email)}</small></div><button data-action="my-profile">${icon('users')} Mi perfil</button><button data-action="avatar">${icon('image')} Cambiar ícono</button><button data-action="edit-profile">${icon('edit')} Editar perfil</button><button data-action="go-messages">${icon('chat')} Mis conversaciones</button><button type="button" data-push-settings>♧ Notificaciones</button><button type="button" data-install-app>↓ Instalar app</button><button data-action="password">${icon('lock')} Cambiar contraseña</button>${state.user.staff?'<button data-moderation="panel">✦ Moderación</button>':''}<button data-action="logout" style="color:var(--danger)">${icon('logout')} Cerrar sesión</button>`;$('.topbar').append(menu);
 }
 function openAvatarPicker(){
   if(!requireAuth())return;state.selectedAvatar=state.user.avatar;
@@ -230,7 +231,7 @@ function upsertMessage(message){const index=state.messages.findIndex(m=>m.id===m
 async function olderMessages(){const id=state.active,history=$('#chatHistory'),height=history.scrollHeight;const result=await api('/conversations/'+encodeURIComponent(id)+'/messages?before='+state.messages[0].created);if(state.active!==id)return;state.messages=[...result.messages,...state.messages];state.hasMore=result.hasMore;renderMessages();history.scrollTop=history.scrollHeight-height;}
 function stopStream(){state.stream?.close();state.stream=null;}
 function startStream(){
-  stopStream();if(!state.user)return;const stream=new EventSource('/api/events');state.stream=stream;
+  stopStream();if(!state.user)return;window.dispatchEvent(new CustomEvent('xp:session',{detail:{id:state.user.id}}));const stream=new EventSource('/api/events');state.stream=stream;
   stream.addEventListener('ready',()=>{setConnection(true);refreshConversations().catch(()=>{});refreshProfiles().catch(()=>{});if(state.active&&state.route==='mensajes')refreshActiveMessages().catch(()=>{});});
   stream.onerror=()=>setConnection(false);stream.onopen=()=>setConnection(true);
   stream.addEventListener('profiles',async()=>{try{const own=await api('/me');state.user=own.user;await refreshProfiles();renderChrome();if(state.route==='comunidad')communityResults();if(state.route==='perfil'&&!$('#postForm'))renderProfile(decodeURIComponent(location.hash.split('/')[1]||''));}catch{}});

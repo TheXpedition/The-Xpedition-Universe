@@ -5,6 +5,7 @@ import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adju
 import {accountRole} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
+import {createPushNotifications} from './push-notifications.mjs';
 import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
@@ -316,6 +317,7 @@ async function api(req, res, url) {
   if (p === '/api/me' && method === 'GET') {if(u)await serialize(()=>progression.bootstrap(u));return json(res, {
     user: await safeUser(u, true)
   });}
+  if(await pushNotifications.handle(req,res,url,u))return;
   if(await progression.handle(req,res,url,u))return;
   if (p === '/api/profiles' && method === 'GET') return json(res, {
     profiles: await profiles()
@@ -614,6 +616,7 @@ async function api(req, res, url) {
         conversation: id,
         message
       });
+      void pushNotifications.notifyMessage(message).catch(error=>console.warn('No se pudo preparar el aviso push:',error.code||'PUSH_ERROR'));
       return json(res, {
         message
       }, 201);
@@ -784,6 +787,7 @@ async function serialize(fn){
   try{return await fn();}finally{release();}
 }
 const progression=createProgression({db,shop:JSON.parse(fs.readFileSync(path.join(publicDir,'simulator/catalog.json'),'utf8')),catalog,body,json,fail,checkRate,serialize,notify});
+const pushNotifications=await createPushNotifications({db,catalog,body,json,fail,checkRate,serialize});
 if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta solicitado aplicado una sola vez: nivel mínimo 50 y 10000 monedas adicionales.');
 if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bono adicional solicitado aplicado una sola vez: 5000 monedas.');
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);

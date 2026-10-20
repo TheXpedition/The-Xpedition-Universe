@@ -84,5 +84,6 @@
   document.addEventListener('click', event => {
     if (event.target.closest('[data-install-app]')) showInstructions();
   });
+  window.XpeditionInstall = { open: showInstructions };
   sync();
 })();

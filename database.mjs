@@ -6,6 +6,9 @@ import path from 'node:path';
 const schema = `
 CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,name TEXT NOT NULL,name_key TEXT UNIQUE NOT NULL,email TEXT UNIQUE NOT NULL,password TEXT,firebase_id TEXT UNIQUE,avatar TEXT NOT NULL,bio TEXT NOT NULL DEFAULT '',created INTEGER NOT NULL,saved TEXT NOT NULL DEFAULT '[]');
 CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS push_configuration(name TEXT PRIMARY KEY,public_key TEXT NOT NULL,private_key TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS push_subscriptions(endpoint_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,session_token TEXT NOT NULL REFERENCES sessions(token) ON DELETE CASCADE,subscription TEXT NOT NULL,created INTEGER NOT NULL,updated INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS push_subscriptions_user ON push_subscriptions(user_id);
 CREATE TABLE IF NOT EXISTS follows(actor TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,target TEXT NOT NULL,PRIMARY KEY(actor,target));
 CREATE INDEX IF NOT EXISTS follows_target ON follows(target);
 CREATE TABLE IF NOT EXISTS conversations(id TEXT PRIMARY KEY,type TEXT NOT NULL,title TEXT NOT NULL,created INTEGER NOT NULL,only_admin INTEGER NOT NULL DEFAULT 0,icon TEXT,icon_mime TEXT);
@@ -34,11 +37,11 @@ CREATE TABLE IF NOT EXISTS game_runs(id TEXT PRIMARY KEY,user_id TEXT NOT NULL R
 CREATE INDEX IF NOT EXISTS game_runs_user ON game_runs(user_id,status,updated);`;
 
 const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0'],['sticker_favorites',"TEXT NOT NULL DEFAULT '[]'"]];
-const tables = ['users','sessions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs'];
+const tables = ['users','sessions','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs'];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';
