@@ -95,7 +95,7 @@ function route(){
   if(!state.catalog)return;cancelRecording();
   const [view,id]=location.hash.slice(1).split('/');state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
-  const routes={inicio:renderHome,explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  const routes={inicio:renderHome,explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,noticias:renderNews,simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   if(state.route==='mensajes'&&id)state.active=decodeURIComponent(id);
   (routes[state.route]||renderHome)();window.scrollTo({top:0,behavior:'instant'});
 }
@@ -143,8 +143,17 @@ function googleLogin(){
 }
 async function authenticated(user){state.user=user;await Promise.all([refreshProfiles(),refreshConversations(),refreshNews()]);startStream();route();}
 async function logout(){await api('/auth/logout',{method:'POST',body:{}});cancelRecording();stopStream();state.user=null;window.dispatchEvent(new CustomEvent('xp:session',{detail:{id:null}}));state.conversations=[];state.messages=[];state.active=null;state.reply=null;clearAttachment();closeModal();route();toast('Sesión cerrada. Hasta la próxima aventura.');}
+function positionAccountMenu(){
+ const menu=$('.account-menu'),anchor=$('[data-action="account-menu"]');if(!menu||!anchor)return;
+ const viewport=window.visualViewport,left=viewport?.offsetLeft||0,top=viewport?.offsetTop||0,width=viewport?.width||innerWidth,height=viewport?.height||innerHeight,rect=anchor.getBoundingClientRect();
+ menu.style.width=Math.min(280,width-24)+'px';menu.style.right='auto';
+ menu.style.left=Math.max(left+12,Math.min(rect.right-menu.offsetWidth,left+width-menu.offsetWidth-12))+'px';
+ const y=Math.max(top+12,Math.min(rect.bottom+10,top+height-150));menu.style.top=y+'px';menu.style.maxHeight=Math.max(120,top+height-y-12)+'px';
+ anchor.setAttribute('aria-expanded','true');
+}
+window.addEventListener('resize',positionAccountMenu);window.visualViewport?.addEventListener('resize',positionAccountMenu);window.visualViewport?.addEventListener('scroll',positionAccountMenu);
 function accountMenu(){
-  if($('.account-menu')){$('.account-menu').remove();return;}const menu=document.createElement('div');menu.className='account-menu';menu.innerHTML=`<div class="menu-user"><strong>${esc(state.user.name)}</strong><small>${esc(state.user.email)}</small></div><button data-action="my-profile">${icon('users')} Mi perfil</button><button data-action="avatar">${icon('image')} Cambiar ícono</button><button data-action="edit-profile">${icon('edit')} Editar perfil</button><button data-action="go-messages">${icon('chat')} Mis conversaciones</button><button type="button" data-push-settings>♧ Notificaciones</button><button type="button" data-install-app>↓ Instalar app</button><button data-action="password">${icon('lock')} Cambiar contraseña</button>${state.user.staff?'<button data-moderation="panel">✦ Moderación</button>':''}<button data-action="logout" style="color:var(--danger)">${icon('logout')} Cerrar sesión</button>`;$('.topbar').append(menu);
+  if($('.account-menu')){$('.account-menu').remove();return;}const menu=document.createElement('div');menu.className='account-menu';menu.innerHTML=`<div class="menu-user"><strong>${esc(state.user.name)}</strong><small>${esc(state.user.email)}</small></div><button data-action="my-profile">${icon('users')} Mi perfil</button><button data-action="avatar">${icon('image')} Cambiar ícono</button><button data-action="edit-profile">${icon('edit')} Editar perfil</button><button data-action="go-messages">${icon('chat')} Mis conversaciones</button><button type="button" data-push-settings>♧ Notificaciones</button><button type="button" data-install-app>↓ Instalar app</button><button data-action="password">${icon('lock')} Cambiar contraseña</button>${state.user.staff?'<button data-moderation="panel">✦ Moderación</button>':''}<button data-action="logout" style="color:var(--danger)">${icon('logout')} Cerrar sesión</button>`;document.body.append(menu);positionAccountMenu();
 }
 function openAvatarPicker(){
   if(!requireAuth())return;state.selectedAvatar=state.user.avatar;
@@ -170,7 +179,7 @@ const personRow=(p,action='start-dm',checkbox=false)=>`<${checkbox?'label':'butt
 
 /* Mensajes */
 function chatTitle(c){return c.type==='group'?c.title:c.members.find(m=>m.id!==state.user?.id)?.name||'Conversación';}
-function chatAvatar(c){return c.type==='group'?`<span class="group-avatar">${esc(c.title.slice(0,2).toUpperCase())}</span>`:avatar(c.members.find(m=>m.id!==state.user?.id)||{name:'Dani'});}
+function chatAvatar(c){return c.type==='group'?`<span class="group-avatar">${esc(c.title.slice(0,2).toUpperCase())}</span>`:chatProfileLink(c.members.find(m=>m.id!==state.user?.id)||{id:'char:dani',name:'Dani'});}
 function messagePreview(m){return !m?'Comienza una conversación':m.type==='image'?'▧ Imagen':m.type==='video'?'▶ Video':m.type==='audio'?'♫ Nota de voz':m.type==='sticker'?'✦ Sticker':m.type==='deleted'?'Mensaje eliminado':m.text;}
 function renderMessenger(){
   $('#main').innerHTML=`<div class="messages-heading"><div><h1>Tus conversaciones.</h1><p>Una buena historia comienza con un «hola».</p></div><span class="pill lime">${icon('lock')} SOLO MIEMBROS DEL CHAT</span></div>`;
@@ -180,7 +189,7 @@ function renderMessenger(){
 }
 function renderConversationList(){
   if(!$('#conversationList')||!state.user)return;let list=state.conversations.filter(c=>norm(chatTitle(c)).includes(norm(state.chatQuery))&&(state.chatFilter!=='sin-leer'||c.unread>0)&&(state.chatFilter!=='grupos'||c.type==='group'));
-  $('#conversationList').innerHTML=list.map(c=>`<button class="conversation-item ${state.active===c.id?'active':''}" data-action="open-chat" data-id="${esc(c.id)}" aria-label="${esc(chatTitle(c))}${c.unread?', '+c.unread+' sin leer':''}">${chatAvatar(c)}<span class="conversation-copy"><span class="conversation-topline"><strong>${esc(chatTitle(c))}</strong><time>${shortDate(c.last?.created||c.created)}</time>${c.unread?`<span class="unread-badge">${c.unread}</span>`:''}</span><p>${c.last?.sender.id===state.user.id?'Tú: ':''}${esc(messagePreview(c.last))}</p></span></button>`).join('')||`<p class="no-results">${state.conversations.length?'No hay conversaciones con este filtro.':'Todavía no tienes chats. Empieza uno con el botón de arriba.'}</p>`;
+  $('#conversationList').innerHTML=list.map(c=>`<article class="conversation-item ${state.active===c.id?'active':''}">${c.type==='group'?`<button class="conversation-group" data-action="open-chat" data-id="${esc(c.id)}" aria-label="Abrir ${esc(chatTitle(c))}">${chatAvatar(c)}</button>`:chatAvatar(c)}<button class="conversation-open" data-action="open-chat" data-id="${esc(c.id)}" aria-label="${esc(chatTitle(c))}${c.unread?', '+c.unread+' sin leer':''}"><span class="conversation-copy"><span class="conversation-topline"><strong>${esc(chatTitle(c))}</strong><time>${shortDate(c.last?.created||c.created)}</time>${c.unread?`<span class="unread-badge">${c.unread}</span>`:''}</span><p>${c.last?.sender.id===state.user.id?'Tú: ':''}${esc(messagePreview(c.last))}</p></span></button></article>`).join('')||`<p class="no-results">${state.conversations.length?'No hay conversaciones con este filtro.':'Todavía no tienes chats. Empieza uno con el botón de arriba.'}</p>`;
   if($('#chatCount'))$('#chatCount').textContent=state.conversations.length;
 }
 async function openChat(id){
@@ -301,7 +310,12 @@ document.addEventListener('keydown',event=>{
   if(event.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)&&!$('#modal').open){event.preventDefault();go('buscar');}
   if(event.target.id==='messageInput'&&event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();sendMessage();}
 });
-$('#attachmentInput').addEventListener('change',event=>{const file=event.target.files[0];if(!file)return;const video=['video/mp4','video/webm'].includes(file.type),image=['image/jpeg','image/png','image/webp','image/gif'].includes(file.type);if((!image&&!video)||file.size>(video?6:4)*1024*1024){toast('Elige una imagen de hasta 4 MB o un video MP4/WebM de hasta 6 MB.',true);event.target.value='';return;}clearAttachment();state.attachment={file,filename:file.name,type:video?'video':'image',preview:URL.createObjectURL(file),id:crypto.randomUUID()};attachmentPreview();});
+function stageChatAttachment(file){
+ if(!file)return false;const video=['video/mp4','video/webm'].includes(file.type),image=['image/jpeg','image/png','image/webp','image/gif'].includes(file.type);
+ if((!image&&!video)||file.size>(video?6:4)*1024*1024){toast('Elige una imagen de hasta 4 MB o un video MP4/WebM de hasta 6 MB.',true);return false;}
+ clearAttachment();state.attachment={file,filename:file.name||'imagen-pegada.png',type:video?'video':'image',preview:URL.createObjectURL(file),id:crypto.randomUUID()};attachmentPreview();return true;
+}
+$('#attachmentInput').addEventListener('change',event=>{if(!stageChatAttachment(event.target.files[0]))event.target.value='';});
 $('#modal').addEventListener('click',event=>{if(event.target===$('#modal'))closeModal();});
 $('#modal').addEventListener('close',()=>{state.modal=null;});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&state.user&&state.active)markRead(state.active).catch(()=>{});});

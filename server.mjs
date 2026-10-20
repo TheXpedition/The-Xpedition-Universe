@@ -2,7 +2,7 @@ import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
 import {createProgression,levelFor} from './progression.mjs';
 import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
-import {accountRole} from './account-roles.mjs';
+import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
@@ -20,6 +20,7 @@ const publicDir = path.join(root, 'public');
 const monetization=monetizationConfig();
 const dataDir = path.resolve(process.env.DATA_DIR || path.join(root, 'data'));
 const db = await openDatabase(dataDir);
+await loadAccountVerifications(db);
 const storage = await openStorage(dataDir, db.kind === 'postgres');
 const publicUrl = (process.env.PUBLIC_URL || process.env.RENDER_EXTERNAL_URL || '').replace(/\/$/, '');
 const catalog = JSON.parse(fs.readFileSync(path.join(publicDir, 'catalog.json'), 'utf8'));
@@ -792,7 +793,7 @@ if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta soli
 if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bono adicional solicitado aplicado una sola vez: 5000 monedas.');
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
-const moderation=createModeration({db,json,fail,checkRate,everyone});
+const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   // Image review runs in a worker before taking the write lock so chat stays responsive.

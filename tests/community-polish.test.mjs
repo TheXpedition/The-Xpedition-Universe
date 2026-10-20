@@ -32,3 +32,26 @@ test('abrir + en móvil mantiene el selector al redimensionar, enfocar búsqueda
 test('la reacción pertenece a la superficie de la burbuja y se actualiza sin reemplazar el texto',async()=>{
  const {dom,w}=messenger();try{await settle();w.messengerTest.renderMessages();const row=w.document.querySelector('.message-row'),bubble=row.querySelector('.bubble');assert.equal(row.querySelector('.message-reactions').parentElement.className,'message-surface');w.state.messages[0].reactions=[];w.messengerTest.renderMessages();assert.equal(row.querySelector('.message-reactions'),null);w.state.messages[0].reactions=[{user_id:'other',emoji:'😂'}];w.messengerTest.renderMessages();assert.equal(row.querySelector('.message-reactions').parentElement.className,'message-surface');assert.equal(row.querySelector('.bubble'),bubble);}finally{dom.window.close();}
 });
+
+test('pegar una imagen prepara el adjunto sin enviar ni perder el borrador; texto e imágenes inválidas no lo reemplazan',()=>{
+ const dom=new JSDOM('<form class="composer"><textarea>Mi borrador</textarea></form><input id="elsewhere">',{url:'https://test.invalid',runScripts:'outside-only'}),w=dom.window;
+ try{
+  w.state={user:{id:'qa'},active:'chat',attachment:null};let previews=0,warnings=0;
+  w.clearAttachment=()=>{w.state.attachment=null;};w.attachmentPreview=()=>previews++;w.toast=()=>warnings++;
+  w.URL.createObjectURL=()=> 'blob:qa';
+  const app=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8'),start=app.indexOf('function stageChatAttachment('),end=app.indexOf("$('#attachmentInput')",start);
+  w.eval(app.slice(start,end));w.eval(fs.readFileSync(new URL('../public/chat-input.js',import.meta.url),'utf8'));
+  const image=new w.File(['png'],'captura.png',{type:'image/png'}),input=w.document.querySelector('textarea');
+  function paste(files=[],items=[],target=input){const event=new w.Event('paste',{bubbles:true,cancelable:true});Object.defineProperty(event,'clipboardData',{value:{files,items}});target.dispatchEvent(event);return event;}
+  assert.equal(paste([], [{kind:'file',type:'image/png',getAsFile:()=>image}]).defaultPrevented,true);
+  assert.equal(w.state.attachment.file,image);assert.equal(previews,1);assert.equal(input.value,'Mi borrador');
+  const staged=w.state.attachment;assert.equal(paste().defaultPrevented,false);assert.equal(w.state.attachment,staged);
+  paste([new w.File(['bad'],'bad.svg',{type:'image/svg+xml'})]);assert.equal(warnings,1);assert.equal(w.state.attachment,staged);
+  paste([image],[],w.document.querySelector('#elsewhere'));assert.equal(previews,1);
+  w.state.active=null;paste([image]);assert.equal(previews,1);
+ }finally{w.close();}
+});
+
+test('el avatar de quien escribe lleva a su perfil, también en mensajes renderizados',async()=>{
+ const {dom,w}=messenger();try{await settle();w.messengerTest.renderMessages();const link=w.document.querySelector('.message-row .chat-person-link');assert(link);assert.equal(link.getAttribute('href'),'#perfil/other');assert.match(link.getAttribute('aria-label'),/Chat QA/);}finally{dom.window.close();}
+});

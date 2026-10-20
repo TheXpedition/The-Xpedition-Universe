@@ -1,31 +1,92 @@
 'use strict';
+const moderationView={tab:'overview',offset:0,query:'',status:'active',selected:null,profiles:[],serial:0};
+const moderationTabs=[['overview','Resumen'],['profiles','Perfiles'],['posts','Publicaciones'],['members','Nuevos miembros'],['history','Historial']];
+const beforeModerationChrome=renderChrome;
+renderChrome=function(){beforeModerationChrome();if(state.user?.staff)$('#navigation')?.insertAdjacentHTML('beforeend',`<a href="#moderacion" class="nav-link ${state.route==='moderacion'?'active':''}" ${state.route==='moderacion'?'aria-current="page"':''}><span>Moderación</span></a>`);};
 const beforeModerationStream=startStream;
-startStream=function(){beforeModerationStream();state.stream?.addEventListener('moderation',async event=>{
- const m=JSON.parse(event.data);
- if(m.kind==='post'){
-  if(m.removed){postElement(m.id)?.remove();postCache.delete(m.id);commentThreads.delete(m.id);if($('#postsFeed')&&!$('#postsFeed .post-card'))await loadPosts();}
-  else if($('#postsFeed'))await loadPosts();
- }else{
-  const thread=commentThreads.get(m.post);if(thread){if(m.removed)thread.comments=thread.comments.filter(c=>c.id!==m.id);renderThread(m.post);if(!m.removed)await loadComments(m.post);}
-  await refreshPostActivity({post:m.post});
- }
-});};
-async function moderationPanel(){
- if(!state.user?.staff)return;
- modal('<div class="modal-kicker">STAFF DE THE XPEDITION</div><h2 id="modalTitle">Contenido retirado.</h2><p class="modal-intro">Las eliminaciones se pueden deshacer aquí. El contenido y las cuentas se conservan.</p><div id="moderationList" class="moderation-list">Cargando…</div>',false,'moderation');
- try{const r=await api('/moderation');if(!$('#moderationList'))return;$('#moderationList').innerHTML=r.removals.map(item=>`<article><div><span>${item.kind==='post'?'PUBLICACIÓN':'COMENTARIO'} · ${esc(shortDate(item.created))}</span><p>${esc(item.text||'Publicación con contenido multimedia')}</p></div><button class="btn secondary small" data-moderation="restore" data-kind="${item.kind}" data-id="${esc(item.id)}">Restaurar</button></article>`).join('')||'<p>No hay contenido retirado. Todo está en su lugar.</p>';}catch(e){if($('#moderationList'))$('#moderationList').textContent=e.message;}
-}
-function confirmModeration(button){
- if(!state.user?.staff)return;
- const kind=button.dataset.kind,id=button.dataset.id,isPost=kind==='post';
- modal(`<div class="modal-kicker">MODERACIÓN DE LA COMUNIDAD</div><h2 id="modalTitle">¿Eliminar ${isPost?'esta publicación':'este comentario'}?</h2><p class="modal-intro">Dejará de ser visible en la comunidad. Podrás restaurarlo desde Moderación en el menú de tu cuenta.</p><p class="form-error" id="moderationError" role="alert"></p><div class="moderation-actions"><button class="btn secondary" data-action="close-modal">Cancelar</button><button class="btn danger" id="confirmModeration">Eliminar ${isPost?'publicación':'comentario'}</button></div>`,false,'confirm-moderation');
- $('#confirmModeration').addEventListener('click',async event=>{
-  event.target.disabled=true;try{await api('/'+(isPost?'posts':'comments')+'/'+id,{method:'DELETE'});closeModal();toast((isPost?'Publicación eliminada.':'Comentario eliminado.')+' Puedes restaurarlo desde Moderación.');if(isPost){postElement(id)?.remove();postCache.delete(id);}else{const post=button.dataset.post,thread=commentThreads.get(post);if(thread){thread.comments=thread.comments.filter(c=>c.id!==id);renderThread(post);}await refreshPostActivity({post});}}catch(error){$('#moderationError').textContent=error.message;event.target.disabled=false;}
+startStream=function(){beforeModerationStream();
+ state.stream?.addEventListener('staff-grant',event=>{const result=JSON.parse(event.data);if(state.user?.id!==result.user)return;state.user.economy=result.wallet;renderChrome();toast(`Staff te entregó ${result.coins} monedas y ${result.tickets} tickets.`);});
+ state.stream?.addEventListener('moderation',async event=>{
+  if(state.route==='moderacion'){void loadModerationBody();return;}
+  const m=JSON.parse(event.data);
+  if(m.kind==='post'){
+   if(m.removed){postElement(m.id)?.remove();postCache.delete(m.id);commentThreads.delete(m.id);if($('#postsFeed')&&!$('#postsFeed .post-card'))await loadPosts();}
+   else if($('#postsFeed'))await loadPosts();
+  }else{const thread=commentThreads.get(m.post);if(thread){if(m.removed)thread.comments=thread.comments.filter(c=>c.id!==m.id);renderThread(m.post);if(!m.removed)await loadComments(m.post);}await refreshPostActivity({post:m.post});}
  });
+};
+function moderationPanel(){closeModal();go('moderacion');}
+function moderationPager(hasMore,size){return `<div class="mod-pagination"><button class="btn secondary small" data-mod="previous" data-size="${size}" ${!moderationView.offset?'disabled':''}>← Anterior</button><span>Página ${Math.floor(moderationView.offset/size)+1}</span><button class="btn secondary small" data-mod="next" data-size="${size}" ${!hasMore?'disabled':''}>Siguiente →</button></div>`;}
+function moderationPerson(person,compact=false){return `<button class="mod-person ${moderationView.selected===person.id?'selected':''} ${compact?'compact':''}" data-mod="select-profile" data-id="${esc(person.id)}">${avatar(person)}<span><strong>${esc(person.name)}${verifiedBadge(person)}</strong><small>${person.staff?'Staff · ':''}Nivel ${person.level} · ${date(person.created)}</small></span><span class="mod-person-arrow" aria-hidden="true">↗</span></button>`;}
+function renderModeration(){
+ if(!state.user?.staff){$('#main').innerHTML=heading('Un espacio del Staff.','La moderación está reservada al equipo de The Xpedition.')+'<a class="btn secondary" href="#inicio">Volver al universo</a>';return;}
+ $('#main').innerHTML=`<section class="mod-shell"><header class="mod-heading"><div><span class="mod-eyebrow">CUIDAMOS LA COMUNIDAD</span><h1>Moderación.</h1><p>Perfiles, publicaciones y las personas que se suman al universo.</p></div><span class="mod-staff">✦ Staff de The Xpedition</span></header><div class="mod-stats" id="moderationStats" aria-label="Estado de la comunidad"></div><nav class="mod-tabs" aria-label="Secciones de moderación">${moderationTabs.map(([id,label])=>`<button data-mod="tab" data-id="${id}" aria-current="${moderationView.tab===id?'page':'false'}">${label}</button>`).join('')}</nav><div id="moderationBody" aria-live="polite">Cargando…</div></section>`;
+ void refreshModerationStats();void loadModerationBody();
+}
+async function refreshModerationStats(){try{const summary=await api('/moderation/overview');const root=$('#moderationStats');if(!root)return;root.innerHTML=[['Cuentas registradas',summary.users],['Publicaciones activas',summary.posts],['Se unieron en 24 h',summary.joined],['Contenidos retirados',summary.removed]].map(([label,value])=>`<article><span>${label}</span><strong>${Number(value).toLocaleString('es-CO')}</strong></article>`).join('');}catch{}}
+async function loadModerationBody(){
+ const root=$('#moderationBody');if(!root||!state.user?.staff||state.route!=='moderacion')return;
+ const serial=++moderationView.serial;root.innerHTML='<div class="mod-loading"><span class="spinner"></span> Abriendo el espacio de revisión…</div>';
+ try{
+  const tab=moderationView.tab;
+  if(tab==='overview'){
+   const [people,history]=await Promise.all([api('/moderation/profiles'),api('/moderation/history')]);if(serial!==moderationView.serial)return;
+   root.innerHTML=`<div class="mod-overview"><section class="mod-panel"><div class="mod-section-title"><h2>Acaban de llegar.</h2><button data-mod="tab" data-id="members">Ver miembros →</button></div><p>Revisa los nuevos perfiles y dales la bienvenida.</p>${people.profiles.slice(0,5).map(p=>moderationPerson(p,true)).join('')||'<p>Aún no hay cuentas.</p>'}</section><section class="mod-panel"><div class="mod-section-title"><h2>Actividad del Staff.</h2><button data-mod="tab" data-id="history">Ver historial →</button></div>${moderationHistory(history.actions.slice(0,5))}</section></div>`;
+  }else if(tab==='profiles'||tab==='members'){
+   const result=await api('/moderation/profiles?'+new URLSearchParams({query:moderationView.query,offset:moderationView.offset}));if(serial!==moderationView.serial)return;
+   moderationView.profiles=result.profiles;
+   root.innerHTML=`<div class="mod-section-title"><div><h2>${tab==='members'?'Quienes se unen al universo.':'Cada perfil, en detalle.'}</h2><p>${result.total} cuentas · Las más recientes primero.</p></div></div><form class="mod-search" id="moderationSearch"><label><span class="sr-only">Buscar perfiles</span><input name="query" type="search" placeholder="Buscar un nombre…" maxlength="80" value="${esc(moderationView.query)}"></label><button class="btn secondary small">Buscar</button></form><div class="mod-profile-grid"><section class="mod-profile-list" aria-label="Cuentas registradas">${result.profiles.map(p=>moderationPerson(p)).join('')||'<div class="mod-panel">No encontramos perfiles.</div>'}${moderationPager(result.hasMore,25)}</section><section id="moderationProfile" class="mod-panel mod-profile-detail" aria-label="Revisión del perfil"><div class="mod-empty"><span>✦</span><h3>Selecciona una cuenta.</h3><p>Revisa su perfil, administra su verificación o entrega monedas y tickets.</p></div></section></div>`;
+   if(moderationView.selected)await showModerationProfile(moderationView.selected,false);
+  }else if(tab==='posts'){
+   const result=await api('/moderation/posts?'+new URLSearchParams({query:moderationView.query,status:moderationView.status,offset:moderationView.offset}));if(serial!==moderationView.serial)return;
+   root.innerHTML=`<form class="mod-search" id="moderationSearch"><label><span class="sr-only">Buscar publicaciones</span><input name="query" type="search" placeholder="Buscar texto o autor…" value="${esc(moderationView.query)}" maxlength="100"></label><select id="moderationPostStatus" aria-label="Estado de las publicaciones">${[['active','Activas'],['removed','Retiradas'],['archived','Archivadas'],['all','Todas']].map(([value,label])=>`<option value="${value}" ${moderationView.status===value?'selected':''}>${label}</option>`).join('')}</select><button class="btn secondary small">Buscar</button></form><div class="mod-posts">${result.posts.map(post=>`<article class="mod-panel mod-post" data-mod-post="${esc(post.id)}"><header><a href="#perfil/${encodeURIComponent(post.author.id)}">${avatar(post.author)}<span><strong>${esc(post.author.name)}${verifiedBadge(post.author)}</strong><small>${date(post.created)} · ${time(post.created)}</small></span></a><span class="mod-status ${post.removed?'removed':''}">${post.removed?'Retirada':post.archived?'Archivada':'Activa'}</span></header>${post.text?`<p class="mod-post-text">${esc(post.text)}</p>`:''}${post.image?`<a href="${esc(post.image)}" target="_blank" rel="noopener" class="mod-post-image"><img src="${esc(post.image)}" alt="Imagen de la publicación" loading="lazy"></a>`:''}${post.sticker?'<p class="mod-media-note">Incluye un sticker.</p>':''}<div class="mod-post-tools"><button class="btn secondary small" data-mod="comments" data-id="${esc(post.id)}">Revisar comentarios</button><button class="btn ${post.removed?'secondary':'danger'} small" data-moderation="${post.removed?'restore':'remove'}" data-kind="post" data-id="${esc(post.id)}">${post.removed?'Restaurar':'Retirar publicación'}</button></div><div class="mod-comments" id="mod-comments-${esc(post.id)}" hidden></div></article>`).join('')||'<div class="mod-panel mod-empty"><h3>No hay publicaciones con este filtro.</h3></div>'}</div>${moderationPager(result.hasMore,20)}`;
+  }else{
+   const result=await api('/moderation/history?offset='+moderationView.offset);if(serial!==moderationView.serial)return;
+   root.innerHTML=`<section class="mod-panel"><h2>Un registro de cada decisión.</h2><p>Verificaciones, entregas de saldo y cambios de moderación.</p>${moderationHistory(result.actions)}</section>${moderationPager(result.hasMore,30)}`;
+  }
+ }catch(error){if(serial===moderationView.serial)root.innerHTML=`<div class="mod-panel"><p class="form-error">${esc(error.message)}</p><button class="btn secondary" data-mod="retry">Volver a intentar</button></div>`;}
+}
+function moderationHistory(actions){const labels={verify:'Verificación concedida',unverify:'Verificación retirada',grant:'Monedas o tickets entregados','remove-post':'Publicación retirada','restore-post':'Publicación restaurada','remove-comment':'Comentario retirado','restore-comment':'Comentario restaurado'};return actions.length?`<div class="mod-history">${actions.map(action=>`<article><span class="mod-history-dot" aria-hidden="true">${action.action==='grant'?'✦':'·'}</span><div><strong>${esc(labels[action.action]||action.action)}</strong><p>${esc(action.details.name||action.details.text||'Contenido de la comunidad')}${action.action==='grant'?` · +${action.details.coins} monedas · +${action.details.tickets} tickets`:''}</p>${action.details.reason?`<p>${esc(action.details.reason)}</p>`:''}<small>${esc(action.moderator_name)} · ${date(action.created)} · ${time(action.created)}</small></div></article>`).join('')}</div>`:'<p class="mod-empty-copy">Aquí aparecerán las próximas decisiones del Staff.</p>';}
+async function showModerationProfile(id,scroll=true){
+ moderationView.selected=id;const root=$('#moderationProfile');if(!root)return;
+ $$('.mod-person').forEach(button=>button.classList.toggle('selected',button.dataset.id===id));
+ root.innerHTML='<p>Cargando perfil…</p>';
+ try{
+  const {profile:p}=await api('/moderation/profiles/'+encodeURIComponent(id));if(moderationView.selected!==id||!root.isConnected)return;
+  moderationView.profiles=moderationView.profiles.map(person=>person.id===p.id?p:person);
+  $$('.mod-person').filter(button=>button.dataset.id===p.id).forEach(button=>{button.outerHTML=moderationPerson(p,button.classList.contains('compact'));});
+  root.innerHTML=`<header class="mod-profile-heading">${avatar(p)}<div><h2>${esc(p.name)}${verifiedBadge(p)}</h2><p>${p.staff?'Staff de The Xpedition':'Miembro de la comunidad'} · Nivel ${p.level}</p></div></header><p class="mod-profile-bio">${esc(p.bio||'Todavía no añadió una biografía.')}</p><div class="mod-profile-links"><a href="#perfil/${encodeURIComponent(p.id)}">Ver perfil público ↗</a><button class="mod-verify ${p.verified?'verified':''}" data-mod="verify" data-id="${esc(p.id)}" data-verified="${p.verified}">${p.verified?'✓ Verificado · Quitar verificación':'Verificar perfil'}</button></div><div class="mod-balances"><article><span>Monedas actuales</span><strong>${p.coins.toLocaleString('es-CO')}</strong></article><article><span>Tickets actuales</span><strong>${p.tickets.toLocaleString('es-CO')}</strong></article></div><form id="moderationGrant" data-id="${esc(p.id)}" data-request-id="${crypto.randomUUID()}"><h3>Entregar monedas o tickets.</h3><p>El importe se suma al saldo de ${esc(p.name)}. Su nivel y compras se conservan.</p><div class="mod-grant-amounts"><label>Monedas<input name="coins" type="number" inputmode="numeric" min="0" max="1000000" step="1" value="0" required></label><label>Tickets<input name="tickets" type="number" inputmode="numeric" min="0" max="100000" step="1" value="0" required></label></div><label>Motivo<textarea name="reason" rows="2" minlength="3" maxlength="180" placeholder="Por ejemplo: premio de una actividad de la comunidad" required></textarea></label><p class="mod-grant-preview" id="moderationGrantPreview">Indica la cantidad que deseas sumar.</p><p class="form-error" id="moderationGrantError" role="alert"></p><button class="btn primary full" type="submit">Entregar saldo a ${esc(p.name)}</button><small class="mod-audit-note">Se guardarán la cantidad, el motivo y la cuenta de Staff que realiza la entrega.</small></form>`;
+  if(scroll&&matchMedia('(max-width:800px)').matches)root.scrollIntoView({block:'start',behavior:'smooth'});
+ }catch(error){if(root.isConnected)root.textContent=error.message;}
+}
+async function moderationComments(id,offset=0){const root=$('#mod-comments-'+CSS.escape(id));if(!root)return;root.hidden=false;try{const result=await api('/moderation/posts/'+id+'/comments?offset='+offset);if(!offset)root.innerHTML='';root.querySelector('[data-mod="more-comments"]')?.remove();root.insertAdjacentHTML('beforeend',result.comments.map(comment=>`<article><a href="#perfil/${encodeURIComponent(comment.author.id)}">${avatar(comment.author)}<strong>${esc(comment.author.name)}${verifiedBadge(comment.author)}</strong></a><p>${esc(comment.text)}</p><div><small>${date(comment.created)} · ${comment.removed?'Retirado':'Visible'}</small><button class="btn ${comment.removed?'secondary':'danger'} small" data-moderation="${comment.removed?'restore':'remove'}" data-kind="comment" data-post="${id}" data-id="${esc(comment.id)}">${comment.removed?'Restaurar':'Retirar'}</button></div></article>`).join('')||(!offset?'<p>No hay comentarios.</p>':''));if(result.hasMore)root.insertAdjacentHTML('beforeend',`<button class="btn secondary small" data-mod="more-comments" data-id="${id}" data-offset="${offset+25}">Ver más comentarios</button>`);}catch(error){root.textContent=error.message;}}
+function confirmModeration(button){
+ if(!state.user?.staff)return;const kind=button.dataset.kind,id=button.dataset.id,isPost=kind==='post';
+ modal(`<div class="modal-kicker">MODERACIÓN DE LA COMUNIDAD</div><h2 id="modalTitle">¿Retirar ${isPost?'esta publicación':'este comentario'}?</h2><p class="modal-intro">Dejará de ser visible en la comunidad. Podrás restaurarlo desde la sección Moderación.</p><p class="form-error" id="moderationError" role="alert"></p><div class="moderation-actions"><button class="btn secondary" data-action="close-modal">Cancelar</button><button class="btn danger" id="confirmModeration">Retirar ${isPost?'publicación':'comentario'}</button></div>`,false,'confirm-moderation');
+ $('#confirmModeration').addEventListener('click',async event=>{event.target.disabled=true;try{await api('/'+(isPost?'posts':'comments')+'/'+id,{method:'DELETE'});closeModal();toast('Contenido retirado. Puedes restaurarlo desde Moderación.');if(state.route==='moderacion'){await loadModerationBody();void refreshModerationStats();return;}if(isPost){postElement(id)?.remove();postCache.delete(id);}else{const post=button.dataset.post,thread=commentThreads.get(post);if(thread){thread.comments=thread.comments.filter(c=>c.id!==id);renderThread(post);}await refreshPostActivity({post});}}catch(error){$('#moderationError').textContent=error.message;event.target.disabled=false;}});
 }
 document.addEventListener('click',async event=>{
- const b=event.target.closest('[data-moderation]');if(!b)return;event.preventDefault();
- if(b.dataset.moderation==='panel'){$('.account-menu')?.remove();await moderationPanel();}
- if(b.dataset.moderation==='remove')confirmModeration(b);
- if(b.dataset.moderation==='restore'){b.disabled=true;try{await api('/moderation/'+b.dataset.kind+'/'+b.dataset.id+'/restore',{method:'POST',body:{}});await moderationPanel();toast('Contenido restaurado.');}catch(error){toast(error.message,true);b.disabled=false;}}
+ const b=event.target.closest('[data-moderation],[data-mod]');if(!b)return;event.preventDefault();if(!state.user?.staff)return;
+ try{
+  if(b.dataset.moderation==='panel'){moderationPanel();return;}
+  if(b.dataset.moderation==='remove'){confirmModeration(b);return;}
+  if(b.dataset.moderation==='restore'){b.disabled=true;await api('/moderation/'+b.dataset.kind+'/'+b.dataset.id+'/restore',{method:'POST',body:{}});if(state.route==='moderacion'){await loadModerationBody();void refreshModerationStats();}toast('Contenido restaurado.');return;}
+  const action=b.dataset.mod;
+  if(action==='tab'){moderationView.tab=b.dataset.id;moderationView.offset=0;moderationView.query='';renderModeration();}
+  if(action==='previous'||action==='next'){moderationView.offset=Math.max(0,moderationView.offset+(action==='next'?1:-1)*Number(b.dataset.size));await loadModerationBody();}
+  if(action==='retry')await loadModerationBody();
+  if(action==='select-profile'){moderationView.selected=b.dataset.id;if(!['profiles','members'].includes(moderationView.tab)){moderationView.tab='profiles';moderationView.offset=0;renderModeration();}else await showModerationProfile(b.dataset.id);}
+  if(action==='verify'){b.disabled=true;const r=await api('/moderation/profiles/'+encodeURIComponent(b.dataset.id)+'/verification',{method:'PUT',body:{verified:b.dataset.verified!=='true'}});await refreshProfiles();await showModerationProfile(r.profile.id,false);toast(r.profile.verified?'Perfil verificado.':'Verificación retirada.');}
+  if(action==='comments')await moderationComments(b.dataset.id);
+  if(action==='more-comments')await moderationComments(b.dataset.id,Number(b.dataset.offset));
+ }catch(error){toast(error.message,true);if(b.isConnected)b.disabled=false;}
 });
+document.addEventListener('input',event=>{const form=event.target.closest('#moderationGrant');if(!form)return;const coins=Number(form.elements.coins.value)||0,tickets=Number(form.elements.tickets.value)||0;$('#moderationGrantPreview').textContent=`Se sumarán ${coins.toLocaleString('es-CO')} monedas y ${tickets.toLocaleString('es-CO')} tickets.`;});
+document.addEventListener('submit',async event=>{
+ const form=event.target;if(form.id==='moderationSearch'){event.preventDefault();moderationView.query=form.elements.query.value.trim();moderationView.offset=0;await loadModerationBody();return;}
+ if(form.id!=='moderationGrant')return;event.preventDefault();if(!state.user?.staff)return;
+ const button=form.querySelector('button[type="submit"]'),error=$('#moderationGrantError');button.disabled=true;error.textContent='';
+ try{const result=await api('/moderation/profiles/'+encodeURIComponent(form.dataset.id)+'/grant',{method:'POST',body:{requestId:form.dataset.requestId,coins:Number(form.elements.coins.value),tickets:Number(form.elements.tickets.value),reason:form.elements.reason.value.trim()}});await showModerationProfile(result.profile.id,false);toast(result.alreadyApplied?'La entrega ya estaba registrada. El saldo no se duplicó.':'Saldo entregado y registrado en el historial.');}
+ catch(e){error.textContent=e.message;button.disabled=false;}
+});
+document.addEventListener('change',event=>{if(event.target.id==='moderationPostStatus'){moderationView.status=event.target.value;moderationView.offset=0;void loadModerationBody();}});

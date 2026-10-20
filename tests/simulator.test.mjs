@@ -4,6 +4,13 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {JSDOM,VirtualConsole} from 'jsdom';
 const root=new URL('../public/simulator/',import.meta.url),shop=JSON.parse(fs.readFileSync(new URL('catalog.json',root)));
+test('el catálogo conserva los talentos del simulador original y los cuatro nuevos pedidos',()=>{
+ const originals=JSON.parse(fs.readFileSync(new URL('fixtures/original-talents.json',import.meta.url))),specific=new Map([['Jose Julián','Comer Pejelagartos'],['Meow','Estafar'],['Neila Drag','Coreografía de Ay, Mi Gatito Meow Meow'],['Robert','Show de Magia']]);
+ const preserved=new Set(['Britney Britney','Gustavo','Edwin','Myke Z','Jiafei','Eduardo Buñuelo','Candy Cookies','Ashley','Emily Waldorf','Vladimir','Maria Luna','Gaba Hochbaum','Jared','Valery Ocampo',...specific.keys()]);
+ const key=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+ let count=0;for(const [name,talent] of Object.entries(originals)){if(preserved.has(name))continue;const item=shop.items.find(i=>i.kind==='character'&&key(i.name)===key(name));if(item){assert.equal(item.talent,talent,name);count++;}}assert(count>=120);
+ for(const [name,talent] of specific)assert.equal(shop.items.find(i=>i.name===name).talent,talent,name);
+});
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function waitForCheckpoint(predicate){const deadline=Date.now()+4000;while(!predicate()){assert(Date.now()<deadline,'El punto de control no terminó de actualizarse');await pause(25);}}
 async function engine(mode='antarctica',snapshot=null,all=false){

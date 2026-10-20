@@ -20,8 +20,11 @@ after(()=>db.close());
 const playableSnapshot={version:1,engine:'game',point:'core:3',state:{vars:{selected18:['Dani','Dua Lingo']}}};
 async function savedRun(u){const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const saved=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:0,snapshot:playableSnapshot,episode:0});assert.equal(saved.saved,true);return {...run,revision:saved.revision};}
 
-test('cada personaje tiene un talento único y los cuatro nuevos conservan precio, identidad e icono',()=>{
- const chars=shop.items.filter(i=>i.kind==='character');assert.equal(new Set(chars.map(i=>i.talent.toLowerCase())).size,chars.length);
+test('restaurar los talentos originales conserva sus coincidencias y los nuevos mantienen precio, identidad e icono',()=>{
+ const chars=shop.items.filter(i=>i.kind==='character'),talents=new Map();
+ for(const c of chars){const key=c.talent.toLowerCase();talents.set(key,[...(talents.get(key)||[]),c.name]);}
+ // The later request restores the original text, including Cantar and Jiafei's explicitly assigned talent.
+ assert.deepEqual([...talents.values()].filter(names=>names.length>1),[['Javi','Jiafei','Sandro']]);
  for(const name of ['Jose Julián','Meow','Neila Drag','Robert']){const c=chars.find(i=>i.name===name);assert.equal(c.price,65);assert.equal(c.starter,false);assert(fs.existsSync(new URL('../public'+c.image,import.meta.url)));}
  assert.equal(chars.find(i=>i.name==='Meow').pronouns,'They / Them');assert.equal(chars.find(i=>i.name==='Meow').gender,'F');
 });

@@ -69,3 +69,13 @@
  .chat-popover .emoji-results{max-height:210px}
  .chat-popover .chat-picker{max-width:calc(100vw - 24px)}
 }
+.account-menu{position:fixed;z-index:110;max-width:calc(100vw - 24px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.chat-person-link{display:inline-flex;flex-shrink:0;border-radius:12px;line-height:0}
+.chat-person-link:focus-visible{outline:2px solid #c7a8f1;outline-offset:4px}
+.messenger .message-row>.chat-person-link{align-self:flex-end;margin-bottom:24px}
+.messenger .message-row>.chat-person-link .avatar{width:30px;height:30px}
+.conversation-open{display:block;flex:1;min-width:0;text-align:left;background:transparent;color:inherit;padding:0;border:0}
+.conversation-open .conversation-copy{display:block}
+.conversation-group{display:block;flex-shrink:0;border:0;padding:0;background:transparent;color:inherit}
+.conversation-item:focus-within{outline:1px solid #ad8ad866;outline-offset:1px}
+@media(max-width:750px){.messenger .message-row>.chat-person-link .avatar{width:25px;height:25px}}
