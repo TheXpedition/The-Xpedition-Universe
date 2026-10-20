@@ -19,7 +19,7 @@ const settle=()=>new Promise(resolve=>setTimeout(resolve,25));
 test('todos los transparentes preceden a los cuadros aun con favoritos, en chat y publicaciones',async()=>{
  const stickers=JSON.parse(fs.readFileSync(new URL('../public/stickers.json',import.meta.url),'utf8')),opaque=stickers.find(s=>!s.transparent),transparent=stickers.filter(s=>s.transparent).at(-1),{dom,w}=messenger(stickers);
  try{w.state.user.stickerFavorites=[opaque.id,transparent.id];await settle();
-  for(const mode of ['chat','post']){const root=w.document.createElement('div');root.innerHTML=w.messengerTest.stickerTiles(mode);const ids=[...root.querySelectorAll('[data-sticker-id]')].map(el=>el.dataset.stickerId),boundary=stickers.filter(s=>s.transparent).length;assert.equal(ids.length,77);assert.equal(ids[0],transparent.id);assert.equal(ids[boundary],opaque.id);assert(ids.slice(0,boundary).every(id=>stickers.find(s=>s.id===id).transparent));assert(ids.slice(boundary).every(id=>!stickers.find(s=>s.id===id).transparent));}
+  for(const mode of ['chat','post']){const root=w.document.createElement('div');root.innerHTML=w.messengerTest.stickerTiles(mode);const ids=[...root.querySelectorAll('[data-sticker-id]')].map(el=>el.dataset.stickerId),boundary=stickers.filter(s=>s.transparent).length;assert.equal(ids.length,78);assert.equal(ids[0],transparent.id);assert.equal(ids[boundary],opaque.id);assert(ids.slice(0,boundary).every(id=>stickers.find(s=>s.id===id).transparent));assert(ids.slice(boundary).every(id=>!stickers.find(s=>s.id===id).transparent));}
  }finally{dom.window.close();}
 });
 
