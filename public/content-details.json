@@ -959,5 +959,76 @@
       "Comunidad",
       "Momentos icónicos"
     ]
+  },
+  "desafio-india": {
+    "previewCast": [
+      "Maria Villegas",
+      "Coronel",
+      "Ivy",
+      "Kareli",
+      "Lui Mclean"
+    ],
+    "cast": [
+      "Maria Villegas",
+      "Coronel",
+      "Ivy",
+      "Kareli",
+      "Lui Mclean",
+      "Sebas",
+      "Ducky",
+      "Pablo",
+      "Amanda Lewis",
+      "Maria Luna",
+      "Popu Yay",
+      "Javi",
+      "Luciano",
+      "Nahuee",
+      "Teseo",
+      "Violeta",
+      "Gokuh Moreno",
+      "Stephany",
+      "Robert",
+      "Gaba Hochbaum",
+      "Robinson Lewis",
+      "Carlos Rojas"
+    ],
+    "genres": [
+      "Especial",
+      "Competencia virtual"
+    ]
+  },
+  "baw": {
+    "previewCast": [
+      "Maria Villegas",
+      "Alexandro",
+      "Dani",
+      "Luciano",
+      "Jose Julián",
+      "Isaac"
+    ],
+    "cast": [
+      "Alexandro",
+      "Cristian Julio",
+      "Gokuh Moreno",
+      "Ian Esteban",
+      "Iker",
+      "Isaac",
+      "Sadith",
+      "Dani",
+      "Felix",
+      "Amanda Lewis",
+      "Jose Julián",
+      "Pablo",
+      "Luciano",
+      "Robin",
+      "Vita",
+      "Paulis Queen",
+      "Marcos",
+      "Renata"
+    ],
+    "genres": [
+      "Especial",
+      "Competencia virtual"
+    ]
   }
 }

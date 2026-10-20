@@ -239,8 +239,11 @@
         "desc": "Especial que reúne a los participantes de The Xpedition Safari para un Torneo de Estrellas.",
         "accent": "var(--tr)",
         "kind": "Spin Off",
-        "url": "https://thexpedition.github.io/The-Xpedition-Safari/",
-        "actionLabel": "Ir a la temporada"
+        "url": "#temporada/safari-showdown",
+        "actionLabel": "Ir a la temporada",
+        "integrated": true,
+        "saga": "showdown",
+        "universe": "The Xpedition"
       },
       {
         "id": "traitor-showdown",
@@ -249,8 +252,11 @@
         "desc": "El regreso del especial de estrellas, está vez reúne a los estelares de la saga The Traitor.",
         "accent": "var(--tr)",
         "kind": "Spin Off",
-        "url": "https://thexpedition.github.io/The-Traitor-2/",
-        "actionLabel": "Ir a la temporada"
+        "url": "#temporada/traitor-showdown",
+        "actionLabel": "Ir a la temporada",
+        "integrated": true,
+        "saga": "showdown",
+        "universe": "The Xpedition"
       },
       {
         "id": "diamond-rush-1",
@@ -398,6 +404,64 @@
               259,
               1423,
               586
+            ]
+          }
+        }
+      },
+      {
+        "id": "desafio-india",
+        "name": "Desafío India",
+        "meta": "2015",
+        "season": "2015",
+        "desc": "Una expedición a India reúne a un elenco del universo en un nuevo desafío. Maria Villegas, Coronel, Ivy, Kareli y Lui Mclean encabezan esta historia de 2015.",
+        "accent": "#efad58",
+        "kind": "Spin Off",
+        "saga": "desafio-india",
+        "universe": "The Xpedition",
+        "integrated": true,
+        "url": "#temporada/desafio-india",
+        "actionLabel": "Explorar el especial",
+        "art": {
+          "background": "backdrops/desafio-india-banner.webp",
+          "poster": "backdrops/desafio-india-poster.webp",
+          "logo": {
+            "src": "transparent/desafio-india.png",
+            "width": 2172,
+            "height": 724,
+            "frame": [
+              188,
+              36,
+              1798,
+              624
+            ]
+          }
+        }
+      },
+      {
+        "id": "baw",
+        "name": "BAW",
+        "meta": "2018",
+        "season": "2018",
+        "desc": "BAW presenta una nueva historia del universo con una identidad en blanco y negro. Maria Villegas, Alexandro, Dani, Luciano, Jose Julián e Isaac encabezan el elenco principal de esta edición de 2018.",
+        "accent": "#d4d0c7",
+        "kind": "Spin Off",
+        "saga": "baw",
+        "universe": "The Xpedition",
+        "integrated": true,
+        "url": "#temporada/baw",
+        "actionLabel": "Explorar el especial",
+        "art": {
+          "background": "backdrops/baw-banner.webp",
+          "poster": "backdrops/baw-poster.webp",
+          "logo": {
+            "src": "transparent/baw.png",
+            "width": 1122,
+            "height": 502,
+            "frame": [
+              262,
+              82,
+              616,
+              285
             ]
           }
         }

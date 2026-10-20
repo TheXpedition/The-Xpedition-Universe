@@ -1,0 +1,1225 @@
+{
+  "version": 1,
+  "seasons": {
+    "desafio-india": {
+      "id": "desafio-india",
+      "franchise": "Especial",
+      "theme": "india",
+      "year": 2015,
+      "heading": "Un nuevo horizonte. El mismo espíritu.",
+      "description": "Una expedición a India reúne a un elenco del universo en un nuevo desafío. Maria Villegas, Coronel, Ivy, Kareli y Lui Mclean encabezan esta historia de 2015.",
+      "poster": "backdrops/desafio-india-poster.webp",
+      "banner": "backdrops/desafio-india-banner.webp",
+      "participants": [
+        {
+          "name": "Maria Villegas",
+          "image": "personajes/maria.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Coronel",
+          "image": "personajes/coronel.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ivy",
+          "image": "personajes/ivy.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Kareli",
+          "image": "personajes/kareli.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Lui Mclean",
+          "image": "personajes/luimclean.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Sebas",
+          "image": "personajes/sebas.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ducky",
+          "image": null,
+          "place": "Participante"
+        },
+        {
+          "name": "Pablo",
+          "image": "personajes/pablo.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Amanda Lewis",
+          "image": "personajes/amandalewis.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Maria Luna",
+          "image": "personajes/marialuna.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Popu Yay",
+          "image": "seasons/spinoffs/popu-yay.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Javi",
+          "image": "personajes/javi.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Luciano",
+          "image": "personajes/luciano.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Nahuee",
+          "image": "personajes/nahuee.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Teseo",
+          "image": "personajes/teseo.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Violeta",
+          "image": "personajes/violeta.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "image": "personajes/gokuhmoreno.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Stephany",
+          "image": "personajes/stephany.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Robert",
+          "image": "personajes/robert.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Gaba Hochbaum",
+          "image": "personajes/gabahochbaum.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Robinson Lewis",
+          "image": null,
+          "place": "Participante"
+        },
+        {
+          "name": "Carlos Rojas",
+          "image": "personajes/carlosrojas.png",
+          "place": "Participante"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "image": "personajes/maria.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Coronel",
+          "image": "personajes/coronel.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Ivy",
+          "image": "personajes/ivy.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Kareli",
+          "image": "personajes/kareli.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Lui Mclean",
+          "image": "personajes/luimclean.png",
+          "place": "Elenco principal"
+        }
+      ],
+      "stats": {
+        "Estreno": "2015",
+        "Elenco completo": "22",
+        "Elenco principal": "5",
+        "Identidad": "India"
+      }
+    },
+    "baw": {
+      "id": "baw",
+      "franchise": "Especial",
+      "theme": "baw",
+      "year": 2018,
+      "heading": "Una historia en blanco y negro.",
+      "description": "BAW presenta una nueva historia del universo con una identidad en blanco y negro. Maria Villegas, Alexandro, Dani, Luciano, Jose Julián e Isaac encabezan el elenco principal de esta edición de 2018.",
+      "poster": "backdrops/baw-poster.webp",
+      "banner": "backdrops/baw-banner.webp",
+      "participants": [
+        {
+          "name": "Alexandro",
+          "image": "personajes/alexandro.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Cristian Julio",
+          "image": "personajes/cristianjulio.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Gokuh Moreno",
+          "image": "personajes/gokuhmoreno.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ian Esteban",
+          "image": "personajes/ianesteban.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Iker",
+          "image": "personajes/iker.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Isaac",
+          "image": "personajes/isaac.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Sadith",
+          "image": "personajes/sadith.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Dani",
+          "image": "personajes/dani.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Felix",
+          "image": "personajes/felix.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Amanda Lewis",
+          "image": "personajes/amandalewis.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Jose Julián",
+          "image": "personajes/josejulian.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Pablo",
+          "image": "personajes/pablo.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Luciano",
+          "image": "personajes/luciano.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Robin",
+          "image": "personajes/robin.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Vita",
+          "image": "personajes/vita.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Paulis Queen",
+          "image": "personajes/paulisqueen.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Marcos",
+          "image": "personajes/marcos.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Renata",
+          "image": "personajes/renata.png",
+          "place": "Participante"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Maria Villegas",
+          "image": "personajes/maria.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Alexandro",
+          "image": "personajes/alexandro.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Dani",
+          "image": "personajes/dani.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Luciano",
+          "image": "personajes/luciano.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Jose Julián",
+          "image": "personajes/josejulian.png",
+          "place": "Elenco principal"
+        },
+        {
+          "name": "Isaac",
+          "image": "personajes/isaac.png",
+          "place": "Elenco principal"
+        }
+      ],
+      "stats": {
+        "Estreno": "2018",
+        "Elenco completo": "18",
+        "Elenco principal": "6",
+        "Identidad": "Blanco y negro"
+      }
+    },
+    "safari-showdown": {
+      "id": "safari-showdown",
+      "franchise": "Showdown",
+      "theme": "showdown",
+      "number": 1,
+      "year": 2025,
+      "heading": "Safari vuelve a brillar.",
+      "description": "Especial que reúne a los participantes de The Xpedition Safari para un Torneo de Estrellas.",
+      "poster": "backdrops/showdown-season-1.png",
+      "participants": [
+        {
+          "name": "Bonju",
+          "image": "personajes/bonju.png",
+          "place": "Presentación"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "image": "seasons/spinoffs/safari-showdown/ignacioricci.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Rafael",
+          "image": "seasons/spinoffs/safari-showdown/rafael.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Eris Midnight",
+          "image": "seasons/spinoffs/safari-showdown/erismidnight.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Oscar",
+          "image": "seasons/spinoffs/safari-showdown/oscar.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Lucas Mendez",
+          "image": "seasons/spinoffs/safari-showdown/lucasmendez.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Luciano",
+          "image": "seasons/spinoffs/safari-showdown/luciano.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Lalamila",
+          "image": "seasons/spinoffs/safari-showdown/lalamila.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Alexandro",
+          "image": "seasons/spinoffs/safari-showdown/alexandro.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Esteban",
+          "image": "seasons/spinoffs/safari-showdown/esteban.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Isabel",
+          "image": "seasons/spinoffs/safari-showdown/isabel.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Bryan Montalvo",
+          "image": "seasons/spinoffs/safari-showdown/bryanmontalvo.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Catalina",
+          "image": "seasons/spinoffs/safari-showdown/catalina.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Iñaella Rose",
+          "image": "seasons/spinoffs/safari-showdown/inaellarose.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Andromeda",
+          "image": "seasons/spinoffs/safari-showdown/andromeda.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Pier",
+          "image": "seasons/spinoffs/safari-showdown/pier.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Bayron",
+          "image": "seasons/spinoffs/safari-showdown/bayron.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Garnet",
+          "image": "seasons/spinoffs/safari-showdown/garnet.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Greg",
+          "image": "seasons/spinoffs/safari-showdown/greg.webp",
+          "place": "Participante"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Bonju",
+          "image": "personajes/bonju.png",
+          "place": "Presentación"
+        },
+        {
+          "name": "Ignacio Ricci",
+          "image": "seasons/spinoffs/safari-showdown/ignacioricci.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Rafael",
+          "image": "seasons/spinoffs/safari-showdown/rafael.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Eris Midnight",
+          "image": "seasons/spinoffs/safari-showdown/erismidnight.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Oscar",
+          "image": "seasons/spinoffs/safari-showdown/oscar.webp",
+          "place": "Participante"
+        },
+        {
+          "name": "Lucas Mendez",
+          "image": "seasons/spinoffs/safari-showdown/lucasmendez.webp",
+          "place": "Participante"
+        }
+      ],
+      "brackets": [
+        {
+          "title": "Bracket 01",
+          "people": [
+            {
+              "name": "Alexandro",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/alexandro.webp"
+            },
+            {
+              "name": "Bayron",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/bayron.webp"
+            },
+            {
+              "name": "Garnet",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/garnet.webp"
+            },
+            {
+              "name": "Greg",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/greg.webp"
+            },
+            {
+              "name": "Isabel",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/isabel.webp"
+            },
+            {
+              "name": "Rafael",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/rafael.webp"
+            }
+          ]
+        },
+        {
+          "title": "Bracket 02",
+          "people": [
+            {
+              "name": "Andromeda",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/andromeda.webp"
+            },
+            {
+              "name": "Eris Midnight",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/erismidnight.webp"
+            },
+            {
+              "name": "Esteban",
+              "mark": "🍀",
+              "image": "seasons/spinoffs/safari-showdown/esteban.webp"
+            },
+            {
+              "name": "Ignacio Ricci",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/ignacioricci.webp"
+            },
+            {
+              "name": "Lalamila",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/lalamila.webp"
+            },
+            {
+              "name": "Pier",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/pier.webp"
+            }
+          ]
+        },
+        {
+          "title": "Bracket 03",
+          "people": [
+            {
+              "name": "Bryan Montalvo",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/bryanmontalvo.webp"
+            },
+            {
+              "name": "Catalina",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/catalina.webp"
+            },
+            {
+              "name": "Iñaella Rose",
+              "mark": "",
+              "image": "seasons/spinoffs/safari-showdown/inaellarose.webp"
+            },
+            {
+              "name": "Lucas Mendez",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/lucasmendez.webp"
+            },
+            {
+              "name": "Luciano",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/luciano.webp"
+            },
+            {
+              "name": "Oscar",
+              "mark": "✅",
+              "image": "seasons/spinoffs/safari-showdown/oscar.webp"
+            }
+          ]
+        }
+      ],
+      "track": {
+        "src": "seasons/spinoffs/safari-showdown/track-record.png",
+        "width": 1175,
+        "height": 541
+      },
+      "stats": {
+        "Temporada": "1",
+        "Estreno": "2025",
+        "Competidores": "18",
+        "Brackets": "3"
+      },
+      "source": {
+        "page": "https://thexpedition.github.io/The-Xpedition-Safari/",
+        "sha256": "7cadd4d4c87704862f2f77e80d2c1bf74af3b642cc30e0c04b5440b5682ec0e6",
+        "brackets": [
+          [
+            {
+              "name": "Alexandro",
+              "mark": "✅"
+            },
+            {
+              "name": "Bayron"
+            },
+            {
+              "name": "Garnet"
+            },
+            {
+              "name": "Greg"
+            },
+            {
+              "name": "Isabel",
+              "mark": "✅"
+            },
+            {
+              "name": "Rafael",
+              "mark": "✅"
+            }
+          ],
+          [
+            {
+              "name": "Andromeda"
+            },
+            {
+              "name": "Eris Midnight",
+              "mark": "✅"
+            },
+            {
+              "name": "Esteban",
+              "mark": "🍀"
+            },
+            {
+              "name": "Ignacio Ricci",
+              "mark": "✅"
+            },
+            {
+              "name": "Lalamila",
+              "mark": "✅"
+            },
+            {
+              "name": "Pier"
+            }
+          ],
+          [
+            {
+              "name": "Bryan"
+            },
+            {
+              "name": "Catalina"
+            },
+            {
+              "name": "Iñaella Rose"
+            },
+            {
+              "name": "Lucas Mendez",
+              "mark": "✅"
+            },
+            {
+              "name": "Luciano",
+              "mark": "✅"
+            },
+            {
+              "name": "Oscar",
+              "mark": "✅"
+            }
+          ]
+        ],
+        "trackSha256": "131c313acf75937113e8350f4981682a92a5f9770033b59da9ed7ab4c6ad2a43"
+      }
+    },
+    "traitor-showdown": {
+      "id": "traitor-showdown",
+      "franchise": "Showdown",
+      "theme": "showdown",
+      "number": 2,
+      "year": 2026,
+      "heading": "Las estrellas vuelven al escenario.",
+      "description": "El regreso del especial de estrellas, está vez reúne a los estelares de la saga The Traitor.",
+      "poster": "backdrops/showdown-season-2.png",
+      "participants": [
+        {
+          "name": "Bonju",
+          "image": "personajes/bonju.png",
+          "place": "Presentación"
+        },
+        {
+          "name": "Alice",
+          "image": "personajes/alice.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ivy",
+          "image": "personajes/ivy.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Luciano",
+          "image": "personajes/luciano.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Leandro",
+          "image": "personajes/leandro.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Eduard",
+          "image": "personajes/eduard.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Gabriel Sab",
+          "image": "personajes/gabrielsab.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Marianito",
+          "image": "personajes/marianito.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Carlos Harrington",
+          "image": "personajes/carlosharrington.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Sal Lua",
+          "image": "personajes/sallua.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Bayron",
+          "image": "personajes/bayron.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Bodega Bodeguita",
+          "image": "personajes/bodegabodeguita.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Peggy",
+          "image": "personajes/peggy.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Elias",
+          "image": "personajes/elias.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Christopher",
+          "image": "personajes/christopher.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Mary Hao",
+          "image": "personajes/maryhao.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Catalina",
+          "image": "personajes/catalina.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Andromeda",
+          "image": "personajes/andromeda.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Greg",
+          "image": "personajes/greg.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Renzo",
+          "image": "personajes/renzo.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Felix",
+          "image": "personajes/felix.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Isabel",
+          "image": "personajes/isabel.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Marcos",
+          "image": "personajes/marcos.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Coronel",
+          "image": "personajes/coronel.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ari Salgado",
+          "image": "personajes/arisalgado.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Daelly",
+          "image": "personajes/daelly.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Esteban",
+          "image": "personajes/esteban.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Julián",
+          "image": "personajes/julian.png",
+          "place": "Participante"
+        }
+      ],
+      "mainCast": [
+        {
+          "name": "Bonju",
+          "image": "personajes/bonju.png",
+          "place": "Presentación"
+        },
+        {
+          "name": "Alice",
+          "image": "personajes/alice.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Ivy",
+          "image": "personajes/ivy.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Luciano",
+          "image": "personajes/luciano.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Leandro",
+          "image": "personajes/leandro.png",
+          "place": "Participante"
+        },
+        {
+          "name": "Eduard",
+          "image": "personajes/eduard.png",
+          "place": "Participante"
+        }
+      ],
+      "brackets": [
+        {
+          "title": "Bracket 01",
+          "people": [
+            {
+              "name": "Elias",
+              "mark": "⭐",
+              "image": "personajes/elias.png"
+            },
+            {
+              "name": "Ari Salgado",
+              "mark": "",
+              "image": "personajes/arisalgado.png"
+            },
+            {
+              "name": "Bayron",
+              "mark": "⭐",
+              "image": "personajes/bayron.png"
+            },
+            {
+              "name": "Christopher",
+              "mark": "⭐",
+              "image": "personajes/christopher.png"
+            },
+            {
+              "name": "Daelly",
+              "mark": "",
+              "image": "personajes/daelly.png"
+            },
+            {
+              "name": "Esteban",
+              "mark": "",
+              "image": "personajes/esteban.png"
+            },
+            {
+              "name": "Gabriel Sab",
+              "mark": "",
+              "image": "personajes/gabrielsab.png"
+            },
+            {
+              "name": "Julián",
+              "mark": "",
+              "image": "personajes/julian.png"
+            },
+            {
+              "name": "Mary Hao",
+              "mark": "⭐",
+              "image": "personajes/maryhao.png"
+            }
+          ]
+        },
+        {
+          "title": "Bracket 02",
+          "people": [
+            {
+              "name": "Coronel",
+              "mark": "",
+              "image": "personajes/coronel.png"
+            },
+            {
+              "name": "Eduard",
+              "mark": "⭐",
+              "image": "personajes/eduard.png"
+            },
+            {
+              "name": "Felix",
+              "mark": "",
+              "image": "personajes/felix.png"
+            },
+            {
+              "name": "Isabel",
+              "mark": "",
+              "image": "personajes/isabel.png"
+            },
+            {
+              "name": "Ivy",
+              "mark": "",
+              "image": "personajes/ivy.png"
+            },
+            {
+              "name": "Luciano",
+              "mark": "⭐",
+              "image": "personajes/luciano.png"
+            },
+            {
+              "name": "Marcos",
+              "mark": "",
+              "image": "personajes/marcos.png"
+            },
+            {
+              "name": "Marianito",
+              "mark": "⭐",
+              "image": "personajes/marianito.png"
+            },
+            {
+              "name": "Sal Lua",
+              "mark": "⭐",
+              "image": "personajes/sallua.png"
+            }
+          ]
+        },
+        {
+          "title": "Bracket 03",
+          "people": [
+            {
+              "name": "Alice",
+              "mark": "⭐",
+              "image": "personajes/alice.png"
+            },
+            {
+              "name": "Andromeda",
+              "mark": "",
+              "image": "personajes/andromeda.png"
+            },
+            {
+              "name": "Bodega Bodeguita",
+              "mark": "⭐",
+              "image": "personajes/bodegabodeguita.png"
+            },
+            {
+              "name": "Carlos Harrington",
+              "mark": "⭐",
+              "image": "personajes/carlosharrington.png"
+            },
+            {
+              "name": "Catalina",
+              "mark": "⭐",
+              "image": "personajes/catalina.png"
+            },
+            {
+              "name": "Greg",
+              "mark": "",
+              "image": "personajes/greg.png"
+            },
+            {
+              "name": "Leandro",
+              "mark": "⭐",
+              "image": "personajes/leandro.png"
+            },
+            {
+              "name": "Peggy",
+              "mark": "⭐",
+              "image": "personajes/peggy.png"
+            },
+            {
+              "name": "Renzo",
+              "mark": "",
+              "image": "personajes/renzo.png"
+            }
+          ]
+        },
+        {
+          "title": "Semi-Finales",
+          "people": [
+            {
+              "name": "Bayron",
+              "mark": "",
+              "image": "personajes/bayron.png"
+            },
+            {
+              "name": "Eduard",
+              "mark": "",
+              "image": "personajes/eduard.png"
+            },
+            {
+              "name": "Elias",
+              "mark": "",
+              "image": "personajes/elias.png"
+            },
+            {
+              "name": "Esteban",
+              "mark": "",
+              "image": "personajes/esteban.png"
+            },
+            {
+              "name": "Luciano",
+              "mark": "",
+              "image": "personajes/luciano.png"
+            },
+            {
+              "name": "Marianito",
+              "mark": "",
+              "image": "personajes/marianito.png"
+            },
+            {
+              "name": "Mary Hao",
+              "mark": "",
+              "image": "personajes/maryhao.png"
+            },
+            {
+              "name": "Sal Lua",
+              "mark": "",
+              "image": "personajes/sallua.png"
+            },
+            {
+              "name": "Alice",
+              "mark": "",
+              "image": "personajes/alice.png"
+            },
+            {
+              "name": "Bodega Bodeguita",
+              "mark": "",
+              "image": "personajes/bodegabodeguita.png"
+            },
+            {
+              "name": "Carlos Harrington",
+              "mark": "",
+              "image": "personajes/carlosharrington.png"
+            },
+            {
+              "name": "Catalina",
+              "mark": "",
+              "image": "personajes/catalina.png"
+            },
+            {
+              "name": "Leandro",
+              "mark": "",
+              "image": "personajes/leandro.png"
+            },
+            {
+              "name": "Peggy",
+              "mark": "",
+              "image": "personajes/peggy.png"
+            }
+          ]
+        }
+      ],
+      "track": {
+        "src": "seasons/spinoffs/traitor-showdown/track-record.png",
+        "width": 710,
+        "height": 2107
+      },
+      "stats": {
+        "Temporada": "2",
+        "Estreno": "2026",
+        "Competidores": "27",
+        "Brackets": "3"
+      },
+      "source": {
+        "page": "https://thexpedition.github.io/The-Traitor-2/",
+        "sha256": "2b00219f4c222071db9d4d973d3b7b9fa02b06d634bef1fe498a2012d367aa0e",
+        "brackets": [
+          {
+            "titulo": "Bracket 01",
+            "p": [
+              {
+                "n": "Elias",
+                "foto": "Adriana Pereira",
+                "up": true
+              },
+              {
+                "n": "Ari Salgado"
+              },
+              {
+                "n": "Bayron",
+                "up": true
+              },
+              {
+                "n": "Christopher",
+                "up": true
+              },
+              {
+                "n": "Daelly"
+              },
+              {
+                "n": "Esteban"
+              },
+              {
+                "n": "Gabriel Sab"
+              },
+              {
+                "n": "Julián"
+              },
+              {
+                "n": "Mary Hao",
+                "up": true
+              }
+            ]
+          },
+          {
+            "titulo": "Bracket 02",
+            "p": [
+              {
+                "n": "Coronel"
+              },
+              {
+                "n": "Eduard",
+                "up": true
+              },
+              {
+                "n": "Felix"
+              },
+              {
+                "n": "Isabel"
+              },
+              {
+                "n": "Ivy"
+              },
+              {
+                "n": "Luciano",
+                "up": true
+              },
+              {
+                "n": "Marcos"
+              },
+              {
+                "n": "Marianito",
+                "up": true
+              },
+              {
+                "n": "Sal Lua",
+                "foto": "Xina Ro",
+                "up": true
+              }
+            ]
+          },
+          {
+            "titulo": "Bracket 03",
+            "p": [
+              {
+                "n": "Alice",
+                "up": true
+              },
+              {
+                "n": "Andrómeda"
+              },
+              {
+                "n": "Bodega Bodeguita",
+                "up": true
+              },
+              {
+                "n": "Carlos Harrington",
+                "up": true,
+                "color": "morado"
+              },
+              {
+                "n": "Catalina",
+                "up": true
+              },
+              {
+                "n": "Greg"
+              },
+              {
+                "n": "Leandro",
+                "up": true
+              },
+              {
+                "n": "Peggy",
+                "up": true
+              },
+              {
+                "n": "Renzo"
+              }
+            ]
+          },
+          {
+            "titulo": "Semi-Finales",
+            "p": [
+              {
+                "n": "Bayron"
+              },
+              {
+                "n": "Eduard"
+              },
+              {
+                "n": "Elias",
+                "foto": "Adriana Pereira"
+              },
+              {
+                "n": "Esteban"
+              },
+              {
+                "n": "Luciano"
+              },
+              {
+                "n": "Marianito"
+              },
+              {
+                "n": "Mary Hao"
+              },
+              {
+                "n": "Sal Lua",
+                "foto": "Xina Ro"
+              },
+              {
+                "n": "Alice"
+              },
+              {
+                "n": "Bodega Bodeguita"
+              },
+              {
+                "n": "Carlos Harrington"
+              },
+              {
+                "n": "Catalina"
+              },
+              {
+                "n": "Leandro"
+              },
+              {
+                "n": "Peggy"
+              }
+            ]
+          }
+        ],
+        "trackSha256": "d67b679f2c6b0e407fed584bfd553885a17e8bcdcddfb083280e51e06a3034bc"
+      }
+    }
+  }
+}
