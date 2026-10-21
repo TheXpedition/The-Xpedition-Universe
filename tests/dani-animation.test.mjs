@@ -30,12 +30,8 @@ test('each supporting foot stays planted in the world throughout its contact int
   }
  }
 });
-test('blocked walking stops the cycle; stopping blends back to the resting pose',()=>{
- const run=newRun();for(let i=0;i<140;i++)stepRun(run,{x:1},1/120);
- const stride=run.player.walk;for(let i=0;i<70;i++)stepRun(run,{x:1},1/120);
- assert.equal(run.player.walk,stride);assert.equal(run.player.phase,'idle');assert.equal(run.player.walkBlend,0);
- const rest=sampleDaniPose(options(run.player)),idle=sampleDaniPose({time:run.time});
- assert(length(rest.nearArm.end,idle.nearArm.end)<2);
+test('stopping walking blends back to the resting pose',()=>{
+ const run=newRun();for(let i=0;i<45;i++)stepRun(run,{x:1},1/120);const stride=run.player.walk;for(let i=0;i<85;i++)stepRun(run,{},1/120);assert.equal(run.player.walk,stride);assert.equal(run.player.phase,'idle');assert.equal(run.player.walkBlend,0);const rest=sampleDaniPose(options(run.player)),idle=sampleDaniPose({time:run.time});assert(length(rest.nearArm.end,idle.nearArm.end)<2);
 });
 test('the walk loop and apex have no pose discontinuity; takeoff and landing have no joint pops',()=>{
  const loopA=sampleDaniPose({phase:'walk',stride:0}),loopB=sampleDaniPose({phase:'walk',stride:Math.PI*2});

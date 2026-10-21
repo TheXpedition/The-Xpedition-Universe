@@ -1,8 +1,25 @@
-export const LEVELS=Object.freeze([
- {id:1,name:'Costa de cristal',count:24,tickets:8,description:'Encuentra el ritmo entre grietas y refugios.'},
- {id:2,name:'El laberinto azul',count:36,tickets:12,description:'Más desvíos, criaturas y decisiones sobre el hielo.'},
- {id:3,name:'El fin del mundo',count:52,tickets:18,description:'Una expedición larga hasta la última base.'}
-]);
-export const DIFFICULTIES=Object.freeze({relaxed:{name:'Relajado',lives:4,fragile:4.5},normal:{name:'Normal',lives:3,fragile:2.8},intense:{name:'Intenso',lives:2,fragile:2}});
+export const CAMPAIGN_VERSION=2;
+const maps=[
+ {id:1,chapter:1,stage:1,name:'Bahía quebrada',tickets:8,masks:['b','bc','abc','ac','ab','a','ab','abc','bc','c','bc','ab','b'],beacons:[[3,'c'],[6,'a'],[10,'c']],seals:[[7,'b']],moving:[],tides:[[8,'b']],collapse:[[4,'a'],[9,'c']],wind:false,waves:false,brief:'Recupera las tres balizas. Los dos brazos de la bahía se conectan por hielo inestable.'},
+ {id:2,chapter:1,stage:2,name:'El canal de la foca',tickets:12,masks:['b','ab','a','abc','bc','c','bc','abc','ab','a','abc','bc','ac','bc','b'],beacons:[[3,'a'],[7,'c'],[12,'a']],seals:[[3,'b'],[7,'b'],[11,'c']],moving:[[4,'c'],[8,'b']],tides:[[6,'c'],[10,'b']],collapse:[[4,'b'],[9,'a']],wind:false,waves:false,brief:'Las focas siguen tus movimientos y cargan hacia ti. Cambia de posición cuando te miren.'},
+ {id:3,chapter:1,stage:3,name:'Puentes a la deriva',tickets:18,masks:['b','abc','ac','ab','a','abc','bc','c','bc','abc','ac','ab','a','abc','bc','b'],beacons:[[2,'c'],[6,'b'],[12,'a']],seals:[[5,'b'],[10,'c']],moving:[[1,'a'],[3,'b'],[5,'c'],[8,'b'],[9,'a'],[11,'b'],[13,'c']],tides:[[7,'c'],[14,'c']],collapse:[[4,'a'],[10,'a']],wind:false,waves:false,brief:'Elige el momento y corrige el salto con WASD. Los témpanos siguen moviéndose mientras estás en el aire.'},
+ {id:4,chapter:2,stage:1,name:'El archipiélago perdido',tickets:20,masks:['b','bc','abc','ac','ab','abc','bc','abc','ac','ab','abc','bc','c','bc','abc','ab','b'],beacons:[[2,'c'],[9,'a'],[14,'c']],finish:[7,'b'],seals:[[4,'b'],[10,'b'],[14,'b']],moving:[[3,'c'],[8,'c'],[11,'b']],tides:[[5,'a'],[13,'c']],collapse:[[6,'c'],[12,'c']],wind:false,waves:true,brief:'La base está en el centro del mapa. Busca las señales a ambos lados y encuentra el camino de vuelta.'},
+ {id:5,chapter:2,stage:2,name:'La carrera de mareas',tickets:22,masks:['b','ab','abc','bc','c','abc','ac','ab','a','ab','abc','bc','ac','abc','ab','bc','b'],beacons:[[3,'c'],[7,'a'],[13,'c']],seals:[[5,'b'],[11,'b']],moving:[[2,'a'],[6,'c'],[10,'a']],tides:[[3,'b'],[4,'c'],[6,'a'],[9,'b'],[12,'c'],[15,'c']],collapse:[[8,'a'],[14,'a']],wind:false,waves:true,brief:'Las mareas se llevan el hielo. Vigila la espuma y usa los refugios anclados para dejar pasar las olas.'},
+ {id:6,chapter:2,stage:3,name:'La garganta de cristal',tickets:25,masks:['b','bc','c','abc','ac','ab','a','abc','bc','abc','ac','bc','c','abc','ab','a','ab','b'],beacons:[[3,'a'],[9,'c'],[15,'a']],seals:[[7,'b'],[13,'b']],moving:[[4,'c'],[8,'b'],[11,'c'],[14,'b']],tides:[[5,'b'],[10,'a']],collapse:[[2,'c'],[6,'a'],[12,'c'],[16,'a']],wind:true,waves:false,brief:'No hay un puente recto. El viento desvía los saltos y las plataformas agrietadas no esperan.'},
+ {id:7,chapter:3,stage:1,name:'Territorio de manada',tickets:28,masks:['b','abc','ab','a','abc','bc','c','abc','ac','ab','abc','bc','ac','abc','bc','c','abc','ab','b'],beacons:[[4,'a'],[8,'c'],[12,'a'],[16,'c']],seals:[[3,'a'],[5,'b'],[8,'a'],[10,'c'],[13,'b'],[16,'b']],moving:[[2,'b'],[7,'a'],[11,'c']],tides:[[6,'c'],[14,'c']],collapse:[[9,'a'],[15,'c']],wind:false,waves:true,brief:'No corras detrás de una sola ruta. Provoca las cargas, esquiva y atraviesa los territorios de la manada.'},
+ {id:8,chapter:3,stage:2,name:'Ojo de la tormenta',tickets:32,masks:['b','ab','abc','ac','bc','c','abc','ab','a','abc','bc','ac','abc','ab','a','abc','bc','c','bc','b'],beacons:[[3,'a'],[7,'b'],[12,'c'],[17,'c']],finish:[10,'b'],seals:[[4,'b'],[9,'b'],[15,'b']],moving:[[2,'c'],[6,'a'],[11,'c'],[15,'a'],[18,'c']],tides:[[5,'c'],[8,'a'],[13,'b'],[16,'b']],collapse:[[7,'a'],[14,'a']],wind:true,waves:true,brief:'Vuelve a la estación central con las cuatro señales. Las ráfagas y las mareas abren y cierran las rutas.'},
+ {id:9,chapter:3,stage:3,name:'La última señal',tickets:40,masks:['b','abc','ac','ab','a','abc','bc','c','abc','ab','a','abc','ac','bc','c','abc','ab','a','abc','bc','b'],beacons:[[2,'c'],[6,'b'],[10,'a'],[15,'c'],[18,'a']],seals:[[3,'b'],[6,'c'],[8,'a'],[11,'b'],[15,'b'],[18,'c']],moving:[[1,'c'],[5,'a'],[9,'b'],[12,'c'],[16,'b'],[19,'c']],tides:[[4,'a'],[7,'c'],[13,'b'],[17,'a']],collapse:[[3,'a'],[10,'a'],[14,'c'],[16,'a']],wind:true,waves:true,brief:'Cinco señales y una red de hielo que se deshace. Planifica, corrige en el aire y guarda una ruta de regreso.'}
+];
+// Broad crossing zones separate the authored junctions: later chapters take
+// longer to traverse, and returning to a central station is a real journey.
+for(const map of maps){
+ const original=map.masks;map.masks=original.flatMap((mask,i)=>i===original.length-1?[mask]:[mask,mask]);
+ for(const key of ['beacons','seals','moving','tides','collapse'])map[key]=map[key].map(([col,lane])=>[col*2,lane]);
+ if(map.finish)map.finish=[map.finish[0]*2,map.finish[1]];
+ for(let col=3;col<map.masks.length-2;col+=6){const mask=map.masks[col];if(mask.length>1)map.collapse.push([col,mask.at(-1)]);}
+}
+export const LEVELS=Object.freeze(maps.map(map=>Object.freeze({...map,count:map.masks.reduce((sum,col)=>sum+col.length,0),columns:map.masks.length,description:map.brief})));
+export const CHAPTERS=Object.freeze([{id:1,name:'El hielo despierta'},{id:2,name:'Rutas que desaparecen'},{id:3,name:'La tormenta'}]);
+export const DIFFICULTIES=Object.freeze({relaxed:{name:'Relajado',lives:5,fragile:3.5,slip:5,windup:1.1,sealSpeed:235,wavePeriod:18},normal:{name:'Normal',lives:4,fragile:2.3,slip:3.6,windup:.85,sealSpeed:310,wavePeriod:15},intense:{name:'Intenso',lives:3,fragile:1.6,slip:2.6,windup:.65,sealSpeed:390,wavePeriod:12}});
 export const levelConfig=id=>LEVELS.find(l=>l.id===Number(id))||LEVELS[0];
-export const worldEnd=id=>160+(levelConfig(id).count-1)*205;
+export const worldEnd=id=>160+(levelConfig(id).columns-1)*205;

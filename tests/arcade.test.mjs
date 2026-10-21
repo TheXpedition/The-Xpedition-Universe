@@ -6,7 +6,7 @@ import path from 'node:path';
 import {spawn} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {openDatabase} from '../database.mjs';
-import {newRun,jumpTo,stepRun,reachable,hazardActive,walkTo,WORLD_END} from '../public/simulator/ice-breaker/engine.mjs';
+import {newRun,jumpTo,stepRun,reachable,floeAvailable,walkTo,distance,MAX_JUMP} from '../public/simulator/ice-breaker/engine.mjs';
 import {LEVELS} from '../public/simulator/ice-breaker/levels.mjs';
 const root=path.resolve(import.meta.dirname,'..'),data=fs.mkdtempSync(path.join(process.env.ARCADE_TEST_ROOT||os.tmpdir(),'xp-arcade-'));
 const staff='92354719-8816-4e25-9199-0dc9a99f7da1',ordinary='arcade-ordinary';
@@ -41,25 +41,38 @@ test('nuevo juego cerrado, controles solo para staff, archivos y enlaces directo
  assert.equal((await req('/simulator/ice-breaker/')).status,403);assert.equal((await req('/simulator/ice-breaker/art/dani.png')).status,403);
  const actions=(await (await req('/api/moderation/history',{token:'staff-test-token'})).json()).actions.filter(a=>a.subject==='ice-breaker');assert.equal(actions.length,2);assert.deepEqual(new Set(actions.map(a=>a.action)),new Set(['open-game','close-game']));
 });
-function tick(run,seconds){for(let i=0;i<Math.ceil(seconds*120);i++)stepRun(run,{},1/120);}
-test('los saltos tienen arco, aterrizan sobre el témpano y recogen un cristal una sola vez',()=>{
- const r=newRun();assert(!jumpTo(r,'f14'));assert(jumpTo(r,'f1'));assert(!jumpTo(r,'f2'));tick(r,.4);assert(r.player.z>70);assert(r.player.x>160&&r.player.x<365);tick(r,1);assert.equal(r.player.floe,'f1');assert.equal(r.player.z,0);assert.equal(r.collected,1);const score=r.score;assert(jumpTo(r,'f0'));tick(r,1.2);assert(jumpTo(r,'f1'));tick(r,1.2);assert.equal(r.collected,1);assert.equal(r.score,score);
+
+function tick(run,seconds,input={}){for(let i=0;i<Math.ceil(seconds*120);i++)stepRun(run,input,1/120);}
+test('pointer jumps have an arc and collect each crystal once; the old automatic jump does nothing',()=>{
+ const r=newRun();tick(r,2,{jump:true});assert.equal(r.player.x,160);assert.equal(r.jump,null);assert(!jumpTo(r,'f24'));assert(jumpTo(r,'f1'));tick(r,.4);assert(r.player.z>70);tick(r,.7);assert.equal(r.player.floe,'f1');assert.equal(r.collected,1);const score=r.score;assert(jumpTo(r,'f0'));tick(r,1);assert(jumpTo(r,'f1'));tick(r,1);assert.equal(r.score,score);
 });
-test('Dani camina dentro del hielo y la ruta completa se puede terminar con los tres refugios',()=>{
- const r=newRun();assert(walkTo(r,{x:185,y:445}));tick(r,.4);assert(r.player.x>175);for(let i=0;i<240;i++)stepRun(r,{x:-1},1/120);assert(r.player.x>=160-121*.72);assert(!walkTo(r,{x:900,y:900}));
- // Reset to the center so reachability is independent of the walking test.
- r.player.x=160;const checkpoints=[];
- for(let i=1;i<LEVELS[0].count;i++){assert(reachable(r,r.floes.find(f=>f.id==='f'+i)),'Alcanzable f'+i);assert(jumpTo(r,'f'+i));tick(r,1.2);assert.equal(r.player.floe,'f'+i);assert.equal(r.lives,3);if(i%6===0)checkpoints.push(r.checkpoint);}
- assert.deepEqual(checkpoints,['f6','f12','f18']);assert.equal(r.status,'won');assert.equal(r.furthest,WORLD_END);assert.equal(r.collected,LEVELS[0].count-2);assert(r.score>2000);
+test('all nine maps have connected branching routes to every beacon and their base',()=>{
+ assert.equal(LEVELS.length,9);for(const level of LEVELS){const r=newRun({level:level.id}),seen=new Set(['f0']),queue=[r.floes[0]];
+  while(queue.length){const f=queue.shift();for(const n of r.floes)if(!seen.has(n.id)&&distance({x:f.anchorX,y:f.anchorY},{x:n.anchorX,y:n.anchorY})<=MAX_JUMP){seen.add(n.id);queue.push(n);}}
+  for(const f of r.floes.filter(f=>f.beacon||f.kind==='finish'))assert(seen.has(f.id),level.name+' '+f.id);assert(r.floes.some(f=>!f.main));assert.equal(r.beaconTotal,level.beacons.length);
+ }
+ assert(LEVELS[8].columns>LEVELS[0].columns);assert(LEVELS[3].finish[0]<LEVELS[3].columns-1);
 });
-test('el hielo frágil se rompe y reaparece en el último refugio; tres caídas terminan la partida',()=>{
- const r=newRun();Object.assign(r.player,{x:775,y:380,floe:'f3'});tick(r,3);assert.equal(r.lives,2);tick(r,1.2);assert.equal(r.player.floe,'f0');
- r.checkpoint='f6';for(let n=0;n<2;n++){const f=r.floes.find(f=>f.id==='f9');Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,4.2);if(n===0)assert.equal(r.player.floe,'f6');}assert.equal(r.lives,0);assert.equal(r.status,'lost');
+test('the base stays locked without the required beacons',()=>{const r=newRun(),f=r.floes.find(f=>f.kind==='finish');Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,.2);assert.equal(r.status,'playing');assert.equal(r.beacons,0);});
+test('collapse keeps counting after leaving, reforms later and tidal ice really disappears',()=>{
+ const r=newRun(),f=r.floes.find(f=>f.kind==='fragile');f.triggered=true;tick(r,r.fragileTime+.1);assert(f.broken);tick(r,7.1);assert(!f.broken);assert(!f.triggered);
+ const t=newRun(),ice=t.floes.find(f=>f.tidal);t.time=(6.2-ice.offset%9.8+9.8)%9.8;Object.assign(t.player,{x:ice.x,y:ice.y,floe:ice.id});tick(t,.1);assert(!floeAvailable(ice));assert.equal(t.lives,t.maxLives-1);
 });
-test('los tres niveles crecen, ofrecen desvíos alcanzables y se completan en los tres ritmos',()=>{
- let previous=0;
- for(const level of LEVELS){assert(level.count>previous);previous=level.count;for(const difficulty of ['relaxed','normal','intense']){const r=newRun({level:level.id,difficulty});assert(r.floes.some(f=>f.rare));for(let i=1;i<level.count;i++){assert(jumpTo(r,'f'+i));tick(r,1.2);}assert.equal(r.status,'won');assert.equal(r.lives,r.maxLives);assert.equal(r.furthest,r.end);}}
+test('lingering causes an actual slide and fall; walking off the edge is no longer clamped',()=>{
+ const r=newRun(),f=r.floes.find(f=>f.id==='f1');Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,7);assert.equal(r.lives,r.maxLives-1);assert(r.events.some(e=>e.type==='splash'&&/resbaló/.test(e.reason)));
+ const w=newRun();tick(w,1.6,{x:1});assert.equal(w.lives,w.maxLives-1);
 });
-test('las criaturas alternan peligro y calma y el témpano ocupado causa una caída solo si hay peligro',()=>{
- const r=newRun(),f=r.floes.find(f=>f.hazard==='seal');assert(hazardActive(f,0));assert(!hazardActive(f,3.2));r.time=3.2;Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,.3);assert.equal(r.lives,3);tick(r,2.3);assert.equal(r.lives,2);
+test('moving platforms carry grounded feet but jumps use the takeoff aim and can miss',()=>{
+ const r=newRun({level:3}),f=r.floes.find(f=>f.moving);tick(r,.01);Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});const dx=r.player.x-f.x;tick(r,.2);assert(Math.abs(r.player.x-f.x-dx)<.001);
+ const s=newRun();assert(jumpTo(s,'f1'));const target=s.floes.find(f=>f.id==='f1');target.anchorX=target.x+160;target.moving=true;tick(s,1);assert.equal(s.lives,s.maxLives-1);
+});
+test('seals lock a real charge vector and dodge has a cooldown; enemies can hit once, not every frame',()=>{
+ const r=newRun(),p=r.player,e=r.enemies[0];e.homeX=p.x+180;e.homeY=p.y;e.cooldown=0;p.invulnerable=0;tick(r,.6);assert.equal(e.phase,'windup');tick(r,.3);const aim=e.targetY;p.y+=20;tick(r,.1);assert.equal(e.phase,'charge');assert.equal(e.targetY,aim);const dx=e.dx,dy=e.dy;p.x-=40;tick(r,.1);assert.equal(e.dx,dx);assert.equal(e.dy,dy);
+ const d=newRun();stepRun(d,{dodge:true});assert(d.player.dodge>0);const cooldown=d.player.dodgeCooldown;stepRun(d,{dodge:true});assert(d.player.dodgeCooldown<cooldown);assert(d.player.dodgeCooldown>2);
+ const h=newRun();h.player.invulnerable=0;const seal=h.enemies[0];Object.assign(seal,{x:h.player.x,y:h.player.y,phase:'charge',dx:0,dy:0,timer:0});tick(h,.2);assert.equal(h.lives,h.maxLives-1);
+});
+test('expert input routes complete every campaign stage in all three difficulties',async()=>{const {solveRun}=await import('./arcade-route-helper.mjs');for(const l of LEVELS)for(const d of ['relaxed','normal','intense']){const {run}=solveRun(l.id,d);assert.equal(run.status,'won',l.id+' '+d);assert.equal(run.beacons,run.beaconTotal);assert(run.lives>0);}});
+test('waves warn before crossing and anchored shelters protect Dani',()=>{
+ const r=newRun({level:4});tick(r,.1);assert.equal(r.wave.phase,'warning');tick(r,4);assert.equal(r.lives,r.maxLives);
+ const danger=newRun({level:4}),f=danger.floes.find(f=>f.id==='f1');Object.assign(danger.player,{x:f.x,y:f.y,floe:f.id,invulnerable:0});tick(danger,4.1);assert.equal(danger.lives,danger.maxLives-1);
 });

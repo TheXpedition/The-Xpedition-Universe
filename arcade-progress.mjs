@@ -1,7 +1,7 @@
 import {randomUUID,createHash} from 'node:crypto';
 import {dayKey} from './progression.mjs';
 import {newRun,stepRun,jumpTo,walkTo} from './public/simulator/ice-breaker/engine.mjs';
-import {LEVELS,DIFFICULTIES} from './public/simulator/ice-breaker/levels.mjs';
+import {LEVELS,DIFFICULTIES,CAMPAIGN_VERSION} from './public/simulator/ice-breaker/levels.mjs';
 export function createArcadeProgress({db,body,json,fail,checkRate,access,progression,now=Date.now}){
  async function completed(uid){return uid?(await db.all("SELECT DISTINCT level FROM arcade_runs WHERE user_id=? AND game_id='ice-breaker' AND status='won'",uid)).map(r=>Number(r.level)):[];}
  async function receipt(row){
@@ -38,13 +38,13 @@ export function createArcadeProgress({db,body,json,fail,checkRate,access,progres
    let ticks=0;
    for(const command of input.commands){
     if(command.op==='step'){
-     if(!Number.isInteger(command.ticks)||command.ticks<1||command.ticks>600||!command.input||!Number.isFinite(command.input.x)||Math.abs(command.input.x)>1||!Number.isFinite(command.input.y)||Math.abs(command.input.y)>1||typeof command.input.jump!=='boolean')fail(400,'Movimiento no válido.');ticks+=command.ticks;
+     if(!Number.isInteger(command.ticks)||command.ticks<1||command.ticks>600||!command.input||!Number.isFinite(command.input.x)||Math.abs(command.input.x)>1||!Number.isFinite(command.input.y)||Math.abs(command.input.y)>1||typeof command.input.dodge!=='boolean')fail(400,'Movimiento no válido.');ticks+=command.ticks;
     }else if(command.op==='jump'){if(typeof command.id!=='string'||command.id.length>24)fail(400,'Destino no válido.');}
     else if(command.op==='walk'){if(!Number.isFinite(command.x)||!Number.isFinite(command.y))fail(400,'Destino no válido.');}
     else if(command.op!=='cancel')fail(400,'Movimiento desconocido.');
    }
    if(ticks>600||Number(row.active_ticks)+ticks>Math.floor((now()-Number(row.created))*.12)+240)fail(400,'El progreso llegó antes de tiempo.');
-   const run=JSON.parse(row.snapshot);
+   const run=JSON.parse(row.snapshot);if(run.version!==CAMPAIGN_VERSION)fail(409,'La campaña se actualizó. Empieza una nueva expedición.');
    for(const command of input.commands){
     if(command.op==='step')for(let i=0;i<command.ticks;i++)stepRun(run,command.input,1/120);
     if(command.op==='jump'&&!jumpTo(run,command.id))fail(409,'El salto no coincide con la expedición.');
