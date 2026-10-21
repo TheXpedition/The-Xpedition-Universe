@@ -860,13 +860,20 @@ const server = http.createServer(async (req, res) => {
       }
     }
     if(filename===path.join(publicDir,'index.html')&&monetization.adsense.publisher){const html=fs.readFileSync(filename,'utf8').replace('</head>','<meta name="google-adsense-account" content="'+monetization.adsense.publisher+'"></head>');res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(html)});return res.end(req.method==='HEAD'?undefined:html);}
-    const size = fs.statSync(filename).size;
+    const fileStat = fs.statSync(filename), size = fileStat.size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
       'Cache-Control': arcadeFile||soloFile?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
+    if(!arcadeFile&&!soloFile){
+      const etag='W/"'+size.toString(16)+'-'+fileStat.mtimeMs.toString(16)+'"';
+      headers.ETag=etag;headers['Last-Modified']=fileStat.mtime.toUTCString();
+      const condition=req.headers['if-none-match'];
+      const fresh=condition?condition.split(',').some(value=>value.trim()==='*'||value.trim().replace(/^W\//,'')===etag.replace(/^W\//,'')):req.headers['if-modified-since']&&Math.floor(fileStat.mtimeMs/1000)*1000<=Date.parse(req.headers['if-modified-since']);
+      if(fresh){delete headers['Content-Length'];res.writeHead(304,headers);return res.end();}
+    }
     let start = 0, end = size - 1, status = 200;
     const range = req.method === 'GET' ? req.headers.range : null;
     if (range && !range.includes(',')) {

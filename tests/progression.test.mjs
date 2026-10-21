@@ -17,6 +17,13 @@ const advance=seconds=>clock+=seconds*1000;
 async function user(){const id=randomUUID();await db.run('INSERT INTO users(id,name,name_key,email,avatar,bio,created) VALUES(?,?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani','Mi próxima aventura empieza aquí.',clock);const user=await db.one('SELECT * FROM users WHERE id=?',id);await progression.bootstrap(user);return user;}
 async function request(user,url,method='GET',payload={}){const res={};try{const action=()=>progression.handle({method,payload},res,new URL(url,'https://test.invalid'),user);if(method==='GET')await action();else await serialize(action);return {status:res.status,...res.result};}catch(e){if(!e.status)throw e;return {status:e.status,error:e.message};}}
 after(()=>db.close());
+
+test('subir precios conserva compras anteriores, personajes iniciales, saldos y otras cuentas',async()=>{
+ const u=await user(),other=await user();await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?)',u.id,'character:bonju',clock-1000);await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?)',u.id,'character:edwin',clock-1000);
+ const before=await progression.wallet(u.id),otherBefore=await progression.wallet(other.id);const view=await progression.view(u.id);assert(view.owned.includes('character:bonju'));assert(view.owned.includes('character:edwin'));
+ assert.equal(view.shop.items.find(i=>i.id==='character:bonju').price,500);assert.equal(view.shop.items.find(i=>i.id==='character:edwin').price,100);
+ assert.equal((await request(u,'/api/economy/buy','POST',{item:'character:bonju'})).status,200);assert.equal((await request(u,'/api/economy/buy','POST',{item:'character:edwin'})).status,200);assert.deepEqual(await progression.wallet(u.id),before);assert.deepEqual(await progression.wallet(other.id),otherBefore);
+});
 const playableSnapshot={version:1,engine:'game',point:'core:3',state:{vars:{selected18:['Dani','Dua Lingo']}}};
 async function savedRun(u){const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const saved=await request(u,'/api/game-runs/'+run.id,'PUT',{revision:0,snapshot:playableSnapshot,episode:0});assert.equal(saved.saved,true);return {...run,revision:saved.revision};}
 
@@ -25,7 +32,7 @@ test('restaurar los talentos originales conserva sus coincidencias y los nuevos 
  for(const c of chars){const key=c.talent.toLowerCase();talents.set(key,[...(talents.get(key)||[]),c.name]);}
  // The later request restores the original text, including Cantar and Jiafei's explicitly assigned talent.
  assert.deepEqual([...talents.values()].filter(names=>names.length>1),[['Javi','Jiafei','Sandro']]);
- for(const name of ['Jose Julián','Meow','Neila Drag','Robert']){const c=chars.find(i=>i.name===name);assert.equal(c.price,65);assert.equal(c.starter,false);assert(fs.existsSync(new URL('../public'+c.image,import.meta.url)));}
+ for(const name of ['Jose Julián','Meow','Neila Drag','Robert']){const c=chars.find(i=>i.name===name);assert.equal(c.price,100);assert.equal(c.starter,false);assert(fs.existsSync(new URL('../public'+c.image,import.meta.url)));}
  assert.equal(chars.find(i=>i.name==='Meow').pronouns,'They / Them');assert.equal(chars.find(i=>i.name==='Meow').gender,'F');
 });
 test('cupones válidos son atómicos, privados y sirven una sola vez por cuenta',async()=>{
@@ -38,7 +45,7 @@ test('cupones válidos son atómicos, privados y sirven una sola vez por cuenta'
  const level=(await progression.wallet(u.id)).level,levelReward=await request(u,'/api/economy/redeem','POST',{code:'LevelUp'});assert.equal(levelReward.wallet.level,level+1);assert.equal(levelReward.redemption.level,level+1);assert(levelReward.redemption.coins>0);assert.equal(levelReward.redemption.tickets,3);assert.equal((await request(u,'/api/economy/redeem','POST',{code:'LevelUp'})).status,409);
 });
 test('quitar de colección y desactivar autoguardado conservan inventario y saldo; guardar manualmente funciona',async()=>{
- const u=await user();await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const before=await progression.wallet(u.id);
+ const u=await user();await progression.grant(u.id,'qa:funds',{coins:20});await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const before=await progression.wallet(u.id);
  await request(u,'/api/economy/preferences','POST',{item:'character:vladimir',enabled:false,autosave:false});const view=await progression.view(u.id);assert(view.owned.includes('character:vladimir'));assert(view.preferences.hidden.includes('character:vladimir'));assert.equal(view.preferences.autosave,false);assert.deepEqual(view.wallet,before);
  assert.equal((await request(u,'/api/economy/preferences','POST',{item:'character:bonju',enabled:false})).status,400);
  const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;
@@ -66,11 +73,11 @@ test('el ajuste solicitado solo aumenta la cuenta exacta una vez y conserva todo
 
 test('el catálogo incluye los 156 personajes, los 36 iniciales y solo cuatro regalos para reclamar',()=>{
  const chars=shop.items.filter(i=>i.kind==='character');assert.equal(chars.length,156);assert.equal(chars.filter(i=>i.starter).length,36);
- assert.deepEqual(chars.filter(i=>!i.starter&&!i.price).map(i=>i.name).sort(),['Alex Yohender','Daniel Sims','Lily Louvre','Vladimir']);
+ assert.deepEqual(chars.filter(i=>!i.starter&&!i.price).map(i=>i.name).sort(),[]);
  assert(chars.find(i=>i.name==='Dua Lingo').starter);assert(!chars.find(i=>i.name==='Bonju').starter);
  const premium=['Bonju','Dios','Britney Britney','Jiafei','Heidi Cum','Ariana Glande','Chad Gil Pete','Candy Cookies','Vitany Glambert','Cassandra Louvre','Maria Isabel','Eduardo Buñuelo'];
- assert(chars.filter(i=>premium.includes(i.name)).every(i=>i.price>=220&&i.premium));assert(chars.filter(i=>!i.premium&&!i.starter&&i.price).every(i=>i.price===65));
- for(const i of chars)assert(['Ella / She','Él / He','They / Them'].includes(i.pronouns));
+ assert(chars.filter(i=>premium.includes(i.name)).every(i=>i.price>=220&&i.premium));assert(chars.filter(i=>!i.premium&&!i.starter&&i.price).every(i=>i.price===100));
+ for(const i of chars)assert(['Ella / She','Él / He','They / Them','Ella / Él'].includes(i.pronouns));
  assert.equal(chars.find(i=>i.name==='Britney Britney').talent,'Hacer Playback');assert.equal(chars.find(i=>i.name==='Gustavo').talent,'Cobrar la Renta');assert.equal(chars.find(i=>i.name==='Emily Waldorf').talent,'Servir café en el aeropuerto');
 });
 test('bienvenida y visita diaria se acreditan una sola vez, sin mezclar tickets con monedas',async()=>{
@@ -83,13 +90,13 @@ test('biografía, pronombres, otros datos, seguimientos y Mi lista no se repiten
  assert.equal((await progression.wallet(u.id)).tickets,15+20+40+2+10);assert.equal((await progression.wallet(v.id)).tickets,16);
 });
 test('reclamar, comprar en paralelo, precios del servidor y saldo insuficiente conservan la colección',async()=>{
- const u=await user();await request(u,'/api/economy?surface=simulator');
+ const u=await user();await request(u,'/api/economy?surface=simulator');await progression.grant(u.id,'qa:second-character',{coins:100});
  await Promise.all([request(u,'/api/economy/buy','POST',{item:'character:vladimir'}),request(u,'/api/economy/buy','POST',{item:'character:vladimir'})]);
  assert.equal((await progression.wallet(u.id)).coins,110);assert.equal((await progression.wallet(u.id)).tickets,17);
  await Promise.all([request(u,'/api/economy/buy','POST',{item:'character:edwin',price:0}),request(u,'/api/economy/buy','POST',{item:'character:edwin',price:0})]);
- assert.equal((await progression.wallet(u.id)).coins,45);assert.equal((await progression.wallet(u.id)).tickets,19);
+ assert.equal((await progression.wallet(u.id)).coins,10);assert.equal((await progression.wallet(u.id)).tickets,19);
  assert.equal((await request(u,'/api/economy/buy','POST',{item:'character:bonju',price:0})).status,409);
- assert(!(await progression.view(u.id)).owned.includes('character:bonju'));assert.equal((await progression.wallet(u.id)).coins,45);
+ assert(!(await progression.view(u.id)).owned.includes('character:bonju'));assert.equal((await progression.wallet(u.id)).coins,10);
 });
 test('solo Antarctica está abierta al inicio, Safari se abre en 2, Traitor en 5 y Showdown se compra sin nivel',async()=>{
  const u=await user();assert(await progression.canPlay(u.id,'antarctica'));for(const m of ['safari','traitor','cruise','house','race','world','showdown'])assert(!await progression.canPlay(u.id,m));
@@ -138,6 +145,6 @@ test('publicaciones, comentarios y grupos tienen límites diarios y deduplican e
  for(let i=0;i<10;i++)await progression.socialAction(u.id,'group','same-members');assert.equal((await progression.wallet(u.id)).tickets,37);
 });
 test('monedas, inventario y partidas permanecen al reabrir la base de datos',async()=>{
- const u=await user();await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const reopened=await openDatabase(dir);
+ const u=await user();await progression.grant(u.id,'qa:funds',{coins:20});await request(u,'/api/economy/buy','POST',{item:'character:vladimir'});const run=(await request(u,'/api/game-runs','POST',{mode:'antarctica'})).run;const reopened=await openDatabase(dir);
  try{assert.equal((await reopened.one('SELECT tickets FROM user_progression WHERE user_id=?',u.id)).tickets,17);assert(await reopened.one('SELECT 1 FROM economy_inventory WHERE user_id=? AND item_id=?',u.id,'character:vladimir'));assert(await reopened.one('SELECT 1 FROM game_runs WHERE id=? AND user_id=?',run.id,u.id));}finally{await reopened.close();}
 });

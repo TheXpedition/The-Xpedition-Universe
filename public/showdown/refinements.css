@@ -1,0 +1,39 @@
+/* Keep the mobile stage layout; bound the desktop stage to a readable scale. */
+.sd-cast-slot>img{width:104px;height:104px;aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid var(--sd-bracket,#d68ec3)}
+.sd-slot-enter{animation:sdSlotArrive .38s ease-out both}
+.sd-cast-slot{position:relative}.sd-slot-index{position:absolute;top:10px;right:12px;font-size:11px;color:#d7b7df}
+@keyframes sdSlotArrive{from{opacity:0;transform:translateY(12px) scale(.96)}to{opacity:1;transform:none}}
+.sd-game .sd-figure.fullbody>img{width:135px!important;height:135px!important;aspect-ratio:1;object-fit:cover;border-radius:50%;border:3px solid var(--sd-bracket,#e887c0);position:static!important;filter:none}
+.sd-game .sd-figure.fullbody{min-height:0;height:auto;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.sd-track-table{table-layout:fixed;border-collapse:collapse;min-width:0}
+.sd-track-table thead tr:nth-child(2)>th{width:68px!important;min-width:68px!important;max-width:68px!important;padding:12px 3px!important;position:static!important}
+.sd-track-table tbody td{width:68px!important;min-width:68px!important;max-width:68px!important;text-align:center}
+.sd-track-table thead tr:first-child>th:first-child,.sd-track-table tbody th{width:240px!important;min-width:240px!important;max-width:240px!important}
+.record-top3{background:#00ff7f!important;color:#102d1b!important}
+.sd-challenge-grid button{position:relative;overflow:hidden;background:linear-gradient(125deg,#32172e,#20102a);transition:transform .2s,border-color .2s,background .2s}
+.sd-challenge-grid button:before{content:'';position:absolute;right:-14px;bottom:-32px;width:115px;height:115px;border-radius:50%;background:radial-gradient(circle,#ee7ebc1c,transparent 70%);pointer-events:none}
+.sd-challenge-grid button:hover:not(:disabled){transform:translateY(-3px);border-color:#f3b8db;background:linear-gradient(125deg,#4a213d,#25122e)}
+.sd-challenge-grid button.selected{border-color:#ffd16e;background:linear-gradient(120deg,#62422a,#3b2041);box-shadow:inset 3px 0 #ffd16e}
+.sd-challenge-symbol{color:#ffd16e;text-shadow:0 0 25px #fa81b033}
+.sd-challenge-teaser{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font:10px/1.5 Manrope,sans-serif;color:#d0b6d3;margin-top:9px;max-width:270px}
+@media(min-width:901px){
+ #main:has(>.sd-game){padding-top:16px}
+ .sd-lobby,.sd-game{max-width:1240px;margin:0 auto;padding:22px 30px 35px}
+ .sd-lobby-heading h1{font-size:clamp(38px,4vw,59px);line-height:1.04}
+ .sd-lobby-heading{padding:12px 0 22px}.sd-lobby-brand .sd-logo{max-width:190px}
+ .sd-cast-grid{grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:14px}
+ .sd-cast-slot{min-height:240px;padding:18px 12px}.sd-cast-slot strong{font-size:21px}.sd-cast-slot>img{width:112px;height:112px}
+ .sd-game-hud{padding:9px 0 12px}.sd-presence{padding:13px 0}.sd-player-bubble{padding:6px 10px}.sd-player-bubble .sd-portrait{width:35px;height:35px}
+ .sd-stage{padding:20px 28px;min-height:440px}.sd-stage-heading{margin-bottom:13px;padding-bottom:8px}.sd-stage-heading h1{font-size:clamp(34px,3.1vw,48px);line-height:1.02}.sd-stage-heading p{font-size:12px;max-width:700px}.sd-time-progress{margin-bottom:16px}.sd-vote-heading{margin-bottom:14px}
+ .sd-stage-heading .sd-eyebrow{font-size:9px}.sd-stage-timer{width:62px;height:62px}.sd-stage-timer strong{font-size:23px}
+ .sd-bonju{grid-template-columns:100px 1fr;min-height:145px;gap:17px;margin-top:14px}.sd-bonju-art{height:160px}.sd-bonju-copy{padding:17px 21px;margin-bottom:5px}.sd-bonju-copy h2{font-size:26px}.sd-bonju-copy p{font-size:12px;line-height:1.7}.sd-bonju-signature{font-size:10px}
+ .sd-game .sd-figure:not(.fullbody)>img{width:118px!important}.sd-game .sd-top-two .sd-figure:not(.fullbody)>img{width:145px!important}.sd-figure-name strong{font-size:23px}.sd-figure-name{padding-top:10px!important}.sd-figure-user{font-size:10px!important;margin-bottom:7px!important}
+ .sd-top-two{max-width:600px;gap:35px;margin:15px auto}.sd-top-ribbon{font-size:15px}.sd-result-duo{max-width:650px;margin:15px auto}
+ .sd-challenge-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.sd-challenge-grid button{min-height:108px;padding:13px 17px;gap:12px}.sd-challenge-grid strong{font-size:23px;line-height:1.1}.sd-challenge-grid small{font-size:8px}.sd-challenge-symbol{font-size:27px}
+ .sd-judging-call{min-height:200px;gap:20px;padding:15px 5px}.sd-verdict-backword{font-size:140px}.sd-judging-call article{max-width:155px}.sd-verdict-history{font-size:10px}
+ .sd-lip-stage{min-height:360px}.sd-fighters{max-width:620px;margin:auto}.sd-fighter .sd-figure>img{width:115px!important}.sd-lip-arena{height:220px;min-height:220px}.sd-lip-target{font-size:22px;padding:14px 23px}
+ .sd-semifinal-reveal{padding-top:112px;min-height:420px}.sd-semifinal-columns{gap:18px;margin-top:20px}.sd-semi-figures{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.sd-semi-figures>div:last-child:nth-child(odd){grid-column:auto;width:100%}.sd-semi-figures .sd-figure.fullbody>img{width:76px!important;height:76px!important}.sd-semi-figures .sd-figure-name strong{font-size:17px}.sd-semifinal-reveal>h1{font-size:clamp(58px,7vw,90px)}
+ .sd-rank-layout{grid-template-columns:minmax(0,1.3fr) minmax(270px,1fr);gap:20px}.sd-rank-pool{grid-template-columns:repeat(5,minmax(0,1fr))}.sd-rank-pool .sd-portrait{width:62px;height:62px}.sd-rank-pool strong{font-size:17px}.sd-ranking-order li{padding:5px 10px}.sd-ranking-order .sd-portrait{width:30px;height:30px}.sd-rank-spotlight{display:none}
+ .sd-track-screen h1{font-size:49px}.sd-coronation>h1{font-size:65px}.sd-champion .sd-figure.fullbody>img{width:160px!important;height:160px!important}.sd-lottery-host h2{font-size:39px}.sd-lottery-center{min-height:330px}
+}
+@media(prefers-reduced-motion:reduce){.sd-slot-enter{animation:none}}

@@ -1,10 +1,10 @@
 export const SHOWDOWN_PRICE=1000;
 export const SHOWDOWN_FORMATS={
  2:{id:2,name:'Double Chance',soloDescription:'Dos por bracket, expansión por empate, un regreso de Bonju y una Wild Card que eliges tú. Semifinal de ocho, final de seis con doble WIN y torneo.',subtitle:'2 por bracket · doble Wild Card',advance:2,wildcards:2,semis:8,finalists:6,semiEpisodes:2,description:'Seis clasificados y dos regresos al azar. Dos eliminaciones en semifinales dejan una final de seis.'},
- 3:{id:3,name:'The Original',soloDescription:'Tres por bracket y una Wild Card que eliges tú. Seis retos de estrellas y penalizaciones, corte al top 4 y final de duelos.',subtitle:'3 por bracket · Wild Card',advance:3,wildcards:1,semis:10,finalists:6,semiEpisodes:4,description:'Nueve clasificados, un regreso al azar, cuatro eliminaciones y una final de seis. El formato de las salas con amigos.'},
+ 3:{id:3,name:'The Original',soloDescription:'Tres por bracket y una Wild Card que eliges tú. Seis retos de estrellas, corte al top 4 y final de duelos. El ganador del lipsync puede quitar una estrella; los dos peores pierden una propia.',subtitle:'3 por bracket · Wild Card',advance:3,wildcards:1,semis:10,finalists:6,semiEpisodes:4,description:'Nueve clasificados, un regreso al azar, cuatro eliminaciones y una final de seis. El formato de las salas con amigos.'},
  4:{id:4,name:'All Stars',soloDescription:'Cuatro por bracket y una Wild Card que eliges tú. El top 2 hace lipsync y su ganador elimina del bottom 3. Torneo final de ocho.',subtitle:'4 por bracket · Wild Card',advance:4,wildcards:1,semis:13,finalists:8,semiEpisodes:5,description:'Trece semifinalistas. El top 2 hace lipsync y quien gane elimina a alguien del bottom 3. Cinco salidas dejan un torneo final de ocho.'}
 };
-export const SHOWDOWN_TIMES={challenge:20000,intro:9000,critiques:14000,countdown:3000,lipsync:10000,lipResult:7500,xvote:20000,cut:12000,semifinalists:14000,ranking:15000,judging:44000,rival:15000,finalWelcome:10000,eliminate:15000,coronation:13000};
+export const SHOWDOWN_TIMES={challenge:20000,intro:6500,critiques:7500,countdown:3000,lipsync:10000,lipResult:5500,xvote:15000,cut:8500,semifinalists:11000,ranking:15000,judging:27500,rival:15000,finalWelcome:8000,eliminate:15000,coronation:10000};
 export const LIP_BEAT=400;
 export const SHOWDOWN_CHALLENGES=[
  ['rapidez','Rapidez','Piensa rápido, decide más rápido. Hoy cada segundo cuenta.','⚡'],

@@ -85,3 +85,14 @@ test('Staff encuentra las audiciones vencidas en Enviadas aunque su dueño cierr
  const actor=await user();await buy(actor);await request(actor,'/start','POST');timestamp+=castingQuestions.reduce((n,q)=>n+q.seconds*1000,0)+1;
  const result=await request({id:'92354719-8816-4e25-9199-0dc9a99f7da1'},'/api/moderation/auditions?status=completed');assert(result.entries.some(e=>e.userId===actor.id&&e.state==='completed'));
 });
+
+test('el cupo diez vale 3000, exige confirmar ese precio, es único y no modifica las nueve compras anteriores',async()=>{
+ const before=await db.all("SELECT user_id,direct_slot,direct_purchased FROM casting_entries WHERE season='apocalypse-ii' AND direct_slot IS NOT NULL ORDER BY direct_slot");assert.equal(before.length,9);
+ const a=await user(4000),b=await user(4000);
+ assert.equal((await request(a,'/purchase','POST',{kind:'direct',expectedPrice:500,acceptNoRefund:true})).status,409);assert.equal((await wallet(a)).tickets,4000);
+ const data=await request(a);assert.equal(data.capacity,10);assert.equal(data.directPrice,3000);
+ const results=await Promise.all([a,b].map(actor=>request(actor,'/purchase','POST',{kind:'direct',expectedPrice:3000,acceptNoRefund:true})));
+ assert.equal(results.filter(r=>r.status===200).length,1);const index=results.findIndex(r=>r.status===200),winner=[a,b][index];assert.equal(results[index].entry.directSlot,10);assert.equal((await wallet(winner)).tickets,1000);
+ assert.equal((await request(winner,'/purchase','POST',{kind:'direct',expectedPrice:3000,acceptNoRefund:true})).status,200);assert.equal((await wallet(winner)).tickets,1000);
+ assert.deepEqual(await db.all("SELECT user_id,direct_slot,direct_purchased FROM casting_entries WHERE season='apocalypse-ii' AND direct_slot<10 ORDER BY direct_slot"),before);
+});

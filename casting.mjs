@@ -1,5 +1,5 @@
 import {accountRole} from './account-roles.mjs';
-import {CASTING_SEASON,AUDITION_PRICE,DIRECT_PRICE,DIRECT_CAPACITY,castingQuestions,castingProfile,agreementLabels} from './public/casting-config.mjs';
+import {CASTING_SEASON,AUDITION_PRICE,DIRECT_PRICE,DIRECT_CAPACITY,LAST_DIRECT_PRICE,castingQuestions,castingProfile,agreementLabels} from './public/casting-config.mjs';
 
 export function createCasting({db,json,fail,body,checkRate,progression,catalog,now=Date.now}){
  const season=CASTING_SEASON;
@@ -52,7 +52,7 @@ export function createCasting({db,json,fail,body,checkRate,progression,catalog,n
   if(q.type==='multi'){if(!Array.isArray(value)||value.length>q.max||(!draft&&!value.length)||new Set(value).size!==value.length||value.some(x=>!q.options.includes(x)))fail(400,'Elige entre 1 y 3 retos.');return value;}
   if(!q.options.includes(value))fail(400,'Elige una de las opciones.');return value;
  }
- async function summary(uid){return {season,auditionPrice:AUDITION_PRICE,directPrice:DIRECT_PRICE,capacity:DIRECT_CAPACITY,cast:await publicCast(),entry:uid?privateEntry(await fresh(uid)):null,franchises:options,questions:castingQuestions,serverTime:now(),wallet:uid?await progression.wallet(uid):null};}
+ async function summary(uid){const cast=await publicCast();return {season,auditionPrice:AUDITION_PRICE,directPrice:cast.length>=9?LAST_DIRECT_PRICE:DIRECT_PRICE,capacity:DIRECT_CAPACITY,slotPrices:Array.from({length:DIRECT_CAPACITY},(_,i)=>i===9?LAST_DIRECT_PRICE:DIRECT_PRICE),cast,entry:uid?privateEntry(await fresh(uid)):null,franchises:options,questions:castingQuestions,serverTime:now(),wallet:uid?await progression.wallet(uid):null};}
  async function handle(req,res,url,user){
   const p=url.pathname,method=req.method,isStaffRoute=p.startsWith('/api/moderation/auditions');
   if(!p.startsWith('/api/casting/')&&!isStaffRoute)return false;
@@ -83,15 +83,24 @@ export function createCasting({db,json,fail,body,checkRate,progression,catalog,n
     await ensure(user.id);const row=await lock(user.id);
     if(kind==='audition'&&row.audition_purchased||kind==='direct'&&row.direct_slot)return;
     if(kind==='audition'&&row.direct_slot)fail(409,'Ya tienes una entrada directa. Tu lugar en el cast está confirmado.');
-    const price=kind==='audition'?AUDITION_PRICE:DIRECT_PRICE;
+    let slot=null;
+    if(kind==='direct'){
+     await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',season);
+     const reserved=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<?',season,DIRECT_CAPACITY-1);
+     if(reserved.changes)slot=Number((await db.one('SELECT sold FROM casting_seasons WHERE season=?',season)).sold);
+     else{
+      // A separate one-seat counter preserves the original nine-seat row and its constraint.
+      const extra=season+':slot-10';await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',extra);
+      const reservedExtra=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<1',extra);
+      if(!reservedExtra.changes)fail(409,'Las diez entradas directas están agotadas. Todavía puedes audicionar.');slot=10;
+     }
+    }
+    const price=kind==='audition'?AUDITION_PRICE:slot===10?LAST_DIRECT_PRICE:DIRECT_PRICE;
+    if(kind==='direct'&&(slot===10||input.expectedPrice!==undefined)&&input.expectedPrice!==price)fail(409,'El precio de la entrada disponible cambió. Revisa el cupo y confirma su precio antes de comprar.');
     const paid=await db.run('UPDATE user_progression SET tickets=tickets-? WHERE user_id=? AND tickets>=?',price,user.id,price);
     if(!paid.changes)fail(409,'No tienes suficientes tickets. Completa tu perfil, participa en la comunidad o termina temporadas en el simulador.');
     const timestamp=now();
     if(kind==='direct'){
-     await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',season);
-     const reserved=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<?',season,DIRECT_CAPACITY);
-     if(!reserved.changes)fail(409,'Las nueve entradas directas están agotadas. Todavía puedes audicionar.');
-     const slot=Number((await db.one('SELECT sold FROM casting_seasons WHERE season=?',season)).sold);
      await db.run('UPDATE casting_entries SET direct_slot=?,direct_purchased=? WHERE season=? AND user_id=?',slot,timestamp,season,user.id);
     }else await db.run('UPDATE casting_entries SET audition_purchased=? WHERE season=? AND user_id=?',timestamp,season,user.id);
     await db.run('INSERT INTO economy_rewards(user_id,event_key,tickets,coins,xp,label,created) VALUES(?,?,?,0,0,?,?)',user.id,'casting:'+season+':'+kind,-price,kind==='direct'?'Entrada directa · Apocalypse II':'Audición · Apocalypse II',timestamp);

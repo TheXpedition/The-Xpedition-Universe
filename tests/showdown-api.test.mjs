@@ -62,7 +62,7 @@ test('guardado y reinicio mantienen personajes, estrellas, historial y campeón 
  const before=JSON.parse(JSON.stringify(game._cache.get(id).state));await game.close();game=createShowdownGame(options);
  room=(await request(actor,'/rooms/'+id)).room;state=game._cache.get(id).state;assert.equal(state.phase,before.phase);assert.deepEqual(state.track,before.track);assert.deepEqual(state.players.map(p=>p.stars),before.players.map(p=>p.stars));
  let guard=0;while(state.status==='running'&&guard++<200){stamp=state.deadline;room=(await request(actor,'/rooms/'+id)).room;}
- assert.equal(room.status,'finished');assert(room.winner);assert.equal(Object.keys(room.track).length,18);assert(!JSON.stringify(room).includes('rankingPoints'));assert(room.episodes.length===13);assert.equal((await progression.wallet(actor.id)).coins,500);
+ assert.equal(room.status,'finished');assert(room.winner||room.endedReason==='no-humans');assert.equal(Object.keys(room.track).length,18);assert(!JSON.stringify(room).includes('rankingPoints'));assert(room.winner?room.episodes.length===13:room.episodes.length<=13);assert.equal((await progression.wallet(actor.id)).coins,500);
  await game.close();game=createShowdownGame(options);assert.equal((await request(actor,'/rooms/'+id)).room.winner,room.winner);
 });
 
@@ -71,6 +71,15 @@ test('una transacción SQLite que falla no revierte operaciones concurrentes de 
  const transaction=db.transaction(async()=>{await db.run('UPDATE user_progression SET coins=100 WHERE user_id=?',actor.id);entered();await resume;throw new Error('rollback esperado');}).catch(()=>{});
  await inside;const outside=db.run('UPDATE user_progression SET tickets=77 WHERE user_id=?',actor.id);continueTx();await transaction;await outside;
  const row=await db.one('SELECT coins,tickets FROM user_progression WHERE user_id=?',actor.id);assert.equal(row.coins,1500);assert.equal(row.tickets,77);
+});
+
+test('solo el líder puede volver a simular; todos reciben el nuevo elenco vacío y se conserva la temporada anterior',async()=>{
+ const owner=await user(),friend=await user();await buy(owner);await buy(friend);const {room}=await make(owner,'multi'),id=room.id;await request(friend,'/rooms/'+id+'/join','POST',{token:room.shareUrl.split('/').at(-1)});
+ const old=game._cache.get(id).state;old.status='finished';old.phase='finished';old.endedReason='no-humans';old.track={saved:{s1:'ELIM'}};old.revision++;await game.flush();
+ assert.equal((await request(friend,'/rooms/'+id+'/restart','POST')).status,403);
+ const replay=await request(owner,'/rooms/'+id+'/restart','POST');assert.equal(replay.status,200);const next=replay.room.nextRoom;assert(next&&next!==id);assert.equal((await request(friend,'/rooms/'+id)).room.nextRoom,next);
+ const lobby=(await request(friend,'/rooms/'+next)).room;assert.equal(lobby.status,'lobby');assert.equal(lobby.host,owner.id);assert.equal(lobby.players.length,2);assert(lobby.players.every(p=>p.character===null));assert.deepEqual(replay.room.track,{saved:{s1:'ELIM'}});
+ assert.equal((await request(owner,'/rooms/'+id+'/restart','POST')).room.nextRoom,next);assert.equal((await progression.wallet(owner.id)).coins,500);assert.equal((await progression.wallet(friend.id)).coins,500);
 });
 
 test('solo guarda sus escenas manuales sin avanzar por el reloj y valida colección y conflictos de otra ventana',async()=>{

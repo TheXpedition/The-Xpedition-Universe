@@ -1,7 +1,8 @@
 export const CASTING_SEASON='apocalypse-ii';
 export const AUDITION_PRICE=100;
 export const DIRECT_PRICE=500;
-export const DIRECT_CAPACITY=9;
+export const DIRECT_CAPACITY=10;
+export const LAST_DIRECT_PRICE=3000;
 export const challengeTypes=['Rapidez','Inteligencia','Estrategia','Concentración','Suerte','Moda','Comedia','Música','TV y Cine','Rol','Cultura y Conocimiento','Edición y Habilidades','Composición','Producto y Venta','Duelos'];
 export const playerTypes=['El estratega','El villano','El competitivo','El impredecible','El cómico'];
 export const allyChoices=['Lo confronto inmediatamente.','Finjo no saber nada y preparo mi venganza.','Busco otra alianza para protegerme.','Intento convencerlo de continuar juntos.'];

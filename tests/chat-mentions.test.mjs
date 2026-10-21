@@ -1,0 +1,9 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {JSDOM} from 'jsdom';
+import vm from 'node:vm';
+const code=fs.readFileSync(new URL('../public/chat-mentions.js',import.meta.url),'utf8');
+function fixture(){const dom=new JSDOM('<textarea id="messageInput"></textarea>',{url:'http://localhost/',runScripts:'outside-only'}),ctx=dom.getInternalVMContext();vm.runInContext(`const state={active:'chat',conversations:[{id:'chat',members:[{id:'ana',name:'Ana María'},{id:'luis',name:'Luis'}]}]};const norm=s=>String(s).toLowerCase();const esc=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');const linkify=esc;`,ctx);vm.runInContext(code,ctx);return {dom,ctx};}
+test('las menciones enlazan exclusivamente a miembros y conservan el escape del texto',()=>{const {dom,ctx}=fixture();const rendered=vm.runInContext(`chatMentionText('Hola @Ana María, @Externo <script>',state.conversations[0].members)`,ctx);assert(rendered.includes('href="#perfil/ana"'));assert(!rendered.includes('perfil/Externo'));assert(rendered.includes('@Externo'));assert(rendered.includes('&lt;script&gt;'));dom.window.close();});
+test('escribir @ sugiere solo el chat activo y Enter inserta sin enviar',()=>{const {dom}=fixture(),field=dom.window.document.querySelector('textarea');field.value='Hola @An';field.selectionStart=field.selectionEnd=field.value.length;field.dispatchEvent(new dom.window.Event('input',{bubbles:true}));assert.equal(dom.window.document.querySelectorAll('[role=option]').length,1);assert.match(dom.window.document.querySelector('[role=option]').textContent,/Ana María/);const key=new dom.window.KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true});field.dispatchEvent(key);assert.equal(field.value,'Hola @Ana María ');assert(key.defaultPrevented);assert(!dom.window.document.querySelector('.chat-mentions'));dom.window.close();});

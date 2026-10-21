@@ -1658,7 +1658,8 @@
     },
     {
       "name": "Cassie Casu",
-      "image": "personajes/cassiecasu.png"
+      "image": "personajes/cassiecasu.png",
+      "pronouns": "Ella / She"
     },
     {
       "name": "Catalina",
@@ -1714,7 +1715,8 @@
     },
     {
       "name": "Doppel",
-      "image": "personajes/doppel.png"
+      "image": "personajes/doppel.png",
+      "pronouns": "Ella / Él"
     },
     {
       "name": "Dua Lingo",

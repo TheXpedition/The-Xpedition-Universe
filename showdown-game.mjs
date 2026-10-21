@@ -68,7 +68,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    await serialize(()=>db.transaction(async()=>{await db.run('INSERT INTO showdown_rooms(id,host,mode,status,snapshot,secret,created,updated) VALUES(?,?,?,?,?,?,?,?)',id,user.id,state.mode,state.status,JSON.stringify(state),secret,stamp,stamp);await db.run('INSERT INTO showdown_members(room,user_id,joined) VALUES(?,?,?)',id,user.id,stamp);}));
    const record={state,secret,dbRevision:0,persisted:state.revision,access:stamp,flushing:null,error:null};cache.set(id,record);json(res,{room:await response(record,user,{includeChat:true})},201);return true;
   }
-  const match=path.match(/^\/api\/showdown\/rooms\/([a-f0-9-]+)(?:\/(join|action|character|bots|start|invite|chat|leave|close|solo))?$/);
+  const match=path.match(/^\/api\/showdown\/rooms\/([a-f0-9-]+)(?:\/(join|action|character|bots|start|invite|chat|leave|close|solo|restart))?$/);
   if(!match)fail(404,'No encontramos esa sala.');
   const [,,action]=match,id=match[1],record=await getRecord(id);let s=record.state;
   if(!action&&method==='GET'){
@@ -85,6 +85,21 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    notify(ids(s),'showdown-room',{id,revision:s.revision});json(res,{room:await response(record,user,{includeChat:true})});return true;
   }
   if(!member(s,user.id))fail(403,'Esta sala es privada.');
+  if(action==='restart'&&method==='POST'){
+   if(s.host!==user.id)fail(403,'Solo el líder de la sala puede volver a simular.');
+   await paid(user.id);
+   await queue(id,async()=>{
+    if(s.nextRoom)return;
+    if(s.status!=='finished')fail(409,'Espera a que termine esta temporada antes de volver a simular.');
+    const stamp=now(),nextId=randomUUID(),next=createShowdown({id:nextId,host:s.host,mode:s.mode,format:s.format,seed:randomBytes(4).readUInt32BE(),now:stamp});
+    for(const p of s.players.filter(p=>!p.bot&&(p.present||p.userId===s.host)))joinShowdown(next,{id:p.userId,name:p.username},stamp);
+    const secret=randomBytes(24).toString('base64url');
+    await db.transaction(async()=>{await db.run('INSERT INTO showdown_rooms(id,host,mode,status,snapshot,secret,created,updated) VALUES(?,?,?,?,?,?,?,?)',nextId,next.host,next.mode,next.status,JSON.stringify(next),secret,stamp,stamp);for(const p of next.players)await db.run('INSERT INTO showdown_members(room,user_id,joined) VALUES(?,?,?)',nextId,p.userId,stamp);});
+    cache.set(nextId,{state:next,secret,dbRevision:0,persisted:next.revision,access:stamp,flushing:null,error:null});
+    s.nextRoom=nextId;s.revision++;await flush(record);
+   });
+   notify(ids(s),'showdown-room',{id,revision:s.revision,nextRoom:s.nextRoom});json(res,{room:await response(record,user)});return true;
+  }
   if(action==='solo'&&method==='POST'){
    if(s.status==='closed')fail(409,'Esta temporada ya se cerró.');if(s.mode!=='solo'||s.host!==user.id)fail(403,'Esta simulación es privada.');await paid(user.id);const input=await body(req),snapshot=input.snapshot;
    if(!snapshot||snapshot.version!==1||!snapshot.vars||JSON.stringify(snapshot).length>350000||/[<>]/.test(JSON.stringify(snapshot))||!['cast','format','distribution','episode','track','finished'].includes(snapshot.stage))fail(400,'Guardado de Showdown inválido.');

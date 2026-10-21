@@ -28,3 +28,17 @@ test('solo conserva los formatos originales completos, elecciones manuales y un 
 test('la simulación solo recupera elenco, distribución, estrellas y tabla al cerrar y volver a abrir',()=>{
  const app=create(3);app.click('#randomCast');app.click('#nextBtn');app.click('#confirmFormat');for(let i=0;i<3;i++){app.click('#distRandomBtn');app.click('#distContinueBtn');}app.click('#runChallenge');app.click('#randomTop2');app.click('#confirmTop2');app.click('#arenaContinueBtn');app.click('#toTrack');const checkpoint=app.saved.findLast(s=>s.stage==='track');assert(checkpoint);const restored=create(3,checkpoint);restored.flush();assert.equal(restored.evaluate('episode'),checkpoint.vars.episode);assert.equal(restored.evaluate('JSON.stringify(stars)'),JSON.stringify(checkpoint.vars.stars));assert.equal(restored.dom.window.document.querySelectorAll('#trkBody tr').length,18);assert.equal(restored.dom.window.document.querySelector('.stage.active').id,'stage-6');restored.click('#nextEpisode');assert.equal(restored.evaluate('episode'),2);app.dom.window.close();restored.dom.window.close();
 });
+
+test('el track record solo agrega columnas cuando hay un episodio jugado',()=>{
+ const app=create(3),doc=app.dom.window.document;
+ app.evaluate("trackData=parent.ShowdownSoloHost.characters.slice(0,18).map(c=>({name:c.name,group:'Rosa',cells:[]}));setTR(trackData[0].name,1,'win','WIN');buildTRTable();");
+ assert.equal(doc.querySelectorAll('#trkHead .episode-head').length,1);assert.equal(doc.querySelectorAll('#trkBody tr:first-child td').length,2);
+ app.evaluate("setTR(trackData[1].name,2,'high','HIGH');buildTRTable();");assert.equal(doc.querySelectorAll('#trkHead .episode-head').length,2);assert(!doc.querySelector('#trkHead').textContent.includes('E3'));app.dom.window.close();
+});
+
+test('en la semifinal de estrellas los dos LOW pierden una propia y solo el ganador elige un rival',()=>{
+ const app=create(3);app.evaluate("selected18=parent.ShowdownSoloHost.characters.slice(0,18).map(c=>c.name);trackData=selected18.map(name=>({name,group:'Rosa',cells:[]}));stars=Object.fromEntries(selected18.map(n=>[n,5]));episode=10;currentStarSemiState={pool:selected18.slice(0,10)};chosenTop2=selected18.slice(0,2);currentChallengeTop3=selected18.slice(0,4);currentEpWinner=selected18[0];currentEpOtherTop2=selected18[1];startStarPenaltyMirrorStage();");app.flush();
+ const data=JSON.parse(app.evaluate('JSON.stringify({events:currentPenaltyEvents,lows:currentStarSemiState.lows,stars,winner:currentEpWinner})'));
+ assert.equal(data.events.length,3);assert.equal(data.events[0].actor,data.winner);assert.notEqual(data.events[0].target,data.winner);
+ assert.deepEqual(data.events.slice(1).map(e=>e.target).sort(),data.lows.slice().sort());assert(data.events.slice(1).every(e=>e.actor==='Bonju'));for(const low of data.lows)assert.equal(data.stars[low],4-(data.events[0].target===low?1:0));app.dom.window.close();
+});

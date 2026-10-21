@@ -11,7 +11,7 @@ function messenger(stickers=[]){
  w.icon=()=>'<svg></svg>';w.avatar=()=>'';w.esc=s=>String(s);w.linkify=s=>s;w.norm=s=>String(s||'').toLowerCase();w.time=()=>'';w.date=()=>'';w.messagePreview=m=>m.text;w.toast=message=>{throw new Error(message);};
  w.fetch=async url=>({json:async()=>url==='chat-emojis.json'?emojis:stickers});w.visualViewport=new w.EventTarget();Object.assign(w.visualViewport,{height:844,width:390,offsetTop:0,offsetLeft:0,scale:1});
  Object.defineProperty(w,'innerHeight',{value:844,configurable:true});Object.defineProperty(w,'innerWidth',{value:390,configurable:true});
- w.eval(fs.readFileSync(new URL('../public/messenger.js',import.meta.url),'utf8')+'\nwindow.messengerTest={renderMessages,stickerTiles};');
+ w.eval(fs.readFileSync(new URL('../public/chat-mentions.js',import.meta.url),'utf8')+'\n'+fs.readFileSync(new URL('../public/messenger.js',import.meta.url),'utf8')+'\nwindow.messengerTest={renderMessages,stickerTiles};');
  return {dom,w};
 }
 const settle=()=>new Promise(resolve=>setTimeout(resolve,25));

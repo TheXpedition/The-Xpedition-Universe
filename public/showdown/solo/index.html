@@ -582,7 +582,8 @@ a{color:#ffdfe9}
   </div>
   <div class="control-bar">
     <button class="btn primary" id="nextEpisode">Siguiente episodio →</button>
-    <button class="btn" id="restartSim" style="display:none">SIMULAR DE NUEVO</button>
+    <button class="btn" id="downloadTrackJpg">Descargar JPG ↓</button>
+    <button class="btn" id="restartSim" style="display:none">Volver a Simular</button>
   </div>
 </section>
 
@@ -1130,7 +1131,7 @@ function updateEpisodeUI(){
     } else if(advFormat === 4){
       $("#epHelp").textContent = `GRAN FINAL TOP 8 - torneo de duelos 1 vs 1 hasta coronar a la ganadora.`;
     } else if(advFormat === 3 && episode>=10 && episode<=15){
-      $("#epHelp").textContent = `SEMIFINAL - El Top 2 suma una estrella, el ganador del versus resta una.`;
+      $("#epHelp").textContent = `SEMIFINAL — El Top 2 suma una estrella. El ganador quita una a un rival y los dos peores pierden una propia.`;
     } else if(advFormat === 3 && episode===16){
       $("#epHelp").textContent = `CORTE DE ESTRELLAS - Bonju revela del puesto 10 al 5 y deja formado el Top 4.`;
     } else if(advFormat === 3){
@@ -1659,7 +1660,7 @@ function showSemifinalsRevealScreen(){
 
 
       const img = document.createElement("img"); img.className = "char-img";
-loadImg(img, [parent.ShowdownSoloHost.characters.find(c=>c.name===member)?.figure], member);
+loadImg(img, [parent.ShowdownSoloHost.characters.find(c=>c.name===member)?.image], member);
 
       const info = document.createElement("div"); info.className = "char-info";
       const name = document.createElement("div"); name.className = "char-name"; name.textContent = member;
@@ -1826,16 +1827,10 @@ function startStarPenaltyMirrorStage(){
   currentPenaltyEvents = [
     { actor: currentEpWinner, target: subtractTarget, text: `${currentEpWinner} gana el lipsync y borra una estrella de ${subtractTarget}.` }
   ].filter(e => e.target);
-  lows.forEach(actor => {
-    const target = pickCompetitivePenaltyTarget(actor, pool, usedPenaltyTargets);
-    if(target){
-      usedPenaltyTargets.push(target);
-      currentPenaltyEvents.push({ actor, target, text: `${actor} escribe el nombre de ${target} para quitarle una estrella.` });
-    }
-  });
+  lows.forEach(name => currentPenaltyEvents.push({actor:'Bonju',target:name,text:name+' pierde una estrella por quedar entre los dos peores del reto.'}));
   currentPenaltyIndex = 0;
 
-  setMirrorCopy("Espejo de Semifinal", "El ganador y los peores del reto restan estrellas antes del siguiente episodio", "Continuar a Resultados");
+  setMirrorCopy("Espejo de Semifinal", "El ganador quita una estrella a un rival. Los dos peores pierden una estrella propia.", "Continuar a Resultados");
   $(".stage.active")?.classList.remove("active");
   $("#stage-mirror-votes").classList.add("active");
 
@@ -2684,14 +2679,16 @@ function renderParticipantCell(row, r){
   if(avatar) loadImg(avatar, imgFor(r.name), r.name);
 }
 
+function visibleTrEpisodes(){return Math.max(0,...trackData.map(row=>row.cells.findLastIndex(c=>String(c?.txt||'').trim())+1));}
 function buildTRSkeleton(){
+  const visible=visibleTrEpisodes();
   const head=$("#trkHead"); const body=$("#trkBody"); head.innerHTML=""; body.innerHTML="";
   const tr=document.createElement("tr");
-  tr.innerHTML = `<th class="participant-head">Participante</th>` + (new Array(trEpisodeCount).fill(0).map((_,i)=>`<th class="episode-head">E${i+1}</th>`).join(""));
+  tr.innerHTML = `<th class="participant-head">Participante</th>` + (new Array(visible).fill(0).map((_,i)=>`<th class="episode-head">E${i+1}</th>`).join(""));
   head.appendChild(tr);
   trackData.forEach((r)=>{
     const trb=document.createElement("tr"); trb.dataset.name = r.name;
-    trb.innerHTML=`<td class="participant-cell"></td>` + new Array(trEpisodeCount).fill(0).map(()=>`<td><span class="cell grey"></span></td>`).join("");
+    trb.innerHTML=`<td class="participant-cell"></td>` + new Array(visible).fill(0).map(()=>`<td><span class="cell grey"></span></td>`).join("");
     renderParticipantCell(trb, r);
     body.appendChild(trb);
   });
@@ -2699,12 +2696,13 @@ function buildTRSkeleton(){
 
 function buildTRTable(){
   ensureGreyForInactive(episode);
+  buildTRSkeleton();
   const body=$("#trkBody"); if(!body) return;
   body.querySelectorAll("tr").forEach((row)=>{
     const nm = row.dataset.name; const r = trackData.find(x=>x.name===nm);
     if(r){
       renderParticipantCell(row, r);
-      for(let e=1;e<=trEpisodeCount;e++){
+      for(let e=1;e<=visibleTrEpisodes();e++){
         const c=r.cells[e-1] || {cls:'grey',txt:''};
         row.cells[e].innerHTML = `<span class="cell ${c.cls}">${c.txt||''}</span>`;
       }
@@ -2777,6 +2775,7 @@ $("#nextEpisode").addEventListener("click", ()=>{
   go(3); updateEpisodeUI();
 });
 
+$("#downloadTrackJpg").addEventListener('click',()=>parent.XPDownloadShowdownTrack({title:'SHOWDOWN · MI TEMPORADA',filename:'Showdown-solitario',columns:Array.from({length:visibleTrEpisodes()},(_,i)=>({label:'E'+(i+1),group:i<9?groupOrder[Math.floor(i/3)]:'Semifinal / Final',color:i<9?groupColors[groupOrder[Math.floor(i/3)]]:'#8451ac'})),rows:Array.from($('#trkBody').children).map(tr=>{const r=trackData.find(r=>r.name===tr.dataset.name);return {name:r.name,image:imgFor(r.name)[0],cells:r.cells.slice(0,visibleTrEpisodes()).map(c=>c.txt||'')};})}));
 $("#restartSim").addEventListener("click", ()=>{ parent.ShowdownSoloHost.restart(); });
 $("#homeBtn").addEventListener("click", ()=>{ parent.location.hash='showdown'; });
 
