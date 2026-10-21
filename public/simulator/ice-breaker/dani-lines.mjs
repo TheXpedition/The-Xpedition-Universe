@@ -5,12 +5,13 @@ export const FALL_LINES=[
  {id:'fall-daniela',spoken:'Quedé hecha toda una Daniela Jara Valentina.',text:'Quedé hecha toda una Daniela Jara Valentina.'},
  {id:'fall-concha',spoken:'¡Me partí toda la concha en esta mamada!',text:'¡Me partí toda la c*nch* en esta m*m*d*!'},
  {id:'fall-camp',spoken:'¡Me dejaron toda un camp así!',text:'¡Me dejaron toda un camp así!'},
- {id:'fall-lynx',spoken:'¡Hijueputa! ¡Me saqué la Leandro Lynx!',text:'¡Hiju*p*t*! ¡Me saqué la Leandro Lynx!'}
+ {id:'fall-lynx',spoken:'¡Hijueputa! ¡Me saqué la Leandro Lynx!',text:'¡Hiju*p*t*! ¡Me saqué la Leandro Lynx!'},
+ {id:'fall-doble-cara',spoken:'Esto me pasa por doble cara, falsa, hipócrita, mustia, mentirosa, roba maridos, manca, zoofílica y pedófila.',text:'Esto me pasa por doble cara, falsa, hipócrita, mustia, mentirosa, roba maridos, manca, zo*fílica y ped*fila.'}
 ];
 export const AMBIENT_LINES=[
  {id:'idle-carlos',spoken:'Qué día de la Carlos Harrington.',text:'Qué día de la Carlos Harrington.'},
  {id:'idle-felix',spoken:'Prefiero estar aquí que con Félix amenazándome de muerte.',text:'Prefiero estar aquí que con Félix amenazándome de muerte.'},
- {id:'idle-frio',spoken:'Esto tan frío y ya tan caliente.',text:'Esto tan frío y ya tan caliente.'},
+ {id:'idle-frio-corregido',spoken:'Qué frío hace, pero yo estoy caliente.',text:'Qué frío hace, pero yo estoy caliente.'},
  {id:'idle-foca',spoken:'¿Por qué esa foca se parece al ogro de Andrómeda?',text:'¿Por qué esa foca se parece al ogro de Andrómeda?'},
  {id:'idle-acoso',spoken:'Tengo que ganar para seguir acosando más mujeres.',text:'Tengo que ganar para seguir acosando más mujeres.'},
  {id:'idle-lucas',spoken:'Prefiero quedarme aquí todo el día que hacer la lista del top cuarenta artistas de Lucas Mendes.',text:'Prefiero quedarme aquí todo el día que hacer la lista del top 40 artistas de Lucas Mendes.'}

@@ -1,6 +1,6 @@
 # Voces de Ice Breaker
 
-Las frases de los personajes fueron suministradas por The Xpedition. Las grabaciones nuevas son síntesis local con Piper; no son grabaciones de los intérpretes de ninguna serie.
+Las frases de los personajes fueron suministradas por The Xpedition. Las grabaciones son voces sintéticas de Piper o Microsoft, con los ajustes de interpretación descritos abajo. No son grabaciones de los intérpretes de ninguna serie.
 
 - **Bayron:** modelo `es_MX-ald-medium`, corpus ALD de rmcpantoja, Unlicense. Interpretación infantil obtenida mediante ajuste de tono y velocidad; volumen normalizado. Fuente: https://huggingface.co/rhasspy/piper-voices/blob/main/es/es_MX/ald/medium/MODEL_CARD
 - **Felix:** modelo `es_ES-davefx-medium`, corpus de OHF Voice Datasets, CC0. Ajustes de tono, velocidad y volumen. Fuente: https://huggingface.co/rhasspy/piper-voices/blob/main/es/es_ES/davefx/medium/MODEL_CARD
@@ -12,3 +12,19 @@ Las frases de los personajes fueron suministradas por The Xpedition. Las grabaci
 - **Ximena:** `es_AR-daniela-high`, corpus OpenSLR 61, copyright 2018, 2019 Google, Inc., licencia CC BY-SA 4.0. Modelo de larcanio, interpretación firme y volumen normalizado. Ficha: https://huggingface.co/rhasspy/piper-voices/blob/main/es/es_AR/daniela/high/MODEL_CARD . Corpus y autores: https://www.openslr.org/61/ . Licencia: https://creativecommons.org/licenses/by-sa/4.0/
 
 Piper (motor utilizado fuera de la aplicación web): https://github.com/OHF-Voice/piper1-gpl . Los modelos y el motor no se envían al navegador ni se alojan en el servidor del juego; se distribuyen únicamente los WAV resultantes.
+
+## Iñaella, Daelly, Coronel, Julián, Alexandro, Catalina y Luciano
+
+Audios sintetizados con voces neuronales de Microsoft mediante la herramienta de preparación `edge-tts` (https://github.com/rany2/edge-tts), fuera del navegador. El juego reproduce archivos WAV ya generados y no envía diálogos a un servicio de voz durante las partidas.
+
+| Personaje | Voz | Interpretación aplicada |
+| --- | --- | --- |
+| Iñaella Rose | es-ES-XimenaNeural | Ritmo pausado, registro elevado y vibrato suave para una entonación melódica. |
+| Daelly | es-PE-CamilaNeural | Registro agudo y ritmo suave. |
+| Coronel | es-MX-JorgeNeural | Registro grave, ritmo pausado y realce suave de frecuencias bajas. |
+| Julián | es-CO-GonzaloNeural | Voz colombiana, ritmo ligero. |
+| Alexandro | es-ES-AlvaroNeural | Español castellano, ritmo dinámico. |
+| Catalina | es-VE-PaolaNeural | Registro alto, ritmo rápido y expresivo. |
+| Luciano | es-AR-TomasNeural | Registro elevado y ajuste adicional de tono y velocidad para una voz caricaturesca. |
+
+Todas estas grabaciones se normalizaron y convirtieron a PCM mono de 22.050 Hz. Las frases nuevas y corregidas de Dani conservan Microsoft Sabina Desktop. La voz de Luciano es una interpretación sintética caricaturesca; no es una grabación de Mickey Mouse ni de su actor de doblaje.

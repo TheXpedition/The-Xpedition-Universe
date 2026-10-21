@@ -15,7 +15,20 @@ let selectedChapter=1,selectedLevel=1,selectedDifficulty='normal',userId=null,co
 const walletChannel='BroadcastChannel' in window?new BroadcastChannel('xpedition-economy'):null;
 const dialogue=new DaniDialogue({caption:$('#daniCaption'),line:$('#daniLine'),audioContext:()=>audio});
 const characterTextures=new Map(),characterPortraits=new Map();
-function renderCharacterChoices(){const choices=$('#characterChoices');if(choices){const scroll=choices.scrollLeft;choices.innerHTML=CHARACTERS.map(c=>'<button type="button" data-character="'+c.id+'" aria-pressed="'+(c.id===selectedCharacter)+'" title="'+c.name+' · '+c.voice+'"><img src="'+(characterPortraits.get(c.id)||c.portrait||c.image)+'" alt=""><span>'+c.name+'</span><small>'+c.voice+'</small></button>').join('');choices.scrollLeft=scroll;choices.querySelector('[aria-pressed="true"]')?.scrollIntoView({block:'nearest',inline:'nearest'});}const character=characterConfig(selectedCharacter);$('#playerName').textContent=character.name.toUpperCase();$('#playerPortrait').src=characterPortraits.get(character.id)||character.portrait||character.image;if($('#voiceLabel'))$('#voiceLabel').textContent='Escuchar a '+character.name;canvas.setAttribute('aria-label','Controla a '+character.name+'. Espacio para saltar; WASD o flechas para dirigir y corregir el salto. En celular, toca un témpano. Shift o E para esquivar. Escape para pausar.');}
+function renderCharacterChoices(){
+ const choices=$('#characterChoices');
+ if(choices){
+  const scroll=choices.scrollLeft,focused=document.activeElement?.dataset.character;
+  choices.innerHTML=CHARACTERS.map(c=>'<button type="button" data-character="'+c.id+'" aria-pressed="'+(c.id===selectedCharacter)+'" title="'+c.name+' · '+c.voice+'"><img src="'+(characterPortraits.get(c.id)||c.portrait||c.image)+'" alt=""><span>'+c.name+'</span><small>'+c.voice+'</small></button>').join('');
+  choices.closest('fieldset').querySelector('legend').dataset.count=CHARACTERS.length;
+  choices.scrollLeft=scroll;
+  if(focused)choices.querySelector('[data-character="'+focused+'"]')?.focus({preventScroll:true});
+  choices.querySelector('[aria-pressed="true"]')?.scrollIntoView({block:'nearest',inline:'nearest'});
+ }
+ const character=characterConfig(selectedCharacter);$('#playerName').textContent=character.name.toUpperCase();$('#playerPortrait').src=characterPortraits.get(character.id)||character.portrait||character.image;
+ if($('#voiceLabel'))$('#voiceLabel').textContent='Escuchar a '+character.name;
+ canvas.setAttribute('aria-label','Controla a '+character.name+'. Espacio para saltar; WASD o flechas para dirigir y corregir el salto. En celular, toca un témpano. Shift o E para esquivar. Escape para pausar.');
+}
 $('#characterChoices').onclick=event=>{const button=event.target.closest('[data-character]');if(!button)return;selectedCharacter=button.dataset.character;try{localStorage.setItem('xp-ice-breaker-character',selectedCharacter);}catch{}dialogue.setCharacter(selectedCharacter);renderCharacterChoices();};
 $('#voicePreviewButton').onclick=()=>{audioStart();dialogue.enabled=true;$('#voiceChoice').checked=true;dialogue.say('fall');};
 dialogue.setCharacter(selectedCharacter);renderCharacterChoices();

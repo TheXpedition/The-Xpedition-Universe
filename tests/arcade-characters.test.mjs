@@ -3,9 +3,9 @@ import {CHARACTERS,characterConfig} from '../public/simulator/ice-breaker/charac
 import {MODELS,sampleCharacterPose} from '../public/simulator/ice-breaker/character-rig.mjs';
 import {newRun,jumpTo,stepRun} from '../public/simulator/ice-breaker/engine.mjs';
 const length=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-test('nine selectable characters preserve their own lines and complete recorded audio',()=>{
- assert.deepEqual(CHARACTERS.map(c=>c.name),['Dani','Bayron','Felix','Andromeda','Isabel','Peggy','Eris','Ximena','Vita']);assert.equal(characterConfig('unknown').id,'dani');assert.deepEqual(CHARACTERS.map(c=>c.fall.length),[7,3,3,4,4,4,5,5,5]);
- const ids=new Set();for(const c of CHARACTERS.slice(1)){assert.equal(c.ambient.length,0);assert(fs.existsSync(new URL('../public/simulator/ice-breaker/'+c.image,import.meta.url)));for(const line of c.fall){assert(!ids.has(line.id),'Unique audio identity');ids.add(line.id);const a=fs.readFileSync(new URL('../public/simulator/ice-breaker/audio/'+line.id+'.wav',import.meta.url));assert.equal(a.toString('ascii',0,4),'RIFF');assert(a.length>16000);assert(!/cagué|andromierda|genshit|mierda|mamada|pinche|perra|ximierdota/i.test(line.text));assert(!/[*]/.test(line.spoken));}}
+test('sixteen selectable characters preserve their own lines and complete recorded audio',()=>{
+ assert.deepEqual(CHARACTERS.map(c=>c.name),['Dani','Bayron','Felix','Andromeda','Isabel','Peggy','Eris','Ximena','Vita','Iñaella Rose','Daelly','Coronel','Julián','Alexandro','Catalina','Luciano']);assert.equal(characterConfig('unknown').id,'dani');assert.deepEqual(CHARACTERS.map(c=>c.fall.length),[8,3,3,4,4,4,5,5,5,6,5,6,5,7,7,8]);
+ const ids=new Set();for(const c of CHARACTERS.slice(1)){assert.equal(c.ambient.length,0);assert(fs.existsSync(new URL('../public/simulator/ice-breaker/'+c.image,import.meta.url)));for(const line of c.fall){assert(!ids.has(line.id),'Unique audio identity');ids.add(line.id);const a=fs.readFileSync(new URL('../public/simulator/ice-breaker/audio/'+line.id+'.wav',import.meta.url));assert.equal(a.toString('ascii',0,4),'RIFF');assert(a.length>16000);assert(!/cagué|andromierda|genshit|mierda|mamada|pinche|perra|ximierdota|joder|coño|gilipollas|hijueputa|\bporno\b|erótica|gonorrea/i.test(line.text));assert(!/[*]/.test(line.spoken));}}
 });
 test('new models keep their measured limb lengths through every walk and jump pose',()=>{
  for(const id of Object.keys(MODELS)){const m=MODELS[id],run=newRun();jumpTo(run,'f1');

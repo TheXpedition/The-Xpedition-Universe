@@ -55,12 +55,13 @@ test('mouse walking can be cancelled by keyboard input without desynchronizing a
  assert.equal(result.status,200);const state=JSON.parse((await db.one('SELECT snapshot FROM arcade_runs WHERE id=?',session.id)).snapshot);assert.equal(state.walkTarget,null);assert(Math.abs(state.player.x-160)<.01);
 });
 test('all fall and ambient quotes have complete audio, censored on-screen profanity and shuffled non-repeating bags',()=>{
- assert.equal(FALL_LINES.length,7);assert.equal(AMBIENT_LINES.length,6);
+ assert.equal(FALL_LINES.length,8);assert.equal(AMBIENT_LINES.length,6);
+ assert.equal(AMBIENT_LINES.find(l=>l.id==='idle-frio-corregido').spoken,'Qué frío hace, pero yo estoy caliente.');assert(!AMBIENT_LINES.some(l=>l.spoken.includes('Esto tan frío')));
  for(const line of [...FALL_LINES,...AMBIENT_LINES]){
   const file=new URL('../public/simulator/ice-breaker/audio/'+line.id+'.wav',import.meta.url),bytes=fs.readFileSync(file);assert.equal(bytes.toString('ascii',0,4),'RIFF');assert.equal(bytes.toString('ascii',8,12),'WAVE');assert(bytes.length>8000);
   assert(!/concha|hijueputa|mamada|pija/i.test(line.text));assert(!/[*@4]/.test(line.spoken));
  }
- const next=shuffleBag(FALL_LINES,()=>.35),first=Array.from({length:7},next);assert.equal(new Set(first.map(q=>q.id)).size,7);assert.notEqual(next().id,first.at(-1).id);
+ const next=shuffleBag(FALL_LINES,()=>.35),first=Array.from({length:FALL_LINES.length},next);assert.equal(new Set(first.map(q=>q.id)).size,FALL_LINES.length);assert.notEqual(next().id,first.at(-1).id);
 });
 test('active runs from the old campaign require a restart without granting tickets',async()=>{
  const session=await start(),row=await db.one('SELECT snapshot FROM arcade_runs WHERE id=?',session.id),state=JSON.parse(row.snapshot);state.version=1;await db.run('UPDATE arcade_runs SET snapshot=? WHERE id=?',JSON.stringify(state),session.id);clock+=1000;const before=await progression.wallet(a.id);
