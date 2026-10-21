@@ -913,11 +913,12 @@
         "id": "showdown",
         "name": "Showdown",
         "meta": "Juego Interactivo",
-        "desc": "Torneo de eliminación.",
+        "desc": "Tu personaje. Tres brackets. Una corona. Compite solo o con amigos en una temporada completa.",
         "accent": "var(--shw)",
         "kind": "Simulador",
-        "url": "https://thexpedition.github.io/The-Xpedition-Showdown-Simulator/",
-        "actionLabel": "Jugar"
+        "url": "/#showdown",
+        "actionLabel": "Entrar a Showdown",
+        "integrated": true
       },
       {
         "id": "house",

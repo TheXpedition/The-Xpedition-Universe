@@ -43,14 +43,20 @@ CREATE TABLE IF NOT EXISTS game_runs(id TEXT PRIMARY KEY,user_id TEXT NOT NULL R
 CREATE INDEX IF NOT EXISTS game_runs_user ON game_runs(user_id,status,updated);
 CREATE TABLE IF NOT EXISTS casting_seasons(season TEXT PRIMARY KEY,sold INTEGER NOT NULL DEFAULT 0 CHECK(sold>=0 AND sold<=9));
 CREATE TABLE IF NOT EXISTS casting_entries(season TEXT NOT NULL,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,audition_purchased INTEGER,direct_purchased INTEGER,direct_slot INTEGER,state TEXT NOT NULL DEFAULT 'ready',started INTEGER,finished INTEGER,step INTEGER NOT NULL DEFAULT 0,step_started INTEGER,deadline INTEGER,answers TEXT NOT NULL DEFAULT '{}',revision INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(season,user_id),UNIQUE(season,direct_slot));
-CREATE INDEX IF NOT EXISTS casting_entries_state ON casting_entries(season,state,finished);`;
+CREATE INDEX IF NOT EXISTS casting_entries_state ON casting_entries(season,state,finished);
+CREATE TABLE IF NOT EXISTS showdown_rooms(id TEXT PRIMARY KEY,host TEXT NOT NULL REFERENCES users(id),mode TEXT NOT NULL,status TEXT NOT NULL,snapshot TEXT NOT NULL,secret TEXT NOT NULL,revision INTEGER NOT NULL DEFAULT 0,created INTEGER NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS showdown_members(room TEXT NOT NULL REFERENCES showdown_rooms(id) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,joined INTEGER NOT NULL,left_at INTEGER,PRIMARY KEY(room,user_id));
+CREATE INDEX IF NOT EXISTS showdown_members_user ON showdown_members(user_id,joined);
+CREATE TABLE IF NOT EXISTS showdown_chat(id TEXT PRIMARY KEY,room TEXT NOT NULL REFERENCES showdown_rooms(id) ON DELETE CASCADE,sender TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS showdown_chat_room ON showdown_chat(room,created);
+CREATE TABLE IF NOT EXISTS showdown_invites(room TEXT NOT NULL REFERENCES showdown_rooms(id) ON DELETE CASCADE,target TEXT NOT NULL REFERENCES users(id),inviter TEXT NOT NULL REFERENCES users(id),message TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(room,target));`;
 
 const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0'],['sticker_favorites',"TEXT NOT NULL DEFAULT '[]'"]];
-const tables = ['users','sessions','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','profile_verifications','moderation_actions','arcade_access','arcade_runs','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs','casting_seasons','casting_entries'];
+const tables = ['users','sessions','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','profile_verifications','moderation_actions','arcade_access','arcade_runs','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs','casting_seasons','casting_entries','showdown_rooms','showdown_members','showdown_chat','showdown_invites'];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|arcade_access|arcade_runs|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|arcade_access|arcade_runs|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries|showdown_rooms|showdown_members|showdown_chat|showdown_invites)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';
@@ -71,12 +77,16 @@ export async function openDatabase(dataDir) {
     if (!database.prepare('PRAGMA table_info(messages)').all().some(c=>c.name==='duration_ms')) database.exec('ALTER TABLE messages ADD COLUMN duration_ms INTEGER NOT NULL DEFAULT 0');
     const userColumns=new Set(database.prepare('PRAGMA table_info(users)').all().map(c=>c.name));
     for(const [name,type] of profileColumns)if(!userColumns.has(name))database.exec(`ALTER TABLE users ADD COLUMN ${name} ${type}`);
+    // Requests for live games may arrive while another asynchronous transaction is open.
+    // Keep outside operations out of that transaction, so its rollback cannot undo them.
+    const sqliteContext=new AsyncLocalStorage();let sqliteTail=Promise.resolve();
+    const sqliteQuery=async(fn)=>{if(!sqliteContext.getStore())await sqliteTail;return fn();};
     return {
       kind:'sqlite',
-      one: async (sql,...args)=>database.prepare(sql).get(...args),
-      all: async (sql,...args)=>database.prepare(sql).all(...args),
-      run: async (sql,...args)=>database.prepare(sql).run(...args),
-      transaction: async fn=>{ database.exec('BEGIN'); try { const value=await fn(); database.exec('COMMIT'); return value; } catch(e) { database.exec('ROLLBACK'); throw e; } },
+      one: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).get(...args)),
+      all: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).all(...args)),
+      run: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).run(...args)),
+      transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release;sqliteTail=new Promise(resolve=>release=resolve);await previous;database.exec('BEGIN');try{const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){database.exec('ROLLBACK');throw e;}finally{release();}},
       close: async ()=>database.close()
     };
   }

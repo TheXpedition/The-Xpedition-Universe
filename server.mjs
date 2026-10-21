@@ -5,6 +5,7 @@ import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adju
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
 import {createCasting} from './casting.mjs';
+import {createShowdownGame} from './showdown-game.mjs';
 import {createArcade} from './arcade.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
@@ -160,6 +161,7 @@ async function messageViews(rows) {
       stickerId: !m.deleted&&m.type==='sticker' ? m.filename : null,
       durationMs: m.deleted ? 0 : Number(m.duration_ms||0),
       filename: m.deleted ? null : m.filename,
+      showdownInvite: !m.deleted&&m.type==='showdown-invite'?showdownInvitation(m.filename):null,
       reply: reply ? {
         id: reply.id,
         text: reply.deleted ? 'Mensaje eliminado' : reply.text || 'Archivo adjunto',
@@ -397,6 +399,7 @@ async function api(req, res, url) {
     });
   }
   if(await arcade.handle(req,res,url,u))return;
+  if(await showdown.handle(req,res,url,u))return;
   if(await casting.handle(req,res,url,u))return;
   if(await moderation.handle(req,res,url,u))return;
   if(await interactions.handle(req,res,url,u))return;
@@ -799,9 +802,12 @@ await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND 
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
 const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields});
 const casting=createCasting({db,json,fail,checkRate,body,progression,catalog});
+function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
+const showdown=createShowdownGame({db,json,fail,body,checkRate,progression,characters:JSON.parse(fs.readFileSync(path.join(publicDir,'showdown/characters.json'),'utf8')),notify,messageView,pushNotifications,serialize});
 const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
+  if(url.pathname.startsWith('/api/showdown'))return api(req,res,url);
   // Casting reads can advance expired questions. Serialize them with other writes.
   if(url.pathname.startsWith('/api/casting/')||url.pathname.startsWith('/api/moderation/auditions'))return serialize(()=>api(req,res,url));
   // Image review runs in a worker before taking the write lock so chat stays responsive.
@@ -836,9 +842,10 @@ const server = http.createServer(async (req, res) => {
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
     if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
-    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
+    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
+    const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
     const arcadeFile=/^simulator\/ice-breaker(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));
     if(arcadeFile){
@@ -856,7 +863,7 @@ const server = http.createServer(async (req, res) => {
     const size = fs.statSync(filename).size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': arcadeFile?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': arcadeFile||soloFile?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
@@ -903,6 +910,7 @@ setInterval(async () => {
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => {
   for (const set of events.values()) for (const stream of set) stream.res.end();
   server.close(async () => {
+    await showdown.close();
     await db.close();
     process.exit(0);
   });

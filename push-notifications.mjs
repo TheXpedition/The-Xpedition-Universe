@@ -72,7 +72,7 @@ export async function createPushNotifications({ db, body, json, fail, checkRate,
       const unread = await db.one('SELECT COUNT(*) AS count FROM messages m JOIN members member ON member.conversation=m.conversation WHERE member.user_id=? AND m.sender<>? AND m.deleted=0 AND m.created>member.read_at', user.id, user.id);
       json(res, { title: message.sender_name, body: ((message.chat_type === 'group' ? message.chat_title + ' · ' : '') + preview).slice(0, 200),
         icon: image ? '/' + image : '/brand/xpedition-transparent-v2-192.png', tag: 'xp-message:' + message.id,
-        url: '/#mensajes/' + encodeURIComponent(message.conversation), unread: Number(unread.count) });
+        url: (()=>{if(message.type==='showdown-invite')try{const i=JSON.parse(message.filename);if(/^[a-f0-9-]{36}$/.test(i.room)&&/^[A-Za-z0-9_-]{32}$/.test(i.token))return '/#showdown/'+i.room+'/'+i.token;}catch{}return '/#mensajes/'+encodeURIComponent(message.conversation);})(), unread: Number(unread.count) });
       return true;
     }
     if (route === '/api/push/subscription' && method === 'POST') {

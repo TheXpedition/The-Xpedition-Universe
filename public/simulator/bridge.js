@@ -43,6 +43,7 @@
   filterSelects();restoreForms(saved);locks();if(typeof enforceUniqueSelects==='function')enforceUniqueSelects();
  }
  document.addEventListener('click',async event=>{const el=event.target.closest('button,a');if(!el)return;
+  if(el.closest('[data-season]')?.dataset.season==='showdown'){event.preventDefault();event.stopImmediatePropagation();void host.start('showdown');return;}
   if(el.closest('[data-season]')&&el.dataset.season&&!host.available(el.dataset.season)){event.preventDefault();event.stopImmediatePropagation();host.openShop('mode');return;}
   if(el.id==='seasonConfirmBtn'&&!replaying){event.preventDefault();event.stopImmediatePropagation();if(startBusy)return;const mode=document.querySelector('.season-card.selected')?.dataset.season||'antarctica';startBusy=true;try{const allowed=await host.start(mode);if(allowed){replaying=true;el.click();replaying=false;setTimeout(()=>mark('setup'),40);}}finally{startBusy=false;}return;}
   if(el.id==='homeBtn'||el.classList.contains('v3-home')||/Simular de nuevo|Simular otra vez/.test(el.textContent)){event.preventDefault();event.stopImmediatePropagation();host.home();return;}

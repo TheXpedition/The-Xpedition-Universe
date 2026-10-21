@@ -91,12 +91,12 @@ test('reclamar, comprar en paralelo, precios del servidor y saldo insuficiente c
  assert.equal((await request(u,'/api/economy/buy','POST',{item:'character:bonju',price:0})).status,409);
  assert(!(await progression.view(u.id)).owned.includes('character:bonju'));assert.equal((await progression.wallet(u.id)).coins,45);
 });
-test('solo Antarctica está abierta al inicio, Safari se abre en 2, Traitor en 5 y World es la compra más cara',async()=>{
- const u=await user();assert(await progression.canPlay(u.id,'antarctica'));for(const m of ['safari','traitor','cruise','house','race','world','japan'])assert(!await progression.canPlay(u.id,m));
+test('solo Antarctica está abierta al inicio, Safari se abre en 2, Traitor en 5 y Showdown se compra sin nivel',async()=>{
+ const u=await user();assert(await progression.canPlay(u.id,'antarctica'));for(const m of ['safari','traitor','cruise','house','race','world','showdown'])assert(!await progression.canPlay(u.id,m));
  await progression.grant(u.id,'qa:level2',{xp:60});assert.equal(levelFor(60),2);assert(!await progression.canPlay(u.id,'safari'));await request(u,'/api/economy/buy','POST',{item:'mode:safari'});assert(await progression.canPlay(u.id,'safari'));
  await progression.grant(u.id,'qa:level5',{xp:520,coins:1500});assert(!await progression.canPlay(u.id,'traitor'));await request(u,'/api/economy/buy','POST',{item:'mode:traitor'});assert(await progression.canPlay(u.id,'traitor'));assert(!await progression.canPlay(u.id,'house'));
  assert.equal((await request(u,'/api/economy/buy','POST',{item:'mode:house'})).status,200);assert(await progression.canPlay(u.id,'house'));
- assert(shop.modes.filter(m=>m.id!=='world').every(m=>m.price<shop.modes.find(m=>m.id==='world').price));assert(!await progression.canPlay(u.id,'japan'));
+ assert.equal(shop.modes.find(m=>m.id==='showdown').price,1000);assert.equal(shop.modes.find(m=>m.id==='showdown').noLevelRequirement,true);assert(!await progression.canPlay(u.id,'japan'));
 });
 test('partidas privadas, una partida activa y conflictos de revisión impiden sobrescribir otra ventana',async()=>{
  const u=await user(),v=await user();assert.equal((await request(null,'/api/economy')).status,401);assert.equal((await request(u,'/api/game-runs','POST',{mode:'world'})).status,403);

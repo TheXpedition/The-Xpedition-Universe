@@ -1,0 +1,2789 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Xpedition — Showdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#0c000c; --bg2:#18001a; --bg3:#240026; --tile:#0d010d; --ink:#f5e9ef;
+  --accent:#c1143b; --accent-2:#ff3b6a; --ok:#22c55e; --warn:#f59e0b; --danger:#e11d48; --muted:#cbd5e1;
+  --glass: rgba(255,255,255,.05);
+  --glass-brd: rgba(255,255,255,.12);
+  /* Track Record Colores */
+  --tr-win:#4169E1;
+  --tr-top2:#ffd700;
+  --tr-btm4:#FF6347;
+  --tr-btm5:#ff8a4c;
+  --tr-btm3:#ff7a3d;
+  --tr-btm2:#FF6347;
+  --tr-high:#9ad9ff;
+  --tr-low:#ffb1c1;
+  --tr-safe:#e5e7eb;
+  --tr-top4:#00ff7f;
+  --tr-elim:#cf0000;
+  --tr-in:#00d0a9;
+  --tr-out:#800080;
+  --tr-dead:#2f2f35;
+  --tr-dead-txt:#9aa0a6;
+  --trk-row: 28px;
+  --trk-empty: #2a1e27;
+}
+*{box-sizing:border-box}
+html,body{height:100%; min-height:100%; margin:0; font-family:Rubik,system-ui,Segoe UI,Roboto,Arial; color:var(--ink); background:#120512; overflow-x:hidden;}
+body::before{
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(900px 520px at 18% -10%, rgba(255, 90, 160, .2), transparent 60%),
+              radial-gradient(1000px 600px at 82% 110%, rgba(130, 40, 200, .15), transparent 60%),
+              linear-gradient(180deg, #1b0716 0%, #0a0209 100%);
+}
+a{color:#ffdfe9}
+.wrap{ max-width:1180px; margin:16px auto; padding:12px 16px }
+.glass{ background:var(--glass); border:1px solid var(--glass-brd); backdrop-filter: blur(12px) saturate(160%); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,.45); }
+.header{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 14px }
+.brand{ display:flex; align-items:center; gap:12px }
+.logo{ width:60px; height:60px; border-radius:12px; background:#2a0010; display:grid; place-items:center; font-weight:800; color:#ffb3c7; }
+.logo img{ width: 100%; height: 100%; object-fit: contain; display: block; }
+.logo.rect{ width: 96px; aspect-ratio: 3 / 2; height: auto; }
+.h1{ font-size:22px; font-weight:800; letter-spacing:.4px }
+.step-indicator{ font-weight:800; color:#ff99b3 }
+.control-bar{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:14px; }
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:40px; padding:0 14px; border-radius:12px; border:1px solid #531122; background:#26000c;
+  font-weight:800; color:#ffdfe9; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,.25); transition: 0.2s ease;
+}
+.btn:hover{ transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+.btn.primary{ background:linear-gradient(180deg,#ff2a5b,#a3002a); border:1px solid #ff658a }
+.btn.green{ background:linear-gradient(180deg,#22c55e,#15803d); border:1px solid #86efac; color:#0a0a0a }
+.btn:disabled{ opacity:.4; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+.help{ color:var(--muted); font-weight:600; margin: 8px 0; }
+#backBtn{ display:none !important }
+
+.grid{ display:grid; gap:14px }
+.grid.cols-7{ grid-template-columns: repeat(7, minmax(0,1fr)); }
+@media (max-width:1200px){ .grid.cols-7{ grid-template-columns: repeat(6,1fr) } }
+@media (max-width:1040px){ .grid.cols-7{ grid-template-columns: repeat(5,1fr) } }
+@media (max-width:900px){ .grid.cols-7{ grid-template-columns: repeat(4,1fr) } }
+@media (max-width:680px){ .grid.cols-7{ grid-template-columns: repeat(3,1fr) } }
+@media (max-width:480px){ .grid.cols-7{ grid-template-columns: repeat(2,1fr) } }
+
+/* Estilos de Slots Circulares Nuevos */
+.slot{
+  position:relative; background:var(--tile); border:1px solid #3a0a17; border-radius:16px; padding:12px;
+  box-shadow:0 6px 18px rgba(0,0,0,.35); transition:transform .25s ease, box-shadow .25s ease;
+  width:auto; display:inline-block; vertical-align:top; margin:6px; animation: fadeUp .45s ease;
+}
+.slot:hover{ transform:translateY(-5px); box-shadow:0 12px 24px rgba(0,0,0,.5); }
+.icon{
+  position:relative; width:120px; height:120px; aspect-ratio:1/1; border-radius:50%;
+  background:linear-gradient(180deg,#2b0010,#120007); border:3px solid #531122;
+  display:grid; place-items:center; overflow:hidden; margin:0 auto 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+.icon img{ position:relative; z-index:0; width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; }
+.icon .placeholder{ position:absolute; font-size:22px; font-weight:800; color:#ff99b3; z-index:1; }
+.slot .name{ font-weight:800; font-size:14px; text-align:center; margin:4px 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.slot select{
+  width:100%; height:34px; padding:0 8px; border:1px solid #531122; border-radius:10px; background:#1a0009; color:#ffdfe9;
+  font-weight:700; font-size:13px; outline:none;
+}
+
+.tag{ display:inline-block; padding:4px 10px; border-radius:999px; font-weight:900; font-size:11px; border:1px solid #333; margin-left:6px; text-transform: uppercase; }
+.tag.rosa{ background:#5b003a; color:#ff66cc; border-color:#7a0050 }
+.tag.dorado{ background:#4d3900; color:#ffd700; border-color:#6b5200 }
+.tag.rojo{ background:#4a0000; color:#ff5a5a; border-color:#7a0000 }
+.tag.naranja{ background:#5c2400; color:#ff944d; border-color:#803300 }
+.tag.morado{ background:#2b005c; color:#b566ff; border-color:#3d0080 }
+
+.chips{ display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0; }
+.pill{ display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:50px; background:#1d000d; border:1px solid #4a0c1e; font-weight:700; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+.av-mini{ width:32px; height:32px; border-radius:50%; object-fit:cover; background:#531122; display:block; border: 1px solid rgba(255,255,255,0.15); }
+.small{ font-size:12px; color:#9aa0a6; margin-left: 4px; }
+
+/* Track Record Table */
+.trk{ overflow:auto; background:#0f0108; border:1px solid #3a0a17; border-radius:14px; padding:8px; }
+.table{ border-collapse:collapse; width:100%; min-width:1040px; table-layout:auto }
+.table th, .table td{ border:1px solid #2f2f35; padding:0; text-align:center; font-weight:800; font-size:13px; color:#e5e7eb }
+.table th{ background:#1c0a12; height:34px; padding:0 8px; white-space:nowrap; }
+.table th.participant-head{ min-width:250px; width:280px; text-align:left; }
+.table th.episode-head{ width:58px; }
+.cell{ border-radius:0; display:flex; width:100%; min-width:52px; padding:0 4px; height:100%; min-height:var(--trk-row); line-height:1; font-weight:900; text-align:center; align-items:center; justify-content:center; }
+.cell.win { background:var(--tr-win); color:#ffffff }
+.cell.top2 { background:var(--tr-top2); color:#2b1700 }
+.cell.btm4 { background:var(--tr-btm4); color:#000 }
+.cell.btm5 { background:var(--tr-btm5); color:#160500 }
+.cell.btm3 { background:var(--tr-btm3); color:#160500 }
+.cell.btm2 { background:var(--tr-btm2); color:#000 }
+.cell.high { background:var(--tr-high); color:#051620 }
+.cell.low  { background:var(--tr-low); color:#300018 }
+.cell.safe { background:var(--tr-safe); color:#111 }
+.cell.top4 { background:var(--tr-top4); color:#111 }
+.cell.elim { background:var(--tr-elim); color:#000; font-size:11px; }
+.cell.in   { background:var(--tr-in); color:#001d16 }
+.cell.out  { background:var(--tr-out); color:#fff }
+.cell.run  { background:#c0c0c0; color:#000; font-size:11px; }
+.cell.champ{ background:#ffd700; color:#000 }
+.cell.third{ background:#8dd7ff; color:#071521; font-size:11px; }
+.cell.fourth{ background:#c7a6ff; color:#160522; font-size:11px; }
+#trkBody tr{ height: var(--trk-row); }
+#trkBody td{ padding: 0; height: var(--trk-row); vertical-align: middle; background: transparent !important; }
+.cell.grey{ background: var(--trk-empty) !important; color: transparent !important; }
+.participant-cell{ min-width:250px; width:280px; padding:4px 8px !important; text-align:left !important; background:#160812 !important; }
+.tr-participant{ display:grid; grid-template-columns:34px 30px minmax(95px,1fr) auto auto; align-items:center; gap:8px; min-height:34px; }
+.rank-badge{ width:28px; height:24px; display:grid; place-items:center; border-radius:6px; background:#2a0c18; color:#ffdfe9; border:1px solid rgba(255,255,255,.12); font-size:12px; font-weight:900; }
+.rank-badge.empty{ color:transparent; }
+.tr-avatar{ width:30px; height:30px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,.18); background:#531122; }
+.tr-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:13px; }
+.tr-stars{ justify-self:end; color:#ffd700; font-size:12px; white-space:nowrap; }
+
+.toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:18px; z-index:1000; background:#000; color:#fff; font-weight:800; padding:10px 20px; border-radius:999px; box-shadow:0 8px 20px rgba(0,0,0,.6); display:none; }
+.toast.show{ display:block }
+.stage{ display:none }
+.stage.active{ display:block }
+
+.gift-row{ display:flex; gap:12px; align-items:center; padding:10px 14px; margin:10px 0; border:1px solid var(--glass-brd); border-radius:14px; background: rgba(255,255,255,.03); animation: fadeUp 0.3s ease; }
+.hide{ display:none !important; }
+.moment-row{ display:flex; gap:10px; align-items:center; padding:10px 12px; margin:8px 0; border:1px solid var(--glass-brd); border-radius:12px; background: rgba(255,255,255,.04); font-weight: 600; font-size: 14px; }
+
+/* Animaciones y UI Cinemática Mejorada */
+@keyframes fadeUp{ from{opacity:0; transform:translateY(15px) scale(.97)} to{opacity:1; transform:translateY(0) scale(1)} }
+@keyframes shineGlow { 0% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } 50% { box-shadow: 0 0 25px var(--brd-color); } 100% { box-shadow: 0 0 5px rgba(255,255,255,0.2); } }
+@keyframes slideAway { to { transform: translateX(-150px) scale(0); opacity: 0; } }
+@keyframes crownPop { 0% { transform: scale(0) translateY(-20px); opacity:0; } 70% { transform: scale(1.3) translateY(-10px); opacity:1; } 100% { transform: scale(1) translateY(0); opacity:1; } }
+@keyframes matchFight { 0% { transform: translateX(-10px); } 50% { transform: translateX(10px); } 100% { transform: translateX(0); } }
+@keyframes stageSweep { to { transform: rotate(360deg); } }
+@keyframes bracketPulse { 0%,100%{ box-shadow:0 8px 18px rgba(0,0,0,.28); } 50%{ box-shadow:0 0 24px rgba(255,215,0,.32); } }
+
+.cinematic-panel{ width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding: 20px 0; }
+.choice-title{ font-size: 26px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; background: linear-gradient(90deg, #ff99b3, #ff3b6a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.choice-sub{ font-size: 14px; color: var(--muted); margin-bottom: 24px; font-weight: 600; }
+.big-choice-wrap{ display:flex; gap:28px; justify-content:center; align-items:center; flex-wrap:wrap; margin:16px auto; width:100%; }
+
+.splash-stage{ min-height:calc(100vh - 120px); align-items:center; justify-content:center; }
+.stage.splash-stage{ display:none; }
+.stage.splash-stage.active{ display:flex; }
+.splash-frame{ width:min(980px, 100%); display:flex; flex-direction:column; align-items:center; gap:22px; text-align:center; }
+.intro-media{ width:min(920px, 96vw); min-height:360px; max-height:68vh; display:grid; place-items:center; border-radius:16px; background:rgba(0,0,0,.24); border:1px solid rgba(255,255,255,.12); box-shadow:0 24px 70px rgba(0,0,0,.55); overflow:hidden; }
+.intro-media img{ width:100%; height:100%; max-height:68vh; object-fit:contain; display:block; }
+.intro-media.missing-art{ background:linear-gradient(135deg, rgba(255,59,106,.22), rgba(147,51,234,.18)), #0d010a; }
+.intro-media.missing-art::after{ content:"SHOWDOWN"; font-size:46px; font-weight:900; color:#fff; letter-spacing:2px; }
+.tutorial-layout{ display:grid; grid-template-columns:minmax(0,1.1fr) minmax(260px,.9fr); gap:28px; align-items:center; width:100%; text-align:left; }
+.tutorial-copy{ display:grid; gap:14px; }
+.tutorial-card{ border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.22); border-radius:8px; padding:14px 16px; }
+.tutorial-card h4{ margin:0 0 6px; color:#ffe8a8; text-transform:uppercase; letter-spacing:.6px; }
+.tutorial-card p{ margin:0; color:#dbe4f0; line-height:1.45; font-weight:600; }
+.tutorial-art{ width:100%; min-height:320px; object-fit:contain; border-radius:14px; background:rgba(0,0,0,.2); border:1px solid rgba(255,255,255,.1); }
+.season-size-panel{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin:18px 0 8px; }
+.choice-radio-card{ min-width:220px; display:flex; align-items:center; gap:10px; padding:14px 18px; border-radius:8px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); font-weight:900; cursor:pointer; }
+.choice-radio-card input{ transform:scale(1.25); }
+@media (max-width:820px){
+  .tutorial-layout{ grid-template-columns:1fr; text-align:center; }
+  .tutorial-copy{ text-align:left; }
+  .splash-image{ max-height:58vh; }
+}
+
+/* Estilo Mejorado Elegante y Limpio de Selección de Top 2 */
+.clean-circle-card {
+  display: flex; flex-direction: column; align-items: center; cursor: pointer; position: relative; width: 160px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.clean-circle-card .circle-wrapper {
+  width: 140px; height: 140px; border-radius: 50%; border: 4px solid rgba(255, 255, 255, 0.1); overflow: hidden; position: relative; box-shadow: 0 8px 20px rgba(0,0,0,0.4); transition: all 0.3s ease;
+}
+.clean-circle-card .circle-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+.clean-circle-card:hover .circle-wrapper { transform: translateY(-5px); }
+.clean-circle-card:hover .circle-wrapper img { transform: scale(1.08); }
+.clean-circle-card .label-name { margin-top: 12px; font-weight: 800; font-size: 15px; text-align: center; letter-spacing: 0.3px; color: var(--ink); }
+.clean-circle-card.selected .circle-wrapper { border-color: var(--brd-color) !important; --shadow-color: var(--brd-color); animation: shineGlow 1.5s infinite ease-in-out; transform: scale(1.05); }
+
+/* Spotify Widget Real */
+.spotify-player {
+  width: 100%; max-width: 460px; min-height:152px; border-radius:14px; overflow:hidden;
+  background:#000; border:1px solid #282828; box-shadow:0 10px 28px rgba(0,0,0,.65);
+  margin:20px auto; animation:fadeUp .5s ease; position:relative;
+}
+.spotify-player iframe{ width:100%; height:152px; border:0; display:block; border-radius:14px; background:#000; }
+
+/* Lipsync Stage Background Effects */
+.lipsync-arena { width: 100%; min-height: 280px; display: flex; justify-content: center; align-items: center; gap: clamp(18px, 4vw, 60px); margin: 20px 0; position: relative; flex-wrap:wrap; padding:18px; }
+.lipsync-fighter { display: flex; flex-direction: column; align-items: center; position: relative; transition: all 0.5s ease; }
+.lipsync-fighter .fighter-avatar { width: 150px; height: 150px; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); object-fit: cover; }
+.lipsync-fighter .fighter-name { font-weight: 800; font-size: 16px; margin-top: 10px; }
+.lipsync-vs{ font-size:32px; font-weight:800; font-style:italic; color:#ff3b6a; z-index:10; }
+.lipsync-arena.active-battle { background: radial-gradient(circle at 50% 15%, rgba(255,255,255,.12), transparent 28%), rgba(0,0,0,0.58); border-radius: 16px; box-shadow: inset 0 0 55px rgba(0,0,0,0.9), 0 0 28px rgba(255,59,106,.16); overflow:hidden; }
+.lipsync-arena.active-battle::before { content:''; position:absolute; inset:-20%; background: conic-gradient(from 90deg, transparent 0 12%, rgba(255,220,120,.18) 14%, transparent 24%, transparent 50%, rgba(255,59,106,.16) 56%, transparent 66%); border-radius:16px; pointer-events: none; animation: stageSweep 4.8s linear infinite; }
+.lipsync-arena.active-battle::after { content:''; position:absolute; inset:0; background: linear-gradient(90deg, rgba(0,0,0,.38), transparent 25% 75%, rgba(0,0,0,.38)); pointer-events:none; }
+.lipsync-fighter.match-anim { animation: matchFight 0.15s infinite alternate; }
+.lipsync-fighter.run-away { animation: slideAway 0.6s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045); }
+.lipsync-crown { position: absolute; top: -35px; width: 50px; height: 50px; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ffd700"><path d="M2 22h20v-2H2v2zm1-4h18V9l-4 4-5-8-5 8-4-4v9z"/></svg>'); background-size: contain; background-repeat: no-repeat; animation: crownPop 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+/* Marcador Espejo de Votos Estilo Horizontal Odometer */
+.mirror-container { width:100%; background: linear-gradient(135deg, #1f0518 0%, #0d010a 100%); border: 2px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; margin: 18px 0; min-height: 240px; position: relative; }
+.mirror-canvas { width: 100%; font-family: 'Rubik'; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 120px; text-shadow: 0 0 10px rgba(255,59,106,0.8); color: #ff3b6a; font-weight: 800; font-size: 28px; font-style: italic; text-align: center; }
+.odometer-board { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; }
+.odo-card { background: #15020d; border: 1px solid #3d0a1b; border-radius: 8px; width: 130px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center; }
+.odo-name { background: var(--grp-color, #ff2a5b); color: #fff; font-weight: 800; font-size: 11px; padding: 4px 6px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.odo-counter { font-size: 32px; font-weight: 800; font-family: monospace; padding: 8px 0; color: #fff; background: #080005; display: flex; justify-content: center; align-items: center; overflow: hidden; height: 50px; }
+.odo-digit { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+/* Nueva Pantalla de Semifinales */
+.semis-title-main { font-size: 38px; font-weight: 800; letter-spacing: 2px; text-align: center; color: #fff; text-transform: uppercase; margin-bottom: 24px; text-shadow: 0 0 15px rgba(255,255,255,0.4); }
+.semis-grid { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.semis-bracket-column { display: flex; flex-direction: column; gap: 14px; width: 300px; background: rgba(0,0,0,0.2); padding: 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
+.semis-box-row { display: flex; align-items: center; height: 80px; background: var(--bg-bracket, #333); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative; box-shadow: 0 6px 14px rgba(0,0,0,0.25); }
+.semis-box-row .char-img { width: 85px; height: 100%; object-fit: contain; object-position: left bottom; background: transparent; display: block; position: absolute; left: 0; bottom: 0; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); }
+.semis-box-row .char-info { margin-left: 95px; flex: 1; padding-right: 10px; display: flex; flex-direction: column; justify-content: center; }
+.semis-box-row .char-name { font-weight: 800; font-size: 14px; text-transform: uppercase; color: #fff; line-height: 1.2; }
+.semis-box-row.empty-slot { opacity: 0.3; justify-content: center; align-items: center; border: 2px dashed rgba(255,255,255,0.2); background: transparent !important; }
+.semis-box-row.empty-slot .char-name { font-size: 24px; text-align: center; width: 100%; color: rgba(255,255,255,0.4); }
+
+/* Nueva Pantalla del Esquema de Torneo de la Gran Final */
+.final-tournament-container {
+  display:grid; grid-template-columns:minmax(240px,1fr) minmax(240px,1fr) minmax(220px,.8fr);
+  gap:34px; position:relative; width:100%; padding:30px 18px; margin:0 auto; overflow-x:auto;
+  background: linear-gradient(90deg, rgba(170,92,18,.18), rgba(196,45,172,.14), rgba(14,150,160,.16));
+  border:1px solid rgba(255,255,255,.12); border-radius:18px; box-shadow:inset 0 0 60px rgba(0,0,0,.45);
+}
+.tournament-column { display:flex; flex-direction:column; justify-content:center; gap:28px; min-height:430px; position:relative; z-index:2; }
+.tournament-column h4{ margin:0; text-align:center; color:#ffe8a8; letter-spacing:1px; text-transform:uppercase; }
+.tournament-column.col-left, .tournament-column.col-mid, .tournament-column.col-right { width:auto; }
+.tournament-column.col-right { align-items:center; justify-content:center; }
+.tournament-matchup { display:flex; flex-direction:column; gap:9px; margin:0; background:rgba(0,0,0,.24); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,.12); position:relative; box-shadow:0 8px 18px rgba(0,0,0,.28); }
+.tournament-matchup::after{ content:""; position:absolute; top:50%; right:-34px; width:34px; height:2px; background:rgba(255,255,255,.55); }
+.tournament-column.col-mid .tournament-matchup::after{ right:-34px; }
+.tournament-column.col-right .tournament-matchup::after{ display:none; }
+.tournament-matchup.pending{ opacity:.28; filter:grayscale(.6); }
+.tournament-matchup.hidden-phase{ opacity:0; transform:translateX(-18px); pointer-events:none; }
+.tournament-matchup.revealed{ opacity:1; transform:translateX(0); transition:opacity .45s ease, transform .45s ease; }
+.tournament-plate { height:42px; background:linear-gradient(180deg, #ffeaa4, #b78613); color:#221300; font-weight:900; font-size:13px; display:flex; align-items:center; padding:0 12px; border-radius:5px; border:1px solid rgba(255,255,255,.9); box-shadow:0 5px 13px rgba(0,0,0,.34); text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:relative; font-style:italic; }
+.tournament-plate.winner-plate{ background:linear-gradient(180deg,#7cffb0,#22c55e); color:#001d0a; box-shadow:0 0 18px rgba(34,197,94,.32); }
+.final-crown-spot .tournament-plate.winner-plate{ background:linear-gradient(180deg,#fff4b8,#ffd700); color:#2b1700; box-shadow:0 0 18px rgba(255,215,0,.3); }
+.tournament-plate.loser-plate { filter: grayscale(1) opacity(0.4); }
+.tournament-plate .seed-num { font-size: 10px; opacity: 0.7; margin-right: 6px; background: rgba(0,0,0,0.15); padding: 2px 5px; border-radius: 3px; }
+.tournament-matchup.selecting{ animation:bracketPulse 1s ease-in-out infinite; border-color:rgba(255,215,0,.5); }
+.tournament-status{ min-height:26px; color:#ffe8a8; font-weight:900; text-transform:uppercase; letter-spacing:.5px; }
+.final-crown-spot { display:flex; flex-direction:column; align-items:center; text-align:center; opacity:.35; transform:scale(.95); transition:opacity .45s ease, transform .45s ease; }
+.final-crown-spot.revealed{ opacity:1; transform:scale(1); }
+.final-crown-spot img { width:110px; height:110px; filter:drop-shadow(0 0 22px rgba(255,215,0,.62)); margin-bottom:12px; animation:crownPop .75s ease both; }
+.svg-connectors { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:1; opacity:.35; }
+.svg-connectors path { stroke: rgba(255, 215, 0, 0.2); stroke-width: 2; fill: none; }
+.svg-connectors path.active-path { stroke: #ffd700; stroke-width: 3; filter: drop-shadow(0 0 4px #ffd700); }
+@media (max-width:820px){
+  .final-tournament-container{ grid-template-columns:1fr; gap:18px; }
+  .tournament-column{ min-height:auto; }
+  .tournament-matchup::after{ display:none; }
+}
+
+/* Corte de estrellas */
+.star-cut-board{ display:flex; flex-direction:column; gap:22px; width:100%; align-items:center; }
+.star-cut-row{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; width:100%; }
+.star-cut-card{ width:150px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:12px; border-radius:14px; background:rgba(0,0,0,.24); border:1px solid rgba(255,255,255,.12); animation:fadeUp .45s ease both; }
+.star-cut-card .circle-wrapper{ width:104px; height:104px; border-radius:50%; overflow:hidden; border:4px solid rgba(255,255,255,.16); background:#21000d; }
+.star-cut-card img{ width:100%; height:100%; object-fit:cover; display:block; }
+.star-cut-rank{ font-size:13px; font-weight:900; color:#ffe8a8; text-transform:uppercase; }
+.star-cut-name{ font-size:13px; font-weight:900; text-transform:uppercase; text-align:center; line-height:1.15; }
+.star-cut-stars{ color:#ffd700; font-size:12px; font-weight:800; }
+.star-cut-card.eliminated{ filter:grayscale(.25); border-color:rgba(225,29,72,.55); }
+.star-cut-card.top4{ border-color:rgba(34,197,94,.7); box-shadow:0 0 18px rgba(34,197,94,.18); }
+
+.elim-decision-grid{ display:grid; grid-template-columns:minmax(220px,.8fr) minmax(260px,1.2fr); gap:24px; width:100%; align-items:stretch; margin-top:16px; }
+.decision-panel{ border:1px solid rgba(255,255,255,.12); background:rgba(0,0,0,.22); border-radius:8px; padding:18px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; min-height:250px; }
+.decision-heading{ color:#ffe8a8; font-weight:900; text-transform:uppercase; letter-spacing:.8px; font-size:13px; }
+.decision-avatar{ width:128px; height:128px; border-radius:50%; object-fit:cover; border:4px solid #ffd700; background:#21000d; }
+.nominee-row{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; width:100%; }
+.nominee-card{ width:118px; display:flex; flex-direction:column; align-items:center; gap:8px; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.04); }
+.nominee-card img{ width:82px; height:82px; border-radius:50%; object-fit:cover; border:3px solid rgba(255,255,255,.18); background:#21000d; }
+.nominee-card.elim-picked{ border-color:#ff3b6a; box-shadow:0 0 22px rgba(255,59,106,.24); }
+.bonju-speech{ display:flex; gap:12px; align-items:flex-start; text-align:left; padding:14px; border-radius:8px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); width:100%; }
+.bonju-speech img{ width:48px; height:48px; border-radius:50%; object-fit:cover; background:#21000d; }
+.speech-text{ font-weight:800; line-height:1.42; color:#ffdfe9; }
+.lipstick-reveal{ min-height:72px; display:grid; place-items:center; width:100%; }
+.lipstick-card{ display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:999px; background:linear-gradient(180deg,#fff,#ffd6e1); color:#330011; border:2px solid #ff3b6a; font-weight:900; box-shadow:0 10px 28px rgba(0,0,0,.35); transform:rotate(-2deg); }
+@media (max-width:820px){ .elim-decision-grid{ grid-template-columns:1fr; } }
+</style>
+<link rel="stylesheet" href="/showdown/solo/solo.css"></head>
+<body>
+<header class="wrap glass header">
+ <div class="brand">
+    <div class="logo rect"><img src="/transparent/showdown.png" alt="Logo"></div>
+    <div class="h1">The Xpedition — Showdown</div>
+    <div class="step-indicator" id="stepName">Especial de Reunión</div>
+  </div>
+  <div class="control-bar" style="margin-top:0;">
+    <button class="btn" id="homeBtn" type="button">THE XPEDITION - PÁGINA</button>
+    <button class="btn primary" id="nextBtn" disabled>Continuar →</button>
+  </div>
+</header>
+
+<!-- PORTADA INICIAL -->
+<section class="wrap glass stage active splash-stage" id="stage-splash">
+  <div class="splash-frame">
+    <div class="intro-media">
+      <img src="/showdown/art/entrance.webp" alt="Showdown inicio" onerror="this.remove(); this.parentElement.classList.add('missing-art');">
+    </div>
+    <button class="btn primary" id="playIntroBtn" type="button" style="min-width:180px;">Jugar</button>
+  </div>
+</section>
+
+<!-- TUTORIAL / CONFIGURACION INICIAL -->
+<section class="wrap glass stage" id="stage-tutorial">
+  <div class="cinematic-panel" style="align-items:stretch;">
+    <div class="choice-title" style="text-align:center;">Formato Showdown</div>
+    <div class="choice-sub" style="text-align:center;">Compite por brackets, suma estrellas, sobrevive a los cortes y gana el torneo final.</div>
+    <div class="tutorial-layout">
+      <div class="tutorial-copy">
+        <div class="tutorial-card">
+          <h4>Brackets</h4>
+          <p>El elenco se divide en tres brackets. Cada bracket juega tres episodios y las estrellas deciden quienes siguen en carrera.</p>
+        </div>
+        <div class="tutorial-card">
+          <h4>Estrellas</h4>
+          <p>Los ganadores de cada episodio reciben estrellas, además de efrentarse por una estrella más, quienes no ganan pueden regalar estrellas.</p>
+        </div>
+        <div class="tutorial-card">
+          <h4>Semifinal y Final</h4>
+          <p>Una vez superados los brackets, los concursantes clasificados se enfrentan en las Semifinales. Los vencedores avanzarán a la Gran Final, donde el título se decidirá en duelos.</p>
+        </div>
+      </div>
+      <img class="tutorial-art" src="/showdown/art/main-stage.webp" alt="Tutorial Showdown" onerror="this.src='/transparent/showdown.png';">
+    </div>
+    <div class="season-size-panel" aria-label="Tamano de temporada">
+      <label class="choice-radio-card">
+        <input type="radio" name="castSize" value="18" checked> Temporada de 18 Participantes
+      </label>
+      
+    </div>
+    <div style="text-align:center;">
+      <button class="btn primary" id="startCastBtn" type="button">Elegir elenco</button>
+    </div>
+  </div>
+</section>
+
+<!-- PASO 1: CAST -->
+<section class="wrap glass stage" id="stage-1">
+  <h3 class="help" id="castTitle">Elenco (elige 18 participantes)</h3>
+  <div class="grid cols-7" id="castGrid"></div>
+  <div class="control-bar">
+    <span class="help" id="castCountHelp">0/18 seleccionados</span>
+    <button class="btn" id="randomCast">Random</button>
+  </div>
+</section>
+
+<!-- PASO 2: SELECCIÓN DE FORMATOS -->
+<section class="wrap glass stage" id="stage-format">
+  <div class="cinematic-panel">
+    <div class="choice-title">Configuración del Formato</div>
+    <div class="choice-sub">Elige cuántos participantes avanzan por bracket a la semifinal.</div>
+    <div id="formatOptions" style="margin: 20px 0; display: flex; gap: 30px; justify-content: center; flex-wrap:wrap;">
+      <label data-format-option="3" style="font-weight: 800; font-size: 18px; cursor: pointer; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px;">
+        <input type="radio" name="advCount" value="3" checked style="transform: scale(1.3);"> Avanzan 3 por Bracket
+      </label>
+      <label data-format-option="2" style="font-weight: 800; font-size: 18px; cursor: pointer; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px;">
+        <input type="radio" name="advCount" value="2" style="transform: scale(1.3);"> Avanzan 2 por Bracket      </label>
+      <label data-format-option="4" style="font-weight: 800; font-size: 18px; cursor: pointer; background: rgba(255,255,255,0.05); padding: 16px 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 10px;">
+        <input type="radio" name="advCount" value="4" style="transform: scale(1.3);"> Avanzan 4 por Bracket
+      </label>
+    </div>
+    <button class="btn primary" id="confirmFormat" style="margin-top: 10px;">Continuar con Formato</button>
+  </div>
+</section>
+
+<!-- PASO 3: DISTRIBUCIÓN GRUPAL INDIVIDUALIZADA -->
+<section class="wrap glass stage" id="stage-distribution">
+  <div class="cinematic-panel" style="align-items: stretch; text-align: left;">
+    <h2 id="distHeaderTitle" style="font-weight:800; margin:0 0 4px 0;">Distribuye al Bracket</h2>
+    <p class="help" style="margin-bottom: 20px;">Elige los concursantes que participaran en este grupo para continuar.</p>
+    <div class="grid" style="grid-template-columns: repeat(6, 1fr);" id="distributionSlotsGrid"></div>
+    <div class="control-bar" style="justify-content: flex-end; margin-top: 24px;">
+      <button class="btn" id="distRandomBtn">Random</button>
+      <button class="btn" id="distClearBtn">Vaciar</button>
+      <button class="btn green" id="distContinueBtn" disabled>Continuar</button>
+    </div>
+  </div>
+</section>
+
+<!-- RETOS Y SIMULACIÓN GENERAL -->
+<section class="wrap glass stage" id="stage-3">
+  <h3 class="help" id="epTitle">Episodio 1</h3>
+  <div class="help" id="epHelp"></div>
+  <div class="control-bar">
+    <select id="challengeSelect" style="height:40px; padding:0 12px; border-radius:12px; border:1px solid #531122; background:#1a0009; color:#ffdfe9; font-weight:700;">
+      <option value="">— Tipo de reto —</option>
+      <option>Rápidez</option><option>Estrategia</option><option>Creatividad</option><option>Inteligencia</option>
+      <option>Agilidad</option><option>Búsqueda</option><option>Duelos</option><option>Moda</option>
+      <option>Música</option><option>Cultura & Conocimiento</option><option>Show de Talentos</option>
+      <option>Rap</option><option>Town of Salem</option><option>Noticiero</option>
+      <option>Suerte</option><option>Bonju Chef</option><option>¿Quién mató a Bonju?</option><option>Bonju Drag Race</option><option>Top Model</option>
+      <option>Wipeout 💦</option><option>Expedición Turística en la Antártida</option><option>Batalla de Baile</option>
+      <option>Covers</option><option>Sillas Musicales</option><option>Entrevista de Trabajo</option><option>Romper Hielos</option><option>La Bomba</option>
+    </select>
+    <button class="btn" id="randomChallenge">Random</button>
+    <button class="btn primary" id="runChallenge" disabled>Generar reto</button>
+  </div>
+  <div class="chips" id="challengeSummary" style="margin-top:6px"></div>
+  
+  <div id="winnersBox" class="hide">
+    <div class="chips" id="winnersChips" style="flex-direction: column; align-items: flex-start;"></div>
+    <div class="chips" id="btmChips" style="flex-direction: column; align-items: flex-start;"></div>
+    <div id="momentsBox" class="hide">
+      <h4 class="help" id="momentsTitle">Momentos del Episodio</h4>
+      <div id="momentsList"></div>
+    </div>
+    <div id="giftBox" class="hide">
+      <h4 class="help">Regalo de Estrellas</h4>
+      <div id="giftList"></div>
+    </div>
+    <div class="chips" id="duelBox"></div>
+    <div class="control-bar"><button class="btn primary hide" id="toTrack">Ver Track Record →</button></div>
+  </div>
+</section>
+
+<!-- PASO DINÁMICO: SELECCIÓN DEL TOP 2 INTERACTIVO -->
+<section class="wrap glass stage" id="stage-top2">
+  <div class="cinematic-panel">
+    <div class="choice-title" id="selectionTitle">ELIGE EL TOP 2</div>
+    <div class="choice-sub" id="selectionSub">Selecciona ordenadamente a 2 participantes de las 3 mejores para activar el Lipsync</div>
+    <div id="top2Choices" class="big-choice-wrap"></div>
+    <div class="control-bar" style="justify-content:center;margin-top:20px;">
+      <button class="btn" id="randomTop2" type="button">Random</button>
+      <button class="btn primary" id="confirmTop2" disabled>Confirmar</button>
+    </div>
+  </div>
+</section>
+
+<!-- ESCENARIO DINÁMICO REVELADO DE LIPSNC Y SPOTIFY -->
+<section class="wrap glass stage" id="stage-lipsync-arena">
+  <div class="cinematic-panel">
+    <div class="choice-title" style="color:#fff;">LIPSYNC BATTLE</div>
+    <div class="choice-sub" id="lipsyncTrackSub">Reproduciendo desde la playlist oficial</div>
+    <div class="lipsync-arena active-battle" id="arenaBox">
+      <div class="lipsync-fighter" id="fighter1">
+        <img src="" class="fighter-avatar" id="f1img">
+        <div class="fighter-name" id="f1name">Fighter 1</div>
+      </div>
+      <div class="lipsync-vs" id="vsLabel1">VS</div>
+      <div class="lipsync-fighter" id="fighter2">
+        <img src="" class="fighter-avatar" id="f2img">
+        <div class="fighter-name" id="f2name">Fighter 2</div>
+      </div>
+      <div class="lipsync-vs" id="vsLabel2" style="display:none;">VS</div>
+      <div class="lipsync-fighter" id="fighter3" style="display:none;">
+        <img src="" class="fighter-avatar" id="f3img">
+        <div class="fighter-name" id="f3name">Fighter 3</div>
+      </div>
+    </div>
+    <div class="spotify-player" id="spotifyWidget"></div>
+    <button class="btn primary" id="arenaContinueBtn" style="margin-top:14px;">Continuar</button>
+  </div>
+</section>
+
+<!-- PANTALLA ESPECIAL: REGALO DE ESTRELLAS EN EL ESPEJO -->
+<section class="wrap glass stage" id="stage-mirror-votes">
+  <div class="cinematic-panel" style="align-items:stretch;">
+    <div class="choice-title" style="text-align:center;">Votos en el Espejo</div>
+    <div class="choice-sub" style="text-align:center;">Las eliminadas escriben en el espejo su decisión para regalar estrellas</div>
+    <div class="mirror-container">
+      <div class="mirror-canvas" id="mirrorText">...</div>
+      <div class="odometer-board" id="odoBoard"></div>
+    </div>
+    <div style="text-align:center;">
+      <button class="btn primary" id="mirrorContinueBtn">Continuar a Resultados del Corte</button>
+    </div>
+  </div>
+</section>
+
+<!-- PANTALLA DECISION DE ELIMINACION AVANZAN 4 -->
+<section class="wrap glass stage" id="stage-adv4-elimination">
+  <div class="cinematic-panel" style="align-items:stretch;">
+    <div class="choice-title" style="text-align:center;">Decision de Eliminacion</div>
+    <div class="choice-sub" style="text-align:center;">La persona ganadora del lipsync decide quien abandona la competencia.</div>
+    <div class="elim-decision-grid">
+      <div class="decision-panel" id="adv4WinnerPanel"></div>
+      <div class="decision-panel">
+        <div class="decision-heading">Bottom 3 nominados</div>
+        <div class="nominee-row" id="adv4Nominees"></div>
+        <div class="bonju-speech">
+          <img src="/showdown/art/bonju.webp" alt="Bonju">
+          <div class="speech-text" id="adv4BonjuText"></div>
+        </div>
+        <div class="lipstick-reveal" id="adv4LipstickReveal"></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn primary" id="adv4DecisionContinue" disabled>Revelando decision...</button>
+    </div>
+  </div>
+</section>
+
+<!-- PANTALLA CORTE DE ESTRELLAS TOP 4 -->
+<section class="wrap glass stage" id="stage-star-cut">
+  <div class="cinematic-panel" style="align-items:stretch;">
+    <div class="choice-title" style="text-align:center;">Corte de Estrellas</div>
+    <div class="choice-sub" style="text-align:center;">Bonju revela del puesto 10 al 5 antes de anunciar el Top 4</div>
+    <div class="star-cut-board">
+      <div class="star-cut-row" id="starCutElims"></div>
+      <div class="star-cut-row" id="starCutTop4"></div>
+    </div>
+    <div style="text-align:center;margin-top:22px;">
+      <button class="btn primary" id="starCutContinueBtn" disabled>Ver Track Record</button>
+    </div>
+  </div>
+</section>
+
+<!-- NUEVA PANTALLA DE SEMIFINALES REVELADO -->
+<section class="wrap glass stage" id="stage-semifinals-reveal">
+  <div class="cinematic-panel">
+    <div class="semis-title-main">SEMI-FINALS</div>
+    <div class="semis-grid" id="semisRevealGrid"></div>
+    <button class="btn primary" id="semisRevealContinueBtn" style="margin-top:30px; width:220px;">Continuar Competencia</button>
+  </div>
+</section>
+
+<!-- PANTALLA DE REINGRESO / COMODÍN -->
+<section class="wrap glass stage" id="stage-return">
+  <div class="cinematic-panel">
+    <div class="choice-title">REGRESA AL JUEGO</div>
+    <div class="choice-sub">Elige 1 participante eliminado para volver a la competencia</div>
+    <div id="returnChoices" class="big-choice-wrap"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn primary" id="confirmReturn" disabled>Confirmar Regreso</button>
+    </div>
+  </div>
+</section>
+
+<!-- NUEVA PANTALLA ESQUEMA DE TORNEO GRAN FINAL -->
+<section class="wrap glass stage" id="stage-final-tournament">
+  <div class="cinematic-panel" style="position:relative;">
+    <div class="choice-title">Árbol de Torneo — Gran Final</div>
+    <div class="choice-sub">Estructura de eliminación directa de la temporada</div>
+    <div class="final-tournament-container" id="tournamentContainer">
+      <svg class="svg-connectors" id="tournamentSvg"></svg>
+      <div class="tournament-column col-left" id="tourneyCol1"></div>
+      <div class="tournament-column col-mid" id="tourneyCol2"></div>
+      <div class="tournament-column col-right" id="tourneyCol3">
+        <div class="final-crown-spot">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'><path d='M2 22h20v-2H2v2zm1-4h18V9l-4 4-5-8-5 8-4-4v9z'/></svg>">
+          <div class="tournament-plate" id="championPlate" style="background:linear-gradient(180deg,#fff,#ffd700); border-color:#fff; font-size:15px; height:48px;">Ganadora</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn primary" id="tourneyContinueBtn" style="margin-top:20px;">Ver Tabla Final de Posiciones</button>
+  </div>
+</section>
+
+<!-- PANTALLA TRACK RECORD GLOBAL -->
+<section class="wrap glass stage" id="stage-6">
+  <h3 class="help" id="trTitle">Track Record — Episodio 1</h3>
+  <div class="trk">
+    <table class="table" id="trkTable">
+      <thead id="trkHead"></thead>
+      <tbody id="trkBody"></tbody>
+    </table>
+  </div>
+  <div class="control-bar">
+    <button class="btn primary" id="nextEpisode">Siguiente episodio →</button>
+    <button class="btn" id="restartSim" style="display:none">SIMULAR DE NUEVO</button>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ALL_PARTICIPANTS = (parent.ShowdownSoloHost?.characters||[]).map(c=>c.name);
+
+const SPOTIFY_TRACKS = Array.from(new Set([
+  "5IxmmHkTSS5tY7FBOdEfES",
+  "0COqiPhxzoWICwFCS4eZcp",
+  "2ZcwbSYqc8RfPGMMXTIdb0",
+  "49FYlytm3dAAraYgpoJZux",
+  "2zMJN9JvDlvGP4jB03l1Bz",
+  "29CFPJaBW3ZfVeCI8EDnQa",
+  "3oHNJECGN3bBoGXejlw2b1",
+  "02XnQdf7sipaKBBHixz3Zp",
+  "3850dYVgOFIXJh5U4BFEWH",
+  "3MjUtNVVq3C8Fn0MP3zhXa",
+  "6Xp2Zm2sJLdODReZWBBifO",
+  "2K1MhduqSRF4Q2agqEtnEh",
+  "40BMhtMftfk75NKehIOXkB",
+  "0xRDqhYsCW6F9LM4s7gY5z",
+  "11C4y2Yz1XbHmaQwO06s9f",
+  "5HOpkTTVcmZHnthgyxrIL8",
+  "0tA2ZGTKs70xE75roJ1QmN",
+  "1Je1IMUlBXcx1Fz0WE7oPT",
+  "3JTMWdhcJPiegDSe7SvZS3",
+  "3WXhshrs1fzwF3rQE399Gq",
+  "5I1n0DGvK1BXdy9hf6wqNW",
+  "58HvfVOeJY7lUuCqF0m3ly",
+  "3nIrIytGbcXAK7huhwiXiW",
+  "21pySLskKIKrhDziCX5ojQ",
+  "0ny5zITdmyNwyTPVzRGscU",
+  "3fptXQbkawHJNXANV2y0t5",
+  "3fptXQbkawHJNXANV2y0t5",
+  "40bm28QcJT5My540ymSQ2y",
+  "1mvZErZBp7WZT3HfGBykao",
+  "44MuEHdlociG8KjhPhOVw5",
+  "2r6DdaSbkbwoPzuK6NjLPn",
+  "6ie2Bw3xLj2JcGowOlcMhb",
+  "0qMAJBLMTshMx03CJkJl6O",
+  "0mrawlgSrnmAoGxc8uG1mI",
+  "0yKznHFSb0CYfMb5kSLw8h",
+  "1a19jsjG2DvbN1fVJonKUU",
+  "5ZdqVCiXrvMGpY8cux5g8t",
+  "7HUhMOrlvwBPfBq3c0ajh0",
+  "4VrWlk8IQxevMvERoX08iC",
+  "1kXmApTm4wonqscYBoLwxj",
+  "2DuaKXVHCHSSTTeOnYSMG9",
+  "78qd8dvwea0Gosb6Fe6j3k",
+  "0sUyqewVzwv0e5tK3hS6vJ",
+  "7wuJGgpTNzbUyn26IOY6rj",
+  "7feSbMqJGg9yL0s6ypxy9S",
+  "7jk7gqyEonmVVYahZN5zhW",
+  "7DXGKFjM7GNkJd32oXstGY",
+  "6KBYefIoo7KydImq1uUQlL",
+  "3j4AWNKYVeL9njKINCTzKm",
+  "4bczJ3GBiORXUoeJ1rdXV4",
+  "4Tn2llBm1g0UlWctmgPL8Z",
+  "4l2Edgdj4vla02GCh7YyAv",
+  "0yvPEnB032fojLfVluFjUv",
+  "6aXWmPvhTxblCCFVIwAnKP",
+  "2eHj0klWkwRQuIrNlPpCPa",
+  "1ot6jEe4w4hYnsOPjd3xKQ",
+  "2V4Bc2I962j7acQj1N0PiQ",
+  "3YVPpVJvJG2EauXurPA90F",
+  "0dfQwyoZoS9LgQiU6AJO7f",
+  "0lWcOHxfnxj1GlVr4zpnyD",
+  "1OutzYv6YiN93lrT3pJsWR",
+  "62LJFaYihsdVrrkgUOJC05",
+  "3S2R0EVwBSAVMd5UMgKTL0",
+  "1j15Ar0qGDzIR0v3CQv3JL",
+  "13MF2TYuyfITClL1R2ei6e",
+  "3FlOciKDqFlTMPeC7t92Qy",
+  "3E7ZwUMJFqpsDOJzEkBrQ7",
+  "0ny5zITdmyNwyTPVzRGscU",
+  "2He3NOyqtLNE3RQPpeDdSb",
+  "0cELvuwJW1acISUHYB6suj",
+  "76FZM38RC8XaAjJ77CVTNe",
+  "12KUFSHFgT0XCoiSlvdQi4",
+  "4p1PizAGdglm2sVvPuFPWs",
+  "6GlhdrhhpRzsBUrFvcXMqm",
+  "65UhJ76y8wMOVeN56O5Otu",
+  "4umN41ggyywUcvMbZxhcHR",
+  "45Ok4AREEWfPIBZ4ylCXK7",
+  "6UmXPaLkNGp0NvMaKeJ0oi",
+  "4l9fZ75WzPZlAIkqJIWlo8"
+])).map(id => ({ id }));
+
+const NEW_INTERACTIONS = [
+  { type: "single", text: "entra al episodio diciendo que no viene a hacer amistades y cinco minutos después está pidiendo abrazos porque nadie le guardó puesto." },
+  { type: "single", text: "promete jugar limpio, pero la cámara la graba escondiendo una pista debajo de una silla como si eso fuera estrategia nivel CIA." },
+  { type: "single", text: "SE CAGÓ DURANTE EL RETO. Bonju pausó todo, respiró profundo y fingió que eso también era parte del formato." },
+  { type: "single", text: "SE ORINÓ DURANTE EL RETO y luego intentó convencer a todos de que era agua del set. Nadie le creyó." },
+  { type: "single", text: "SE MURIÓ DURANTE EL RETO de manera inexplicable. Producción la revivió para que al menos pudiera recibir críticas." },
+  { type: "single", text: "miente en confesionario diciendo que tiene una alianza fuerte, pero en el fondo ni recuerda con quién habló hace diez minutos." },
+  { type: "single", text: "se queda mirando al vacío mientras los demás planean estrategias. Luego dice que estaba calculando probabilidades, pero estaba pensando en comida." },
+  { type: "single", text: "acusa a producción de editarla mal antes de que pase algo editable. La paranoia llegó temprano y con tacones." },
+  { type: "single", text: "finge estar triste por una eliminación futura que todavía no ocurrió, solo para ganar narrativa." },
+  { type: "single", text: "hace una promesa dramática frente a todos y la rompe en menos de siete minutos. Récord absoluto de descaro." },
+  { type: "single", text: "se esconde para escuchar conversaciones ajenas, pero estornuda tan fuerte que termina delatándose sola." },
+  { type: "single", text: "dice que no le importa ganar estrellas y acto seguido cuenta sus estrellas tres veces seguidas." },
+  { type: "vs", text: "le jura lealtad a {B} y en el mismo episodio vota en su contra con una sonrisa perfectamente ensayada." },
+  { type: "vs", text: "acusa a {B} de copiarle la estrategia. {B} responde que copiar esa estrategia sería autosabotaje." },
+  { type: "vs", text: "intenta hacer una alianza secreta con {B}, pero hablan tan duro que medio set se entera antes del corte comercial." },
+  { type: "vs", text: "le dice a {B} que confía plenamente en ella. La cámara corta a {A} diciendo en confesionario que no confía ni en su sombra." },
+  { type: "vs", text: "y {B} tienen una pelea absurda por una silla. Nadie sabe por qué empezó, pero todos tomaron partido." },
+  { type: "vs", text: "le inventa un rumor a {B}; {B} lo escucha, se ríe y decide hacerlo realidad solo por molestar." },
+  { type: "vs", text: "se enfrenta a {B} por comentarios pasivo-agresivos. {B} dice que no fueron pasivo-agresivos, fueron agresivos directos." },
+  { type: "vs", text: "hace quedar mal a {B} frente al grupo y luego intenta arreglarlo diciendo 'era broma'. No era broma." },
+  { type: "vs", text: "descubre que {B} contó un secreto suyo. La discusión escala tan rápido que Bonju solo mira al equipo de cámara como pidiendo ayuda." },
+  { type: "vs", text: "le roba protagonismo a {B} durante una explicación importante. {B} responde con una mirada que vale tres subtítulos." },
+  { type: "vs", text: "y {B} sellan una alianza que dura exactamente hasta que aparece la primera ventaja del episodio." },
+  { type: "vs", text: "intenta manipular a {B} con una historia triste. {B} se conmueve, pero igual no le cree nada." },
+  { type: "trio", text: "arma una alianza con {B} y {C}, pero cada una cree que es la líder. La alianza nace oficialmente condenada." },
+  { type: "trio", text: "y {C} acusan a {B} de jugar doble. {B} responde que no juega doble, juega triple." },
+  { type: "trio", text: "le piden a {B} que sea honesta. {B} dice una verdad tan innecesaria que {C} se arrepiente de haber preguntado." },
+  { type: "trio", text: "y {C} descubren que {B} les prometió exactamente lo mismo palabra por palabra. Ni se molestó en cambiar el guion." },
+  { type: "trio", text: "propone votar en bloque, pero {B} y {C} ya tenían un bloque aparte donde no la incluyeron." },
+  { type: "trio", text: "se une con {B} y {C} para desenmascarar una mentira, pero terminan encontrando tres mentiras nuevas." },
+  { type: "trio", text: "y {C} hacen una tregua temporal contra {B}. La tregua se rompe cuando aparece una estrella en juego." },
+  { type: "trio", text: "llora frente a {B} y {C}. Una se conmueve, la otra calcula si eso le conviene para el ranking." },
+  { type: "trio", text: "intenta dar un discurso motivacional a {B} y {C}, pero acaba sonando como amenaza elegante." },
+  { type: "trio", text: "y {C} revisan las cuentas de estrellas de {B} como si estuvieran auditando una empresa sospechosa." },
+  { type: "trio", text: "promete proteger a {B} y {C}, pero en el confesionario admite que solo protegerá a quien le sirva esta semana." },
+  { type: "trio", text: "y {C} hacen las paces con {B}; cinco segundos después ya están planeando cómo ganarle." }
+];
+
+const MOMENT_BANKS = {
+  bracket: [
+    { text: "cuenta las estrellas del bracket en voz baja; {B} lo/a escucha y cambia de asiento sin decir nada." },
+    { text: "tiene una fuerte pelea con {B}." },
+    { text: "falleció durante el episodio." },
+   { text: "quedó en embarazo durante las grabaciones del episodio." },
+    { text: "se beso con {B} detrás de cámaras para ganar una estrella." },
+    { text: "intenta manipular a {B} para que le regale una estrella." },
+    { text: "le ofrece a {B} no atacarse durante el bracket. {B} acepta, pero aún puede cambiar de opinión depende de cuantas estrellas tengan." },
+    { text: "nota que {B} esta demasiado tranquilo/a y empieza a convencer a {C} de que eso tambien es una estrategia." },
+    { text: "promete votar con el grupo; en confesionario admite que el grupo todavia no sabe que ella ya se fue por otro lado." },
+    { text: "se molesta porque {B} celebro demasiado fuerte su critica. La conversacion termina con sonrisas falsas y cero disculpas." },
+    { text: "intenta armar mayoria con {B} y {C}, pero cada uno sale de la charla con otra perspectiva." },
+    { text: "le recuerda a {B} una promesa vieja justo cuando Bonju anuncia el episodio." },
+    { text: "está intentando hacer alianzas con la mayoría para que le den estrellas." }
+  ],
+  semifinal: [
+    { text: "propone quitarle una estrella a {B}; {C} sonrie porque esa era exactamente su idea desde el desayuno." },
+    { text: "intenta venderle a {B} una tregua de semifinal. {B} escucha, asiente y luego busca a {C} para comparar versiones." },
+    { text: "dice que ya no hay brackets, pero sigue contando quien vino de cual como si fuera deuda pendiente." },
+    { text: "se da cuenta de que {B} tiene demasiadas estrellas y convierte una conversacion casual en campana silenciosa." },
+    { text: "le promete proteccion a {B}; cinco minutos despues pregunta si alguien mas tambien quiere bajarle una estrella." },
+    { text: "y {C} acuerdan no tocar a {B}, hasta que {B} gana foco en el reto y el pacto empieza a sonar opcional." },
+    { text: "entra al episodio con una sonrisa tranquila. Nadie le cree: esa sonrisa ya borro estrellas antes." },
+    { text: "finge celebrar a {B}, pero mira el contador como si estuviera haciendo matematicas con rabia." }
+  ],
+  tournament: [
+    { text: "pide enfrentar a {B} en primera ronda para sacarla rapido; cuando Bonju mezcla nombres, se queda helada." },
+    { text: "y {B} pactan no celebrar antes de tiempo. El pacto dura hasta que aparece el primer WIN verde en el arbol." },
+    { text: "mira el bracket y entiende que {C} puede llegar descansada. De pronto todo el mundo tiene una teoria." },
+    { text: "le dice a {B} que no es personal, que es torneo. {B} responde que justamente por eso lo va a recordar." },
+    { text: "intenta leer la cara de Bonju durante la seleccion de nombres. No consigue nada, pero se convence de que si." },
+    { text: "celebra el doble WIN como si fuera justicia; {B} lo llama suerte con una sonrisa muy filosa." }
+  ],
+  final4: [
+    { text: "le dice a {B} que quiere una final limpia. En confesionario admite que primero quiere cansarla." },
+    { text: "mira a {B} y {C} ensayar juntas y decide que esa amistad llego demasiado lejos." },
+    { text: "promete elegir por estrategia, no por rencor. Nadie en la sala parece comprar esa frase." },
+    { text: "sabe que una mala eleccion de lipsync puede regalar la corona. Por primera vez, baja la voz." },
+    { text: "le ofrece a {B} cerrar la temporada sin drama. {B} responde que el drama ya pago renta." },
+    { text: "ensaya sola mientras {B} y {C} negocian miradas. La final ya empezo antes de la musica." }
+  ]
+};
+
+let step=1, episode=1, advFormat=3, castSize=18;
+let selected18=[];
+let groups={Rosa:[], Dorado:[], Rojo:[]};
+let groupColors={Rosa:'rosa',Dorado:'dorado',Rojo:'rojo',Naranja:'naranja',Morado:'morado'};
+let groupOrder=['Rosa','Dorado','Rojo'];
+let groupSize=6;
+let top3EpisodeByGroup={};
+let stars={};
+let advanced=new Set();
+let alive=[];
+let activeSet = new Set();
+let eliminatedSet = new Set();
+let trackData=[];
+let finalRank = {};
+let eliminationOrder = [];
+let nextSemiRank = 9;
+let nextBracketRank = 18;
+let episodeDone = {};
+let currentDistIndex=0;
+let expansionTriggered=false;
+let currentChallengeTop3=[];
+let chosenTop2=[];
+let currentFighters=[];
+let currentEpWinner="", currentEpOtherTop2="", currentEpLosers=[];
+let currentMirrorGivers=[], currentMirrorPairs=[], currentMirrorIndex=0;
+let userWildcardChoice=null, regularWildcard=null;
+let currentMirrorPool=[];
+let selectionMode="top2";
+let selectionRequired=2;
+let lipsyncContext="episodeTop2";
+let currentSemiState=null;
+let currentAdv4SemiState=null;
+let tournamentTimers=[];
+let trEpisodeCount=seasonEpisodeCount();
+let usedSpotifyTrackIds=new Set();
+let mirrorMode="gift";
+let currentStarSemiState=null;
+let currentPenaltyEvents=[];
+let currentPenaltyIndex=0;
+let top4FinalState=null;
+let finalTournamentState=null;
+let pendingTournamentMatch=null;
+
+const $=sel=>document.querySelector(sel);
+const $$=sel=>Array.from(document.querySelectorAll(sel));
+const toast=t=>{ const el=$("#toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1800); };
+
+function __gNorm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();}
+function slug(s){ return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ñ/gi, "n").toLowerCase().replace(/[^a-z0-9]+/g, "").trim(); }
+function imgFor(name){const c=parent.ShowdownSoloHost?.characters.find(c=>c.name===name);return c?[c.image]:[];}
+
+function makeInitials(name){
+  const d=document.createElement("div"); d.className="placeholder";
+  d.textContent=(name.split(/\s+/).map(s=>s[0]).join("").slice(0,2)||"?").toUpperCase();
+  return d;
+}
+
+function loadImg(el, candidates, fallbackText=""){
+  let i=0;
+  function next(){
+    if(i>=candidates.length){
+      if(el.parentElement && !el.parentElement.querySelector('.placeholder')){ el.parentElement.appendChild(makeInitials(fallbackText)); }
+      return;
+    }
+    const t=new Image();
+    t.onload=()=>{ el.src=t.src; el.parentElement?.querySelector('.placeholder')?.remove(); };
+    t.onerror=()=>{ i++; next(); };
+    t.src=candidates[i];
+  }
+  next();
+}
+
+function shuffle(arr){const result=arr.slice();for(let i=result.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[result[i],result[j]]=[result[j],result[i]];}return result;}
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function sample(arr,k){ const a=arr.slice(); const out=[]; for(let i=0;i<k&&a.length;i++){ out.push(a.splice(Math.floor(Math.random()*a.length),1)[0]); } return out; }
+function seasonEpisodeCount(){ return advFormat === 4 ? 15 : advFormat === 3 ? 17 : 12; }
+function syncTrEpisodeCount(){ trEpisodeCount = seasonEpisodeCount(); }
+function rankedByStars(list, dir="desc"){
+  const sign = dir === "asc" ? 1 : -1;
+  return list.slice().sort((a,b)=>sign*((stars[a]||0)-(stars[b]||0)) || a.localeCompare(b));
+}
+function pickCompetitiveGiftReceiver(giver, pool){
+  let candidates = pool.filter(n => n !== giver);
+  if(!candidates.length) return null;
+  const belowLeaderWall = candidates.filter(n => (stars[n]||0) < 7);
+  if(belowLeaderWall.length) candidates = belowLeaderWall;
+  const sorted = rankedByStars(candidates, "asc");
+  const lowest = stars[sorted[0]] || 0;
+  const closeLow = sorted.filter(n => (stars[n]||0) <= lowest + 2);
+  return pick(closeLow.length ? closeLow : sorted.slice(0, Math.max(1, Math.ceil(sorted.length/2))));
+}
+function pickCompetitivePenaltyTarget(actor, pool, used=[]){
+  let candidates = pool.filter(n => n !== actor && !used.includes(n));
+  if(!candidates.length) candidates = pool.filter(n => n !== actor);
+  if(!candidates.length) candidates = pool.slice();
+  const withEnoughStars = candidates.filter(n => (stars[n]||0) >= 3);
+  if(withEnoughStars.length) candidates = withEnoughStars;
+  const sorted = rankedByStars(candidates, "desc");
+  const maxStars = stars[sorted[0]] || 0;
+  const topCluster = sorted.filter(n => (stars[n]||0) >= Math.max(3, maxStars - 2));
+  return pick(topCluster.length ? topCluster : sorted.slice(0, Math.min(3, sorted.length)));
+}
+function configureTop3Episodes(){
+  top3EpisodeByGroup = {};
+  groupOrder.forEach(g => { top3EpisodeByGroup[g] = Math.floor(Math.random() * 3); });
+}
+function adjustStars(name, delta){
+  if(!name) return 0;
+  stars[name] = Math.max(0, (stars[name] || 0) + delta);
+  return stars[name];
+}
+function updateOdoDisplay(name){
+  const display = $(`#odo-${slug(name)}`);
+  if(display){
+    display.innerHTML = `<div class="odo-digit" style="transform:translateY(-30px); opacity:0;">${stars[name]||0}</div>`;
+    setTimeout(() => { display.innerHTML = `<div class="odo-digit" style="transform:translateY(0); opacity:1;">${stars[name]||0}</div>`; }, 100);
+  }
+}
+function setMirrorCopy(title, sub, buttonText="Continuar"){
+  const stage = $("#stage-mirror-votes");
+  const titleEl = stage?.querySelector(".choice-title");
+  const subEl = stage?.querySelector(".choice-sub");
+  if(titleEl) titleEl.textContent = title;
+  if(subEl) subEl.textContent = sub;
+  $("#mirrorContinueBtn").textContent = buttonText;
+}
+function pickSpotifyTrack(){
+  let available = SPOTIFY_TRACKS.filter(t => !usedSpotifyTrackIds.has(t.id));
+  if(!available.length){
+    usedSpotifyTrackIds.clear();
+    available = SPOTIFY_TRACKS.slice();
+  }
+  const track = pick(available);
+  usedSpotifyTrackIds.add(track.id);
+  return track;
+}
+
+function chip(name, txt){
+  const span=document.createElement("span"); span.className="pill";
+  const img=document.createElement("img"); img.className="av-mini"; loadImg(img, imgFor(name), name);
+  const b=document.createElement("b"); b.textContent=name;
+  span.appendChild(img); span.appendChild(b);
+  if(txt){ const t=document.createElement("span"); t.className="small"; t.textContent=" — "+txt; span.appendChild(t); }
+  return span;
+}
+
+function setTR(name, ep, cls, txt){
+  const row = trackData.find(r=>r.name===name);
+  if(row){ while(row.cells.length<Math.max(trEpisodeCount, ep)){ row.cells.push({cls:'grey',txt:''}); } row.cells[ep-1] = {cls, txt}; }
+}
+
+function ensureGreyForInactive(ep){
+  const g=currentActiveGroup(ep);
+  if(g) trackData.forEach(r=>{ if(r.group!==g){ setTR(r.name, ep, 'grey', ''); } });
+}
+
+// PASO 1: CREAR CAST
+$("#playIntroBtn").addEventListener("click", ()=>{
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-tutorial").classList.add("active");
+  $("#stepName").textContent = "Bienvenida Showdown";
+});
+
+$("#startCastBtn").addEventListener("click", ()=>{
+  castSize = parseInt($("input[name='castSize']:checked")?.value || "18", 10);
+  groupSize = castSize / 3;
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-1").classList.add("active");
+  $("#stepName").textContent = "Paso 1 - Elegir Elenco";
+  buildCastGrid();
+  updateCastState();
+  enforceUnique('#castGrid');
+});
+
+function buildCastGrid(){
+  const castGrid=$("#castGrid"); castGrid.innerHTML="";
+  $("#castTitle").textContent = `Elenco (elige ${castSize} participantes)`;
+  for(let i=0;i<castSize;i++){
+    const slot=document.createElement("div"); slot.className="slot";
+    const icon=document.createElement("div"); icon.className="icon";
+    const img=document.createElement("img"); icon.appendChild(img); icon.appendChild(makeInitials("?"));
+    const name=document.createElement("div"); name.className="name"; name.textContent="Elegir participante";
+    const sel=document.createElement("select");
+    sel.innerHTML=`<option value="">— Ninguno —</option>` + ALL_PARTICIPANTS.map(n=>`<option>${n}</option>`).join("");
+    sel.addEventListener("change", ()=>{
+      name.textContent=sel.value||"Elegir participante";
+      if(sel.value){ loadImg(img, imgFor(sel.value), sel.value); } else { img.removeAttribute('src'); icon.querySelector(".placeholder")?.remove(); icon.appendChild(makeInitials("?")); }
+      updateCastState(); enforceUnique('#castGrid');
+    });
+    slot.appendChild(icon); slot.appendChild(name); slot.appendChild(sel); castGrid.appendChild(slot);
+  }
+}
+
+function enforceUnique(containerSel){
+  const container=$(containerSel); if(!container) return;
+  const selects=Array.from(container.querySelectorAll('select'));
+  const chosen=new Set(selects.map(s=>s.value).filter(Boolean));
+  selects.forEach(sel=>{
+    Array.from(sel.options).forEach(opt=>{ if(opt.value && sel.value!==opt.value) opt.disabled=chosen.has(opt.value); });
+  });
+}
+
+function updateCastState(){
+  const vals=$$("#castGrid select").map(s=>s.value).filter(Boolean);
+  $("#castCountHelp").textContent=`${new Set(vals).size}/${castSize} seleccionados`;
+  $("#nextBtn").disabled = !(vals.length===castSize && new Set(vals).size===castSize);
+}
+
+$("#randomCast").addEventListener("click", ()=>{
+  const picks=shuffle(ALL_PARTICIPANTS).slice(0,castSize);
+  $$("#castGrid select").forEach((s,i)=>{ s.value=picks[i]||""; s.dispatchEvent(new Event('change')); });
+});
+
+$("#nextBtn").addEventListener("click", ()=>{
+  if(step===1){
+    selected18=$$("#castGrid select").map(s=>s.value).filter(Boolean);
+    stars={}; selected18.forEach(n=>stars[n]=0);
+    trackData=selected18.map(n=>({name:n, group: null, cells:[]}));
+    activeSet = new Set(selected18); eliminatedSet = new Set();
+    advanced = new Set();
+    finalRank = {};
+    eliminationOrder = [];
+    nextBracketRank = castSize;
+    expansionTriggered = false;
+    regularWildcard = null;
+    userWildcardChoice = null;
+    goFormatSelection();
+  }
+});
+
+// PASO 2: SELECCIÓN DE FORMATO
+function goFormatSelection(){
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-format").classList.add("active");
+  $("#stepName").textContent = "Paso 2 - Elegir Formato de Temporada";
+  $$("[data-format-option]").forEach(label => {
+    const val = label.dataset.formatOption;
+    const visible = castSize === 27 ? val === "4" : val === "2" || val === "3";
+    label.classList.toggle("hide", !visible);
+    const input = label.querySelector("input");
+    if(input) input.disabled = !visible;
+  });
+  if(castSize === 27){
+    $("input[name='advCount'][value='4']").checked = true;
+  } else {
+    $("input[name='advCount'][value='3']").checked = true;
+  }
+}
+
+$("#confirmFormat").addEventListener("click", ()=>{
+  advFormat = parseInt($("input[name='advCount']:checked").value);
+  syncTrEpisodeCount();
+  if(advFormat===2){
+    groupOrder = ['Naranja', 'Rosa', 'Morado'];
+  } else if(advFormat===4){
+    groupOrder = ['Rojo', 'Rosa', 'Morado'];
+  } else {
+    groupOrder = ['Rosa', 'Dorado', 'Rojo'];
+  }
+  groupSize = castSize / 3;
+  configureTop3Episodes();
+  groups = {}; groupOrder.forEach(g=>groups[g]=[]);
+  currentDistIndex = 0;
+  startIndividualDistribution();
+});
+
+// PASO 3: PANTALLAS DE DISTRIBUCIÓN DE PARTICIPANTES INDIVIDUALES POR COLOR
+function startIndividualDistribution(){
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-distribution").classList.add("active");
+  const currentGroup = groupOrder[currentDistIndex];
+  $("#stepName").textContent = `Distribucion - Bracket ${currentGroup}`;
+  
+  const header = $("#distHeaderTitle");
+  header.textContent = `Distribuye al Bracket ${currentGroup}`;
+  header.className = `tag ${groupColors[currentGroup]}`;
+  header.style.fontSize = "24px"; header.style.padding = "6px 14px";
+  
+  const grid = $("#distributionSlotsGrid"); grid.innerHTML = "";
+  
+  // Obtener las ya asignadas en grupos previos
+  const assigned = [];
+  for(let i=0; i<currentDistIndex; i++){ assigned.push(...groups[groupOrder[i]]); }
+  const available = selected18.filter(n => !assigned.includes(n));
+  
+  grid.style.gridTemplateColumns = "repeat(auto-fit, minmax(150px, 1fr))";
+  for(let i=0; i<groupSize; i++){
+    const slot = document.createElement("div"); slot.className = "slot";
+    const icon = document.createElement("div"); 
+    icon.className = "icon"; 
+    icon.style.borderColor = `var(--tr-${groupColors[currentGroup]})`;
+    icon.style.borderWidth = "4px";
+    
+    const img = document.createElement("img"); icon.appendChild(img); icon.appendChild(makeInitials("?"));
+    const name = document.createElement("div"); name.className = "name"; name.textContent = "Vacío";
+    
+    const sel = document.createElement("select");
+    sel.innerHTML = `<option value="">— Ninguno —</option>` + available.map(n=>`<option>${n}</option>`).join("");
+    
+    sel.addEventListener("change", ()=>{
+      name.textContent = sel.value || "Vacío";
+      if(sel.value){ loadImg(img, imgFor(sel.value), sel.value); } else { img.removeAttribute('src'); icon.querySelector(".placeholder")?.remove(); icon.appendChild(makeInitials("?")); }
+      enforceUnique('#distributionSlotsGrid');
+      checkDistComplete();
+    });
+    
+    slot.appendChild(icon); slot.appendChild(name); slot.appendChild(sel); grid.appendChild(slot);
+  }
+  enforceUnique('#distributionSlotsGrid');
+  checkDistComplete();
+}
+
+function checkDistComplete(){
+  const vals = $$("#distributionSlotsGrid select").map(s=>s.value).filter(Boolean);
+  $("#distContinueBtn").disabled = !(vals.length === groupSize && new Set(vals).size === groupSize);
+}
+
+$("#distRandomBtn").addEventListener("click", ()=>{
+  const assigned = [];
+  for(let i=0; i<currentDistIndex; i++){ assigned.push(...groups[groupOrder[i]]); }
+  const available = shuffle(selected18.filter(n => !assigned.includes(n))).slice(0,groupSize);
+  $$("#distributionSlotsGrid select").forEach((s,i)=>{ s.value = available[i]||""; s.dispatchEvent(new Event('change')); });
+});
+
+$("#distClearBtn").addEventListener("click", ()=>{
+  $$("#distributionSlotsGrid select").forEach(s=>{ s.value = ""; s.dispatchEvent(new Event('change')); });
+});
+
+$("#distContinueBtn").addEventListener("click", ()=>{
+  const currentGroup = groupOrder[currentDistIndex];
+  const vals = $$("#distributionSlotsGrid select").map(s=>s.value).filter(Boolean);
+  groups[currentGroup] = vals;
+  
+  // Guardar en trackData
+  vals.forEach(name => {
+    const r = trackData.find(x => x.name === name);
+    if(r) r.group = currentGroup;
+  });
+  
+  currentDistIndex++;
+  if(currentDistIndex < groupOrder.length){
+    startIndividualDistribution();
+  } else {
+    buildTRSkeleton();
+    episode = 1;
+    go(3);
+    updateEpisodeUI();
+  }
+});
+
+// NAVEGACIÓN Y CONFIG DE EPISODIOS
+function currentActiveGroup(ep){
+  if(ep>=1 && ep<=3) return groupOrder[0];
+  if(ep>=4 && ep<=6) return groupOrder[1];
+  if(ep>=7 && ep<=9) return groupOrder[2];
+  return null;
+}
+
+function updateEpisodeUI(){
+  $("#epTitle").textContent = `Episodio ${episode}`;
+  const g = currentActiveGroup(episode);
+  if(g){
+    $("#epHelp").innerHTML = `Compite el grupo <b>${g}</b> — <span class="tag ${groupColors[g]}">${g}</span>. Selecciona el reto para evaluar el rendimiento de los participantes.`;
+  } else if(episode>=10 && episode<14){
+    $("#epHelp").textContent = `SEMIFINALES — Formato de eliminación directa BTM3 con salvación intermedia LOW.`;
+  } else {
+    $("#epHelp").textContent = `GRAN FINAL — Torneo directo por brackets hasta coronar a la campeona definitiva.`;
+  }
+  if(!g){
+    if(advFormat === 4 && episode>=10 && episode<seasonEpisodeCount()){
+      $("#epHelp").textContent = `SEMIFINAL AVANZAN 4 - TOP2 entre cuatro mejores, BOTTOM 3 y decision de eliminacion.`;
+    } else if(advFormat === 4){
+      $("#epHelp").textContent = `GRAN FINAL TOP 8 - torneo de duelos 1 vs 1 hasta coronar a la ganadora.`;
+    } else if(advFormat === 3 && episode>=10 && episode<=15){
+      $("#epHelp").textContent = `SEMIFINAL - El Top 2 suma una estrella, el ganador del versus resta una.`;
+    } else if(advFormat === 3 && episode===16){
+      $("#epHelp").textContent = `CORTE DE ESTRELLAS - Bonju revela del puesto 10 al 5 y deja formado el Top 4.`;
+    } else if(advFormat === 3){
+      $("#epHelp").textContent = `GRAN FINAL TOP 4 - elige el primer lipsync, el segundo sale por descarte y las ganadoras pelean la corona.`;
+    } else if(advFormat === 2 && episode < seasonEpisodeCount()){
+      $("#epHelp").textContent = `SEMIFINAL - un WIN, dos HIGH, BOTTOM 3 y eleccion de BTM2 antes del lipsync.`;
+    } else {
+      $("#epHelp").textContent = `GRAN FINAL - Torneo de 6 con tres duelos iniciales, un doble WIN y brackets hasta la corona.`;
+    }
+  }
+  $("#challengeSummary").innerHTML="";
+  $("#winnersBox").classList.add("hide");
+  $("#winnersChips").innerHTML="";
+  $("#btmChips").innerHTML="";
+  $("#giftBox").classList.add("hide");
+  $("#giftList").innerHTML="";
+  $("#duelBox").innerHTML="";
+  $("#toTrack").classList.add("hide");
+  $("#toTrack").textContent = "Ver Track Record →";
+  challengeSelect.selectedIndex=0;
+  $("#runChallenge").disabled = false;
+}
+
+$("#runChallenge").addEventListener("click", ()=>{
+  const type = challengeSelect.value || "Reto de Habilidad";
+  const g = currentActiveGroup(episode);
+  
+  // Añadir un resumen estético del reto
+  $("#challengeSummary").innerHTML = `<div class="pill" style="background:#2b001a; border-color:#ff3b6a;">⚡ <b>Reto de la semana:</b> ${type}</div>`;
+  
+  if(episode <= 9){
+    const pool = groups[g].slice();
+    if(advFormat === 4){
+      currentChallengeTop3 = sample(pool, 4);
+      const bracketEpIndex = (episode - 1) % 3;
+      showCinematicTop2Selection(top3EpisodeByGroup[g] === bracketEpIndex ? "top3" : "top2");
+      return;
+    }
+    currentChallengeTop3 = sample(pool, 3);
+    // Ir a pantalla de elección cinemática limpia
+    showCinematicTop2Selection();
+  } else if(advFormat === 3 && episode >= 10 && episode <= 15){
+    runStarSemifinalEpisode(type);
+  } else if(advFormat === 3 && episode === 16){
+    runStarCutEpisode();
+  } else if(advFormat === 4 && episode < seasonEpisodeCount()){
+    runAdv4SemiEpisode(type);
+  } else if(advFormat === 2 && episode < seasonEpisodeCount()){
+    runSemiEpisode(type);
+  } else if(advFormat === 2 || advFormat === 4 || episode >= seasonEpisodeCount()){
+    runFinalEpisode();
+  } else {
+    runSemiEpisode(type);
+  }
+});
+
+$("#randomChallenge").addEventListener("click", ()=>{
+  const options = Array.from($("#challengeSelect").options).filter(o => o.value || o.textContent.trim());
+  const valid = options.filter(o => o.index > 0);
+  const opt = pick(valid);
+  if(opt){
+    $("#challengeSelect").selectedIndex = opt.index;
+  }
+});
+
+// PANTALLA MEJORADA DE SELECCIÓN CIRCULAR (TOP2 O BTM2 SEGÚN EL CONTEXTO)
+function showCinematicTop2Selection(mode="top2"){
+  selectionMode = mode;
+  selectionRequired = mode === "top3" ? 3 : 2;
+  lipsyncContext = mode === "btm2" ? "semiBtm2"
+    : mode === "semiTop2" ? "starSemiTop2"
+    : mode === "adv4SemiTop2" ? "adv4SemiTop2"
+    : mode === "finalFirstPair" ? "top4FinalSemi1"
+    : mode === "top3" ? "episodeTop3"
+    : "episodeTop2";
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-top2").classList.add("active");
+  $("#stepName").textContent = mode === "btm2" ? `Semifinal - Eleccion del BTM2` : `Episodio ${episode} - Seleccion`;
+  $("#selectionTitle").textContent = mode === "btm2" ? "ELIGE EL BTM2" : mode === "top3" ? "ELIGE EL TOP 3" : "ELIGE EL TOP 2";
+  $("#selectionSub").textContent = mode === "btm2"
+    ? "Selecciona a las 2 personas que haran lipsync. La que no elijas se salva como LOW."
+    : mode === "top3"
+      ? "Selecciona a 3 participantes de las 4 mejores para un lipsync 1 vs 1 vs 1."
+      : "Selecciona a 2 participantes de las mejores del reto para activar el Lipsync.";
+  $("#confirmTop2").textContent = mode === "btm2" ? "Confirmar BTM2 e Iniciar Lipsync" : "Confirmar";
+  
+  if(mode === "btm2"){
+    $("#stepName").textContent = `Semifinal - Eleccion del BTM2`;
+    $("#selectionTitle").textContent = "ELIGE EL BTM2";
+    $("#selectionSub").textContent = "Selecciona a las 2 personas que haran lipsync. La que no elijas se salva como LOW.";
+    $("#confirmTop2").textContent = "Confirmar BTM2 e Iniciar Lipsync";
+  } else if(mode === "semiTop2"){
+    $("#stepName").textContent = `Episodio ${episode} - Semifinal de Estrellas`;
+    $("#selectionTitle").textContent = "ELIGE EL TOP 2";
+    $("#selectionSub").textContent = "Selecciona 2 participantes para el lipsync.";
+    $("#confirmTop2").textContent = "Confirmar TOP2";
+  } else if(mode === "finalFirstPair"){
+    $("#stepName").textContent = `Gran Final - Primer Lipsync`;
+    $("#selectionTitle").textContent = "ELIGE EL PRIMER DUELO";
+    $("#selectionSub").textContent = "Selecciona los 2 finalistas que irán al primer duelo. Los dos no elegidos se enfrentan en el segundo duelo.";
+    $("#confirmTop2").textContent = "Confirmar Primer Lipsync";
+  } else if(mode === "adv4SemiTop2"){
+    $("#stepName").textContent = `Episodio ${episode} - Semifinal Avanzan 4`;
+    $("#selectionTitle").textContent = "ELIGE EL TOP 2";
+    $("#selectionSub").textContent = "Selecciona 2 entre las 4 mejores. Las dos restantes quedan HIGH.";
+    $("#confirmTop2").textContent = "Confirmar TOP2";
+  } else {
+    $("#stepName").textContent = `Episodio ${episode} - Seleccion del Top 2`;
+    $("#selectionTitle").textContent = mode === "top3" ? "ELIGE EL TOP 3" : "ELIGE EL TOP 2";
+    $("#selectionSub").textContent = mode === "top3" ? "Selecciona 3 participantes de las 4 mejores para ir al Lipsync." : "Selecciona a 2 participantes de los mejores del reto para ir al Lipsync";
+    $("#confirmTop2").textContent = "Confirmar";
+  }
+
+  const wrap = $("#top2Choices"); wrap.innerHTML = "";
+  chosenTop2 = [];
+  $("#confirmTop2").disabled = true;
+  
+  const g = currentActiveGroup(episode);
+  const colorKey = g ? groupColors[g] : "morado";
+  const colorHex = colorKey === 'rosa' ? '#ff66cc' : colorKey === 'dorado' ? '#ffd700' : colorKey === 'rojo' ? '#ff5a5a' : colorKey === 'naranja' ? '#ff944d' : '#b566ff';
+  
+  currentChallengeTop3.forEach((name, index) => {
+    const card = document.createElement("div");
+    card.className = "clean-circle-card";
+    card.style.animationDelay = `${index * 0.15}s`;
+    card.style.setProperty('--brd-color', colorHex);
+    
+    const circle = document.createElement("div");
+    circle.className = "circle-wrapper";
+    
+    const img = document.createElement("img");
+    loadImg(img, imgFor(name), name);
+    
+    const lbl = document.createElement("div");
+    lbl.className = "label-name";
+    lbl.textContent = name;
+    
+    circle.appendChild(img); card.appendChild(circle); card.appendChild(lbl);
+    
+    card.addEventListener("click", ()=>{
+      if(card.classList.contains("selected")){
+        card.classList.remove("selected");
+        chosenTop2 = chosenTop2.filter(x => x !== name);
+      } else {
+        if(chosenTop2.length >= selectionRequired) return;
+        card.classList.add("selected");
+        chosenTop2.push(name);
+      }
+      $("#confirmTop2").disabled = (chosenTop2.length !== selectionRequired);
+    });
+    wrap.appendChild(card);
+  });
+}
+
+$("#randomTop2").addEventListener("click", ()=>{
+  const picks = sample(currentChallengeTop3, selectionRequired);
+  chosenTop2 = [];
+  $$("#top2Choices .clean-circle-card").forEach(card => card.classList.remove("selected"));
+  picks.forEach(name => {
+    const cards = $$("#top2Choices .clean-circle-card");
+    const card = cards.find(c => c.querySelector(".label-name")?.textContent === name);
+    if(card){
+      card.classList.add("selected");
+      chosenTop2.push(name);
+    }
+  });
+  $("#confirmTop2").disabled = (chosenTop2.length !== selectionRequired);
+});
+
+$("#confirmTop2").addEventListener("click", ()=>{
+  // Iniciar flujo de animación Lipsync / Spotify
+  showLipsyncArenaFlow();
+});
+
+function setSpotifyTrack(trackId){
+  const widget = $("#spotifyWidget");
+  widget.innerHTML = "";
+  const iframe = document.createElement("iframe");
+  iframe.title = "Spotify Embed: Lipsync track";
+  iframe.allow = "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture";
+  iframe.loading = "lazy";
+  iframe.src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`;
+  widget.appendChild(iframe);
+  $("#lipsyncTrackSub").textContent = "Canción oficial de lipsync desde Spotify";
+}
+
+function stopSpotifyTrack(){
+  $("#spotifyWidget").innerHTML = "";
+}
+
+// ESCENARIO DE LIPSYNC CON LUZ OSCURA, REFLECTORES Y WIDGET REAL DE SPOTIFY
+function showLipsyncArenaFlow(){
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-lipsync-arena").classList.add("active");
+  
+  currentFighters = chosenTop2.filter(Boolean).slice(0, selectionRequired);
+  $("#f1name").textContent = currentFighters[0] || ""; loadImg($("#f1img"), imgFor(currentFighters[0]), currentFighters[0]);
+  $("#f2name").textContent = currentFighters[1] || ""; loadImg($("#f2img"), imgFor(currentFighters[1]), currentFighters[1]);
+  const hasThird = currentFighters.length === 3;
+  $("#fighter3").style.display = hasThird ? "flex" : "none";
+  $("#vsLabel2").style.display = hasThird ? "block" : "none";
+  if(hasThird){
+    $("#f3name").textContent = currentFighters[2];
+    loadImg($("#f3img"), imgFor(currentFighters[2]), currentFighters[2]);
+  } else {
+    $("#f3name").textContent = "";
+    $("#f3img").removeAttribute("src");
+  }
+  
+  $("#fighter1").className = "lipsync-fighter match-anim";
+  $("#fighter2").className = "lipsync-fighter match-anim";
+  $("#fighter3").className = "lipsync-fighter match-anim";
+  $("#fighter1").querySelector(".lipsync-crown")?.remove();
+  $("#fighter2").querySelector(".lipsync-crown")?.remove();
+  $("#fighter3").querySelector(".lipsync-crown")?.remove();
+  
+  // Elegir canción Spotify random de la lista entregada por el usuario.
+  const track = pickSpotifyTrack();
+  setSpotifyTrack(track.id);
+  
+  // Detalle de simulación de ganador
+  currentEpWinner = pick(currentFighters);
+  currentEpLosers = currentFighters.filter(x => x !== currentEpWinner);
+  currentEpOtherTop2 = currentEpLosers[0] || "";
+  
+  clearTimeout(window.soloLipTimer);window.soloLipTimer=setTimeout(() => {
+    // Animación de conclusión de lipsync
+    $("#fighter1").classList.remove("match-anim");
+    $("#fighter2").classList.remove("match-anim");
+    $("#fighter3").classList.remove("match-anim");
+    
+    const winnerId = `#fighter${currentFighters.indexOf(currentEpWinner) + 1}`;
+    
+    currentEpLosers.forEach(loser => {
+      const loserIndex = currentFighters.indexOf(loser) + 1;
+      $(`#fighter${loserIndex}`)?.classList.add("run-away");
+    });
+    
+    // Poner corona animada al ganador
+    const crown = document.createElement("div");
+    crown.className = "lipsync-crown";
+    $(winnerId).appendChild(crown);
+    
+    toast(`¡${currentEpWinner} gana el Lipsync!`);
+  }, 900);
+}
+
+$("#arenaContinueBtn").addEventListener("click", ()=>{
+  clearTimeout(window.soloLipTimer);stopSpotifyTrack();
+  if(lipsyncContext === "semiBtm2"){
+    finalizeSemiBtm2Selection();
+    return;
+  }
+
+  // Procesar lógicas internas y pasar al regalo de estrellas
+  if(lipsyncContext === "starSemiTop2"){
+    startStarPenaltyMirrorStage();
+    return;
+  }
+  if(lipsyncContext === "adv4SemiTop2"){
+    startAdv4EliminationDecision();
+    return;
+  }
+  if(lipsyncContext.startsWith("top4Final")){
+    handleTop4FinalLipsyncResult();
+    return;
+  }
+  if(lipsyncContext === "adv2Tournament"){
+    resolveAdv2TournamentMatch();
+    return;
+  }
+  if(lipsyncContext === "adv4Tournament"){
+    resolveAdv4TournamentMatch();
+    return;
+  }
+
+  stars[currentEpWinner] += 3; // 2 base + 1 duelo
+  currentEpLosers.forEach(n => { stars[n] += 2; }); // 2 base
+  
+  setTR(currentEpWinner, episode, 'win', 'WIN');
+  currentEpLosers.forEach(n => setTR(n, episode, 'top2', currentFighters.length === 3 ? 'WIN' : 'WIN'));
+  
+  const g = currentActiveGroup(episode);
+  const highGroup = advFormat === 4 ? currentChallengeTop3.filter(n => !chosenTop2.includes(n)) : [];
+  highGroup.forEach(n => setTR(n, episode, 'high', 'HIGH'));
+  const bottomGroup = advFormat === 4
+    ? groups[g].filter(n => !currentChallengeTop3.includes(n))
+    : groups[g].filter(n => !chosenTop2.includes(n));
+  bottomGroup.forEach(n => setTR(n, episode, advFormat === 4 ? 'btm5' : 'btm4', advFormat === 4 ? 'BTM5' : 'BTM4'));
+  
+  // Configurar e iniciar pantalla espejo de regalo de estrellas interactiva si es ep final de bracket
+  if([3,6,9].includes(episode)){
+    startMirrorVotesStage(bottomGroup, groups[g]);
+  } else {
+    // Episodios normales regulares
+    currentMirrorPairs = [];
+    bottomGroup.forEach(giver => {
+      const target = pickCompetitiveGiftReceiver(giver, groups[g]);
+      if(target){
+        stars[target] += 1;
+        currentMirrorPairs.push({ giver, receiver: target });
+      }
+    });
+    finalizeGroupEpisodeRegular();
+  }
+});
+
+// NUEVA PANTALLA AVANZADA DE REGALO DE ESTRELLAS EN EL ESPEJO (EPISODIOS CLÍMAX 3, 6 Y 9)
+function startMirrorVotesStage(gifters, groupPool){
+  mirrorMode = "gift";
+  setMirrorCopy("Votos en el Espejo", "Los participantes regalan estrellas por ultima vez durante este grupo.", "Continuar");
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-mirror-votes").classList.add("active");
+  
+  currentMirrorGivers = gifters.slice();
+  currentMirrorPool = groupPool.slice();
+  currentMirrorPairs = [];
+  currentMirrorIndex = 0;
+  
+  const odoBoard = $("#odoBoard"); odoBoard.innerHTML = "";
+  currentMirrorPool.forEach(name => {
+    const card = document.createElement("div"); card.className = "odo-card";
+    card.style.setProperty('--grp-color', `var(--tr-${groupColors[currentActiveGroup(episode)]})`);
+    const nDiv = document.createElement("div"); nDiv.className = "odo-name"; nDiv.textContent = name;
+    const cDiv = document.createElement("div"); cDiv.className = "odo-counter"; cDiv.id = `odo-${slug(name)}`;
+    cDiv.innerHTML = `<div class="odo-digit">${stars[name]}</div>`;
+    card.appendChild(nDiv); card.appendChild(cDiv); odoBoard.appendChild(card);
+  });
+  
+  runNextMirrorVote();
+}
+
+function runNextMirrorVote(){
+  if(currentMirrorIndex >= currentMirrorGivers.length){
+    $("#mirrorText").innerHTML = `<span style="color:#22c55e;">¡TodAs las estrellas han sido escritas y reveladas en el espejo!,  en caso de empate de estrellas la decisión final es de Bonju.</span>`;
+    return;
+  }
+  
+  const giver = currentMirrorGivers[currentMirrorIndex];
+  const receiver = pickCompetitiveGiftReceiver(giver, currentMirrorPool);
+  if(receiver) currentMirrorPairs.push({ giver, receiver });
+  
+  $("#mirrorText").textContent = `${giver} está escribiendo en el espejo...`;
+  
+  setTimeout(() => {
+    $("#mirrorText").innerHTML = `${giver} le regala su estrella a <span style="color:#fff;">${receiver}</span> 💄`;
+    stars[receiver] += 1;
+    
+    // Efecto de odómetro horizontal digital
+    const display = $(`#odo-${slug(receiver)}`);
+    if(display){
+      display.innerHTML = `<div class="odo-digit" style="transform:translateY(-30px); opacity:0;">${stars[receiver]}</div>`;
+      setTimeout(() => { display.innerHTML = `<div class="odo-digit" style="transform:translateY(0); opacity:1;">${stars[receiver]}</div>`; }, 100);
+    }
+    
+    currentMirrorIndex++;
+    setTimeout(runNextMirrorVote, 1600);
+  }, 1400);
+}
+
+$("#mirrorContinueBtn").addEventListener("click", ()=>{
+  if(mirrorMode === "penalty"){
+    if(currentPenaltyIndex < currentPenaltyEvents.length){
+      toast("Espera a que termine la decision del espejo."); return;
+    }
+    finalizeStarSemiEpisode();
+    return;
+  }
+  if(currentMirrorIndex < currentMirrorGivers.length){
+    toast("Espera a que termine la animación del espejo."); return;
+  }
+  finalizeGroupEpisodeRegular();
+});
+
+// CONCLUSIÓN Y RESOLUCIÓN DE BRACKET CON EL REVELADO DE SEMIFINALISTAS CON IMÁGENES /TRANSPARENT/
+function finalizeGroupEpisodeRegular(){
+  go(3);
+  $("#winnersBox").classList.remove("hide");
+  $("#winnersChips").innerHTML = "";
+  $("#winnersChips").appendChild(chip(currentEpWinner, "WINNER (Duelo)"));
+  $("#winnersChips").appendChild(chip(currentEpOtherTop2, "TOP 2"));
+  
+  // Renderizar momentos
+  renderEpisodeMoments(episode);
+  
+  // Renderizar regalos
+  const box = $("#giftBox"); box.classList.remove("hide");
+  const list = $("#giftList"); list.innerHTML = "";
+  const isBracketFinal = [3,6,9].includes(episode);
+  currentMirrorPairs.forEach(p => {
+    const row = document.createElement("div"); row.className = "gift-row";
+    row.appendChild(chip(p.giver));
+    row.appendChild(document.createTextNode(isBracketFinal ? " — escribe en el espejo que regala estrella a " : " — regala 1 ⭐ a "));
+    row.appendChild(chip(p.receiver));
+    list.appendChild(row);
+  });
+  
+  if([3,6,9].includes(episode)){
+    const g = currentActiveGroup(episode);
+    resolveGroupCutLogic(g);
+    showSemifinalsRevealScreen();
+  } else {
+    $("#toTrack").classList.remove("hide");
+    $("#toTrack").onclick = () => { buildTRTable(); go(6); };
+  }
+}
+
+// LOGICA AVANZADA DE FORMATOS Y EXPANSIONES EXCLUSIVAS DE BONJU
+function resolveGroupCutLogic(group){
+  const list = groups[group].slice().sort((a,b) => (stars[b]||0) - (stars[a]||0));
+  
+  if(advFormat === 4){
+    const cutStars = stars[list[3]] || 0;
+    const fixed = list.filter(n => (stars[n]||0) > cutStars);
+    const tied = list.filter(n => (stars[n]||0) === cutStars);
+    let chosen = fixed.slice(0,4);
+    if(chosen.length < 4){
+      const need = 4 - chosen.length;
+      const picks = sample(tied, need);
+      chosen = chosen.concat(picks);
+      if(tied.length > need) appendBonjuTieMessage(tied, picks);
+    }
+    chosen.forEach(n => advanced.add(n));
+    rankGroupLosers(group);
+    return;
+  }
+
+  if(advFormat === 3 || advFormat === 4){
+    // Formato estándar regular original
+    const cutStars = stars[list[2]] || 0;
+    const fixed = list.filter(n => (stars[n]||0) > cutStars);
+    const tied = list.filter(n => (stars[n]||0) === cutStars);
+    
+    const fixedPicks = fixed.slice(0,3);
+    if(fixedPicks.length < 3){
+      const need = 3 - fixedPicks.length;
+      const tiePicks = sample(tied, need);
+      tiePicks.forEach(n => advanced.add(n));
+      if(tied.length > need) appendBonjuTieMessage(tied, tiePicks);
+    }
+    fixedPicks.forEach(n => advanced.add(n));
+    rankGroupLosers(group);
+  } else {
+    // NUEVO FORMATO: AVANZAN 2 POR BRACKET CON BONJU EXCLUSIVO
+    const cutStars = stars[list[1]] || 0;
+    const fixed = list.filter(n => (stars[n]||0) > cutStars);
+    const tied = list.filter(n => (stars[n]||0) === cutStars);
+    
+    let toPass = 2;
+    // REGLA DE EMPATE BRACKET 2 O 3 DE EXPANSIÓN AUTOMÁTICA
+    if((group === groupOrder[1] || group === groupOrder[2]) && !expansionTriggered && fixed.length < 2 && fixed.length + tied.length > 2){
+      toPass = 3; expansionTriggered = true;
+      toast("¡Bonju activa la regla de expansión! Pasan 3 en este bracket.");
+    }
+    
+    let chosen = fixed.slice(0, toPass);
+    if(chosen.length < toPass){
+      const need = toPass - chosen.length;
+      const picks = sample(tied, need);
+      chosen = chosen.concat(picks);
+      if(tied.length > need) appendBonjuTieMessage(tied, picks);
+    }
+    chosen.forEach(n => advanced.add(n));
+    rankGroupLosers(group);
+  }
+}
+
+function currentActiveGroupIndex(){ return groupOrder.indexOf(currentActiveGroup(episode)); }
+
+function rankGroupLosers(group){
+  const losers = groups[group]
+    .filter(n => !advanced.has(n))
+    .sort((a,b) => (stars[a]||0) - (stars[b]||0) || a.localeCompare(b));
+  losers.forEach(n => {
+    setRank(n, nextBracketRank);
+    eliminatedSet.add(n);
+    activeSet.delete(n);
+    nextBracketRank--;
+  });
+}
+
+function rerankBracketEliminatedAfterWildcard(){
+  const bracketLosers = selected18
+    .filter(n => !advanced.has(n))
+    .sort((a,b) => (stars[a]||0) - (stars[b]||0) || a.localeCompare(b));
+  bracketLosers.forEach((n,i) => setRank(n, castSize - i));
+}
+
+function appendBonjuTieMessage(tied, picks){
+  const div = document.createElement("div"); div.className = "help";
+  div.style.color = "#ffd700"; div.innerHTML = `⭐ <b>Desempate elegido por Bonju:</b> Decidió clasificar a: ${picks.join(" y ")}`;
+  div.innerHTML = `* <b>Empate en el espejo:</b> Bonju vio empate entre ${tied.join(", ")} y decide avanzar a ${picks.join(" y ")}.`;
+  $("#duelBox").appendChild(div);
+}
+
+// NUEVA PANTALLA: SEMI-FINALS INTERFAZ CON TRANSPARENT IMAGES
+function showSemifinalsRevealScreen(){
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-semifinals-reveal").classList.add("active");
+  
+  const grid = $("#semisRevealGrid"); grid.innerHTML = "";
+  
+  groupOrder.forEach(g => {
+    const members = groups[g].filter(n => advanced.has(n)).sort((a,b)=>(stars[b]||0)-(stars[a]||0));
+    if(!members.length) return;
+
+    const col = document.createElement("div"); col.className = "semis-bracket-column";
+    const header = document.createElement("div"); header.className = `tag ${groupColors[g]}`;
+    header.style.textAlign = "center"; header.style.width = "100%"; header.style.marginBottom = "10px";
+    header.textContent = `Bracket ${g}`; col.appendChild(header);
+
+    members.forEach(member => {
+      const row = document.createElement("div");
+      row.className = "semis-box-row";
+      row.style.setProperty('--bg-bracket', `var(--tr-${groupColors[g]})`);
+
+
+      if (g === 'Rosa') { row.style.backgroundColor = 'rgba(255, 105, 180, 0.2)'; row.style.border = '1px solid #ff69b4'; }
+      else if (g === 'Naranja') { row.style.backgroundColor = 'rgba(255, 140, 0, 0.2)'; row.style.border = '1px solid #ff8c00'; }
+      else if (g === 'Morado') { row.style.backgroundColor = 'rgba(147, 51, 234, 0.2)'; row.style.border = '1px solid #9333ea'; }
+      else if (g === 'Azul') { row.style.backgroundColor = 'rgba(59, 130, 246, 0.2)'; row.style.border = '1px solid #3b82f6'; }
+      else if (g === 'Verde') { row.style.backgroundColor = 'rgba(34, 197, 94, 0.2)'; row.style.border = '1px solid #22c55e'; }
+      else if (g === 'Dorado') { row.style.backgroundColor = 'rgba(234, 179, 8, 0.2)'; row.style.border = '1px solid #eab308'; }
+      else if (g === 'Rojo') { row.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'; row.style.border = '1px solid #ef4444'; }
+      else { row.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'; row.style.border = '1px solid #ffffff'; }
+
+
+      const img = document.createElement("img"); img.className = "char-img";
+loadImg(img, [parent.ShowdownSoloHost.characters.find(c=>c.name===member)?.figure], member);
+
+      const info = document.createElement("div"); info.className = "char-info";
+      const name = document.createElement("div"); name.className = "char-name"; name.textContent = member;
+
+      info.appendChild(name); row.appendChild(img); row.appendChild(info);
+      col.appendChild(row);
+    });
+    grid.appendChild(col);
+  });
+}
+
+$("#semisRevealContinueBtn").addEventListener("click", ()=>{
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").onclick = () => { buildTRTable(); go(6); };
+  $("#toTrack").click();
+});
+
+// REINGRESO / COMODINES AL CIERRE DE LA FASE DE BRACKETS (EPISODIO 9)
+function runWildcardStageLogic(){
+  if(advFormat === 3 || advFormat === 4){
+    regularWildcard = null;
+    const eliminatedPool = selected18.filter(n => !advanced.has(n));
+    showUserWildcardSelection(eliminatedPool, 1);
+    return;
+  }
+  if(advFormat === 3){
+    // Continuar directo a semis tradicional
+    alive = Array.from(advanced); nextSemiRank = alive.length; episode = 10; go(3); updateEpisodeUI();
+  } else {
+    // Formato de 2 clasificados por bracket: Wild Cards Activas obligatorias
+    const currentPassed = advanced.size;
+    const eliminatedPool = selected18.filter(n => !advanced.has(n));
+    
+    if(currentPassed === 6){
+      // Caso 1: 2 Wild Cards (1 simulador automático, 1 elección de usuario)
+      regularWildcard = rankedByStars(eliminatedPool, "desc")[0] || pick(eliminatedPool);
+      advanced.add(regularWildcard);
+      delete finalRank[regularWildcard];
+      eliminatedSet.delete(regularWildcard);
+      activeSet.add(regularWildcard);
+      showUserWildcardSelection(eliminatedPool.filter(x => x !== regularWildcard), 2);
+    } else {
+      // Caso 2: Hubo expansión, ya hay 7 clasificadas. 1 Sola wild card de usuario.
+      showUserWildcardSelection(eliminatedPool, 1);
+    }
+  }
+}
+
+function showUserWildcardSelection(pool, mode){
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-return").classList.add("active");
+  $("#stepName").textContent = "Fase de Comodín · Elección de Bonju y Usuario";
+  
+  if(advFormat === 3){
+    $("#stepName").textContent = "Wild Card - Antes del Episodio 10";
+    $("#stage-return .choice-title").textContent = "ELIGE LA WILD CARD";
+    $("#stage-return .choice-sub").textContent = "Elige 1 participante eliminado para participar en la semifinal.";
+  } else if(advFormat === 4){
+    $("#stepName").textContent = "Wild Card - Top 13";
+    $("#stage-return .choice-title").textContent = "ELIGE LA WILD CARD";
+    $("#stage-return .choice-sub").textContent = "Elige 1 participante eliminado para completar la semifinal de 13.";
+  } else if(mode === 2){
+    $("#stepName").textContent = "Wild Card - Bonju y Usuario";
+    $("#stage-return .choice-title").textContent = "DOBLE WILD CARD";
+    $("#stage-return .choice-sub").textContent = "Bonju ya eligio una participante; elige la segunda Wild Card para formar la semifinal de 8.";
+  } else {
+    $("#stepName").textContent = "Wild Card - Semifinal de 8";
+    $("#stage-return .choice-title").textContent = "ELIGE LA WILD CARD";
+    $("#stage-return .choice-sub").textContent = "El bracket ya expandio a 3 por empate. Elige 1 Wild Card para completar 8 semifinalistas.";
+  }
+  $("#confirmReturn").disabled = true;
+  const choices = $("#returnChoices"); choices.innerHTML = "";
+  let selectedName = null;
+
+  if(mode === 2 && regularWildcard){
+    const auto = document.createElement("div");
+    auto.className = "clean-circle-card selected locked";
+    auto.style.setProperty('--brd-color', '#ffd700');
+    auto.style.cursor = "default";
+    const circle = document.createElement("div"); circle.className = "circle-wrapper";
+    const img = document.createElement("img"); loadImg(img, imgFor(regularWildcard), regularWildcard);
+    const lbl = document.createElement("div"); lbl.className = "label-name"; lbl.innerHTML = `${regularWildcard}<br><span class="small">Bonju ya eligió</span>`;
+    lbl.innerHTML = `${regularWildcard}<br><span class="small">Bonju la eligio</span>`;
+    circle.appendChild(img); auto.appendChild(circle); auto.appendChild(lbl);
+    choices.appendChild(auto);
+  }
+  
+  pool.forEach(name => {
+    const card = document.createElement("div"); card.className = "clean-circle-card";
+    const circle = document.createElement("div"); circle.className = "circle-wrapper";
+    const img = document.createElement("img"); loadImg(img, imgFor(name), name);
+    const lbl = document.createElement("div"); lbl.className = "label-name"; lbl.textContent = name;
+    
+    circle.appendChild(img); card.appendChild(circle); card.appendChild(lbl);
+    card.addEventListener("click", ()=>{
+      $$("#returnChoices .clean-circle-card:not(.locked)").forEach(x => x.classList.remove("selected"));
+      card.classList.add("selected");
+      selectedName = name;
+      $("#confirmReturn").disabled = false;
+    });
+    choices.appendChild(card);
+  });
+  
+  $("#confirmReturn").onclick = () => {
+    advanced.add(selectedName);
+    userWildcardChoice = selectedName;
+    delete finalRank[selectedName];
+    eliminatedSet.delete(selectedName);
+    activeSet.add(selectedName);
+    rerankBracketEliminatedAfterWildcard();
+    if(mode === 2){
+      toast(`Comodines: El simulador eligió a ${regularWildcard} y tú elegiste a ${selectedName}`);
+    } else {
+      toast(`Elegiste a ${selectedName} como la Wild Card de la semifinal`);
+    }
+    alive = Array.from(advanced);
+    nextSemiRank = alive.length;
+    episode = 10; go(3); updateEpisodeUI();
+  };
+}
+
+// LOGICAS DE SEMIFINAL CON ESTRUCTURA BTM3 Y REGLAS DE SALVACIÓN INTERMEDIA LOW
+// SEMIFINAL DE ESTRELLAS - SOLO FORMATO AVANZAN 3
+function runStarSemifinalEpisode(type){
+  if(alive.length === 0){ alive = Array.from(advanced); }
+  const pool = alive.slice();
+  currentChallengeTop3 = sample(pool, Math.min(4, pool.length));
+  currentStarSemiState = { type, pool };
+  showCinematicTop2Selection("semiTop2");
+}
+
+function startStarPenaltyMirrorStage(){
+  if(!currentStarSemiState) return;
+  const pool = currentStarSemiState.pool.slice();
+  const top2 = chosenTop2.slice();
+  const highs = currentChallengeTop3.filter(n => !top2.includes(n)).slice(0,2);
+  const lowPool = pool.filter(n => !top2.includes(n) && !highs.includes(n));
+  const lows = sample(lowPool, Math.min(2, lowPool.length));
+  const safe = pool.filter(n => !top2.includes(n) && !highs.includes(n) && !lows.includes(n));
+  const usedPenaltyTargets = [];
+  const subtractTarget = pickCompetitivePenaltyTarget(currentEpWinner, pool, usedPenaltyTargets);
+  if(subtractTarget) usedPenaltyTargets.push(subtractTarget);
+
+  adjustStars(currentEpWinner, 1);
+  adjustStars(currentEpOtherTop2, 1);
+  setTR(currentEpWinner, episode, 'win', 'WIN');
+  setTR(currentEpOtherTop2, episode, 'top2', 'WIN');
+  highs.forEach(n => setTR(n, episode, 'high', 'HIGH'));
+  safe.forEach(n => setTR(n, episode, 'safe', 'SAFE'));
+  lows.forEach(n => setTR(n, episode, 'low', 'LOW'));
+
+  currentStarSemiState = {
+    ...currentStarSemiState,
+    top2,
+    highs,
+    safe,
+    lows,
+    winner: currentEpWinner,
+    otherTop2: currentEpOtherTop2,
+    subtractTarget
+  };
+
+  mirrorMode = "penalty";
+  currentPenaltyEvents = [
+    { actor: currentEpWinner, target: subtractTarget, text: `${currentEpWinner} gana el lipsync y borra una estrella de ${subtractTarget}.` }
+  ].filter(e => e.target);
+  lows.forEach(actor => {
+    const target = pickCompetitivePenaltyTarget(actor, pool, usedPenaltyTargets);
+    if(target){
+      usedPenaltyTargets.push(target);
+      currentPenaltyEvents.push({ actor, target, text: `${actor} escribe el nombre de ${target} para quitarle una estrella.` });
+    }
+  });
+  currentPenaltyIndex = 0;
+
+  setMirrorCopy("Espejo de Semifinal", "El ganador y los peores del reto restan estrellas antes del siguiente episodio", "Continuar a Resultados");
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-mirror-votes").classList.add("active");
+
+  const odoBoard = $("#odoBoard"); odoBoard.innerHTML = "";
+  pool.forEach(name => {
+    const card = document.createElement("div"); card.className = "odo-card";
+    card.style.setProperty('--grp-color', '#ff3b6a');
+    const nDiv = document.createElement("div"); nDiv.className = "odo-name"; nDiv.textContent = name;
+    const cDiv = document.createElement("div"); cDiv.className = "odo-counter"; cDiv.id = `odo-${slug(name)}`;
+    cDiv.innerHTML = `<div class="odo-digit">${stars[name]||0}</div>`;
+    card.appendChild(nDiv); card.appendChild(cDiv); odoBoard.appendChild(card);
+  });
+
+  runNextStarPenalty();
+}
+
+function runNextStarPenalty(){
+  if(currentPenaltyIndex >= currentPenaltyEvents.length){
+    $("#mirrorText").innerHTML = `<span style="color:#22c55e;">Ya han sido restadas las estrellas de este episodio.</span>`;
+    return;
+  }
+  const event = currentPenaltyEvents[currentPenaltyIndex];
+  $("#mirrorText").textContent = `${event.actor || "Bonju"} esta escribiendo en el espejo...`;
+  setTimeout(() => {
+    adjustStars(event.target, -1);
+    $("#mirrorText").innerHTML = `${event.text} <span style="color:#fff;">${event.target} queda con ${stars[event.target]||0} estrella(s).</span>`;
+    updateOdoDisplay(event.target);
+    currentPenaltyIndex++;
+    setTimeout(runNextStarPenalty, 1500);
+  }, 1100);
+}
+
+function finalizeStarSemiEpisode(){
+  if(!currentStarSemiState) return;
+  const { winner, otherTop2, highs, safe, lows, subtractTarget } = currentStarSemiState;
+  go(3);
+  $("#winnersBox").classList.remove("hide");
+  renderEpisodeMoments(episode);
+
+  $("#winnersChips").innerHTML = `<h4>Top del reto</h4>`;
+  $("#winnersChips").appendChild(chip(winner, "WIN +1 estrella"));
+  $("#winnersChips").appendChild(chip(otherTop2, "TOP2 +1 estrella"));
+  highs.forEach(n => $("#winnersChips").appendChild(chip(n, "HIGH")));
+  safe.forEach(n => $("#winnersChips").appendChild(chip(n, "SAFE")));
+
+  $("#btmChips").innerHTML = `<h4>Zona baja</h4>`;
+  lows.forEach((n,i) => $("#btmChips").appendChild(chip(n, i === 0 ? "LOW - peor del reto" : "LOW - segundo peor")));
+
+  $("#duelBox").innerHTML = `<h4>Espejo</h4>`;
+  currentPenaltyEvents.forEach(e => $("#duelBox").appendChild(chip(e.actor, `resto una estrella a ${e.target}`)));
+
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").textContent = "Ver Track Record";
+  $("#toTrack").onclick = () => { buildTRTable(); go(6); };
+}
+
+function createStarCutCard(name, rank, cls){
+  const card = document.createElement("div"); card.className = `star-cut-card ${cls}`;
+  const circle = document.createElement("div"); circle.className = "circle-wrapper";
+  const img = document.createElement("img"); loadImg(img, imgFor(name), name);
+  const rankEl = document.createElement("div"); rankEl.className = "star-cut-rank"; rankEl.textContent = `Puesto ${rank}`;
+  const nameEl = document.createElement("div"); nameEl.className = "star-cut-name"; nameEl.textContent = name;
+  const starsEl = document.createElement("div"); starsEl.className = "star-cut-stars"; starsEl.textContent = `${stars[name]||0} estrella(s)`;
+  circle.appendChild(img); card.appendChild(circle); card.appendChild(rankEl); card.appendChild(nameEl); card.appendChild(starsEl);
+  return card;
+}
+
+function runStarCutEpisode(){
+  episode = 16;
+  const ranked = rankedByStars(alive.length ? alive : Array.from(advanced), "desc").slice(0,10);
+  const top4 = ranked.slice(0,4);
+  const cut = ranked.slice(4).reverse();
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-star-cut").classList.add("active");
+  $("#stepName").textContent = "Episodio 16 - Corte de Estrellas";
+  $("#starCutElims").innerHTML = "";
+  $("#starCutTop4").innerHTML = "";
+  $("#starCutContinueBtn").disabled = true;
+
+  cut.forEach((name, i) => {
+    const rank = 10 - i;
+    setTimeout(() => {
+      setTR(name, 16, 'elim', 'ELIMINATED');
+      setRank(name, rank);
+      eliminatedSet.add(name);
+      activeSet.delete(name);
+      $("#starCutElims").appendChild(createStarCutCard(name, rank, "eliminated"));
+      if(i === cut.length - 1){
+        setTimeout(() => {
+          top4.forEach((n, idx) => {
+            setTR(n, 16, 'top4', 'TOP4');
+            $("#starCutTop4").appendChild(createStarCutCard(n, idx + 1, "top4"));
+          });
+          alive = top4.slice();
+          $("#starCutContinueBtn").disabled = false;
+        }, 800);
+      }
+    }, i * 900);
+  });
+}
+
+$("#starCutContinueBtn").addEventListener("click", ()=>{
+  buildTRTable();
+  go(6);
+});
+
+function runTop4FinalEpisode(){
+  if(!alive.length){ alive = rankedByStars(Array.from(advanced).filter(n => !finalRank[n]), "desc").slice(0,4); }
+  top4FinalState = { finalists: alive.slice(0,4), firstWinner:null, firstLoser:null, secondWinner:null, secondLoser:null, champion:null, runnerUp:null };
+  currentChallengeTop3 = top4FinalState.finalists.slice();
+  showCinematicTop2Selection("finalFirstPair");
+}
+
+function handleTop4FinalLipsyncResult(){
+  if(!top4FinalState) return;
+  if(lipsyncContext === "top4FinalSemi1"){
+    top4FinalState.firstWinner = currentEpWinner;
+    top4FinalState.firstLoser = currentEpOtherTop2;
+    chosenTop2 = top4FinalState.finalists.filter(n => !currentFighters.includes(n));
+    lipsyncContext = "top4FinalSemi2";
+    showLipsyncArenaFlow();
+    return;
+  }
+  if(lipsyncContext === "top4FinalSemi2"){
+    top4FinalState.secondWinner = currentEpWinner;
+    top4FinalState.secondLoser = currentEpOtherTop2;
+    chosenTop2 = [top4FinalState.firstWinner, top4FinalState.secondWinner];
+    lipsyncContext = "top4FinalGrand";
+    showLipsyncArenaFlow();
+    return;
+  }
+  if(lipsyncContext === "top4FinalGrand"){
+    top4FinalState.champion = currentEpWinner;
+    top4FinalState.runnerUp = currentEpOtherTop2;
+    commitTop4FinalResults();
+  }
+}
+
+function commitTop4FinalResults(){
+  const state = top4FinalState;
+  if(!state || state.committed) return;
+  state.committed = true;
+  const finalEp = seasonEpisodeCount();
+  setTR(state.champion, finalEp, 'champ', 'WINNER'); setRank(state.champion, 1);
+  setTR(state.runnerUp, finalEp, 'run', 'RUNNER UP'); setRank(state.runnerUp, 2);
+  [state.firstLoser, state.secondLoser]
+    .filter(Boolean)
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0) || a.localeCompare(b))
+    .forEach((n,i)=>{ setTR(n, finalEp, 'elim', 'ELIMINATED'); setRank(n, 3+i); });
+
+  go(3);
+  $("#winnersBox").classList.remove("hide");
+  renderEpisodeMoments(episode);
+  $("#winnersChips").innerHTML = `<h4>Resultado Final</h4>`;
+  $("#winnersChips").appendChild(chip(state.champion, "WINNER"));
+  $("#winnersChips").appendChild(chip(state.runnerUp, "RUNNER UP"));
+  $("#btmChips").innerHTML = `<h4>Eliminadas 3-4</h4>`;
+  [state.firstLoser, state.secondLoser].filter(Boolean).forEach(n => $("#btmChips").appendChild(chip(n, "ELIMINATED")));
+  $("#duelBox").innerHTML = "";
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").textContent = "Ver Track Record Final";
+  $("#toTrack").onclick = () => {
+    buildTRTable();
+    go(6);
+    $("#nextEpisode").style.display = "none";
+    $("#restartSim").style.display = "inline-flex";
+  };
+}
+
+function runAdv4SemiEpisode(type){
+  if(alive.length === 0){ alive = Array.from(advanced); }
+  const pool = alive.slice();
+  currentChallengeTop3 = sample(pool, Math.min(4, pool.length));
+  currentAdv4SemiState = { type, pool };
+  showCinematicTop2Selection("adv4SemiTop2");
+}
+
+function createDecisionAvatar(name, label="", cls=""){
+  const card = document.createElement("div");
+  card.className = `nominee-card ${cls}`.trim();
+  const img = document.createElement("img");
+  loadImg(img, imgFor(name), name);
+  const nm = document.createElement("div");
+  nm.className = "label-name";
+  nm.textContent = name;
+  card.appendChild(img);
+  card.appendChild(nm);
+  if(label){
+    const small = document.createElement("div");
+    small.className = "small";
+    small.textContent = label;
+    card.appendChild(small);
+  }
+  return card;
+}
+
+function typeBonjuLine(el, text){
+  el.textContent = "";
+  let i = 0;
+  const timer = setInterval(() => {
+    el.textContent = text.slice(0, i + 1);
+    i++;
+    if(i >= text.length) clearInterval(timer);
+  }, 18);
+}
+
+function startAdv4EliminationDecision(){
+  if(!currentAdv4SemiState) return;
+  const pool = currentAdv4SemiState.pool.slice();
+  const top2 = chosenTop2.slice();
+  const highs = currentChallengeTop3.filter(n => !top2.includes(n));
+  const bottomPool = pool.filter(n => !currentChallengeTop3.includes(n));
+  const btm3 = sample(bottomPool, Math.min(3, bottomPool.length));
+  const safe = pool.filter(n => !currentChallengeTop3.includes(n) && !btm3.includes(n));
+  const eliminated = pick(btm3);
+
+  setTR(currentEpWinner, episode, 'win', 'WIN');
+  currentEpLosers.forEach(n => setTR(n, episode, 'top2', 'WIN'));
+  highs.forEach(n => setTR(n, episode, 'high', 'HIGH'));
+  safe.forEach(n => setTR(n, episode, 'safe', 'SAFE'));
+  btm3.forEach(n => setTR(n, episode, 'btm3', 'BTM3'));
+
+  currentAdv4SemiState = {
+    ...currentAdv4SemiState,
+    top2,
+    highs,
+    safe,
+    btm3,
+    winner: currentEpWinner,
+    otherTop2: currentEpOtherTop2,
+    eliminated
+  };
+
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-adv4-elimination").classList.add("active");
+  $("#stepName").textContent = `Episodio ${episode} - Decision de Eliminacion`;
+  $("#adv4DecisionContinue").disabled = true;
+  $("#adv4DecisionContinue").textContent = "Revelando decision...";
+  $("#adv4LipstickReveal").innerHTML = "";
+
+  const winnerPanel = $("#adv4WinnerPanel");
+  winnerPanel.innerHTML = `<div class="decision-heading">Ganador del lipsync</div>`;
+  const winnerImg = document.createElement("img");
+  winnerImg.className = "decision-avatar";
+  loadImg(winnerImg, imgFor(currentEpWinner), currentEpWinner);
+  const winnerName = document.createElement("div");
+  winnerName.className = "label-name";
+  winnerName.textContent = currentEpWinner;
+  winnerPanel.appendChild(winnerImg);
+  winnerPanel.appendChild(winnerName);
+
+  const nominees = $("#adv4Nominees");
+  nominees.innerHTML = "";
+  btm3.forEach(n => nominees.appendChild(createDecisionAvatar(n, "BTM3", n === eliminated ? "elim-picked" : "")));
+
+  typeBonjuLine(
+    $("#adv4BonjuText"),
+    `${currentEpWinner}, como ganador del episodio tienes una responsabilidad importante en este momento, debes elegir quien de los participantes en BOTTOM debe abandonar el juego.`
+  );
+
+  setTimeout(() => {
+    $("#adv4LipstickReveal").innerHTML = "";
+    const lipstick = document.createElement("div");
+    lipstick.className = "lipstick-card";
+    lipstick.innerHTML = `<span>Espejo de ${currentEpWinner}:</span><b>${eliminated}</b>`;
+    $("#adv4LipstickReveal").appendChild(lipstick);
+    $$("#adv4Nominees .nominee-card").forEach(card => {
+      if(card.textContent.includes(eliminated)) card.classList.add("elim-picked");
+    });
+    $("#adv4DecisionContinue").disabled = false;
+    $("#adv4DecisionContinue").textContent = "Continuar a Resultados";
+  }, 2800);
+}
+
+function finalizeAdv4EliminationDecision(){
+  const state = currentAdv4SemiState;
+  if(!state) return;
+  const { winner, otherTop2, highs, safe, btm3, eliminated } = state;
+  if(eliminated){
+    setTR(eliminated, episode, 'elim', 'ELIM');
+    setRank(eliminated, nextSemiRank);
+    eliminatedSet.add(eliminated);
+    activeSet.delete(eliminated);
+    nextSemiRank--;
+    alive = alive.filter(n => n !== eliminated);
+  }
+
+  go(3);
+  $("#winnersBox").classList.remove("hide");
+  renderEpisodeMoments(episode);
+
+  $("#winnersChips").innerHTML = `<h4>Top del episodio</h4>`;
+  $("#winnersChips").appendChild(chip(winner, "WIN - decide eliminacion"));
+  if(otherTop2) $("#winnersChips").appendChild(chip(otherTop2, "TOP2"));
+  highs.forEach(n => $("#winnersChips").appendChild(chip(n, "HIGH")));
+  safe.forEach(n => $("#winnersChips").appendChild(chip(n, "SAFE")));
+
+  $("#btmChips").innerHTML = `<h4>Bottom 3</h4>`;
+  btm3.forEach(n => $("#btmChips").appendChild(chip(n, n === eliminated ? "ELIM" : "BTM3")));
+  $("#duelBox").innerHTML = `<h4>Decision</h4>`;
+  if(eliminated) $("#duelBox").appendChild(chip(eliminated, `eliminado por ${winner}`));
+
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").textContent = "Ver Track Record";
+  $("#toTrack").onclick = () => { buildTRTable(); go(6); };
+}
+
+$("#adv4DecisionContinue").addEventListener("click", finalizeAdv4EliminationDecision);
+
+function runSemiEpisode(type){
+  if(alive.length === 0){ alive = Array.from(advanced); }
+  const pool = alive.slice();
+  
+  // 1. Calcular Ganadora e Inmune (WIN)
+  const win = pick(pool);
+  setTR(win, episode, 'win', 'WIN');
+  
+  // 2. Determinar las 3 peores de la noche y mostrarlas como BTM3.
+  const remaining = pool.filter(n => n !== win);
+  const btm3 = sample(remaining, 3);
+  const highPool = remaining.filter(n => !btm3.includes(n));
+  const highs = sample(highPool, Math.min(2, highPool.length));
+  const safe = highPool.filter(n => !highs.includes(n));
+  
+  highs.forEach(n => setTR(n, episode, 'high', 'HIGH'));
+  safe.forEach(n => setTR(n, episode, 'safe', 'SAFE'));
+  btm3.forEach(n => setTR(n, episode, 'btm3', 'BTM3'));
+  currentSemiState = { win, highs, safe, btm3, type };
+  
+  // Mostrar resultados pulidos antes de elegir BTM2.
+  $("#winnersBox").classList.remove("hide");
+  renderEpisodeMoments(episode);
+  
+  $("#winnersChips").innerHTML = `<h4>Desempeño Alto e Inmune</h4>`;
+  $("#winnersChips").appendChild(chip(win, "WIN"));
+  highs.forEach(n => $("#winnersChips").appendChild(chip(n, "HIGH")));
+  safe.forEach(n => $("#winnersChips").appendChild(chip(n, "SAFE")));
+  
+  $("#btmChips").innerHTML = `<h4>Zona de Peligro (BTM3)</h4>`;
+  btm3.forEach(n => $("#btmChips").appendChild(chip(n, "BTM3")));
+  
+  $("#duelBox").innerHTML = `<div class="help" style="color:#ffd700;">Bonju todavía no elige salvación: primero debes seleccionar quiénes caen al BTM2.</div>`;
+  
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").textContent = "Elegir BTM2";
+  $("#toTrack").onclick = () => {
+    currentChallengeTop3 = btm3.slice();
+    showCinematicTop2Selection("btm2");
+  };
+}
+
+function finalizeSemiBtm2Selection(){
+  if(!currentSemiState) return;
+  const { win, highs, safe, btm3 } = currentSemiState;
+  const savedLow = btm3.find(n => !chosenTop2.includes(n));
+  const survivor = currentEpWinner;
+  const loser = currentEpOtherTop2;
+
+  if(savedLow) setTR(savedLow, episode, 'low', 'LOW');
+  if(survivor) setTR(survivor, episode, 'btm2', 'BTM2');
+  if(loser){
+    setTR(loser, episode, 'elim', 'ELIM');
+    setRank(loser, nextSemiRank);
+    eliminatedSet.add(loser);
+    activeSet.delete(loser);
+    nextSemiRank--;
+    alive = alive.filter(n => n !== loser);
+  }
+
+  go(3);
+  $("#winnersBox").classList.remove("hide");
+  renderEpisodeMoments(episode);
+
+  $("#winnersChips").innerHTML = `<h4>Desempeño Alto e Inmune</h4>`;
+  $("#winnersChips").appendChild(chip(win, "WIN"));
+  highs.forEach(n => $("#winnersChips").appendChild(chip(n, "HIGH")));
+  safe.forEach(n => $("#winnersChips").appendChild(chip(n, "SAFE")));
+
+  $("#btmChips").innerHTML = `<h4>Zona de Peligro Resuelta</h4>`;
+  if(savedLow) $("#btmChips").appendChild(chip(savedLow, "LOW (Salvada)"));
+  if(survivor) $("#btmChips").appendChild(chip(survivor, "BTM2 (Gana lipsync)"));
+  if(loser) $("#btmChips").appendChild(chip(loser, "ELIM"));
+
+  $("#duelBox").innerHTML = `<h4>Resultado de Lipsync</h4>`;
+  if(loser) $("#duelBox").appendChild(chip(loser, "ELIMINADA"));
+
+  $("#toTrack").classList.remove("hide");
+  $("#toTrack").textContent = "Ver Track Record →";
+  $("#toTrack").onclick = () => { buildTRTable(); go(6); };
+}
+
+// TORNEO FINAL DE 6 - SOLO FORMATO AVANZAN 2
+function runAdv2TournamentEpisode(){
+  tournamentTimers.forEach(t => clearTimeout(t));
+  tournamentTimers = [];
+  const players = rankedByStars(alive.length ? alive : Array.from(advanced), "desc").slice(0,6);
+  alive = players.slice();
+  const shuffled = shuffle(players);
+  const round1 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]], [shuffled[4], shuffled[5]]];
+  finalTournamentState = {
+    round: 1,
+    matchIndex: 0,
+    round1,
+    round1Results: [],
+    round2: [],
+    round2Results: [],
+    finalMatch: null,
+    champion: null,
+    runnerUp: null,
+    doubleWinIndex: Math.floor(Math.random()*3),
+    committed: false
+  };
+
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-final-tournament").classList.add("active");
+  $("#stepName").textContent = "Gran Final - Torneo de 6";
+  $("#stage-final-tournament .choice-title").textContent = "Arbol de Torneo - Gran Final";
+  $("#stage-final-tournament .choice-sub").textContent = "Bonju mezcla nombres, revela duelos y el arbol se actualiza despues de cada lipsync";
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Bonju elige nombres...";
+  renderAdv2TournamentTree();
+  prepareNextAdv2TournamentMatch();
+}
+
+function prepareNextAdv2TournamentMatch(){
+  const state = finalTournamentState;
+  if(!state || state.champion) return;
+  let match = null;
+  if(state.round === 1){
+    match = { round:1, index:state.matchIndex, names:state.round1[state.matchIndex], doubleWin:state.matchIndex === state.doubleWinIndex };
+  } else if(state.round === 2){
+    if(!state.round2.length){
+      const advancers = state.round1Results.flatMap(r => r.winners);
+      const shuffled = shuffle(advancers);
+      state.round2 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]]];
+      state.matchIndex = 0;
+    }
+    match = { round:2, index:state.matchIndex, names:state.round2[state.matchIndex], doubleWin:false };
+  } else {
+    match = { round:3, index:0, names:state.finalMatch, doubleWin:false };
+  }
+  pendingTournamentMatch = match;
+  renderAdv2TournamentTree(match, true);
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Bonju esta eligiendo nombres...";
+  tournamentTimers.push(setTimeout(() => {
+    renderAdv2TournamentTree(match, false);
+    $("#tourneyContinueBtn").disabled = false;
+    $("#tourneyContinueBtn").textContent = "Ir al Lipsync";
+    $("#tourneyContinueBtn").onclick = () => {
+      chosenTop2 = match.names.slice();
+      lipsyncContext = "adv2Tournament";
+      showLipsyncArenaFlow();
+    };
+  }, 900));
+}
+
+function resolveAdv2TournamentMatch(){
+  const state = finalTournamentState;
+  const match = pendingTournamentMatch;
+  if(!state || !match) return;
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-final-tournament").classList.add("active");
+
+  if(match.round === 1){
+    const winners = match.doubleWin ? match.names.slice() : [currentEpWinner];
+    const losers = match.doubleWin ? [] : [currentEpOtherTop2];
+    state.round1Results[match.index] = { winners, losers, doubleWin: match.doubleWin };
+    state.matchIndex++;
+    if(state.matchIndex >= state.round1.length){
+      state.round = 2;
+      state.matchIndex = 0;
+    }
+  } else if(match.round === 2){
+    state.round2Results[match.index] = { winners:[currentEpWinner], losers:[currentEpOtherTop2] };
+    state.matchIndex++;
+    if(state.matchIndex >= 2){
+      state.round = 3;
+      state.finalMatch = state.round2Results.map(r => r.winners[0]);
+      state.matchIndex = 0;
+    }
+  } else {
+    state.champion = currentEpWinner;
+    state.runnerUp = currentEpOtherTop2;
+    commitAdv2TournamentResults();
+    renderAdv2TournamentTree(null, false);
+    $("#tourneyContinueBtn").disabled = false;
+    $("#tourneyContinueBtn").textContent = "Ver Tabla Final de Posiciones";
+    $("#tourneyContinueBtn").onclick = showFinalTrackRecord;
+    return;
+  }
+  renderAdv2TournamentTree(null, false);
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Actualizando arbol...";
+  tournamentTimers.push(setTimeout(prepareNextAdv2TournamentMatch, 850));
+}
+
+function renderAdv2TournamentTree(activeMatch=null, selecting=false){
+  const state = finalTournamentState;
+  const col1 = $("#tourneyCol1"), col2 = $("#tourneyCol2"), col3 = $("#tourneyCol3");
+  $("#tournamentSvg").innerHTML = "";
+  col1.innerHTML = "<h4>Ronda 1</h4>";
+  col2.innerHTML = "<h4>Ronda 2</h4>";
+  col3.innerHTML = "<h4>Gran Duelo</h4>";
+
+  state.round1.forEach((m,i) => {
+    const result = state.round1Results[i];
+    const active = activeMatch?.round === 1 && activeMatch.index === i;
+    const title = result?.doubleWin ? `Ronda 1.${i+1} - Doble WIN` : `Ronda 1.${i+1}`;
+    col1.appendChild(createMatchup(title, active && selecting ? ["...", "..."] : m, ["", ""], result?.winners || null, active && selecting));
+  });
+
+  const round2List = state.round2.length ? state.round2 : [["?", "?"], ["?", "?"]];
+  round2List.forEach((m,i) => {
+    const result = state.round2Results[i];
+    const active = activeMatch?.round === 2 && activeMatch.index === i;
+    col2.appendChild(createMatchup(`Semifinal ${i+1}`, active && selecting ? ["...", "..."] : m, ["", ""], result?.winners || null, !state.round2.length || (active && selecting)));
+  });
+
+  const finalNames = state.finalMatch || ["?", "?"];
+  const activeFinal = activeMatch?.round === 3;
+  col3.appendChild(createMatchup("Final", activeFinal && selecting ? ["...", "..."] : finalNames, ["", ""], state.champion ? [state.champion] : null, !state.finalMatch || (activeFinal && selecting)));
+
+  const crown = document.createElement("div");
+  crown.className = `final-crown-spot ${state.champion ? "revealed" : ""}`;
+  crown.innerHTML = `
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'><path d='M2 22h20v-2H2v2zm1-4h18V9l-4 4-5-8-5 8-4-4v9z'/></svg>">
+    <div class="tournament-plate winner-plate" id="championPlate">${state.champion || "Ganadora"}</div>`;
+  col3.appendChild(crown);
+}
+
+function commitAdv2TournamentResults(){
+  const state = finalTournamentState;
+  if(!state || state.committed) return;
+  state.committed = true;
+  const ep = seasonEpisodeCount();
+  setTR(state.champion, ep, 'champ', 'WINNER'); setRank(state.champion, 1);
+  setTR(state.runnerUp, ep, 'run', 'RUNNER UP'); setRank(state.runnerUp, 2);
+  state.round2Results
+    .flatMap(r => r.losers)
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0) || a.localeCompare(b))
+    .forEach((n,i)=>{ setTR(n, ep, 'elim', 'ELIMINATED'); setRank(n, 3+i); });
+  state.round1Results
+    .flatMap(r => r.losers)
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0) || a.localeCompare(b))
+    .forEach((n,i)=>{ setTR(n, ep, 'elim', 'ELIMINATED'); setRank(n, 5+i); });
+}
+
+// TORNEO FINAL DE 8 - FORMATO AVANZAN 4
+function runAdv4TournamentEpisode(){
+  tournamentTimers.forEach(t => clearTimeout(t));
+  tournamentTimers = [];
+  const players = rankedByStars(alive.length ? alive : Array.from(advanced).filter(n => finalRank[n] == null), "desc").slice(0,8);
+  alive = players.slice();
+  const shuffled = shuffle(players);
+  finalTournamentState = {
+    mode: "adv4",
+    round: 1,
+    matchIndex: 0,
+    round1: [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]], [shuffled[4], shuffled[5]], [shuffled[6], shuffled[7]]],
+    round1Results: [],
+    round2: [],
+    round2Results: [],
+    finalMatch: null,
+    champion: null,
+    runnerUp: null,
+    committed: false
+  };
+
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-final-tournament").classList.add("active");
+  $("#stepName").textContent = "Gran Final - Torneo Top 8";
+  $("#stage-final-tournament .choice-title").textContent = "Torneo Final Top 8";
+  $("#stage-final-tournament .choice-sub").textContent = "Cada duelo se revela, va a lipsync y el arbol conserva los resultados ya decididos.";
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Bonju mezcla nombres...";
+  renderAdv4TournamentTree();
+  prepareNextAdv4TournamentMatch();
+}
+
+function prepareNextAdv4TournamentMatch(){
+  const state = finalTournamentState;
+  if(!state || state.champion) return;
+  let match = null;
+  if(state.round === 1){
+    match = { round:1, index:state.matchIndex, names:state.round1[state.matchIndex] };
+  } else if(state.round === 2){
+    if(!state.round2.length){
+      const advancers = state.round1Results.map(r => r.winner);
+      const shuffled = shuffle(advancers);
+      state.round2 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]]];
+      state.matchIndex = 0;
+    }
+    match = { round:2, index:state.matchIndex, names:state.round2[state.matchIndex] };
+  } else {
+    match = { round:3, index:0, names:state.finalMatch };
+  }
+  pendingTournamentMatch = match;
+  renderAdv4TournamentTree(match, true);
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Bonju esta revelando el duelo...";
+  tournamentTimers.push(setTimeout(() => {
+    renderAdv4TournamentTree(match, false);
+    $("#tourneyContinueBtn").disabled = false;
+    $("#tourneyContinueBtn").textContent = "Ir al Lipsync";
+    $("#tourneyContinueBtn").onclick = () => {
+      chosenTop2 = match.names.slice();
+      lipsyncContext = "adv4Tournament";
+      showLipsyncArenaFlow();
+    };
+  }, 900));
+}
+
+function resolveAdv4TournamentMatch(){
+  const state = finalTournamentState;
+  const match = pendingTournamentMatch;
+  if(!state || !match) return;
+  $(".stage.active")?.classList.remove("active");
+  $("#stage-final-tournament").classList.add("active");
+
+  if(match.round === 1){
+    state.round1Results[match.index] = { winner: currentEpWinner, loser: currentEpOtherTop2 };
+    state.matchIndex++;
+    if(state.matchIndex >= state.round1.length){
+      state.round = 2;
+      state.matchIndex = 0;
+    }
+  } else if(match.round === 2){
+    state.round2Results[match.index] = { winner: currentEpWinner, loser: currentEpOtherTop2 };
+    state.matchIndex++;
+    if(state.matchIndex >= state.round2.length){
+      state.round = 3;
+      state.finalMatch = state.round2Results.map(r => r.winner);
+      state.matchIndex = 0;
+    }
+  } else {
+    state.champion = currentEpWinner;
+    state.runnerUp = currentEpOtherTop2;
+    commitAdv4TournamentResults();
+    renderAdv4TournamentTree(null, false);
+    $("#tourneyContinueBtn").disabled = false;
+    $("#tourneyContinueBtn").textContent = "Ver Tabla Final de Posiciones";
+    $("#tourneyContinueBtn").onclick = showFinalTrackRecord;
+    return;
+  }
+
+  renderAdv4TournamentTree(null, false);
+  $("#tourneyContinueBtn").disabled = true;
+  $("#tourneyContinueBtn").textContent = "Actualizando arbol...";
+  tournamentTimers.push(setTimeout(prepareNextAdv4TournamentMatch, 850));
+}
+
+function renderAdv4TournamentTree(activeMatch=null, selecting=false){
+  const state = finalTournamentState;
+  const col1 = $("#tourneyCol1"), col2 = $("#tourneyCol2"), col3 = $("#tourneyCol3");
+  $("#tournamentSvg").innerHTML = "";
+  col1.innerHTML = "<h4>Fase 1</h4>";
+  col2.innerHTML = "<h4>Fase 2</h4>";
+  col3.innerHTML = "<h4>Gran Final</h4>";
+
+  state.round1.forEach((m,i) => {
+    const result = state.round1Results[i];
+    const active = activeMatch?.round === 1 && activeMatch.index === i;
+    col1.appendChild(createMatchup(`Duelo ${i+1}`, active && selecting ? ["...", "..."] : m, ["", ""], result ? [result.winner] : null, active && selecting));
+  });
+
+  const round2List = state.round2.length ? state.round2 : [["?", "?"], ["?", "?"]];
+  round2List.forEach((m,i) => {
+    const result = state.round2Results[i];
+    const active = activeMatch?.round === 2 && activeMatch.index === i;
+    col2.appendChild(createMatchup(`Duelo ${i+5}`, active && selecting ? ["...", "..."] : m, ["", ""], result ? [result.winner] : null, !state.round2.length || (active && selecting)));
+  });
+
+  const finalNames = state.finalMatch || ["?", "?"];
+  const activeFinal = activeMatch?.round === 3;
+  col3.appendChild(createMatchup("Duelo Final", activeFinal && selecting ? ["...", "..."] : finalNames, ["", ""], state.champion ? [state.champion] : null, !state.finalMatch || (activeFinal && selecting)));
+
+  const crown = document.createElement("div");
+  crown.className = `final-crown-spot ${state.champion ? "revealed" : ""}`;
+  crown.innerHTML = `
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'><path d='M2 22h20v-2H2v2zm1-4h18V9l-4 4-5-8-5 8-4-4v9z'/></svg>">
+    <div class="tournament-plate winner-plate" id="championPlate">${state.champion || "Ganadora"}</div>`;
+  col3.appendChild(crown);
+}
+
+function commitAdv4TournamentResults(){
+  const state = finalTournamentState;
+  if(!state || state.committed) return;
+  state.committed = true;
+  const ep = seasonEpisodeCount();
+  setTR(state.champion, ep, 'champ', 'WINNER'); setRank(state.champion, 1);
+  setTR(state.runnerUp, ep, 'run', 'RUNNER UP'); setRank(state.runnerUp, 2);
+
+  state.round2Results
+    .flatMap(r => r.loser)
+    .filter(Boolean)
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0) || a.localeCompare(b))
+    .forEach((n,i)=>{
+      setTR(n, ep, i === 0 ? 'third' : 'fourth', i === 0 ? '3RD PLACE' : '4TH PLACE');
+      setRank(n, 3+i);
+    });
+
+  state.round1Results
+    .flatMap(r => r.loser)
+    .filter(Boolean)
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0) || a.localeCompare(b))
+    .forEach((n,i)=>{ setTR(n, ep, 'elim', 'ELIMINATED'); setRank(n, 5+i); });
+}
+
+function showFinalTrackRecord(){
+  go(6);
+  $("#nextEpisode").style.display = "none";
+  $("#restartSim").style.display = "inline-flex";
+}
+
+// NUEVA PANTALLA INTERACTIVA: ESQUEMA DE TORNEO PARA LA GRAN FINAL VISUAL COMPLETO
+function runFinalEpisode(){
+  if(advFormat === 3){
+    runTop4FinalEpisode();
+    return;
+  }
+  if(advFormat === 4){
+    runAdv4TournamentEpisode();
+    return;
+  }
+  runAdv2TournamentEpisode();
+}
+
+function renderFinalBracketPhase(phase, state){
+  const col1 = $("#tourneyCol1"), col2 = $("#tourneyCol2"), col3 = $("#tourneyCol3");
+  $("#tournamentSvg").innerHTML = "";
+  col1.innerHTML = "<h4>Ronda 1</h4>";
+  col2.innerHTML = "<h4>Semifinal</h4>";
+  col3.innerHTML = "<h4>Final</h4>";
+
+  col1.appendChild(createMatchup("Duelo A", state.qf1, ["3","6"], phase >= 1 ? state.qfW1 : null));
+  col1.appendChild(createMatchup("Duelo B", state.qf2, ["4","5"], phase >= 1 ? state.qfW2 : null));
+
+  col2.appendChild(createMatchup("Semifinal A", phase >= 1 ? state.sf1 : ["?", "?"], ["1","W"], phase >= 2 ? state.finalist1 : null, phase < 1));
+  col2.appendChild(createMatchup("Semifinal B", phase >= 1 ? state.sf2 : ["?", "?"], ["2","W"], phase >= 2 ? state.finalist2 : null, phase < 1));
+
+  col3.appendChild(createMatchup("Gran Duelo", phase >= 2 ? state.finalMatch : ["?", "?"], ["F1","F2"], phase >= 3 ? state.champion : null, phase < 2));
+
+  const crown = document.createElement("div");
+  crown.className = `final-crown-spot ${phase >= 3 ? "revealed" : ""}`;
+  crown.innerHTML = `
+    <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'><path d='M2 22h20v-2H2v2zm1-4h18V9l-4 4-5-8-5 8-4-4v9z'/></svg>">
+    <div class="tournament-plate winner-plate" id="championPlate">${phase >= 3 ? state.champion : "Ganadora"}</div>`;
+  col3.appendChild(crown);
+
+  if(phase >= 3){
+    commitFinalResults(state);
+    $("#tourneyContinueBtn").disabled = false;
+  }
+}
+
+function createMatchup(title, names, seeds, winner=null, pending=false){
+  const box = document.createElement("div");
+  const winners = Array.isArray(winner) ? winner : winner ? [winner] : [];
+  const selecting = pending && names.some(name => name === "...");
+  box.className = `tournament-matchup revealed ${pending ? "pending" : ""} ${selecting ? "selecting" : ""}`;
+  const head = document.createElement("div");
+  head.className = "small";
+  head.style.color = "#ffe8a8";
+  head.style.textTransform = "uppercase";
+  head.style.fontWeight = "900";
+  head.textContent = title;
+  box.appendChild(head);
+  names.forEach((name, i) => box.appendChild(createPlate(name, winners.length && !winners.includes(name), seeds[i], winners.includes(name))));
+  return box;
+}
+
+function createPlate(name, isLoser=false, seed="", isWinner=false){
+  const div = document.createElement("div");
+  div.className = `tournament-plate ${isLoser ? 'loser-plate' : ''} ${isWinner ? 'winner-plate' : ''}`;
+  div.innerHTML = `<span class="seed-num">${seed}</span> ${name || "?"}`;
+  return div;
+}
+
+function commitFinalResults(state){
+  if(state.committed) return;
+  state.committed = true;
+  const ep = seasonEpisodeCount();
+  setTR(state.champion, ep, 'champ', 'WINNER'); setRank(state.champion, 1);
+  setTR(state.runnerUp, ep, 'run', 'RUNNER UP'); setRank(state.runnerUp, 2);
+
+  [state.sfL1, state.sfL2]
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0))
+    .forEach((n,i)=>{ setTR(n, ep, 'elim', 'ELIMINATED'); setRank(n, 3+i); });
+
+  [state.qfL1, state.qfL2]
+    .sort((a,b)=>(stars[b]||0)-(stars[a]||0))
+    .forEach((n,i)=>{ setTR(n, ep, 'elim', 'ELIMINATED'); setRank(n, 5+i); });
+}
+
+$("#tourneyContinueBtn").addEventListener("click", ()=>{
+  if(finalTournamentState && !finalTournamentState.champion) return;
+  showFinalTrackRecord();
+});
+
+// POOL DE EVENTOS RE ENRIQUECIDO (30 INTERACCIONES INTEGRADAS CON HUMOR)
+function renderEpisodeMoments(ep){
+  const box = $("#momentsBox"); if(!box) return;
+  const list = $("#momentsList"); list.innerHTML = "";
+  
+  const currentGroup = currentActiveGroup(ep);
+  const pool = currentGroup ? groups[currentGroup].slice() : alive.slice();
+  if(pool.length < 2) { box.classList.add("hide"); return; }
+  
+  let bank = MOMENT_BANKS.bracket;
+  if(!currentGroup && advFormat === 3 && ep >= 10 && ep <= 15) bank = MOMENT_BANKS.semifinal;
+  else if(!currentGroup && advFormat === 3 && ep >= 16) bank = MOMENT_BANKS.final4;
+  else if(!currentGroup && advFormat === 2) bank = MOMENT_BANKS.tournament;
+  const selection = sample(bank, Math.min(3, bank.length));
+  selection.forEach(inter => {
+    const row = document.createElement("div"); row.className = "moment-row";
+    const p1 = pick(pool); const p2 = pick(pool.filter(x=>x!==p1)) || p1; const p3 = pick(pool.filter(x=>x!==p1&&x!==p2)) || p2;
+    
+    row.appendChild(chip(p1));
+    let txt = inter.text.replace("{B}", p2).replace("{C}", p3).replace("{A}", p1);
+    row.appendChild(document.createTextNode(" " + txt));
+    list.appendChild(row);
+  });
+  box.classList.remove("hide");
+}
+
+// CONTROLADOR DE TRACK RECORD Y TABLAS GENERALES
+function participantCellHTML(r){
+  const rank = finalRank[r.name] || "";
+  const tagClass = groupColors[r.group] || "";
+  const tag = r.group ? `<span class="tag ${tagClass}">${r.group}</span>` : "";
+  return `
+    <div class="tr-participant">
+      <span class="rank-badge ${rank ? "" : "empty"}">${rank || "-"}</span>
+      <img class="tr-avatar" data-tr-avatar="${r.name}">
+      <span class="tr-name">${r.name}</span>
+      ${tag}
+      <span class="tr-stars">⭐ ${stars[r.name]||0}</span>
+    </div>`;
+}
+
+function renderParticipantCell(row, r){
+  row.cells[0].className = "participant-cell";
+  row.cells[0].innerHTML = participantCellHTML(r);
+  const avatar = row.cells[0].querySelector(".tr-avatar");
+  if(avatar) loadImg(avatar, imgFor(r.name), r.name);
+}
+
+function buildTRSkeleton(){
+  const head=$("#trkHead"); const body=$("#trkBody"); head.innerHTML=""; body.innerHTML="";
+  const tr=document.createElement("tr");
+  tr.innerHTML = `<th class="participant-head">Participante</th>` + (new Array(trEpisodeCount).fill(0).map((_,i)=>`<th class="episode-head">E${i+1}</th>`).join(""));
+  head.appendChild(tr);
+  trackData.forEach((r)=>{
+    const trb=document.createElement("tr"); trb.dataset.name = r.name;
+    trb.innerHTML=`<td class="participant-cell"></td>` + new Array(trEpisodeCount).fill(0).map(()=>`<td><span class="cell grey"></span></td>`).join("");
+    renderParticipantCell(trb, r);
+    body.appendChild(trb);
+  });
+}
+
+function buildTRTable(){
+  ensureGreyForInactive(episode);
+  const body=$("#trkBody"); if(!body) return;
+  body.querySelectorAll("tr").forEach((row)=>{
+    const nm = row.dataset.name; const r = trackData.find(x=>x.name===nm);
+    if(r){
+      renderParticipantCell(row, r);
+      for(let e=1;e<=trEpisodeCount;e++){
+        const c=r.cells[e-1] || {cls:'grey',txt:''};
+        row.cells[e].innerHTML = `<span class="cell ${c.cls}">${c.txt||''}</span>`;
+      }
+    }
+  });
+  $("#trTitle").textContent=`Track Record — Episodio ${episode}`;
+  maybeSortRowsByRank();
+}
+
+function setRank(name, n){ finalRank[name] = n; updateRankColumn(); maybeSortRowsByRank(); }
+function updateRankColumn(){
+  $$("#trkBody tr").forEach(tr=>{
+    const r = trackData.find(x=>x.name===tr.dataset.name);
+    if(r) renderParticipantCell(tr, r);
+  });
+}
+
+function maybeSortRowsByRank(){
+  const body = $("#trkBody"); if(!body) return;
+  const rows = Array.from(body.querySelectorAll("tr"));
+  const g = currentActiveGroup(episode);
+  const activeNames = new Set(alive.length ? alive : Array.from(advanced));
+  rows.sort((a,b)=>{
+    const ra = trackData.find(x=>x.name===a.dataset.name);
+    const rb = trackData.find(x=>x.name===b.dataset.name);
+    const rankA = finalRank[a.dataset.name], rankB = finalRank[b.dataset.name];
+    if(episode >= trEpisodeCount && rankA != null && rankB != null) return rankA - rankB;
+
+    const bucket = (row, r, rank) => {
+      if(rank != null) return 4;
+      if(g && r?.group === g) return 0;
+      if(activeNames.has(row.dataset.name) || advanced.has(row.dataset.name)) return 1;
+      return 2;
+    };
+    const ba = bucket(a, ra, rankA), bb = bucket(b, rb, rankB);
+    if(ba !== bb) return ba - bb;
+    if(rankA != null || rankB != null) return (rankA ?? 99) - (rankB ?? 99);
+    const ga = groupOrder.indexOf(ra?.group), gb = groupOrder.indexOf(rb?.group);
+    if(ga !== gb) return ga - gb;
+    return a.dataset.name.localeCompare(b.dataset.name);
+  });
+  body.replaceChildren(...rows);
+}
+
+function go(n){
+  $$(".stage").forEach(s=>s.classList.remove("active"));
+  $("#stage-"+n)?.classList.add("active");
+  if(n===6) buildTRTable();
+}
+
+$("#nextEpisode").addEventListener("click", ()=>{
+  if(episode === 9){
+    runWildcardStageLogic();
+    return;
+  }
+  if(advFormat === 3 && episode === 15){
+    runStarCutEpisode();
+    return;
+  }
+  if(advFormat === 3 && episode === 16){
+    episode = 17;
+    go(3);
+    updateEpisodeUI();
+    return;
+  }
+  if(episode >= seasonEpisodeCount()){
+    return;
+  }
+  episode++;
+  go(3); updateEpisodeUI();
+});
+
+$("#restartSim").addEventListener("click", ()=>{ parent.ShowdownSoloHost.restart(); });
+$("#homeBtn").addEventListener("click", ()=>{ parent.location.hash='showdown'; });
+
+// Inicialización
+buildCastGrid();
+updateCastState();
+enforceUnique('#castGrid');
+</script>
+<script src="/showdown/solo/bridge.js"></script></body>
+</html>

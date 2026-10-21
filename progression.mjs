@@ -71,7 +71,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
  async function inventory(uid){return new Set((await db.all('SELECT item_id FROM economy_inventory WHERE user_id=?',uid)).map(row=>row.item_id));}
  async function preferences(uid){const row=await db.one('SELECT autosave,hidden FROM simulator_preferences WHERE user_id=?',uid);return {autosave:row?!!Number(row.autosave):true,hidden:JSON.parse(row?.hidden||'[]')};}
  async function expireArchives(uid){await db.run("UPDATE game_runs SET status='expired' WHERE user_id=? AND status='archived' AND updated<=?",uid,now()-86400000);}
- async function canPlay(uid,mode){const item=modes.get(mode);if(!item||item.upcoming)return false;const w=await wallet(uid);return w.level>=item.level&&(!item.price||(await inventory(uid)).has('mode:'+mode));}
+ async function canPlay(uid,mode){const item=modes.get(mode);if(!item||item.upcoming)return false;const w=await wallet(uid);return (item.noLevelRequirement||w.level>=item.level)&&(!item.price||(await inventory(uid)).has('mode:'+mode));}
  async function view(uid){
   const w=await wallet(uid),owned=await inventory(uid);
   await expireArchives(uid);
@@ -122,7 +122,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    const b=await body(req),item=items.get(b.item)||shop.modes.find(m=>'mode:'+m.id===b.item);
    if(!item||item.starter||item.upcoming||(item.kind==='mode'&&!item.price))fail(400,'Este artículo no está a la venta.');
    const id=item.kind==='mode'?'mode:'+item.id:item.id,w=await wallet(user.id);
-   if(w.level<(item.level||1))fail(409,'Primero alcanza el nivel '+item.level+'.');
+   if(!item.noLevelRequirement&&w.level<(item.level||1))fail(409,'Primero alcanza el nivel '+item.level+'.');
    await db.transaction(async()=>{
     const added=await db.run('INSERT INTO economy_inventory(user_id,item_id,acquired) VALUES(?,?,?) ON CONFLICT DO NOTHING',user.id,id,now());
     if(!added.changes)return;
@@ -134,7 +134,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
   }
   if(p==='/api/economy/activity'&&method==='POST'){
    const b=await body(req),surface=b.surface==='simulator'?'simulator':'web';
-   const validRoutes=new Set(['inicio','explorar','temporada','premios','comunidad','noticias','simuladores','guardados','universo','perfil','mensajes','buscar','privacidad','audicion']);
+   const validRoutes=new Set(['inicio','explorar','temporada','premios','comunidad','noticias','simuladores','guardados','universo','perfil','mensajes','buscar','privacidad','audicion','showdown']);
    const route=String(b.route||'inicio').split('/')[0];if(!validRoutes.has(route))fail(400,'Página inválida.');
    const key=String(b.route||'inicio').slice(0,100);
    const previous=await db.one('SELECT active_seconds,updated FROM activity_days WHERE user_id=? AND day=? AND surface=?',user.id,day(),surface);
@@ -156,7 +156,7 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
    json(res,{wallet:await wallet(user.id)});return true;
   }
   if(p==='/api/game-runs'&&method==='POST'){
-   const b=await body(req),mode=String(b.mode||'');
+   const b=await body(req),mode=String(b.mode||'');if(mode==='showdown')fail(409,'Showdown se juega desde su sala dentro de la web.');
    if(!await canPlay(user.id,mode))fail(403,'Esta temporada aún está bloqueada. Revisa tu nivel y la tienda.');
    const active=await activeRun(user.id);if(active)fail(409,'Ya tienes una partida sin terminar. Puedes continuarla o archivarla.',{run:active});
    await db.run("UPDATE game_runs SET status='discarded' WHERE user_id=? AND status='active'",user.id);
