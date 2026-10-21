@@ -26,6 +26,14 @@ export function jumpTo(run,id){
  run.walkTarget=null;p.facing=f.x>=p.x?1:-1;p.phase='crouch';p.phaseTime=0;p.takeoffBlend=p.walkBlend;p.takeoffStride=p.walk;p.jumpProgress=0;p.idle=0;p.slip=0;
  run.jump={from:{x:p.x,y:p.y},aim:{x:f.x,y:f.y},to:f.id,t:0,duration:.58+distance(p,f)/1100,airX:0,airY:0};run.events.push({type:'jump'});return true;
 }
+export function jumpFree(run,dx=0,dy=0){
+ const p=run.player;if(run.jump||run.deathTimer||p.stun>0||run.status!=='playing')return false;
+ if(!dx&&!dy){dx=p.directionX??p.facing;dy=p.directionY||0;}
+ // Manual direction and fixed impulse: no selection of the next platform.
+ const aim={x:p.x+Math.sign(dx)*205,y:p.y+Math.sign(dy)*140};
+ run.walkTarget=null;p.facing=dx?Math.sign(dx):p.facing;p.phase='crouch';p.phaseTime=0;p.takeoffBlend=p.walkBlend;p.takeoffStride=p.walk;p.jumpProgress=0;p.idle=0;p.slip=0;
+ run.jump={from:{x:p.x,y:p.y},aim,to:null,t:0,duration:.58+distance(p,aim)/1100,airX:0,airY:0};run.events.push({type:'jump'});return true;
+}
 function phase(p,next){if(p.phase!==next){p.phase=next;p.phaseTime=0;}}
 function blendWalk(p,target,dt){p.walkBlend+=(target-p.walkBlend)*(1-Math.exp(-dt*15));if(Math.abs(target-p.walkBlend)<.001)p.walkBlend=target;}
 function loseLife(run,reason){if(run.deathTimer||run.status!=='playing')return;run.lives=Math.max(0,run.lives-1);run.combo=0;run.jump=null;run.walkTarget=null;run.deathTimer=1.15;phase(run.player,'hurt');run.events.push({type:'splash',reason});}
@@ -87,11 +95,12 @@ export function stepRun(run,input={},dt=1/120){
   }return;
  }
  if(input.dodge&&!p.dodgeCooldown&&!run.jump){p.dodge=.36;p.dodgeCooldown=2.4;p.slip=0;p.idle=0;run.events.push({type:'dodge'});}
+ if(input.jump&&!run.jump)jumpFree(run,Number(input.x)||0,Number(input.y)||0);
  if(run.jump){const j=run.jump;j.t+=dt;blendWalk(p,0,dt);if(j.t<.1){phase(p,'crouch');return;}
   const t=Math.min(1,(j.t-.1)/j.duration),mx=Number(input.x)||0,my=Number(input.y)||0;
   j.airX=Math.max(-55,Math.min(55,j.airX+(mx*68+run.wind)*dt));j.airY=Math.max(-31,Math.min(31,j.airY+my*42*dt));
   p.jumpProgress=t;phase(p,t<.5?'jump':'fall');p.x=j.from.x+(j.aim.x-j.from.x)*t+j.airX;p.y=j.from.y+(j.aim.y-j.from.y)*t+j.airY;p.z=4*(94+distance(j.from,j.aim)*.14)*t*(1-t);
-  if(t===1){run.jump=null;arrive(run,run.floes.find(f=>f.id===j.to));}return;
+  if(t===1){run.jump=null;const f=j.to?run.floes.find(f=>f.id===j.to):run.floes.filter(f=>floeAvailable(f)&&((p.x-f.x)/f.rx)**2+((p.y-f.y)/f.ry)**2<=1).sort((a,b)=>distance(p,a)-distance(p,b))[0];if(f)arrive(run,f);else loseLife(run,'Caíste al agua. Dirige el salto con WASD o las flechas.');}return;
  }
  const f=run.floes.find(f=>f.id===p.floe);if(!floeAvailable(f)){loseLife(run,f?.broken?'El témpano colapsó. Las grietas no se detienen cuando te vas.':'La marea hundió el hielo. ¡Atenta a la espuma!');return;}
  if(f.kind==='fragile')f.triggered=true;
@@ -99,6 +108,7 @@ export function stepRun(run,input={},dt=1/120){
  if(f.kind==='finish'&&run.beacons===run.beaconTotal){run.status='won';run.score+=run.lives*200+Math.max(0,Math.round(300-run.time))*5;run.events.push({type:'win'});return;}
  if(p.land>0){p.land=Math.max(0,p.land-dt);blendWalk(p,0,dt);phase(p,'land');return;}
  let mx=Number(input.x)||0,my=Number(input.y)||0;
+ if(mx||my){p.directionX=Math.sign(mx);p.directionY=Math.sign(my);}
  if(run.walkTarget){const dx=run.walkTarget.x-p.x,dy=run.walkTarget.y-p.y,d=Math.hypot(dx,dy);if(d<3)run.walkTarget=null;else{mx=dx/d;my=dy/d;}}
  const safe=['start','checkpoint','finish'].includes(f.kind);
  if(mx||my){p.idle=Math.max(0,p.idle-dt*3);p.slip=Math.max(0,p.slip-dt*2);}else if(!safe){p.idle+=dt;if(p.idle>run.rules.slip)p.slip=Math.min(1,p.slip+dt*.7);}
@@ -107,5 +117,5 @@ export function stepRun(run,input={},dt=1/120){
  if(p.slip>0){p.x+=(24+p.slip*90)*p.slip*dt;p.y+=Math.sin(f.offset)*16*p.slip*dt;}
  const moved=distance(before,p);if(moved&&(mx||my))p.walk+=moved*Math.PI*2/RIG.cycleDistance;if(mx)p.facing=mx>0?1:-1;
  blendWalk(p,moved&&(mx||my)?1:0,dt);phase(p,p.stun?'hurt':moved&&(mx||my)?'walk':'idle');
- if(((p.x-f.x)/f.rx)**2+((p.y-f.y)/f.ry)**2>1.12)loseLife(run,p.slip?'Dani resbaló. Muévete antes de que el hielo te lleve al borde.':'Te acercaste demasiado al borde.');
+ if(((p.x-f.x)/f.rx)**2+((p.y-f.y)/f.ry)**2>1.12)loseLife(run,p.slip?'Te resbalaste. Muévete antes de que el hielo te lleve al borde.':'Te acercaste demasiado al borde.');
 }

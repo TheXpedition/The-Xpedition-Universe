@@ -1,8 +1,11 @@
 import {FALL_LINES,AMBIENT_LINES,shuffleBag} from './dani-lines.mjs';
+import {characterConfig} from './characters.mjs';
 export class DaniDialogue{
  constructor({caption,line,audioContext}){Object.assign(this,{caption,line,audioContext});this.fall=shuffleBag(FALL_LINES);this.ambient=shuffleBag(AMBIENT_LINES);this.next=9+Math.random()*7;this.enabled=true;this.muted=false;this.active=null;this.audio=null;this.paused=false;this.mouth=0;this.clock=0;this.until=0;this.analyser=null;this.samples=new Uint8Array(128);}
+ setCharacter(id){const character=characterConfig(id);this.stop();this.character=character;this.fall=shuffleBag(character.fall);this.ambient=character.ambient.length?shuffleBag(character.ambient):null;this.caption.querySelector('b').textContent=character.name.toUpperCase();this.next=9+Math.random()*7;}
  say(kind='ambient'){
   if(kind!=='fall'&&this.active)return;
+  if(kind!=='fall'&&!this.ambient)return;
   this.stop();const item=(kind==='fall'?this.fall:this.ambient)();this.active=item;this.line.textContent=item.text;this.caption.hidden=false;this.until=this.clock+Math.max(4,item.spoken.length/12);this.next=this.until+20+Math.random()*19;
   if(!this.enabled||this.muted)return;
   const voice=new Audio('./audio/'+item.id+'.wav');this.audio=voice;voice.volume=.95;
@@ -27,7 +30,7 @@ export class DaniDialogue{
   // Plain character subtitles: no panel, toast, bubble or screen-fixed message.
   const boxWidth=this.caption.offsetWidth||280,screenX=(player.x-camera)/width*this.caption.parentElement.clientWidth;
   const px=Math.max(boxWidth/2+10,Math.min(this.caption.parentElement.clientWidth-boxWidth/2-10,screenX));
-  const headY=(player.y-player.z-216)/height*100;
+  const headY=(player.y-player.z-(player.renderHeight||this.character?.height||206)-10)/height*100;
   this.caption.style.left=px+'px';this.caption.style.top=Math.max(12,headY)+'%';
  }
  reset(){this.stop();this.next=9+Math.random()*7;this.clock=0;}

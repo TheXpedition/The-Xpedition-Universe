@@ -1,4 +1,4 @@
-export const CAMPAIGN_VERSION=2;
+export const CAMPAIGN_VERSION=3;
 const maps=[
  {id:1,chapter:1,stage:1,name:'Bahía quebrada',tickets:8,masks:['b','bc','abc','ac','ab','a','ab','abc','bc','c','bc','ab','b'],beacons:[[3,'c'],[6,'a'],[10,'c']],seals:[[7,'b']],moving:[],tides:[[8,'b']],collapse:[[4,'a'],[9,'c']],wind:false,waves:false,brief:'Recupera las tres balizas. Los dos brazos de la bahía se conectan por hielo inestable.'},
  {id:2,chapter:1,stage:2,name:'El canal de la foca',tickets:12,masks:['b','ab','a','abc','bc','c','bc','abc','ab','a','abc','bc','ac','bc','b'],beacons:[[3,'a'],[7,'c'],[12,'a']],seals:[[3,'b'],[7,'b'],[11,'c']],moving:[[4,'c'],[8,'b']],tides:[[6,'c'],[10,'b']],collapse:[[4,'b'],[9,'a']],wind:false,waves:false,brief:'Las focas siguen tus movimientos y cargan hacia ti. Cambia de posición cuando te miren.'},

@@ -66,3 +66,6 @@ test('active runs from the old campaign require a restart without granting ticke
  const session=await start(),row=await db.one('SELECT snapshot FROM arcade_runs WHERE id=?',session.id),state=JSON.parse(row.snapshot);state.version=1;await db.run('UPDATE arcade_runs SET snapshot=? WHERE id=?',JSON.stringify(state),session.id);clock+=1000;const before=await progression.wallet(a.id);
  const result=await send(session,[{op:'step',ticks:1,input:{x:0,y:0,dodge:false}}]);assert.equal(result.status,409);assert.match(result.error,/campaña se actualizó/);assert.deepEqual(await progression.wallet(a.id),before);
 });
+test('manual keyboard jumps are replayed by the server and cannot earn tickets by themselves',async()=>{
+ const session=await start();clock+=1200;const result=await send(session,[{op:'step',ticks:1,input:{x:0,y:0,dodge:false,jump:true}},{op:'step',ticks:119,input:{x:0,y:0,dodge:false,jump:false}}]);assert.equal(result.status,200);assert.equal(result.reward,null);const state=JSON.parse((await db.one('SELECT snapshot FROM arcade_runs WHERE id=?',session.id)).snapshot);assert.equal(state.player.floe,'f1');assert.equal(state.player.x,365);assert.equal(state.collected,1);
+});

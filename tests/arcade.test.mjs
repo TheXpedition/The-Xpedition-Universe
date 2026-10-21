@@ -20,7 +20,7 @@ after(stop);
 async function req(url,{token,method='GET',body}={}){return fetch(base+url,{method,redirect:'manual',headers:{'Content-Type':'application/json',...(token?{cookie:'xp_session='+token}:{})},body:body===undefined?undefined:JSON.stringify(body)});}
 test('nuevo juego cerrado, controles solo para staff, archivos y enlaces directos protegidos; abrir/cerrar persiste y se audita',async()=>{
  await start();const metadata=await (await req('/api/arcade/games')).json();assert.equal(metadata.games[0].publicEnabled,false);assert.equal(metadata.games[0].canPlay,false);
- for(const url of ['/simulator/ice-breaker','/simulator/ice-breaker/','/simulator/ice-breaker/index.html','/simulator/ice-breaker/game.mjs','/simulator/ice-breaker/engine.mjs','/simulator/ice-breaker/dani-renderer.mjs','/simulator/ice-breaker/dani-rig.mjs','/simulator/ice-breaker/animation.html','/simulator/ice-breaker/animation.mjs','/simulator/ice-breaker/art/dani.png','/simulator/ice-breaker/audio/fall-concha.wav']){
+ for(const url of ['/simulator/ice-breaker','/simulator/ice-breaker/','/simulator/ice-breaker/index.html','/simulator/ice-breaker/game.mjs','/simulator/ice-breaker/engine.mjs','/simulator/ice-breaker/dani-renderer.mjs','/simulator/ice-breaker/dani-rig.mjs','/simulator/ice-breaker/animation.html','/simulator/ice-breaker/animation.mjs','/simulator/ice-breaker/art/dani.png','/simulator/ice-breaker/audio/fall-concha.wav','/simulator/ice-breaker/character-renderer.mjs','/simulator/ice-breaker/characters.mjs','/simulator/ice-breaker/art/bayron-reference.png','/simulator/ice-breaker/audio/andromeda-dia.wav']){
   for(const token of [undefined,'ordinary-test-token']){const r=await req(url,{token});assert.equal(r.status,403,url);assert.match(r.headers.get('cache-control'),/no-store/);}
   const allowed=await req(url,{token:'staff-test-token'});assert.equal(allowed.status,200,url);assert.match(allowed.headers.get('cache-control'),/private, no-store/);assert.match(allowed.headers.get('vary'),/Cookie/);
  }
@@ -43,8 +43,13 @@ test('nuevo juego cerrado, controles solo para staff, archivos y enlaces directo
 });
 
 function tick(run,seconds,input={}){for(let i=0;i<Math.ceil(seconds*120);i++)stepRun(run,input,1/120);}
-test('pointer jumps have an arc and collect each crystal once; the old automatic jump does nothing',()=>{
- const r=newRun();tick(r,2,{jump:true});assert.equal(r.player.x,160);assert.equal(r.jump,null);assert(!jumpTo(r,'f24'));assert(jumpTo(r,'f1'));tick(r,.4);assert(r.player.z>70);tick(r,.7);assert.equal(r.player.floe,'f1');assert.equal(r.collected,1);const score=r.score;assert(jumpTo(r,'f0'));tick(r,1);assert(jumpTo(r,'f1'));tick(r,1);assert.equal(r.score,score);
+test('pointer jumps have an arc and collect each crystal once',()=>{
+ const r=newRun();assert(!jumpTo(r,'f24'));assert(jumpTo(r,'f1'));tick(r,.4);assert(r.player.z>70);tick(r,.7);assert.equal(r.player.floe,'f1');assert.equal(r.collected,1);const score=r.score;assert(jumpTo(r,'f0'));tick(r,1);assert(jumpTo(r,'f1'));tick(r,1);assert.equal(r.score,score);
+});
+test('space uses a manual impulse and an actual landing collider; missing ice means water',()=>{
+ const r=newRun();stepRun(r,{jump:true});assert.equal(r.jump.to,null);assert.equal(r.jump.aim.x,365);tick(r,1);assert.equal(r.player.floe,'f1');assert.equal(r.collected,1);
+ const water=newRun();water.floes=water.floes.filter(f=>f.id!=='f1');stepRun(water,{jump:true});tick(water,1);assert.equal(water.lives,water.maxLives-1);assert(water.events.some(e=>e.type==='splash'&&/agua/.test(e.reason)));
+ const up=newRun();stepRun(up,{jump:true,y:-1});assert.equal(up.jump.aim.x,160);assert.equal(up.jump.aim.y,310);tick(up,1);assert.equal(up.lives,up.maxLives-1);
 });
 test('all nine maps have connected branching routes to every beacon and their base',()=>{
  assert.equal(LEVELS.length,9);for(const level of LEVELS){const r=newRun({level:level.id}),seen=new Set(['f0']),queue=[r.floes[0]];
@@ -59,7 +64,7 @@ test('collapse keeps counting after leaving, reforms later and tidal ice really 
  const t=newRun(),ice=t.floes.find(f=>f.tidal);t.time=(6.2-ice.offset%9.8+9.8)%9.8;Object.assign(t.player,{x:ice.x,y:ice.y,floe:ice.id});tick(t,.1);assert(!floeAvailable(ice));assert.equal(t.lives,t.maxLives-1);
 });
 test('lingering causes an actual slide and fall; walking off the edge is no longer clamped',()=>{
- const r=newRun(),f=r.floes.find(f=>f.id==='f1');Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,7);assert.equal(r.lives,r.maxLives-1);assert(r.events.some(e=>e.type==='splash'&&/resbaló/.test(e.reason)));
+ const r=newRun(),f=r.floes.find(f=>f.id==='f1');Object.assign(r.player,{x:f.x,y:f.y,floe:f.id});tick(r,7);assert.equal(r.lives,r.maxLives-1);assert(r.events.some(e=>e.type==='splash'&&/resbal/.test(e.reason)));
  const w=newRun();tick(w,1.6,{x:1});assert.equal(w.lives,w.maxLives-1);
 });
 test('moving platforms carry grounded feet but jumps use the takeoff aim and can miss',()=>{

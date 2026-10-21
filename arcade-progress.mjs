@@ -38,7 +38,7 @@ export function createArcadeProgress({db,body,json,fail,checkRate,access,progres
    let ticks=0;
    for(const command of input.commands){
     if(command.op==='step'){
-     if(!Number.isInteger(command.ticks)||command.ticks<1||command.ticks>600||!command.input||!Number.isFinite(command.input.x)||Math.abs(command.input.x)>1||!Number.isFinite(command.input.y)||Math.abs(command.input.y)>1||typeof command.input.dodge!=='boolean')fail(400,'Movimiento no válido.');ticks+=command.ticks;
+     if(!Number.isInteger(command.ticks)||command.ticks<1||command.ticks>600||!command.input||!Number.isFinite(command.input.x)||Math.abs(command.input.x)>1||!Number.isFinite(command.input.y)||Math.abs(command.input.y)>1||typeof command.input.dodge!=='boolean'||command.input.jump!==undefined&&typeof command.input.jump!=='boolean')fail(400,'Movimiento no válido.');ticks+=command.ticks;
     }else if(command.op==='jump'){if(typeof command.id!=='string'||command.id.length>24)fail(400,'Destino no válido.');}
     else if(command.op==='walk'){if(!Number.isFinite(command.x)||!Number.isFinite(command.y))fail(400,'Destino no válido.');}
     else if(command.op!=='cancel')fail(400,'Movimiento desconocido.');
