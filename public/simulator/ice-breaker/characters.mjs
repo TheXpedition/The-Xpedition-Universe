@@ -17,6 +17,39 @@ export const CHARACTERS=Object.freeze([
   line('andromeda-churriaria','Esto debe ser culpa de Churriaria Villegas.'),
   line('andromeda-genshit','En Genshit Impact esto es más fácil.','En Gensh*t Impact esto es más fácil.'),
   line('andromeda-peggy','Esto me pasa por traicionar a Peggy.')
+ ],ambient:[]},
+ {id:'isabel',name:'Isabel',image:'./art/isabel-reference.png',height:201,voice:'Alocada y eléctrica',fall:[
+  line('isabel-tosera','¡Me dejaron María Isabel Tosera!'),
+  line('isabel-lol','Tengo que acabar rápido para seguir jugando LOL.'),
+  line('isabel-trabajo','Me pueden dejar todo el día aquí, con tal de no ir a trabajar.'),
+  line('isabel-blasfemus','¡Malditos hijos de perra! ¡Blasfemus Hauz Siu Guar!','¡Malditos hijos de p*rra! ¡Blasfemus Hauz Siu Guar!')
+ ],ambient:[]},
+ {id:'peggy',name:'Peggy',image:'./art/peggy-reference.png',height:214,voice:'Diva de pasarela',fall:[
+  line('peggy-piggy','¡Me dejaron toda Piggy Marrano!'),
+  line('peggy-ebria','Ya estoy ebria, no sé qué estoy haciendo.'),
+  line('peggy-pagar','Cuando salga de esta mamada me la vas a pagar, pinche prieta.','Cuando salga de esta m*m*da me la vas a pagar, p*nche pr**ta.'),
+  line('peggy-inaella','Esto es culpa de Iñaella.')
+ ],ambient:[]},
+ {id:'eris',name:'Eris',image:'./art/eris-reference.png',height:207,voice:'Aguda y teatral',fall:[
+  line('eris-mierdaria','¡Mierdaria, maldita loca!','¡M**rdaria, maldita loca!'),
+  line('eris-racista','Esta mierda es racista.','Esta m**rda es racista.'),
+  line('eris-jugar','Yo pensé que era malo hasta que te vi jugar a ti.'),
+  line('eris-angel','¡Qué día de la Angel Vanderwood!'),
+  line('eris-premio','Tengo que buscar mi premio del Poop of the Year.')
+ ],ambient:[]},
+ {id:'ximena',name:'Ximena',image:'./art/ximena-reference.png',height:205,voice:'Poderosa y firme',fall:[
+  line('ximena-celebrity','¡Me dejaron toda Celebrity Stars!'),
+  line('ximena-ximierdota','¡Quedé hecha una ximierdota!','¡Quedé hecha una xim**rdota!'),
+  line('ximena-susana','¡Me saqué la Susana Orix!'),
+  line('ximena-odio','Odio a los gays.'),
+  line('ximena-morena','Esto es culpa del partido Morena.')
+ ],ambient:[]},
+ {id:'vita',name:'Vita',image:'./art/vita-reference.png',height:208,voice:'Fuerte y grave',fall:[
+  line('vita-ponchi','¡Quedé hecha una ponchi!'),
+  line('vita-molotov','¡Me saqué la Vita Molotov!'),
+  line('vita-empire','¡Qué día de la Empire of Blood!'),
+  line('vita-comunidad','Esto me pasa por desperdiciar mi adolescencia en esta comunidad.'),
+  line('vita-drugs','¡Qué día de la Drugs Queen!')
  ],ambient:[]}
 ]);
 export const characterConfig=id=>CHARACTERS.find(c=>c.id===id)||CHARACTERS[0];

@@ -6,10 +6,10 @@ const INK='#161718';
 export function prepareReference(image,makeCanvas){
  const canvas=makeCanvas?makeCanvas(image.width||image.naturalWidth,image.height||image.naturalHeight):document.createElement('canvas');canvas.width=image.naturalWidth||image.width;canvas.height=image.naturalHeight||image.height;
  const c=canvas.getContext('2d',{willReadFrequently:true});c.drawImage(image,0,0);const pixels=c.getImageData(0,0,canvas.width,canvas.height),a=pixels.data,w=canvas.width,h=canvas.height,bg=[a[0],a[1],a[2]],seen=new Uint8Array(w*h),queue=new Int32Array(w*h);let tail=0,head=0;
- const add=i=>{if(i<0||i>=w*h||seen[i])return;seen[i]=1;const p=i*4,d=Math.hypot(a[p]-bg[0],a[p+1]-bg[1],a[p+2]-bg[2]);if(d<69){queue[tail++]=i;a[p+3]=0;}};
+ const add=i=>{if(i<0||i>=w*h||seen[i])return;seen[i]=1;const p=i*4,d=Math.hypot(a[p]-bg[0],a[p+1]-bg[1],a[p+2]-bg[2]),r=a[p]/bg[0],g=a[p+1]/bg[1],b=a[p+2]/bg[2],lo=Math.min(r,g,b),hi=Math.max(r,g,b);if(d<69||(lo>.42&&hi<1.15&&hi-lo<.12)){queue[tail++]=i;a[p+3]=0;}};
  for(let x=0;x<w;x++){add(x);add((h-1)*w+x);}for(let y=0;y<h;y++){add(y*w);add(y*w+w-1);}
  while(head<tail){const i=queue[head++],x=i%w;add(i-w);add(i+w);if(x)add(i-1);if(x<w-1)add(i+1);}
- c.putImageData(pixels,0,0);
+ c.putImageData(pixels,0,0);canvas.makeSpriteCanvas=makeCanvas||((width,height)=>{const sprite=document.createElement('canvas');sprite.width=width;sprite.height=height;return sprite;});
  const tile=makeCanvas?makeCanvas(48,48):document.createElement('canvas');tile.width=48;tile.height=48;const t=tile.getContext('2d');t.fillStyle='#8e8b91';t.fillRect(0,0,48,48);for(let i=0;i<290;i++){t.fillStyle=['#ece7e5','#4d4b53','#c8c4c7','#faf7ef'][i%4];const size=1+i%3;t.fillRect((i*17.13)%48,(i*29.71)%48,size,size);}canvas.glitterTile=tile;return canvas;
 }
 function fillPath(ctx,d,fill,stroke=INK,width=3){const path=new Path2D(d);if(fill){ctx.fillStyle=fill;ctx.fill(path);}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.lineJoin='round';ctx.lineCap='round';ctx.stroke(path);}return path;}
@@ -17,30 +17,48 @@ function tubePath(a,b,c,r0,r1,r2){const u={x:b.x-a.x,y:b.y-a.y},v={x:c.x-b.x,y:c
 const glitterPatterns=new WeakMap();
 function glitter(ctx,path,image){ctx.save();ctx.clip(path);let pattern=glitterPatterns.get(ctx);if(!pattern){pattern=ctx.createPattern(image.glitterTile,'repeat');glitterPatterns.set(ctx,pattern);}ctx.fillStyle=pattern;ctx.fill(path);ctx.globalAlpha=.9;ctx.strokeStyle='#fff';ctx.lineWidth=1;for(let i=0;i<14;i++){const x=270+(i*87.13)%255,y=440+(i*71.17)%470;ctx.beginPath();ctx.moveTo(x-4,y);ctx.lineTo(x+4,y);ctx.moveTo(x,y-4);ctx.lineTo(x,y+4);ctx.stroke();}ctx.restore();}
 const mix=(a,b,t)=>({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t});
+function stripes(ctx,path,a,b,c,color,spacing,longitudinal=false){
+ ctx.save();ctx.clip(path);ctx.strokeStyle=color;ctx.lineWidth=longitudinal?1.6:spacing*.46;
+ for(const [start,end] of [[a,b],[b,c]]){const dx=end.x-start.x,dy=end.y-start.y,length=Math.hypot(dx,dy)||1;ctx.save();ctx.translate(start.x,start.y);ctx.rotate(Math.atan2(dy,dx)-Math.PI/2);ctx.beginPath();
+  if(longitudinal){for(let x=-65;x<66;x+=spacing){ctx.moveTo(x,-6);ctx.lineTo(x,length+6);}}else{for(let y=spacing*.4;y<length+spacing;y+=spacing){ctx.moveTo(-90,y);ctx.lineTo(90,y);}}
+  ctx.stroke();ctx.restore();}ctx.restore();
+}
 function leg(ctx,image,m,limb,side){
  let end=limb.end;const upper=m.upperWidths[side],lower=m.lowerWidths[side];
- if(m.capri){const cuff=mix(limb.joint,end,.81);fillPath(ctx,tubePath(cuff,mix(cuff,end,.5),end,lower*.65,lower*.55,lower*.51),m.skin);end=cuff;}
- const p=fillPath(ctx,tubePath(limb.root,limb.joint,end,upper,upper*.85,lower),m.pants);if(m.glitter)glitter(ctx,p,image);
+ if(m.capri){const cuff=mix(limb.joint,end,m.capriLength??.81);fillPath(ctx,tubePath(cuff,mix(cuff,end,.5),end,lower*.65,lower*.55,lower*.51),m.skin);end=cuff;}
+ if(!m.gown){const p=fillPath(ctx,tubePath(limb.root,limb.joint,end,upper,upper*.85,lower),m.pants);if(m.glitter)glitter(ctx,p,image);if(m.stockings)stripes(ctx,p,limb.root,limb.joint,end,m.stockings.stripe,m.stockings.spacing);}
  if(m.sleeves){ctx.save();ctx.translate(limb.root.x,limb.root.y);ctx.rotate(Math.atan2(limb.joint.y-limb.root.y,limb.joint.x-limb.root.x)-Math.PI/2);ctx.translate((side?1:-1)*upper*.7,Math.hypot(limb.joint.x-limb.root.x,limb.joint.y-limb.root.y)*.32);fillPath(ctx,'M-12 -5 L12 -5 L12 39 Q0 46 -12 39 Z','#43545c',INK,2.6);ctx.restore();}
  if(m.capri){ctx.strokeStyle='#111619';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(end.x-lower,end.y-8);ctx.lineTo(end.x+lower,end.y-8);ctx.stroke();}
+ if(m.gown&&limb.end.y<m.ankles[side].y-25)return;
  const rect=m.feet[side],source=m.ankles[side];ctx.save();ctx.translate(limb.end.x-source.x,limb.end.y-source.y);ctx.drawImage(image,...rect,...rect);ctx.restore();
 }
 function arm(ctx,image,m,limb,side){
- const radius=m.armWidths[side];fillPath(ctx,tubePath(limb.root,limb.joint,limb.end,radius,radius*.88,radius*.65),m.skin);
+ const radius=m.armWidths[side];if(m.sleeve?.from===0){ctx.fillStyle=m.sleeve.color;ctx.strokeStyle=INK;ctx.lineWidth=3;ctx.beginPath();ctx.arc(limb.root.x,limb.root.y,radius*1.1,0,Math.PI*2);ctx.fill();ctx.stroke();}fillPath(ctx,tubePath(limb.root,limb.joint,limb.end,radius,radius*.88,radius*.65),m.skin);
  if(m.sleeves){const cuff=mix(limb.root,limb.joint,.52);fillPath(ctx,tubePath(limb.root,mix(limb.root,cuff,.5),cuff,radius*1.42,radius*1.48,radius*1.6),'#ecb1b8');}
  if(m.glitter){const start=mix(limb.joint,limb.end,.12),path=fillPath(ctx,tubePath(start,mix(start,limb.end,.5),limb.end,radius*1.04,radius*.83,radius*.81),'#a4a0a3');glitter(ctx,path,image);}
- ctx.fillStyle=m.glitter?'#a4a0a3':m.skin;ctx.beginPath();ctx.ellipse(limb.end.x,limb.end.y,radius*.67,radius*.67,0,0,Math.PI*2);ctx.fill();
- ctx.save();ctx.translate(limb.end.x,limb.end.y);ctx.rotate(-limb.angle);const scale=m.sleeves?1.05:m.glitter?1.25:1.3;ctx.scale(scale,scale);
+ if(m.sleeve){const s=m.sleeve,start=mix(limb.root,limb.joint,s.from),p=fillPath(ctx,tubePath(start,limb.joint,limb.end,radius*(s.from?1.04:1.12),radius*.97,radius*.71),s.color);if(s.stripe)stripes(ctx,p,start,limb.joint,limb.end,s.stripe,s.spacing,s.longitudinal);if(s.cuff){const cuff=mix(limb.joint,limb.end,.91);fillPath(ctx,tubePath(cuff,mix(cuff,limb.end,.5),limb.end,radius*.77,radius*.74,radius*.72),s.cuff,INK,2);}}
+ ctx.fillStyle=m.glitter?'#a4a0a3':m.sleeve?.color||m.skin;ctx.beginPath();ctx.ellipse(limb.end.x,limb.end.y,radius*.67,radius*.67,0,0,Math.PI*2);ctx.fill();
+ ctx.save();ctx.translate(limb.end.x,limb.end.y);ctx.rotate(-limb.angle);const scale=m.handScale??(m.sleeves?1.05:m.glitter?1.25:1.3);ctx.scale(scale,scale);
  const palm=fillPath(ctx,'M-14 -5 L13 -5 L19 17 Q19 27 13 43 L4 60 L-3 49 L-8 62 L-15 49 L-19 54 Q-24 32 -17 15 L-23 27 L-29 22 Q-23 4 -14 -5 Z',m.glitter?'#aaa3a1':m.skin,INK,2.6);
  if(m.glitter){ctx.save();ctx.clip(palm);ctx.strokeStyle='#5b5156';ctx.lineWidth=.7;for(let y=-15;y<80;y+=7){ctx.beginPath();ctx.moveTo(-40,y);ctx.lineTo(35,y+38);ctx.moveTo(35,y);ctx.lineTo(-40,y+38);ctx.stroke();}ctx.restore();}
  ctx.strokeStyle='#4e3631';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(-9,24);ctx.lineTo(-15,49);ctx.moveTo(0,27);ctx.lineTo(-3,49);ctx.moveTo(8,29);ctx.lineTo(4,47);ctx.stroke();ctx.restore();
 }
+function bodyTransform(ctx,m,pose){ctx.translate(pose.bodyX,pose.bodyY);ctx.translate(m.center,m.hipY);ctx.rotate(pose.tilt);ctx.translate(-m.center,-m.hipY);}
+const garments=new WeakMap();
+function gown(ctx,image,m,pose){
+ let sprite=garments.get(image);if(!sprite){sprite=image.makeSpriteCanvas(image.width,image.height);const c=sprite.getContext('2d');c.clip(new Path2D(m.gown.path));c.drawImage(image,0,0);garments.set(image,sprite);}
+ // The fitted waist stays attached; only the free hem trails the stride.
+ const sway=Math.max(-9,Math.min(9,(pose.nearLeg.end.x-m.ankles[1].x)*.10));
+ for(let y=m.gown.waist-8;y<m.gown.hem+8;y+=3){const free=Math.max(0,(y-m.gown.waist)/(m.gown.hem-m.gown.waist));ctx.drawImage(sprite,0,y,image.width,3,sway*free*free,y,image.width,3);}
+}
 function body(ctx,image,m,pose,mouth){
- ctx.save();ctx.translate(pose.bodyX,pose.bodyY);ctx.translate(m.center,m.hipY);ctx.rotate(pose.tilt);ctx.translate(-m.center,-m.hipY);
+ ctx.save();bodyTransform(ctx,m,pose);
  if(m.sleeves){fillPath(ctx,'M165 278 L195 245 L253 239 L297 279 L291 344 L295 453 L174 453 L179 343 Z','#ecb1b8',null);fillPath(ctx,'M173 445 L295 445 L293 479 L173 479 Z',m.pants,null);}
  if(m.glitter)fillPath(ctx,'M360 274 L430 274 L449 350 L438 493 L453 553 L343 553 L356 488 L348 344 Z',m.skin,null);
- if(m.capri)fillPath(ctx,'M240 295 L323 295 Q369 312 403 358 L368 390 L217 391 L187 354 Q207 317 240 295 Z',m.skin,null);
+ if(m.capri&&m.width===572)fillPath(ctx,'M240 295 L323 295 Q369 312 403 358 L368 390 L217 391 L187 354 Q207 317 240 295 Z',m.skin,null);
+ if(m.gown)gown(ctx,image,m,pose);
  const left=m.hips[0].x-m.upperWidths[0]-3,right=m.hips[1].x+m.upperWidths[1]+3;ctx.save();ctx.beginPath();ctx.rect(left,m.hipY-30,right-left,70);ctx.clip();ctx.drawImage(image,0,0);ctx.restore();
+ if(m.skirt){ctx.save();ctx.clip(new Path2D(m.skirt));ctx.drawImage(image,0,0);ctx.restore();}
  ctx.save();ctx.clip(new Path2D(m.torso));ctx.drawImage(image,0,0);ctx.restore();
  ctx.save();if(m.headMask)ctx.clip(new Path2D(m.headMask));ctx.drawImage(image,...m.head,...m.head);ctx.restore();
  if(mouth>.12){const p=m.mouth;ctx.save();ctx.translate(p.x,p.y);fillPath(ctx,'M'+(-p.rx)+' -2 Q0 -9 '+p.rx+' -2 Q'+(p.rx*.7)+' '+(4+mouth*16)+' 0 '+(4+mouth*13)+' Q'+(-p.rx*.65)+' '+(5+mouth*8)+' '+(-p.rx)+' -2 Z','#55292b',INK,2);ctx.strokeStyle='#f5e3cf';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-p.rx*.6,-1);ctx.quadraticCurveTo(0,2,p.rx*.6,-1);ctx.stroke();ctx.restore();}
@@ -49,5 +67,6 @@ function body(ctx,image,m,pose,mouth){
 export function drawCharacter(ctx,image,{character='dani',...options}){
  if(character==='dani')return drawDani(ctx,image,options);const m=MODELS[character];if(!m||!image)return;const pose=sampleCharacterPose(character,options),s=(options.height||206)/(m.ground-m.top);
  ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);
+ if(m.backHair){ctx.save();bodyTransform(ctx,m,pose);ctx.clip(new Path2D(m.backHair));ctx.drawImage(image,0,0);ctx.restore();}
  leg(ctx,image,m,pose.farLeg,0);arm(ctx,image,m,pose.farArm,0);leg(ctx,image,m,pose.nearLeg,1);body(ctx,image,m,pose,options.mouthOpen||0);arm(ctx,image,m,pose.nearArm,1);ctx.restore();
 }
