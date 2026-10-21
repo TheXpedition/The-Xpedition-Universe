@@ -3234,7 +3234,7 @@
         {
           "name": "Vita",
           "place": "12th Place",
-          "image": "personajes/vita.png"
+          "image": "personajes/vita-20261021.png"
         },
         {
           "name": "Santi",
@@ -3295,7 +3295,7 @@
         "Pablo": "personajes/pablo.png",
         "Nahuee": "personajes/nahuee.png",
         "Eduard": "personajes/eduard.png",
-        "Vita": "personajes/vita.png",
+        "Vita": "personajes/vita-20261021.png",
         "Santi": "personajes/santi.png",
         "Teseo": "personajes/teseo.png",
         "Maicol": "personajes/maicol.png",
@@ -3665,7 +3665,7 @@
         {
           "name": "Vita",
           "place": "12th Place",
-          "image": "personajes/vita.png"
+          "image": "personajes/vita-20261021.png"
         },
         {
           "name": "Santi",
@@ -4110,7 +4110,7 @@
         {
           "name": "Vita",
           "place": "Winner",
-          "image": "personajes/vita.png"
+          "image": "personajes/vita-20261021.png"
         },
         {
           "name": "Rodri",
@@ -4155,7 +4155,7 @@
       },
       "poster": "seasons/campria/empire/poster.png",
       "images": {
-        "Vita": "personajes/vita.png",
+        "Vita": "personajes/vita-20261021.png",
         "Rodri": "personajes/rodri.png",
         "Carlos Harrington": "seasons/campria/portraits/8455a87fd3f71203.png",
         "Eris Midnight": "seasons/campria/portraits/f28c8e357f348811.png",
@@ -4338,7 +4338,7 @@
         {
           "name": "Vita",
           "place": "Elenco principal",
-          "image": "personajes/vita.png"
+          "image": "personajes/vita-20261021.png"
         },
         {
           "name": "Carlos Harrington",
@@ -4370,7 +4370,7 @@
         {
           "name": "Vita",
           "place": "Winner",
-          "image": "personajes/vita.png"
+          "image": "personajes/vita-20261021.png"
         },
         {
           "name": "Rodri",
