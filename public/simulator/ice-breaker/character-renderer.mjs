@@ -2,6 +2,8 @@ import {drawDani} from './dani-renderer.mjs';
 import {MODELS,sampleCharacterPose} from './character-rig.mjs';
 const INK='#161718';
 const rigCache=new WeakMap();
+const angleBetween=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
+const angleDelta=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
 // Runtime sprite matting leaves the supplied files untouched. Flood only the
 // connected paper around the inked silhouette, preserving enclosed skin/fabric.
 export function prepareReference(image,makeCanvas){
@@ -88,16 +90,23 @@ function body(ctx,image,m,pose,mouth){
  if(mouth>.12&&m.mouth){const p=m.mouth;ctx.save();ctx.translate(p.x,p.y);fillPath(ctx,'M'+(-p.rx)+' -2 Q0 -9 '+p.rx+' -2 Q'+(p.rx*.7)+' '+(4+mouth*16)+' 0 '+(4+mouth*13)+' Q'+(-p.rx*.65)+' '+(5+mouth*8)+' '+(-p.rx)+' -2 Z','#55292b',INK,2);ctx.strokeStyle='#f5e3cf';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-p.rx*.6,-1);ctx.quadraticCurveTo(0,2,p.rx*.6,-1);ctx.stroke();ctx.restore();}
  ctx.restore();
 }
+function jointSplit(limb,keepRoot){
+ const root=limb.root,joint=limb.joint,end=limb.end,dx=end[0]-root[0],dy=end[1]-root[1],length=Math.hypot(dx,dy)||1,ux=dx/length,uy=dy/length,nx=-uy,ny=ux,overlap=30,offset=keepRoot?overlap:-overlap,cx=joint[0]+ux*offset,cy=joint[1]+uy*offset,r=4000;
+ const a={x:cx+nx*r,y:cy+ny*r},b={x:cx-nx*r,y:cy-ny*r},direction=keepRoot?-1:1;
+ return new Path2D(`M${a.x} ${a.y} L${b.x} ${b.y} L${b.x+ux*r*direction} ${b.y+uy*r*direction} L${a.x+ux*r*direction} ${a.y+uy*r*direction} Z`);
+}
 function makeMaskedLayer(image,limb,region){const layer=image.makeSpriteCanvas(image.width,image.height),mask=image.makeSpriteCanvas(image.width,image.height),mc=mask.getContext('2d'),path=new Path2D(limb.mask);mc.save();if(region)mc.clip(region);mc.fillStyle='#fff';mc.strokeStyle='#fff';mc.lineWidth=4;mc.lineJoin='round';mc.lineCap='round';mc.fill(path);mc.stroke(path);mc.restore();const c=layer.getContext('2d');c.drawImage(image,0,0);c.globalCompositeOperation='destination-in';c.drawImage(mask,0,0);return layer;}
 function segmentedLayers(image,m){
  let cache=rigCache.get(image);if(cache)return cache;
  const limbs=[...m.arms,...m.legs],base=image.makeSpriteCanvas(image.width,image.height),b=base.getContext('2d');b.drawImage(image,0,0);b.globalCompositeOperation='destination-out';b.lineWidth=4;b.lineJoin='round';b.lineCap='round';for(const limb of limbs){const path=new Path2D(limb.mask);b.fill(path);b.stroke(path);}b.globalCompositeOperation='source-over';
  const groups={arms:[],legs:[],base};
- for(const kind of ['arms','legs'])for(const limb of m[kind]){const path=new Path2D(limb.mask);groups[kind].push({whole:makeMaskedLayer(image,limb,null),path});}
+ for(const kind of ['arms','legs'])for(const limb of m[kind]){groups[kind].push({upper:makeMaskedLayer(image,limb,jointSplit(limb,true)),lower:makeMaskedLayer(image,limb,jointSplit(limb,false))});}
  rigCache.set(image,groups);return groups;
 }
-function wholeLimb(ctx,layer,src,pose){
- const root={x:src.root[0],y:src.root[1]};ctx.save();ctx.translate(root.x,root.y);ctx.rotate(pose.angle);ctx.translate(-root.x,-root.y);ctx.drawImage(layer.whole,0,0);ctx.restore();
+function bonePart(ctx,layer,src,pose){
+ const root={x:src.root[0],y:src.root[1]},joint={x:src.joint[0],y:src.joint[1]},upper=pose.upperAngle,lower=pose.lowerAngle;
+ ctx.save();ctx.translate(root.x,root.y);ctx.rotate(upper);ctx.translate(-root.x,-root.y);ctx.drawImage(layer.upper,0,0);ctx.restore();
+ ctx.save();ctx.translate(pose.joint.x,pose.joint.y);ctx.rotate(upper+lower);ctx.translate(-joint.x,-joint.y);ctx.drawImage(layer.lower,0,0);ctx.restore();
 }
 function speechMouth(ctx,mouth,amount){
  const level=Math.max(0,Math.min(1,amount));if(level<.08)return;const rx=mouth.rx,ry=mouth.ry,open=ry*(.35+level*1.45);
@@ -106,8 +115,10 @@ function speechMouth(ctx,mouth,amount){
  ctx.beginPath();ctx.moveTo(-rx*.62,open*.04);ctx.quadraticCurveTo(0,open*.16,rx*.62,open*.04);ctx.lineTo(rx*.47,open*.30);ctx.quadraticCurveTo(0,open*.38,-rx*.47,open*.30);ctx.closePath();ctx.fillStyle='#f5eadb';ctx.fill();ctx.restore();
 }
 function drawSegmentedCharacter(ctx,image,m,pose,options,s){
- const layers=segmentedLayers(image,m);ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);bodyTransform(ctx,m,pose);
- wholeLimb(ctx,layers.legs[0],m.legs[0],pose.legs[0]);wholeLimb(ctx,layers.legs[1],m.legs[1],pose.legs[1]);wholeLimb(ctx,layers.arms[0],m.arms[0],pose.arms[0]);wholeLimb(ctx,layers.arms[1],m.arms[1],pose.arms[1]);ctx.drawImage(layers.base,0,0);speechMouth(ctx,m.mouth,options.mouthOpen||0);ctx.restore();
+ const moving=(options.walkBlend??(options.phase==='walk'?1:0))>.04||options.phase==='jump'||options.phase==='fall'||options.phase==='crouch';ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);bodyTransform(ctx,m,pose);
+ if(!moving){ctx.drawImage(image,0,0);speechMouth(ctx,m.mouth,options.mouthOpen||0);ctx.restore();return;}
+ const layers=segmentedLayers(image,m);
+ bonePart(ctx,layers.legs[0],m.legs[0],pose.legs[0]);bonePart(ctx,layers.legs[1],m.legs[1],pose.legs[1]);bonePart(ctx,layers.arms[0],m.arms[0],pose.arms[0]);bonePart(ctx,layers.arms[1],m.arms[1],pose.arms[1]);ctx.drawImage(layers.base,0,0);speechMouth(ctx,m.mouth,options.mouthOpen||0);ctx.restore();
 }
 export function drawCharacter(ctx,image,{character='dani',...options}){
  if(character==='dani')return drawDani(ctx,image,options);const m=MODELS[character];if(!m||!image)return;const pose=sampleCharacterPose(character,options),s=(options.height||206)/(m.ground-m.top);
