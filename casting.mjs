@@ -1,5 +1,5 @@
 import {accountRole} from './account-roles.mjs';
-import {CASTING_SEASON,AUDITION_PRICE,DIRECT_PRICE,DIRECT_CAPACITY,LAST_DIRECT_PRICE,castingQuestions,castingProfile,agreementLabels} from './public/casting-config.mjs';
+import {CASTING_SEASON,AUDITION_PRICE,DIRECT_PRICE,DIRECT_STANDARD_CAPACITY,DIRECT_CAPACITY,LAST_DIRECT_PRICE,castingQuestions,castingProfile,agreementLabels} from './public/casting-config.mjs';
 
 export function createCasting({db,json,fail,body,checkRate,progression,catalog,now=Date.now}){
  const season=CASTING_SEASON;
@@ -52,7 +52,7 @@ export function createCasting({db,json,fail,body,checkRate,progression,catalog,n
   if(q.type==='multi'){if(!Array.isArray(value)||value.length>q.max||(!draft&&!value.length)||new Set(value).size!==value.length||value.some(x=>!q.options.includes(x)))fail(400,'Elige entre 1 y 3 retos.');return value;}
   if(!q.options.includes(value))fail(400,'Elige una de las opciones.');return value;
  }
- async function summary(uid){const cast=await publicCast();return {season,auditionPrice:AUDITION_PRICE,directPrice:cast.length>=9?LAST_DIRECT_PRICE:DIRECT_PRICE,capacity:DIRECT_CAPACITY,slotPrices:Array.from({length:DIRECT_CAPACITY},(_,i)=>i===9?LAST_DIRECT_PRICE:DIRECT_PRICE),cast,entry:uid?privateEntry(await fresh(uid)):null,franchises:options,questions:castingQuestions,serverTime:now(),wallet:uid?await progression.wallet(uid):null};}
+ async function summary(uid){const cast=await publicCast();return {season,auditionPrice:AUDITION_PRICE,directPrice:cast.length>=DIRECT_STANDARD_CAPACITY?LAST_DIRECT_PRICE:DIRECT_PRICE,capacity:DIRECT_CAPACITY,slotPrices:Array.from({length:DIRECT_CAPACITY},(_,i)=>i>=DIRECT_STANDARD_CAPACITY?LAST_DIRECT_PRICE:DIRECT_PRICE),cast,entry:uid?privateEntry(await fresh(uid)):null,franchises:options,questions:castingQuestions,serverTime:now(),wallet:uid?await progression.wallet(uid):null};}
  async function handle(req,res,url,user){
   const p=url.pathname,method=req.method,isStaffRoute=p.startsWith('/api/moderation/auditions');
   if(!p.startsWith('/api/casting/')&&!isStaffRoute)return false;
@@ -86,17 +86,20 @@ export function createCasting({db,json,fail,body,checkRate,progression,catalog,n
     let slot=null;
     if(kind==='direct'){
      await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',season);
-     const reserved=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<?',season,DIRECT_CAPACITY-1);
+     const reserved=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<?',season,DIRECT_STANDARD_CAPACITY);
      if(reserved.changes)slot=Number((await db.one('SELECT sold FROM casting_seasons WHERE season=?',season)).sold);
      else{
-      // A separate one-seat counter preserves the original nine-seat row and its constraint.
-      const extra=season+':slot-10';await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',extra);
-      const reservedExtra=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<1',extra);
-      if(!reservedExtra.changes)fail(409,'Las diez entradas directas están agotadas. Todavía puedes audicionar.');slot=10;
+      // Separate counters preserve the original nine-seat row and its database constraint.
+      for(let candidate=DIRECT_STANDARD_CAPACITY+1;candidate<=DIRECT_CAPACITY;candidate++){
+       const extra=season+':slot-'+candidate;await db.run('INSERT INTO casting_seasons(season,sold) VALUES(?,0) ON CONFLICT DO NOTHING',extra);
+       const reservedExtra=await db.run('UPDATE casting_seasons SET sold=sold+1 WHERE season=? AND sold<1',extra);
+       if(reservedExtra.changes){slot=candidate;break;}
+      }
+      if(!slot)fail(409,'Las doce entradas directas están agotadas. Todavía puedes audicionar.');
      }
     }
-    const price=kind==='audition'?AUDITION_PRICE:slot===10?LAST_DIRECT_PRICE:DIRECT_PRICE;
-    if(kind==='direct'&&(slot===10||input.expectedPrice!==undefined)&&input.expectedPrice!==price)fail(409,'El precio de la entrada disponible cambió. Revisa el cupo y confirma su precio antes de comprar.');
+    const price=kind==='audition'?AUDITION_PRICE:slot>DIRECT_STANDARD_CAPACITY?LAST_DIRECT_PRICE:DIRECT_PRICE;
+    if(kind==='direct'&&(slot>DIRECT_STANDARD_CAPACITY||input.expectedPrice!==undefined)&&input.expectedPrice!==price)fail(409,'El precio de la entrada disponible cambió. Revisa el cupo y confirma su precio antes de comprar.');
     const paid=await db.run('UPDATE user_progression SET tickets=tickets-? WHERE user_id=? AND tickets>=?',price,user.id,price);
     if(!paid.changes)fail(409,'No tienes suficientes tickets. Completa tu perfil, participa en la comunidad o termina temporadas en el simulador.');
     const timestamp=now();
