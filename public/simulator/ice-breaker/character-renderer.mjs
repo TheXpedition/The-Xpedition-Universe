@@ -89,6 +89,9 @@ function body(ctx,image,m,pose,mouth){
 }
 export function drawCharacter(ctx,image,{character='dani',...options}){
  if(character==='dani')return drawDani(ctx,image,options);const m=MODELS[character];if(!m||!image)return;const pose=sampleCharacterPose(character,options),s=(options.height||206)/(m.ground-m.top);
+ // Keep hand-drawn cast members intact: rebuilding limbs or overlaying a
+ // second mouth on these reference sprites caused visible doubles and drift.
+ if(m.wholeSprite){ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(pose.bodyX,pose.bodyY);ctx.translate(m.center,m.hipY);ctx.rotate(pose.tilt);ctx.translate(-m.center,-m.hipY);ctx.translate(-m.center,-m.ground);ctx.drawImage(image,0,0);ctx.restore();return;}
  ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);
  if(m.backHair){ctx.save();bodyTransform(ctx,m,pose);ctx.clip(new Path2D(m.backHair));ctx.drawImage(image,0,0);ctx.restore();}
  leg(ctx,image,m,pose.farLeg,0);arm(ctx,image,m,pose.farArm,0);leg(ctx,image,m,pose.nearLeg,1);body(ctx,image,m,pose,options.mouthOpen||0);arm(ctx,image,m,pose.nearArm,1);ctx.restore();
