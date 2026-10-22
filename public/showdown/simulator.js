@@ -63,7 +63,7 @@ function sdAcceptRoom(room,force=false){
  const label=$('#sdPhaseLabel');if(label)label.innerHTML=room.finalKind?'<b>LA FINAL</b><span>El último camino a la corona</span>':room.semiEpisode?`<b>SEMIFINAL · EP ${room.semiEpisode}</b><span>Quedan ${room.players.filter(p=>p.active).length} en competencia</span>`:`<b>${esc(room.groups[0]?.name||'TU BRACKET')} · EP ${room.bracketEpisode} / 3</b><span>Tu bracket avanza al mismo tiempo que los demás</span>`;
  const shell=$('.sd-game');if(shell)shell.style.setProperty('--sd-bracket',room.semiEpisode||room.finalKind?'#b480ff':room.groups[0]?.color||'#ff55b0');
  sdPresence(room);
- const signature=[room.phaseNumber,room.status,room.paused,room.current?.judging.length,room.current?.revealed.length,room.social?.log?.at(-1)?.id,JSON.stringify(room.current?.assignments),room.statsReady,room.wildcards.length,room.current?.rival,room.current?.duel?.id,room.current?.duel?.winner,room.current?.eliminated,room.endedReason,sdUI.track].join(':');
+  const signature=[room.phaseNumber,room.status,room.paused,room.current?.judging.length,room.current?.revealed.length,room.social?.log?.at(-1)?.id,room.backstage?.messages?.at(-1)?.id,JSON.stringify(room.current?.assignments),room.statsReady,room.wildcards.length,room.current?.rival,room.current?.duel?.id,room.current?.duel?.winner,room.current?.eliminated,room.endedReason,sdUI.track].join(':');
  if(force||sdUI.signature!==signature){sdUI.signature=signature;sdUI.beat=-1;sdUI.pendingHits.clear();sdRenderStage(room);}
  sdApplyControls(room);if(typeof sdExperienceControls==='function')sdExperienceControls(room);sdClock();sdMusic(sdUI.sound&&room.phase==='lipsync'&&!room.paused);
 }

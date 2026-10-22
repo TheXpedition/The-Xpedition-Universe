@@ -4,7 +4,7 @@ export const SHOWDOWN_FORMATS={
  3:{id:3,name:'The Original',soloDescription:'Tres por bracket y una Wild Card que eliges tú. Seis retos de estrellas, corte al top 4 y final de duelos. El ganador del lipsync puede quitar una estrella; los dos peores pierden una propia.',subtitle:'3 por bracket · Wild Card',advance:3,wildcards:1,semis:10,finalists:6,semiEpisodes:4,description:'Nueve clasificados, un regreso al azar, cuatro eliminaciones y una final de seis. El formato de las salas con amigos.'},
  4:{id:4,name:'All Stars',soloDescription:'Cuatro por bracket y una Wild Card que eliges tú. El top 2 hace lipsync y su ganador elimina del bottom 3. Torneo final de ocho.',subtitle:'4 por bracket · Wild Card',advance:4,wildcards:1,semis:13,finalists:8,semiEpisodes:5,description:'Trece semifinalistas. El top 2 hace lipsync y quien gane elimina a alguien del bottom 3. Cinco salidas dejan un torneo final de ocho.'}
 };
-export const SHOWDOWN_TIMES={presentation:16000,stats:40000,status:30000,assign:25000,challenge:35000,intro:11000,critiques:13500,countdown:3000,lipsync:10000,lipResult:11000,xvote:30000,cut:13000,semifinalists:16000,ranking:25000,judging:42000,rival:25000,finalWelcome:14000,eliminate:20000,coronation:14000};
+export const SHOWDOWN_TIMES={presentation:16000,stats:40000,status:30000,assign:25000,challenge:15000,intro:11000,critiques:13500,countdown:3000,lipsync:10000,lipResult:11000,xvote:30000,cut:13000,semifinalists:16000,ranking:25000,judging:42000,rival:25000,finalWelcome:14000,eliminate:20000,coronation:14000};
 export const LIP_BEAT=400;
 export const SHOWDOWN_CHALLENGES=[
  ['rapidez','Rapidez','Piensa rápido, decide más rápido. Hoy cada segundo cuenta.','⚡'],
