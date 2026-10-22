@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#132b43">
+  <meta name="description" content="Snowball Showdown: un minijuego de arena con los personajes de The Xpedition.">
+  <title>Snowball Showdown · The Xpedition</title>
+  <link rel="icon" href="/brand/xpedition-transparent-v2-32.png">
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./game.mjs"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="return" href="/#simuladores" aria-label="Volver a los simuladores">← <span>THE XPEDITION</span></a>
+      <span class="chapter">ARCADE / ANTARCTICA</span>
+      <span class="preview">PRUEBA PRIVADA · SIN RECOMPENSAS</span>
+    </header>
+
+    <section class="headline" aria-labelledby="title">
+      <div><p class="eyebrow">24 PERSONAJES ORIGINALES · LANZAMIENTOS ANIMADOS · 4 COMPETIDORES</p>
+        <h1 id="title">SNOWBALL <em>SHOWDOWN</em></h1>
+        <p class="subtitle">Aquí nadie se salva de una bola de nieve.</p>
+      </div>
+      <div class="best" aria-live="polite"><span>MEJOR MARCA</span><strong id="bestScore">000</strong></div>
+    </section>
+
+    <main>
+      <section class="game-frame" aria-label="Arena de Snowball Showdown">
+        <div class="scorebar" id="scorebar" aria-live="off"></div>
+        <div class="battlefield" id="battlefield">
+          <canvas id="arena" width="1280" height="720" tabindex="0" aria-label="Arena nevada. Muévete con WASD o flechas. Lanza con clic o espacio. En móvil, usa los controles táctiles."></canvas>
+          <div class="announce" id="announce" aria-live="polite"></div>
+          <div class="overlay" id="overlay">
+            <div class="panel" id="panel">
+              <p class="overline" id="panelTag">TEMPORADA ANTARCTICA · NUEVO DESAFÍO</p>
+              <h2 id="panelTitle">Que empiece<br><em>la nevada.</em></h2>
+              <p class="panel-text" id="panelText">Prepara el brazo, recoge nieve de los montículos del borde y etiqueta a tus rivales con bolas de nieve. Atrapa las estrellas para sumar puntos. El personaje con más puntos gana al terminar la ronda.</p>
+              <fieldset class="picker" id="picker"><legend>ELIGE TU COMPETIDOR</legend><div class="choices" id="choices"></div></fieldset>
+              <div class="mode-line"><span>⏱ 75 SEGUNDOS</span><span>✧ ESTRELLAS EXTRA</span><span>❤ 3 VIDAS</span><span>❄ RECARGA EN LOS BORDES</span></div>
+              <button id="mainButton" class="go" type="button">EMPEZAR LA BATALLA <span>↗</span></button>
+              <small id="panelHint">PC: WASD / FLECHAS + CLIC O ESPACIO · MÓVIL: BOTONES TÁCTILES</small>
+            </div>
+          </div>
+          <div class="touch-ui" id="touchUI" aria-label="Controles táctiles">
+            <div class="dpad" aria-label="Mover personaje">
+              <button class="up" data-move="ArrowUp" aria-label="Arriba">▲</button>
+              <button class="left" data-move="ArrowLeft" aria-label="Izquierda">◀</button>
+              <button class="down" data-move="ArrowDown" aria-label="Abajo">▼</button>
+              <button class="right" data-move="ArrowRight" aria-label="Derecha">▶</button>
+            </div>
+            <button id="throwButton" class="throw" type="button">❄<span>LANZAR</span></button>
+          </div>
+        </div>
+        <div class="toolbar">
+          <span class="state-text" id="gameState">Selecciona a tu personaje</span>
+          <div class="toolbar-actions"><button id="soundButton" type="button" aria-label="Silenciar efectos" aria-pressed="true">♪ Sonido</button><button id="pauseButton" type="button" disabled>Ⅱ Pausa</button><button id="restartButton" type="button">↻ Reiniciar</button><button id="fullButton" type="button">⛶ Pantalla</button></div>
+        </div>
+      </section>
+      <footer class="instructions"><p><strong>¿CÓMO SE JUEGA?</strong> Muévete para esquivar · Recoge nieve en los montículos del borde · Prepara y lanza con animación sincronizada · Atina a tus rivales · Recoge estrellas para sumar puntos · Si pierdes tus tres vidas, reapareces después de unos segundos.</p><p>Puedes elegir entre los 24 personajes animados de Ice Breaker. En cada ronda compites contra tres rivales aleatorios. Esta prueba no entrega tickets, monedas ni modifica partidas guardadas.</p></footer>
+    </main>
+  </div>
+</body>
+</html>
