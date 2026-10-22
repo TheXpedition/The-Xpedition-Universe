@@ -170,6 +170,65 @@ export const CHARACTERS=Object.freeze([
   line('sallua-desempleada','Ya te dije que no estoy desempleada, solo no tengo nada mejor que hacer.'),
   line('sallua-ir','Sigue perdiendo, no me quiero ir.'),
   line('sallua-pesimo','Eres pésimo jugando, me recuerdas a mí.')
+ ],ambient:[]},
+ {id:'ivy',name:'Ivy',image:'./art/ivy-reference.png',height:208,voice:'Femenina, arrogante y segura',portraitPosition:'50% 12%',fall:[
+  line('ivy-natalia','¡Me dejaron toda Natalia Pierce!'),
+  line('ivy-mommy','Oh my fucking God, mommy, qué icónica soy.','¡OMFG, mommy, qué icónica soy!'),
+  line('ivy-get','Ay, amiga, mejor me voy a Get.'),
+  line('ivy-ojitos','Mmm... ojitos... E. E.','MJM *OJITOS* E.E'),
+  line('ivy-diva','Se me escurrió la The Next Diva.'),
+  line('ivy-nieve','Lo blanco, ¿es coca o es nieve, para saber si me la meto por la nariz?')
+ ],ambient:[]},
+ {id:'eduard',name:'Eduard',image:'./art/eduard-reference.png',height:211,voice:'Masculina venezolana, cómica y rápida',portraitPosition:'50% 13%',fall:[
+  line('eduard-pase','Ay, chamo, pasé pena, marico. No, sí.'),
+  line('eduard-turnitup','¡Me saqué la Turn It Up!'),
+  line('eduard-chavez','No joda, mamaguevo, esto es culpa de Chávez.','No joda, mamag**evo, esto es culpa de Chávez.'),
+  line('eduard-pasteles','Si no salgo de aquí me voy a poner a vender pasteles de nieve.'),
+  line('eduard-bunuelo','Deja de perder, marico, que tengo un buñuelo en el horno.','Deja de perder, marico, que tengo un buñuelo en el horno.'),
+  line('eduard-heidi','¡Me saqué la Heidi Cum!')
+ ],ambient:[]},
+ {id:'kimcamila',name:'Kim Camila',image:'./art/kimcamila-reference.png',height:211,voice:'Femenina, musculosa y de registro grave',portraitPosition:'50% 11%',fall:[
+  line('kimcamila-obeso','Deja de perder, obeso.'),
+  line('kimcamila-gordinflon','Intenta hacerlo mejor la próxima vez, gordinflón.'),
+  line('kimcamila-mamut','Estoy segura de que debes ser un mamuth de 20 kilos en persona.'),
+  line('kimcamila-gym','Deberías inscribirte a mi gimnasio, lo necesitas, cerda.'),
+  line('kimcamila-globalwar','Pensé que el reto sería ver un mapa hecho en PowerPoint, como en Global War.')
+ ],ambient:[]},
+ {id:'carlosharrington',name:'Carlos Harrington',image:'./art/carlosharrington-reference.png',height:208,voice:'Masculina joven, dicción precisa y cadencia tranquila',portraitPosition:'50% 12%',fall:[
+  line('carlosharrington-trapajo','¡Me saqué la Trapajo!'),
+  line('carlosharrington-bts','Apúrate, que tengo que ir a ver a BTS.'),
+  line('carlosharrington-novios','¿Ya te conté que tuvo 50 novios en la comunidad IDD?'),
+  line('carlosharrington-hermano','Necesito encontrar a mi hermano Daniel Sims.'),
+  line('carlosharrington-arigato','¡Arigato!')
+ ],ambient:[]},
+ {id:'nahuee',name:'Nahuee',image:'./art/nahuee-reference.png',height:209,voice:'Femenina muy aguda y chillona',portraitPosition:'50% 10%',fall:[
+  line('nahuee-ternera','¡Me dejaron toda Nahuee Ternera!'),
+  line('nahuee-meto','¿Y si me meto con él?'),
+  line('nahuee-pasiva','¡Me saqué la pasiva del rancho!'),
+  line('nahuee-minecraft','Apúrate, que tengo que ir a jugar Minecraft.'),
+  line('nahuee-luzverde','Jugaremos Muévete, luz verde.'),
+  line('nahuee-nahuel','¡Qué día de la Nahuel Silva!')
+ ],ambient:[]},
+ {id:'pier',name:'Pier',image:'./art/pier-reference.png',height:208,voice:'Masculina extremadamente grave, oscura y demoníaca',portraitPosition:'50% 12%',fall:[
+  line('pier-caer','Cuando salga de aquí, muchos van a caer.'),
+  line('pier-croquetas','¿Dónde estarán mis croquetas?'),
+  line('pier-jail','Prefiero estar aquí que en The Xpedition Jail.'),
+  line('pier-diddy','¡Me saqué toda la P. Diddy!'),
+  line('pier-edad','¿Cuántos años tienes?')
+ ],ambient:[]},
+ {id:'esteban',name:'Esteban',image:'./art/esteban-reference.png',height:208,voice:'Masculina joven y directa',portraitPosition:'50% 11%',fall:[
+  line('esteban-ano','Me reventé el Esteban-ano.','Me reventé el Esteban-*no.'),
+  line('esteban-messenger','Si no me sacas de aquí, te voy a ir a pelear por Messenger.'),
+  line('esteban-instagram','Si sigues perdiendo, me voy a crear una cuenta en Instagram y exponerte.'),
+  line('esteban-bracket','Me dejaron más humillado que en el bracket uno.')
+ ],ambient:[]},
+ {id:'marcos',name:'Marcos',image:'./art/marcos-reference.png',height:208,voice:'Masculina venezolana, cálida y sensual',portraitPosition:'50% 12%',fall:[
+  line('marcos-izquierda','Esto es culpa de la izquierda liberal comunista.'),
+  line('marcos-maracaibo','Prefiero estar aquí que en Maracaibo.'),
+  line('marcos-trump','Trump, sácame de aquí, ya me salvaste una vez.'),
+  line('marcos-marquitos','Tengo ganas de expulsar la Marquitos.'),
+  line('marcos-marcostoso','¡Qué día de la Marcostoso!'),
+  line('marcos-maga','Make America Great Again.')
  ],ambient:[]}
 ]);
 export const characterConfig=id=>CHARACTERS.find(c=>c.id===id)||CHARACTERS[0];

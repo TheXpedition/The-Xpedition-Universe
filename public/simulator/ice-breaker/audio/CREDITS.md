@@ -43,3 +43,18 @@ Todas estas grabaciones se normalizaron y convirtieron a PCM mono de 22.050 Hz. 
 | Beto | es-EC-LuisNeural | Voz masculina joven y natural. |
 | Greg | es-CO-SalomeNeural | Tono femenino alto y ritmo rápido. |
 | Sal Lua | es-BO-MarceloNeural | Registro elevado y vibrato cómico suave. |
+
+## Ivy, Eduard, Kim Camila, Carlos Harrington, Nahuee, Pier, Esteban y Marcos
+
+43 frases escritas para estos personajes y sintetizadas con voces neuronales de Microsoft mediante `edge-tts`, fuera del navegador. Se normalizaron a PCM mono de 22.050 Hz. El juego reproduce los WAV locales; no envía los diálogos a un servicio de voz durante las partidas.
+
+| Personaje | Voz | Interpretación aplicada |
+| --- | --- | --- |
+| Ivy | es-MX-DaliaNeural | Ritmo seguro y registro ligeramente elevado para una entrega arrogante. |
+| Eduard | es-VE-SebastianNeural | Voz venezolana masculina, ritmo rápido y tono cómico. |
+| Kim Camila | es-CO-SalomeNeural | Voz femenina de registro más grave y fraseo firme. |
+| Carlos Harrington | es-US-AlonsoNeural | Voz masculina en español, dicción clara y cadencia tranquila. |
+| Nahuee | es-VE-PaolaNeural | Tono muy agudo y ritmo rápido. |
+| Pier | es-MX-JorgeNeural | Registro muy grave y ritmo pausado, con tono oscuro. |
+| Esteban | es-CO-GonzaloNeural | Voz masculina joven y directa. |
+| Marcos | es-VE-SebastianNeural | Voz venezolana masculina, cálida, grave y pausada. |

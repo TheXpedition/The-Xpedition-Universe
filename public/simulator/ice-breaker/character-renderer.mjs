@@ -36,11 +36,13 @@ function leg(ctx,image,m,limb,side){
 const flowerPatterns=new WeakMap();
 const clothPatterns=new WeakMap();
 function clothFabric(ctx,image,path,kind){
- let tile=clothPatterns.get(image);if(!tile){const size=kind==='triangles'?80:48;tile=image.makeSpriteCanvas(size,size);const c=tile.getContext('2d');
-  c.fillStyle=kind==='triangles'?'#2d2821':kind==='palms'?'#a9ced1':'#edf4e9';c.fillRect(0,0,size,size);
+ let tile=clothPatterns.get(image);if(!tile){const size=kind==='triangles'?80:kind==='brocade'?64:kind==='stars'?52:48;tile=image.makeSpriteCanvas(size,size);const c=tile.getContext('2d');
+  c.fillStyle=kind==='triangles'?'#2d2821':kind==='palms'?'#a9ced1':kind==='stars'?'#07518b':kind==='brocade'?'#651728':'#edf4e9';c.fillRect(0,0,size,size);
   if(kind==='plaid'){c.strokeStyle='#9caf9f';c.lineWidth=1.7;c.beginPath();for(let n=0;n<49;n+=24){c.moveTo(n,0);c.lineTo(n,48);c.moveTo(0,n);c.lineTo(48,n);}c.stroke();}
   if(kind==='triangles'){for(const [x,y,flip] of [[4,4,1],[43,40,-1]]){c.fillStyle='#b88c50';c.strokeStyle='#100f0c';c.lineWidth=3;c.beginPath();c.moveTo(x,y+(flip>0?0:31));c.lineTo(x+34,y+(flip>0?0:31));c.lineTo(x+17,y+(flip>0?31:0));c.closePath();c.fill();c.stroke();c.fillStyle='#2d2821';c.beginPath();c.moveTo(x+9,y+(flip>0?6:25));c.lineTo(x+25,y+(flip>0?6:25));c.lineTo(x+17,y+(flip>0?21:10));c.closePath();c.fill();}}
   if(kind==='palms'){c.strokeStyle='#6f9ea4';c.lineWidth=2;for(const [x,y] of [[8,7],[31,31]]){c.beginPath();c.moveTo(x,y+12);c.quadraticCurveTo(x+3,y+5,x+1,y);for(let n=-2;n<=2;n++){c.moveTo(x+1,y);c.quadraticCurveTo(x+n*3,y-4,x+n*4,y+3);}c.stroke();}c.fillStyle='#729fa4';c.beginPath();c.arc(37,11,1.5,0,Math.PI*2);c.fill();}
+  if(kind==='stars'){c.fillStyle='#f6f4e9';for(const [x,y,r] of [[13,13,7],[39,38,6]]){c.beginPath();for(let n=0;n<10;n++){const a=-Math.PI/2+n*Math.PI/5,rr=n%2?r*.42:r;c.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr);}c.closePath();c.fill();}}
+  if(kind==='brocade'){c.strokeStyle='#bf9a50';c.lineWidth=1.35;for(const [x,y] of [[14,14],[47,47]]){c.beginPath();c.moveTo(x-8,y+9);c.bezierCurveTo(x-12,y-3,x+9,y-7,x+4,y+5);c.bezierCurveTo(x+1,y+12,x-3,y+8,x,y+2);c.stroke();c.fillStyle='#d0ac63';c.beginPath();c.arc(x,y,1.6,0,Math.PI*2);c.fill();}}
   clothPatterns.set(image,tile);
  }ctx.save();ctx.clip(path);ctx.fillStyle=ctx.createPattern(tile,'repeat');ctx.fill(path);ctx.restore();
 }
