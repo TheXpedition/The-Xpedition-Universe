@@ -989,7 +989,7 @@
         "Emanuel": "personajes/emanuel.png",
         "Alexia": "personajes/alexia.png",
         "Aaron": "seasons/shared/persona-sin-foto.webp",
-        "Gonz": "seasons/shared/persona-sin-foto.webp",
+        "Gonz": "personajes/julie.png",
         "Jesús": "personajes/jesus.png"
       },
       "versus": {
@@ -1339,7 +1339,7 @@
         {
           "name": "Gonz",
           "place": "Participante",
-          "image": "seasons/shared/persona-sin-foto.webp"
+          "image": "personajes/julie.png"
         }
       ]
     },
@@ -2696,12 +2696,11 @@
         "Luciano": "personajes/luciano.png",
         "Edwin": "personajes/edwin.png",
         "Azael": "personajes/azael.png",
-        "Alex": "seasons/shared/persona-sin-foto.webp",
+        "Alex Yohender": "personajes/alexyohender.png",
         "Catalina": "personajes/catalina.png",
         "Mati": "personajes/mati.png",
         "Javier": "personajes/javi.png",
-        "Amanda Lewis": "personajes/amandalewis.png",
-        "Alex Yohender": "personajes/alexyohender.png"
+        "Amanda Lewis": "personajes/amandalewis.png"
       },
       "versus": {
         "format": "top2-elimination",
@@ -3144,9 +3143,9 @@
           "image": "personajes/azael.png"
         },
         {
-          "name": "Alex",
+          "name": "Alex Yohender",
           "place": "Participante",
-          "image": "seasons/shared/persona-sin-foto.webp"
+          "image": "personajes/alexyohender.png"
         },
         {
           "name": "Catalina",
