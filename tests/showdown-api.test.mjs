@@ -43,7 +43,7 @@ test('elección de personajes, pago compartido y mínimo/máximo del elenco se v
  await choose(host,id,starter[0]);assert.equal((await request(host,'/rooms/'+id+'/start','POST',{fillBots:true})).status,409);
  await request(friend,'/rooms/'+id+'/join','POST',{token});assert.equal((await choose(friend,id,starter[0])).status,409);await choose(friend,id,starter[1]);
  assert.equal((await request(friend,'/rooms/'+id+'/start','POST',{fillBots:true})).status,403);assert.equal((await request(host,'/rooms/'+id+'/start','POST',{fillBots:false})).status,409);
- const started=await request(host,'/rooms/'+id+'/start','POST',{fillBots:true});assert.equal(started.status,200);assert.equal(started.room.players.length,6);assert.equal(started.room.groups.length,1);
+ const started=await request(host,'/rooms/'+id+'/start','POST',{fillBots:true});assert.equal(started.status,200);assert.equal(started.room.players.length,18);assert.equal(started.room.groups.length,3);
  const state=game._cache.get(id).state;assert.equal(state.players.length,18);assert.equal(state.players.filter(p=>p.bot).length,16);
  assert.equal((await choose(friend,id,starter[2])).status,409);assert.equal((await request(host,'/rooms/'+id+'/action','POST',{type:'pause'})).status,403);
  const privateView=JSON.stringify((await request(host,'/rooms/'+id)).room);assert(!privateView.includes('random'));assert(!privateView.includes('tieOrder'));assert(!privateView.includes('rankingPoints'));assert(!privateView.includes('botHits'));
@@ -62,7 +62,7 @@ test('guardado y reinicio mantienen personajes, estrellas, historial y campeón 
  const before=JSON.parse(JSON.stringify(game._cache.get(id).state));await game.close();game=createShowdownGame(options);
  room=(await request(actor,'/rooms/'+id)).room;state=game._cache.get(id).state;assert.equal(state.phase,before.phase);assert.deepEqual(state.track,before.track);assert.deepEqual(state.players.map(p=>p.stars),before.players.map(p=>p.stars));
  let guard=0;while(state.status==='running'&&guard++<200){stamp=state.deadline;room=(await request(actor,'/rooms/'+id)).room;}
- assert.equal(room.status,'finished');assert(room.winner||room.endedReason==='no-humans');assert.equal(Object.keys(room.track).length,18);assert(!JSON.stringify(room).includes('rankingPoints'));assert(room.winner?room.episodes.length===13:room.episodes.length<=13);assert.equal((await progression.wallet(actor.id)).coins,500);
+ assert.equal(room.status,'finished');assert(room.winner||room.endedReason==='no-humans');assert.equal(Object.keys(room.track).length,18);assert(!JSON.stringify(room).includes('rankingPoints'));assert(room.winner?room.episodes.length===13:room.episodes.length<=13);assert((await progression.wallet(actor.id)).coins>500);
  await game.close();game=createShowdownGame(options);assert.equal((await request(actor,'/rooms/'+id)).room.winner,room.winner);
 });
 
@@ -89,3 +89,5 @@ test('solo guarda sus escenas manuales sin avanzar por el reloj y valida colecci
  const unowned=characters.find(c=>!starter.includes(c.id));assert.equal((await request(actor,p+'/solo','POST',{revision:1,snapshot:{...snapshot,cast:[unowned.name]}})).status,403);
  await game.close();game=createShowdownGame(options);assert.deepEqual((await request(actor,p)).room.soloSnapshot,snapshot);assert.equal((await progression.wallet(actor.id)).coins,500);
 });
+
+test('las seis salas abiertas siguen accesibles aunque haya muchas finalizadas; cerrar una libera el cupo sin borrar historial',async()=>{const owner=await user();await buy(owner);const active=[];for(let n=0;n<6;n++)active.push((await make(owner,'multi')).room.id);assert.equal((await make(owner,'multi')).status,409);for(let n=0;n<15;n++){const id=randomUUID(),snapshot={...game._cache.get(active[0]).state,id,status:'finished',phase:'finished'};await db.run('INSERT INTO showdown_rooms(id,host,mode,status,snapshot,secret,created,updated) VALUES(?,?,?,?,?,?,?,?)',id,owner.id,'multi','finished',JSON.stringify(snapshot),'test',stamp,stamp+100000+n);await db.run('INSERT INTO showdown_members(room,user_id,joined) VALUES(?,?,?)',id,owner.id,stamp);}const list=(await request(owner)).rooms;assert.equal(list.filter(r=>r.status==='lobby').length,6);assert(list.slice(0,6).every(r=>active.includes(r.id)));assert.equal((await request(owner,'/rooms/'+active[0])).status,200);assert.equal((await request(owner,'/rooms/'+active[0]+'/close','POST')).status,200);assert.equal((await make(owner,'multi')).status,201);assert.equal((await db.one('SELECT status FROM showdown_rooms WHERE id=?',active[0])).status,'closed');});

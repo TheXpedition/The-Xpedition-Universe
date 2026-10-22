@@ -1139,7 +1139,7 @@ function updateEpisodeUI(){
     } else if(advFormat === 2 && episode < seasonEpisodeCount()){
       $("#epHelp").textContent = `SEMIFINAL - un WIN, dos HIGH, BOTTOM 3 y eleccion de BTM2 antes del lipsync.`;
     } else {
-      $("#epHelp").textContent = `GRAN FINAL - Torneo de 6 con tres duelos iniciales, un doble WIN y brackets hasta la corona.`;
+      $("#epHelp").textContent = `GRAN FINAL - Torneo de 6: dos pases directos por rendimiento, cuatro aspirantes en primera fase y duelos hasta la corona.`;
     }
   }
   $("#challengeSummary").innerHTML="";
@@ -1324,6 +1324,7 @@ function stopSpotifyTrack(){
 
 // ESCENARIO DE LIPSYNC CON LUZ OSCURA, REFLECTORES Y WIDGET REAL DE SPOTIFY
 function showLipsyncArenaFlow(){
+  $("#arenaContinueBtn").disabled=true;$("#arenaContinueBtn").textContent="Lipsync en escena…";
   $(".stage.active")?.classList.remove("active");
   $("#stage-lipsync-arena").classList.add("active");
   
@@ -1376,7 +1377,8 @@ function showLipsyncArenaFlow(){
     $(winnerId).appendChild(crown);
     
     toast(`¡${currentEpWinner} gana el Lipsync!`);
-  }, 900);
+    $('#arenaContinueBtn').disabled=false;$('#arenaContinueBtn').textContent='Continuar con el resultado →';
+  }, /Tournament|Final/.test(lipsyncContext)?4500:2400);
 }
 
 $("#arenaContinueBtn").addEventListener("click", ()=>{
@@ -2228,8 +2230,11 @@ function runAdv2TournamentEpisode(){
   tournamentTimers = [];
   const players = rankedByStars(alive.length ? alive : Array.from(advanced), "desc").slice(0,6);
   alive = players.slice();
-  const shuffled = shuffle(players);
-  const round1 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]], [shuffled[4], shuffled[5]]];
+  const weights={WIN:5,TOP2:4,HIGH:3,SAFE:2,LOW:1};
+  const score=name=>{const row=trackData.find(r=>r.name===name);return (row?.cells||[]).slice(9,seasonEpisodeCount()-1).reduce((n,c)=>n+(weights[c.txt]||0),0);};
+  const ranked=players.slice().sort((a,b)=>score(b)-score(a)||(stars[b]||0)-(stars[a]||0)||a.localeCompare(b));
+  const byes=ranked.slice(0,2),shuffled=shuffle(ranked.slice(2));
+  const round1 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]]];
   finalTournamentState = {
     round: 1,
     matchIndex: 0,
@@ -2240,7 +2245,7 @@ function runAdv2TournamentEpisode(){
     finalMatch: null,
     champion: null,
     runnerUp: null,
-    doubleWinIndex: Math.floor(Math.random()*3),
+    byes,
     committed: false
   };
 
@@ -2252,7 +2257,8 @@ function runAdv2TournamentEpisode(){
   $("#tourneyContinueBtn").disabled = true;
   $("#tourneyContinueBtn").textContent = "Bonju elige nombres...";
   renderAdv2TournamentTree();
-  prepareNextAdv2TournamentMatch();
+  const announcement=document.createElement('div');announcement.className='solo-final-announcement';announcement.innerHTML='<img src="/showdown/art/bonju.webp" alt="Bonju"><div><small>BONJU · LA GRAN FINAL</small><h2>El rendimiento tiene recompensa.</h2><p>'+byes.join(' y ')+' fueron los dos mejores de la semifinal y pasan directamente a la segunda fase. Los otros cuatro se enfrentarán para llegar hasta ellos.</p></div>';$('#stage-final-tournament .choice-sub').after(announcement);
+  $('#tourneyContinueBtn').disabled=false;$('#tourneyContinueBtn').textContent='Comenzar la primera fase →';$('#tourneyContinueBtn').onclick=()=>{announcement.remove();prepareNextAdv2TournamentMatch();};
 }
 
 function prepareNextAdv2TournamentMatch(){
@@ -2260,12 +2266,11 @@ function prepareNextAdv2TournamentMatch(){
   if(!state || state.champion) return;
   let match = null;
   if(state.round === 1){
-    match = { round:1, index:state.matchIndex, names:state.round1[state.matchIndex], doubleWin:state.matchIndex === state.doubleWinIndex };
+    match = { round:1, index:state.matchIndex, names:state.round1[state.matchIndex], doubleWin:false };
   } else if(state.round === 2){
     if(!state.round2.length){
       const advancers = state.round1Results.flatMap(r => r.winners);
-      const shuffled = shuffle(advancers);
-      state.round2 = [[shuffled[0], shuffled[1]], [shuffled[2], shuffled[3]]];
+      state.round2 = [[advancers[0],state.byes[0]],[advancers[1],state.byes[1]]];
       state.matchIndex = 0;
     }
     match = { round:2, index:state.matchIndex, names:state.round2[state.matchIndex], doubleWin:false };
@@ -2296,8 +2301,8 @@ function resolveAdv2TournamentMatch(){
   $("#stage-final-tournament").classList.add("active");
 
   if(match.round === 1){
-    const winners = match.doubleWin ? match.names.slice() : [currentEpWinner];
-    const losers = match.doubleWin ? [] : [currentEpOtherTop2];
+    const winners = [currentEpWinner];
+    const losers = [currentEpOtherTop2];
     state.round1Results[match.index] = { winners, losers, doubleWin: match.doubleWin };
     state.matchIndex++;
     if(state.matchIndex >= state.round1.length){
@@ -2325,7 +2330,7 @@ function resolveAdv2TournamentMatch(){
   renderAdv2TournamentTree(null, false);
   $("#tourneyContinueBtn").disabled = true;
   $("#tourneyContinueBtn").textContent = "Actualizando arbol...";
-  tournamentTimers.push(setTimeout(prepareNextAdv2TournamentMatch, 850));
+  $('#tourneyContinueBtn').disabled=false;$('#tourneyContinueBtn').textContent='Continuar al siguiente duelo →';$('#tourneyContinueBtn').onclick=prepareNextAdv2TournamentMatch;
 }
 
 function renderAdv2TournamentTree(activeMatch=null, selecting=false){
@@ -2343,7 +2348,7 @@ function renderAdv2TournamentTree(activeMatch=null, selecting=false){
     col1.appendChild(createMatchup(title, active && selecting ? ["...", "..."] : m, ["", ""], result?.winners || null, active && selecting));
   });
 
-  const round2List = state.round2.length ? state.round2 : [["?", "?"], ["?", "?"]];
+  const round2List = state.round2.length ? state.round2 : [["?",state.byes?.[0]||"?"],["?",state.byes?.[1]||"?"]];
   round2List.forEach((m,i) => {
     const result = state.round2Results[i];
     const active = activeMatch?.round === 2 && activeMatch.index === i;
@@ -2480,7 +2485,7 @@ function resolveAdv4TournamentMatch(){
   renderAdv4TournamentTree(null, false);
   $("#tourneyContinueBtn").disabled = true;
   $("#tourneyContinueBtn").textContent = "Actualizando arbol...";
-  tournamentTimers.push(setTimeout(prepareNextAdv4TournamentMatch, 850));
+  $('#tourneyContinueBtn').disabled=false;$('#tourneyContinueBtn').textContent='Continuar al siguiente duelo →';$('#tourneyContinueBtn').onclick=prepareNextAdv4TournamentMatch;
 }
 
 function renderAdv4TournamentTree(activeMatch=null, selecting=false){

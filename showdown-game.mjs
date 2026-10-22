@@ -1,8 +1,10 @@
+import {createShowdownRewards} from './showdown-rewards.mjs';
 import {randomUUID,randomBytes} from 'node:crypto';
 import {createShowdown,joinShowdown,selectShowdownCharacter,fillShowdownBots,beginShowdown,tickShowdown,showdownAction,showdownPublicView,sdFail} from './showdown-engine.mjs';
 import {SHOWDOWN_FORMATS,SHOWDOWN_CHALLENGES,SHOWDOWN_PRICE} from './public/showdown/config.mjs';
 
 export function createShowdownGame({db,json,fail,body,checkRate,progression,characters,notify=()=>{},messageView,pushNotifications,serialize=fn=>fn(),now=Date.now}){
+ const rewards=createShowdownRewards({db,progression,serialize,now});
  const cache=new Map(),loading=new Map(),locked=new Map();let closing=false;
  const queue=(id,fn)=>{const old=locked.get(id)||Promise.resolve(),next=old.catch(()=>{}).then(fn);locked.set(id,next);next.finally(()=>{if(locked.get(id)===next)locked.delete(id);}).catch(()=>{});return next;};
  async function getRecord(id){
@@ -29,7 +31,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
   if(p&&stamp-p.lastSeen>=3000){p.lastSeen=stamp;s.revision++;}
  }
  async function chat(room,after=0){const rows=await db.all('SELECT c.id,c.sender,c.text,c.created,u.name,u.avatar FROM showdown_chat c JOIN users u ON u.id=c.sender WHERE c.room=? AND c.created>? ORDER BY c.created DESC,c.id DESC LIMIT 60',room,after);return rows.reverse().map(r=>({id:r.id,sender:r.sender,name:r.name,avatar:r.avatar,text:r.text,created:Number(r.created)}));}
- async function response(record,user,{includeChat=false}={}){const s=record.state;const view=showdownPublicView(s,user.id,now(),characters);return {...view,soloClassic:s.mode==='solo',soloSnapshot:s.mode==='solo'?s.soloSnapshot||null:null,soloRevision:s.soloRevision||0,shareUrl:s.status==='lobby'?'/#showdown/'+s.id+'/'+record.secret:null,...(includeChat?{chat:await chat(s.id)}:{})};}
+ async function response(record,user,{includeChat=false}={}){const s=record.state;const view=showdownPublicView(s,user.id,now(),characters);return {...view,...await rewards(s,user.id),soloClassic:s.mode==='solo',soloSnapshot:s.mode==='solo'?s.soloSnapshot||null:null,soloRevision:s.soloRevision||0,shareUrl:s.status==='lobby'?'/#showdown/'+s.id+'/'+record.secret:null,...(includeChat?{chat:await chat(s.id)}:{})};}
  async function notifyInvitation(room,user,target){
   const stamp=now(),old=await db.one('SELECT * FROM showdown_invites WHERE room=? AND target=?',room.state.id,target);
   if(old&&stamp-Number(old.created)<300000)return {alreadySent:true};
@@ -55,7 +57,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
   const method=req.method;
   if(path==='/api/showdown'&&method==='GET'){
    const wallet=await progression.wallet(user.id),owned=await progression.canPlay(user.id,'showdown');
-   const rooms=await db.all('SELECT r.id,r.mode,r.status,r.created,r.updated,r.snapshot FROM showdown_rooms r JOIN showdown_members m ON m.room=r.id WHERE m.user_id=? AND m.left_at IS NULL ORDER BY r.updated DESC LIMIT 12',user.id);
+   const rooms=await db.all("SELECT r.id,r.mode,r.status,r.created,r.updated,r.snapshot FROM showdown_rooms r WHERE r.host=? OR r.id IN (SELECT room FROM showdown_members WHERE user_id=? AND left_at IS NULL) ORDER BY CASE WHEN r.status IN ('running','lobby') THEN 0 ELSE 1 END,r.updated DESC LIMIT 60",user.id,user.id);
    const collection=await progression.view(user.id),ownedCharacters=collection.shop.items.filter(i=>i.kind==='character'&&(i.starter||collection.owned.includes(i.id))).map(i=>i.id.replace('character:',''));
    json(res,{owned,wallet,price:SHOWDOWN_PRICE,characters,ownedCharacters,formats:Object.values(SHOWDOWN_FORMATS),challenges:SHOWDOWN_CHALLENGES,rooms:rooms.map(r=>{const s=cache.get(r.id)?.state||JSON.parse(r.snapshot);return {id:r.id,isHost:s.host===user.id,mode:r.mode,status:s.status,phase:s.phase,format:s.format,created:Number(r.created),updated:Number(r.updated),players:s.players.filter(p=>!p.bot).length,winner:s.soloWinner|| (s.winner?characters.find(c=>c.id===s.players.find(p=>p.id===s.winner)?.charId)?.name:null)};})});return true;
   }
@@ -108,7 +110,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    const collection=await progression.view(user.id),owned=new Set(collection.shop.items.filter(i=>i.kind==='character'&&(i.starter||collection.owned.includes(i.id))).map(i=>i.id.replace('character:',''))),allowed=new Set(characters.filter(c=>owned.has(c.id)).map(c=>c.name));
    for(const list of [snapshot.vars.selected18||[],snapshot.cast||[],...Object.values(snapshot.vars.groups||{})]){if(!Array.isArray(list)||list.length>18||new Set(list.filter(Boolean)).size!==list.filter(Boolean).length||list.some(n=>n&&!allowed.has(n)))fail(403,'El elenco solo puede usar personajes de tu colección.');}
    await queue(id,async()=>{if(input.revision!==(s.soloRevision||0))fail(409,'Otra ventana actualizó esta temporada. Vuelve a abrirla desde Showdown.');s.soloSnapshot=snapshot;s.soloRevision=(s.soloRevision||0)+1;s.format=snapshot.vars.advFormat;s.phase='solo';s.paused=false;s.status=snapshot.stage==='finished'?'finished':'running';s.soloWinner=Object.entries(snapshot.vars.finalRank||{}).find(([,rank])=>rank===1)?.[0]||null;s.revision++;await flush(record);});
-   json(res,{revision:s.soloRevision,saved:true});return true;
+   json(res,{revision:s.soloRevision,saved:true,...await rewards(s,user.id)});return true;
   }
   if(action==='chat'&&method==='GET'){json(res,{messages:await chat(id,Number(url.searchParams.get('after'))||0)});return true;}
   if(action==='chat'&&method==='POST'){
