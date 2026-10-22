@@ -28,3 +28,18 @@ Audios sintetizados con voces neuronales de Microsoft mediante la herramienta de
 | Luciano | es-AR-TomasNeural | Registro elevado y ajuste adicional de tono y velocidad para una voz caricaturesca. |
 
 Todas estas grabaciones se normalizaron y convirtieron a PCM mono de 22.050 Hz. Las frases nuevas y corregidas de Dani conservan Microsoft Sabina Desktop. La voz de Luciano es una interpretación sintética caricaturesca; no es una grabación de Mickey Mouse ni de su actor de doblaje.
+
+## Ignacio Ricci, Lalamila, Lucas Mendez, Cocomong, Bryan Montalvo, Beto, Greg y Sal Lua
+
+46 frases nuevas sintetizadas con voces neuronales de Microsoft mediante `edge-tts`, preparadas y convertidas fuera de la aplicación. Misma normalización a PCM mono de 22.050 Hz.
+
+| Personaje | Voz | Interpretación aplicada |
+| --- | --- | --- |
+| Ignacio Ricci | es-CL-LorenzoNeural | Registro bajo, ritmo pausado y realce suave de graves. |
+| Lalamila | es-VE-PaolaNeural | Registro femenino joven y ritmo ligero. |
+| Lucas Mendez | es-DO-EmilioNeural | Voz dominicana masculina, ritmo dinámico. |
+| Cocomong | es-PE-AlexNeural | Tono y velocidad adaptados a una voz infantil; vibrato en el llanto. |
+| Bryan Montalvo | es-PR-VictorNeural | Voz masculina cálida, coqueta y pausada. |
+| Beto | es-EC-LuisNeural | Voz masculina joven y natural. |
+| Greg | es-CO-SalomeNeural | Tono femenino alto y ritmo rápido. |
+| Sal Lua | es-BO-MarceloNeural | Registro elevado y vibrato cómico suave. |

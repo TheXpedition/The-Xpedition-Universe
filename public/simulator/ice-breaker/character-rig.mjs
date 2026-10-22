@@ -76,16 +76,58 @@ export const MODELS={
   torso:'M211 193 L272 187 L283 214 L320 231 L325 266 L288 337 L289 448 L244 464 L198 465 L173 445 L181 335 L151 275 L159 239 L192 217 L208 207 Z',
   hips:[v(209,454),v(264,454)],knees:[v(216,587),v(274,587)],ankles:[v(213,705),v(280,705)],shoulders:[v(165,249),v(312,249)],elbows:[v(148,347),v(329,347)],wrists:[v(147,444),v(321,444)],skin:'#eac797',pants:'#4b6069',upperWidths:[24,25],lowerWidths:[24,25],armWidths:[22,23],handScale:.82,
   sleeve:{from:0,color:'#263c3b',pattern:'floral',cuff:'#213c3e'},
-  feet:[[123,698,113,43],[237,698,108,43]],mouth:{x:227,y:161,rx:17,ry:4},worldHeight:209,headMask:'M139 10 H317 V197 H276 V232 H208 V207 H139 Z'}
+  feet:[[123,698,113,43],[237,698,108,43]],mouth:{x:227,y:161,rx:17,ry:4},worldHeight:209,headMask:'M139 10 H317 V197 H276 V232 H208 V207 H139 Z'},
+ ignacio:{width:501,ground:742,top:17,center:267,hipY:565,shoulderY:293,head:[108,10,306,337],portrait:[141,49,235,234],
+  torso:'M185 240 L304 240 Q362 248 391 303 L381 395 Q416 476 385 534 L374 568 Q287 592 149 565 L131 510 Q101 447 127 350 L137 290 Z',
+  hips:[v(202,565),v(337,565)],knees:[v(207,635),v(335,635)],ankles:[v(204,703),v(335,703)],shoulders:[v(139,293),v(397,293)],elbows:[v(94,389),v(437,389)],wrists:[v(98,492),v(419,492)],skin:'#efa454',pants:'#f5f5f1',upperWidths:[47,49],lowerWidths:[35,37],armWidths:[37,40],handScale:1.08,footMotion:.48,bodyMotion:.72,
+  sleeve:{from:0,color:'#fafaf6',cuff:'#e6e8e3'},pelvis:'M145 531 Q257 564 379 530 L380 590 L340 604 H194 L151 590 Z',
+  backHair:'M166 191 L205 217 L209 281 L198 316 L174 329 L161 296 Z M321 188 L366 183 L379 264 L368 319 L337 349 L321 327 L329 295 Z',
+  feet:[[117,679,126,66],[288,679,126,66]],mouth:{x:239,y:199,rx:20,ry:4},worldHeight:204,headMask:'M106 8 H416 V245 L375 250 L364 318 L335 349 L319 338 L324 310 L302 296 H217 L199 329 L173 331 L160 308 L157 263 H106 Z'},
+ lalamila:{width:383,ground:736,top:41,center:183,hipY:375,shoulderY:266,head:[90,33,211,285],
+  torso:'M145 211 L194 202 L207 225 L238 232 L250 259 L248 291 L223 318 L210 342 L234 363 L142 365 L124 371 L144 341 L147 292 L126 275 L125 247 Z',
+  hips:[v(151,376),v(214,376)],knees:[v(158,548),v(216,548)],ankles:[v(164,663),v(211,663)],shoulders:[v(127,267),v(253,267)],elbows:[v(110,351),v(265,351)],wrists:[v(105,435),v(266,435)],skin:'#e9ac70',pants:'#5a542b',upperWidths:[26,28],lowerWidths:[17,18],armWidths:[16,17],handScale:.76,shorts:.80,cargo:'#47441f',
+  sleeve:{from:0,to:.40,color:'#b58b40',cuff:'#9d7832'},pelvis:'M133 359 H231 L245 425 H125 Z',
+  backHair:'M103 184 L139 201 L135 262 L141 303 L119 321 L101 287 L93 247 Z M222 148 L269 153 L289 227 L287 259 L300 273 L282 283 L258 274 L237 239 Z',
+  feet:[[109,650,85,87],[192,650,80,87]],mouth:{x:159,y:166,rx:17,ry:5},worldHeight:200,headMask:'M88 30 H304 V278 L285 285 L260 273 L232 226 L204 210 L205 236 H146 L147 217 L132 256 L139 304 L119 321 L101 287 L88 271 Z'},
+ lucasmendez:{width:431,ground:742,top:24,center:205,hipY:391,shoulderY:247,head:[129,19,155,226],
+  torso:'M154 209 L183 225 L231 221 L255 204 L278 221 L274 275 L260 322 L264 372 L223 388 L148 377 L145 323 L134 277 L135 230 Z',
+  hips:[v(173,391),v(234,391)],knees:[v(181,548),v(247,548)],ankles:[v(180,667),v(250,667)],shoulders:[v(142,245),v(274,245)],elbows:[v(128,333),v(290,333)],wrists:[v(128,422),v(284,422)],skin:'#eea97d',pants:'#292e2d',upperWidths:[26,28],lowerWidths:[25,27],armWidths:[18,19],handScale:.73,cargo:'#232827',
+  sleeve:{from:0,color:'#252722',folds:'#47483c',cuff:'#171c19'},
+  feet:[[112,643,95,100],[220,643,84,100]],mouth:{x:179,y:153,rx:13,ry:4},worldHeight:209,headMask:'M127 17 H286 V228 L264 239 L232 231 L201 242 L159 226 L136 206 Z'},
+ cocomong:{width:336,ground:457,top:15,center:160,hipY:387,shoulderY:286,head:[21,9,282,253],portrait:[63,73,196,187],
+  torso:'M115 247 L181 248 L201 269 L215 284 L219 307 L196 315 L204 384 L180 394 L151 385 L111 385 L105 316 L84 303 L99 270 Z',
+  hips:[v(130,387),v(186,387)],knees:[v(131,424),v(190,424)],ankles:[v(128,440),v(190,440)],shoulders:[v(111,286),v(202,286)],elbows:[v(102,321),v(219,321)],wrists:[v(95,347),v(225,347)],skin:'#49331b',pants:'#a9ced1',upperWidths:[20,22],lowerWidths:[8,9],armWidths:[8,9],handScale:.35,shorts:.94,legPattern:'palms',footMotion:.33,bodyMotion:.45,
+  sleeve:{from:0,to:.55,color:'#a9ced1',pattern:'palms'},pelvis:'M110 365 L204 366 L205 422 H167 L150 388 L144 422 H108 Z',
+  feet:[[99,430,51,28],[165,430,52,28]],mouth:null,worldHeight:142,headMask:'M18 7 H309 V162 L244 164 L239 228 L215 253 L187 260 H116 L77 233 L65 202 L68 172 L21 168 Z'},
+ bryan:{width:381,ground:745,top:23,center:181,hipY:462,shoulderY:254,head:[106,16,150,211],
+  torso:'M147 186 L215 183 L224 208 L250 225 L250 310 L235 445 L209 465 L169 452 L128 463 L132 320 L114 285 L117 235 L145 210 Z',
+  hips:[v(151,462),v(212,462)],knees:[v(157,596),v(216,596)],ankles:[v(152,712),v(219,712)],shoulders:[v(103,254),v(267,254)],elbows:[v(80,365),v(285,365)],wrists:[v(81,465),v(279,465)],skin:'#d09453',pants:'#425b65',upperWidths:[26,28],lowerWidths:[25,26],armWidths:[24,25],handScale:.88,
+  sleeve:{from:0,to:.52,color:'#edf4e9',pattern:'plaid'},pelvis:'M131 445 H233 L239 506 H124 Z',
+  feet:[[76,699,108,47],[185,699,105,47]],mouth:{x:174,y:150,rx:19,ry:5},worldHeight:216,headMask:'M104 14 H259 V185 H219 V228 H148 V203 H104 Z'},
+ beto:{width:460,ground:734,top:17,center:229,hipY:412,shoulderY:242,head:[134,10,173,209],
+  torso:'M191 192 L260 179 L273 201 L310 218 L326 246 L311 306 L296 391 Q236 418 145 391 L149 307 L126 288 L133 244 L162 218 L186 207 Z',
+  hips:[v(195,412),v(263,412)],knees:[v(207,566),v(269,566)],ankles:[v(203,696),v(271,696)],shoulders:[v(148,242),v(323,242)],elbows:[v(126,341),v(337,341)],wrists:[v(127,452),v(332,452)],skin:'#c98f51',pants:'#c7b88e',upperWidths:[27,28],lowerWidths:[25,26],armWidths:[22,23],handScale:.9,
+  sleeve:{from:0,to:.50,color:'#9dbed0',stripe:'#edf3f4',spacing:5,longitudinal:true,cuff:'#bfd4df'},
+  feet:[[120,680,107,55],[235,680,100,55]],mouth:{x:222,y:155,rx:19,ry:4},worldHeight:205,headMask:'M132 8 H310 V194 H267 V220 H192 V207 H132 Z'},
+ greg:{width:418,ground:748,top:26,center:242,hipY:470,shoulderY:286,head:[122,18,245,271],
+  torso:'M178 229 L222 240 L263 226 L273 249 L272 273 L287 291 L273 341 L263 376 L285 405 L232 427 L202 397 L209 376 L201 333 L188 284 L191 257 Z',
+  hips:[v(213,470),v(277,470)],knees:[v(218,610),v(276,610)],ankles:[v(216,684),v(271,684)],shoulders:[v(185,286),v(294,286)],elbows:[v(174,371),v(309,371)],wrists:[v(167,458),v(315,458)],skin:'#d49b63',pants:'#d49b63',upperWidths:[18,20],lowerWidths:[12,13],armWidths:[12,13],handScale:.72,
+  skirt:'M209 374 L261 374 Q310 398 335 535 Q241 580 140 535 Q150 434 180 399 Z',
+  feet:[[160,661,80,88],[242,661,81,88]],mouth:{x:227,y:181,rx:17,ry:4},worldHeight:202,headMask:'M120 16 H370 V283 H275 L267 252 H213 L205 280 H120 Z'},
+ sallua:{width:510,ground:752,top:6,center:264,hipY:594,shoulderY:262,head:[170,0,204,229],
+  torso:'M211 194 L307 193 Q375 203 401 267 L410 349 Q429 412 412 469 Q362 500 273 505 Q164 514 109 469 Q80 404 108 322 L136 255 Q164 218 211 194 Z',
+  hips:[v(179,594),v(338,594)],knees:[v(197,664),v(341,664)],ankles:[v(189,725),v(350,725)],shoulders:[v(151,283),v(385,283)],elbows:[v(89,374),v(440,374)],wrists:[v(75,480),v(447,480)],skin:'#202121',pants:'#2d2821',upperWidths:[49,51],lowerWidths:[35,38],armWidths:[42,45],handScale:1.1,shorts:.38,legPattern:'triangles',footMotion:.40,bodyMotion:.65,shoulderCap:1.25,
+  skirt:'M112 474 L410 452 L418 603 Q346 629 267 615 L254 590 L248 616 L102 606 Z',
+  feet:[[115,709,121,45],[306,710,85,44]],mouth:{x:232,y:184,rx:20,ry:6},worldHeight:211,headMask:'M167 0 H377 V141 L351 185 L334 213 L304 229 H224 L193 208 L176 186 Z'}
 };
 function rotatePoint(root,angle,length){return {x:root.x+Math.sin(angle)*length,y:root.y+Math.cos(angle)*length};}
 export function sampleCharacterPose(id,options={}){
- if(id==='dani')return sampleDaniPose(options);const m=MODELS[id];if(!m)throw Error('Unknown character');const driver=sampleDaniPose(options),scale=(m.ground-m.top)/980,bodyX=driver.bodyX*scale,bodyY=driver.bodyY*scale,tilt=driver.tilt;
+ if(id==='dani')return sampleDaniPose(options);const m=MODELS[id];if(!m)throw Error('Unknown character');const driver=sampleDaniPose(options),scale=(m.ground-m.top)/980,bodyScale=scale*(m.bodyMotion??1),bodyX=driver.bodyX*bodyScale,bodyY=driver.bodyY*bodyScale,tilt=driver.tilt;
  const anchor=p=>({x:m.center+bodyX+(p.x-m.center)*Math.cos(tilt)-(p.y-m.hipY)*Math.sin(tilt),y:m.hipY+bodyY+(p.x-m.center)*Math.sin(tilt)+(p.y-m.hipY)*Math.cos(tilt)});
  const output={bodyX,bodyY,tilt};
  for(let side=0;side<2;side++){
   const near=side===1,name=near?'near':'far',src=driver[name+'Leg'],restX=near?310:220,restY=near?965:960;
-  const target={x:m.ankles[side].x+(src.end.x-restX)*scale,y:m.ankles[side].y+(src.end.y-restY)*scale};
+  const footScale=scale*(m.footMotion??1),target={x:m.ankles[side].x+(src.end.x-restX)*footScale,y:m.ankles[side].y+(src.end.y-restY)*footScale};
   output[name+'Leg']=solveLimb(anchor(m.hips[side]),target,len(m.hips[side],m.knees[side]),len(m.knees[side],m.ankles[side]));
   const a=driver[name+'Arm'],upper=Math.atan2(a.joint.x-a.root.x,a.joint.y-a.root.y),lower=Math.atan2(a.end.x-a.joint.x,a.end.y-a.joint.y),root=anchor(m.shoulders[side]),joint=rotatePoint(root,upper,len(m.shoulders[side],m.elbows[side]));
   output[name+'Arm']={root,joint,end:rotatePoint(joint,lower,len(m.elbows[side],m.wrists[side])),angle:lower};

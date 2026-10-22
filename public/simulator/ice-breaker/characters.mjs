@@ -108,6 +108,68 @@ export const CHARACTERS=Object.freeze([
   line('luciano-hermano','Deja de perder, que tengo que ir a ver Gran Hermano.'),
   line('luciano-argentina','Tengo que ir a defender a Argentina en Twitter porque dicen que somos fascistas.'),
   line('luciano-luchoben','¡Me saqué toda la LuchoBen!')
+ ],ambient:[]},
+ {id:'ignacio',name:'Ignacio Ricci',image:'./art/ignacio-reference.png',height:204,voice:'Masculina y gruesa',fall:[
+  line('ignacio-silvanya','¡Me dejaron toda Silvanya Dlemberth!'),
+  line('ignacio-coneolimpiadas','¡Me saqué la Coneolimpiadas!'),
+  line('ignacio-audios','Rápido, que tengo que enviar audios de cuarenta minutos.'),
+  line('ignacio-bonshu','Bonshu está detrás de esto.'),
+  line('ignacio-boicot','Me vuelves a hacer perder y te hago un boicot.')
+ ],ambient:[]},
+ {id:'lalamila',name:'Lalamila',image:'./art/lalamila-reference.png',height:200,voice:'Femenina y joven',fall:[
+  line('lalamila-leyenda','¿Ya te dijeron que soy una leyenda en competencias?'),
+  line('lalamila-gucci','¡Me reventé toda la Lalamila Gucci!'),
+  line('lalamila-empleo','Verte jugar me motiva a buscar empleo.'),
+  line('lalamila-chamo','Chamo, no te pases, mamaguevo.','Chamo, no te pases, m*m*guevo.'),
+  line('lalamila-pierre','Te voy a ir a buscar a tu casa y sacarte la Pierre Donnovan.')
+ ],ambient:[]},
+ {id:'lucasmendez',name:'Lucas Mendez',image:'./art/lucasmendez-reference.png',height:209,voice:'Dominicana',fall:[
+  line('lucasmendez-leyenda','¿Ya te dije que soy la nueva leyenda del grupo?'),
+  line('lucasmendez-global','¡Me saqué la Global Wars!'),
+  line('lucasmendez-top40','Ya deja de perder y ve a hacer el top cuarenta canciones de mi lista musical.'),
+  line('lucasmendez-wap','Termina rápido, que tengo que ir a reproducir WAP y I Like It.'),
+  line('lucasmendez-pagar','No olvidaré esto, me la vas a pagar.'),
+  line('lucasmendez-elias','Esto es culpa de Elías.'),
+  line('lucasmendez-adriana','¿Dónde estará mi mejor amiga Adriana?')
+ ],ambient:[]},
+ {id:'cocomong',name:'Cocomong',image:'./art/cocomong-reference.png',height:142,voice:'Infantil y pequeña',fall:[
+  line('cocomong-yumyum','¡Expulsé la Cocomong Yum Yum!'),
+  line('cocomong-abortado','Me debieron haber abortado.'),
+  line('cocomong-siete','Tal vez tenga siete años, pero no juego tan mal como tú.'),
+  line('cocomong-amamantar','¿Me podrías amamantar?'),
+  line('cocomong-bua','¡Buaaaaa!','¡BUAAAAAAA!'),
+  line('cocomong-adoptas','¿Me adoptas?')
+ ],ambient:[]},
+ {id:'bryan',name:'Bryan Montalvo',image:'./art/bryan-reference.png',height:216,voice:'Coqueta y seductora',fall:[
+  line('bryan-sidapop','¡Me saqué la Sida Pop!'),
+  line('bryan-trabajo','Apúrate, que tengo que ir a mi trabajo como escort.','Apúrate, que tengo que ir a mi trabajo como esc*rt.'),
+  line('bryan-celebrity','Juegas horrible, deberías entrar a Celebrity Stars.'),
+  line('bryan-canvas','¿Te gustaría calificar mi Drag Race en Canvas?'),
+  line('bryan-concierto','Ya te dije que no puedo seguir jugando, tengo un concierto.'),
+  line('bryan-coronel','Esto me recuerda a cuando me saqué la Coronel Sanders en un evento.')
+ ],ambient:[]},
+ {id:'beto',name:'Beto',image:'./art/beto-reference.png',height:205,voice:'Masculina y joven',fall:[
+  line('beto-kareli','¡Me saqué la Kareli!'),
+  line('beto-cae','¿Cómo te cae Kareli? A mí, mal.'),
+  line('beto-bullying','¿Ya te conté la historia de cuando me hacían bullying en la comunidad IDD?'),
+  line('beto-crayola','Volví a perder, como cuando me rayé la cara con una crayola para la final de un camp.'),
+  line('beto-campria','¡Me dejaron toda Campria All Stars dos!')
+ ],ambient:[]},
+ {id:'greg',name:'Greg',image:'./art/greg-reference.png',height:202,voice:'Aguda y chillona',fall:[
+  line('greg-rep','¡Me saqué la Greg Rep!'),
+  line('greg-retos','Estos retos están horribles. Mejor pon los de Turn It Up, de mandar música de canciones de cuna.'),
+  line('greg-gregorito','¡Me dejaron toda la Gregorito!'),
+  line('greg-chats','Deja de perder o te filtro tus chats.'),
+  line('greg-verguenza','Pasé vergüenza por milésima vez.'),
+  line('greg-cardi','Tengo que buscar a Lucas y decirle que le puse noventa y nueve de nota al álbum de Cardi B.')
+ ],ambient:[]},
+ {id:'sallua',name:'Sal Lua',image:'./art/sallua-reference.png',height:211,voice:'Excéntrica y juguetona',fall:[
+  line('sallua-cincuenta','Esta es la vez número cincuenta y uno que pierdo este juego.'),
+  line('sallua-camp','¡Me dejaron toda un Camp Así!'),
+  line('sallua-traitors','Deberías saber que gané The Traitors uno hace diez años.'),
+  line('sallua-desempleada','Ya te dije que no estoy desempleada, solo no tengo nada mejor que hacer.'),
+  line('sallua-ir','Sigue perdiendo, no me quiero ir.'),
+  line('sallua-pesimo','Eres pésimo jugando, me recuerdas a mí.')
  ],ambient:[]}
 ]);
 export const characterConfig=id=>CHARACTERS.find(c=>c.id===id)||CHARACTERS[0];
