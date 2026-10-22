@@ -2,7 +2,7 @@ import {randomUUID} from 'node:crypto';
 import {isStaff} from './account-roles.mjs';
 import {createArcadeProgress} from './arcade-progress.mjs';
 
-export const arcadeGames=Object.freeze([{id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-cover.webp',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}]);
+export const arcadeGames=Object.freeze([{id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-poster.png',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}]);
 
 export function createArcade({db,json,fail,body,checkRate,progression,now=Date.now,everyone=()=>{}}){
  const find=id=>{const game=arcadeGames.find(g=>g.id===id);if(!game)fail(404,'Juego no encontrado.');return game;};
