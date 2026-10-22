@@ -1,6 +1,7 @@
 import {drawDani} from './dani-renderer.mjs';
 import {MODELS,sampleCharacterPose} from './character-rig.mjs';
 const INK='#161718';
+const rigCache=new WeakMap();
 // Runtime sprite matting leaves the supplied files untouched. Flood only the
 // connected paper around the inked silhouette, preserving enclosed skin/fabric.
 export function prepareReference(image,makeCanvas){
@@ -87,11 +88,30 @@ function body(ctx,image,m,pose,mouth){
  if(mouth>.12&&m.mouth){const p=m.mouth;ctx.save();ctx.translate(p.x,p.y);fillPath(ctx,'M'+(-p.rx)+' -2 Q0 -9 '+p.rx+' -2 Q'+(p.rx*.7)+' '+(4+mouth*16)+' 0 '+(4+mouth*13)+' Q'+(-p.rx*.65)+' '+(5+mouth*8)+' '+(-p.rx)+' -2 Z','#55292b',INK,2);ctx.strokeStyle='#f5e3cf';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-p.rx*.6,-1);ctx.quadraticCurveTo(0,2,p.rx*.6,-1);ctx.stroke();ctx.restore();}
  ctx.restore();
 }
+function makeMaskedLayer(image,limb,region){const layer=image.makeSpriteCanvas(image.width,image.height),mask=image.makeSpriteCanvas(image.width,image.height),mc=mask.getContext('2d'),path=new Path2D(limb.mask);mc.save();if(region)mc.clip(region);mc.fillStyle='#fff';mc.strokeStyle='#fff';mc.lineWidth=4;mc.lineJoin='round';mc.lineCap='round';mc.fill(path);mc.stroke(path);mc.restore();const c=layer.getContext('2d');c.drawImage(image,0,0);c.globalCompositeOperation='destination-in';c.drawImage(mask,0,0);return layer;}
+function segmentedLayers(image,m){
+ let cache=rigCache.get(image);if(cache)return cache;
+ const limbs=[...m.arms,...m.legs],base=image.makeSpriteCanvas(image.width,image.height),b=base.getContext('2d');b.drawImage(image,0,0);b.globalCompositeOperation='destination-out';b.lineWidth=4;b.lineJoin='round';b.lineCap='round';for(const limb of limbs){const path=new Path2D(limb.mask);b.fill(path);b.stroke(path);}b.globalCompositeOperation='source-over';
+ const groups={arms:[],legs:[],base};
+ for(const kind of ['arms','legs'])for(const limb of m[kind]){const path=new Path2D(limb.mask);groups[kind].push({whole:makeMaskedLayer(image,limb,null),path});}
+ rigCache.set(image,groups);return groups;
+}
+function wholeLimb(ctx,layer,src,pose){
+ const root={x:src.root[0],y:src.root[1]};ctx.save();ctx.translate(root.x,root.y);ctx.rotate(pose.angle);ctx.translate(-root.x,-root.y);ctx.drawImage(layer.whole,0,0);ctx.restore();
+}
+function speechMouth(ctx,mouth,amount){
+ const level=Math.max(0,Math.min(1,amount));if(level<.08)return;const rx=mouth.rx,ry=mouth.ry,open=ry*(.35+level*1.45);
+ ctx.save();ctx.translate(mouth.x,mouth.y);ctx.fillStyle=mouth.skin;ctx.beginPath();ctx.ellipse(0,0,rx+2,Math.max(ry+2,open+2),0,0,Math.PI*2);ctx.fill();
+ ctx.beginPath();ctx.moveTo(-rx,0);ctx.quadraticCurveTo(0,-open,rx,0);ctx.quadraticCurveTo(rx*.8,open*1.18,0,open*1.12);ctx.quadraticCurveTo(-rx*.8,open*1.05,-rx,0);ctx.closePath();ctx.fillStyle='#341a1a';ctx.fill();ctx.strokeStyle=mouth.lip||INK;ctx.lineWidth=Math.max(2,rx*.09);ctx.stroke();
+ ctx.beginPath();ctx.moveTo(-rx*.62,open*.04);ctx.quadraticCurveTo(0,open*.16,rx*.62,open*.04);ctx.lineTo(rx*.47,open*.30);ctx.quadraticCurveTo(0,open*.38,-rx*.47,open*.30);ctx.closePath();ctx.fillStyle='#f5eadb';ctx.fill();ctx.restore();
+}
+function drawSegmentedCharacter(ctx,image,m,pose,options,s){
+ const layers=segmentedLayers(image,m);ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);bodyTransform(ctx,m,pose);
+ wholeLimb(ctx,layers.legs[0],m.legs[0],pose.legs[0]);wholeLimb(ctx,layers.legs[1],m.legs[1],pose.legs[1]);wholeLimb(ctx,layers.arms[0],m.arms[0],pose.arms[0]);wholeLimb(ctx,layers.arms[1],m.arms[1],pose.arms[1]);ctx.drawImage(layers.base,0,0);speechMouth(ctx,m.mouth,options.mouthOpen||0);ctx.restore();
+}
 export function drawCharacter(ctx,image,{character='dani',...options}){
  if(character==='dani')return drawDani(ctx,image,options);const m=MODELS[character];if(!m||!image)return;const pose=sampleCharacterPose(character,options),s=(options.height||206)/(m.ground-m.top);
- // Keep hand-drawn cast members intact: rebuilding limbs or overlaying a
- // second mouth on these reference sprites caused visible doubles and drift.
- if(m.wholeSprite){ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(pose.bodyX,pose.bodyY);ctx.translate(m.center,m.hipY);ctx.rotate(pose.tilt);ctx.translate(-m.center,-m.hipY);ctx.translate(-m.center,-m.ground);ctx.drawImage(image,0,0);ctx.restore();return;}
+ if(m.segmented)return drawSegmentedCharacter(ctx,image,m,pose,options,s);
  ctx.save();ctx.translate(options.x||0,options.y||0);ctx.scale(-(options.facing||1)*s,s);ctx.translate(-m.center,-m.ground);
  if(m.backHair){ctx.save();bodyTransform(ctx,m,pose);ctx.clip(new Path2D(m.backHair));ctx.drawImage(image,0,0);ctx.restore();}
  leg(ctx,image,m,pose.farLeg,0);arm(ctx,image,m,pose.farArm,0);leg(ctx,image,m,pose.nearLeg,1);body(ctx,image,m,pose,options.mouthOpen||0);arm(ctx,image,m,pose.nearArm,1);ctx.restore();

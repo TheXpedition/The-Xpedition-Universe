@@ -119,19 +119,77 @@ export const MODELS={
   hips:[v(179,594),v(338,594)],knees:[v(197,664),v(341,664)],ankles:[v(189,725),v(350,725)],shoulders:[v(151,283),v(385,283)],elbows:[v(89,374),v(440,374)],wrists:[v(75,480),v(447,480)],skin:'#202121',pants:'#2d2821',upperWidths:[49,51],lowerWidths:[35,38],armWidths:[42,45],handScale:1.1,shorts:.38,legPattern:'triangles',footMotion:.40,bodyMotion:.65,shoulderCap:1.25,
   skirt:'M112 474 L410 452 L418 603 Q346 629 267 615 L254 590 L248 616 L102 606 Z',
   feet:[[115,709,121,45],[306,710,85,44]],mouth:{x:232,y:184,rx:20,ry:6},worldHeight:211,headMask:'M167 0 H377 V141 L351 185 L334 213 L304 229 H224 L193 208 L176 186 Z'},
- ivy:{width:514,ground:744,top:16,center:292,hipY:420,head:[210,16,166,211],bodyMotion:.35,worldHeight:208,wholeSprite:true},
- eduard:{width:514,ground:733,top:8,center:256,hipY:575,head:[170,8,184,223],bodyMotion:.35,worldHeight:211,wholeSprite:true},
- kimcamila:{width:514,ground:744,top:15,center:260,hipY:445,head:[167,13,188,202],bodyMotion:.35,worldHeight:211,wholeSprite:true},
- carlosharrington:{width:514,ground:735,top:12,center:257,hipY:427,head:[171,10,173,207],bodyMotion:.35,worldHeight:208,wholeSprite:true},
- nahuee:{width:514,ground:744,top:8,center:257,hipY:428,head:[159,5,200,244],bodyMotion:.35,worldHeight:209,wholeSprite:true},
- pier:{width:514,ground:744,top:17,center:257,hipY:468,head:[146,14,180,207],bodyMotion:.35,worldHeight:208,wholeSprite:true},
- esteban:{width:511,ground:738,top:18,center:255,hipY:448,head:[128,16,229,208],bodyMotion:.35,worldHeight:208,wholeSprite:true},
- marcos:{width:511,ground:739,top:17,center:255,hipY:460,head:[144,17,166,206],bodyMotion:.35,worldHeight:208,wholeSprite:true}
+ ivy:{width:514,ground:744,top:16,center:292,hipY:420,head:[210,16,166,211],mouth:{x:278,y:151,rx:16,ry:7,skin:'#e4915f',lip:'#542c37'},worldHeight:208,segmented:true,
+  arms:[
+   {root:[230,221],joint:[228,324],end:[218,449],mask:'M228 216 Q218 217 218 235 L221 269 L219 317 L221 371 L216 406 L201 422 Q195 433 198 441 L206 435 L201 452 Q201 460 208 454 L217 437 L213 456 Q214 464 220 456 L227 437 L231 453 Q238 458 239 445 L243 427 L237 407 L240 363 L237 314 L242 269 L240 235 Z'},
+   {root:[358,373],joint:[364,410],end:[385,451],mask:'M357 369 L374 374 L372 404 Q383 412 389 431 L393 447 L388 455 L375 436 L380 454 Q380 462 374 457 L364 440 L365 458 Q360 464 357 454 L352 436 L345 421 L350 398 Z'}],
+  legs:[
+   {root:[252,423],joint:[276,524],end:[280,731],mask:'M231 423 L287 423 L294 467 L287 505 L301 549 L305 610 L310 674 L324 704 L314 738 L232 739 L229 729 L258 709 L270 676 L267 620 L264 566 L251 538 L239 505 L231 467 Z'},
+   {root:[308,423],joint:[321,525],end:[330,735],mask:'M292 423 L345 423 L340 477 L331 514 L332 549 L343 610 L348 675 L365 709 L351 741 L308 739 L296 719 L307 684 L299 635 L288 591 L291 554 L301 528 L293 504 Z'}]},
+ eduard:{width:514,ground:733,top:8,center:256,hipY:575,head:[170,8,184,223],mouth:{x:209,y:184,rx:28,ry:8,skin:'#eba572',lip:'#603b32'},worldHeight:211,segmented:true,
+  arms:[
+   {root:[160,251],joint:[112,341],end:[104,526],mask:'M158 246 Q141 250 131 272 L113 315 L99 365 L92 430 L95 450 L138 453 L144 420 L153 379 L165 336 L176 298 L173 260 Z M95 450 L89 474 Q78 488 83 505 L98 532 L108 539 L113 518 L121 535 L128 534 L132 515 L139 522 L145 505 L138 450 Z'},
+   {root:[353,251],joint:[402,343],end:[418,525],mask:'M356 246 Q373 250 387 272 L405 315 L418 365 L422 430 L419 450 L376 453 L370 420 L361 379 L349 336 L340 298 L343 260 Z M419 450 L425 474 Q437 488 431 505 L416 532 L406 539 L401 518 L393 535 L386 534 L382 515 L376 450 Z'}],
+  legs:[
+   {root:[210,581],joint:[208,648],end:[188,715],mask:'M170 581 L255 581 L255 626 L244 664 L247 696 L251 711 L237 726 L131 726 L132 706 L164 692 L170 666 L163 641 Z'},
+   {root:[307,581],joint:[310,648],end:[318,715],mask:'M256 581 L344 581 L349 638 L339 666 L344 693 L379 707 L379 725 L263 726 L257 711 L264 691 L258 666 L253 634 Z'}]},
+ kimcamila:{width:514,ground:744,top:15,center:260,hipY:445,head:[167,13,188,202],mouth:{x:251,y:143,rx:22,ry:10,skin:'#e1aa83',lip:'#4e2027'},worldHeight:211,segmented:true,
+  arms:[
+   {root:[188,231],joint:[160,319],end:[137,462],mask:'M188 226 Q168 230 160 251 L151 288 L154 326 L148 373 L148 413 L136 427 L130 445 L128 459 L133 465 L140 454 L139 470 L145 466 L153 446 L164 424 L162 399 L170 355 L168 321 L186 278 L201 251 Z'},
+   {root:[342,231],joint:[369,319],end:[383,462],mask:'M342 226 Q362 230 370 251 L379 288 L376 326 L382 373 L382 413 L394 427 L400 445 L402 459 L397 465 L390 454 L391 470 L385 466 L377 446 L366 424 L368 399 L360 355 L362 321 L344 278 L329 251 Z'}],
+  legs:[
+   {root:[219,444],joint:[236,540],end:[198,728],mask:'M182 444 L252 444 L258 485 L249 526 L258 558 L251 617 L245 677 L253 697 L243 729 L222 743 L149 735 L155 720 L181 700 L184 675 L179 620 L181 568 L173 519 Z'},
+   {root:[316,444],joint:[320,542],end:[325,728],mask:'M275 444 L345 444 L354 519 L346 568 L348 620 L342 675 L346 700 L375 721 L376 736 L301 743 L282 729 L287 697 L280 677 L274 617 L274 558 L283 526 Z'}]},
+ carlosharrington:{width:514,ground:735,top:12,center:257,hipY:427,head:[171,10,173,207],mouth:{x:218,y:154,rx:24,ry:5,skin:'#f5dcbe',lip:'#201d1d'},worldHeight:208,segmented:true,
+  arms:[
+   {root:[176,231],joint:[154,324],end:[132,486],mask:'M178 226 Q160 230 156 249 L149 280 L143 320 L149 374 L149 435 L137 448 L126 468 L125 482 L131 490 L141 477 L143 492 L150 487 L157 471 L165 456 L164 434 L164 390 L169 347 L179 298 L188 253 Z'},
+   {root:[341,231],joint:[363,324],end:[385,486],mask:'M339 226 Q357 230 361 249 L368 280 L374 320 L368 374 L368 435 L380 448 L391 468 L392 482 L386 490 L376 477 L374 492 L367 487 L360 471 L352 456 L353 434 L353 390 L348 347 L338 298 L329 253 Z'}],
+  legs:[
+   {root:[215,435],joint:[216,555],end:[210,727],mask:'M190 435 L263 435 L262 487 L251 532 L250 581 L239 622 L239 673 L247 698 L237 724 L146 741 L141 731 L175 709 L187 681 L187 626 L190 579 L184 531 Z'},
+   {root:[294,435],joint:[292,555],end:[309,727],mask:'M266 435 L321 435 L320 531 L315 579 L315 626 L317 681 L338 710 L374 731 L369 742 L278 741 L269 723 L275 698 L269 673 L269 622 L258 581 L257 532 Z'}]},
+ nahuee:{width:514,ground:744,top:8,center:257,hipY:428,head:[159,5,200,244],mouth:{x:261,y:154,rx:39,ry:11,skin:'#965b21',lip:'#2f1712'},worldHeight:209,segmented:true,
+  arms:[
+   {root:[142,270],joint:[120,348],end:[77,487],mask:'M143 264 Q124 267 120 287 L107 322 L101 362 L102 416 L98 440 L80 452 L64 469 L61 484 L68 498 L78 485 L75 502 L82 506 L97 485 L111 464 L108 438 L113 395 L111 357 L129 310 L154 280 Z'},
+   {root:[371,270],joint:[394,348],end:[439,487],mask:'M370 264 Q389 267 393 287 L406 322 L412 362 L411 416 L415 440 L433 452 L449 469 L452 484 L445 498 L435 485 L438 502 L431 506 L416 485 L402 464 L405 438 L400 395 L402 357 L384 310 L359 280 Z'}],
+  legs:[
+   {root:[187,410],joint:[192,578],end:[203,711],mask:'M123 410 Q178 416 242 410 L258 472 L238 537 L243 593 L231 641 L231 691 L271 705 L272 729 L157 733 L153 710 L163 683 L157 619 L145 552 L129 482 Z'},
+   {root:[326,410],joint:[320,578],end:[319,711],mask:'M242 410 Q314 416 387 410 L381 482 L359 553 L345 619 L338 683 L349 710 L344 732 L272 729 L271 705 L303 691 L303 641 L292 593 L288 537 L258 472 Z'}]},
+ pier:{width:514,ground:744,top:17,center:257,hipY:468,head:[146,14,180,207],mouth:{x:226,y:156,rx:18,ry:5,skin:'#815c41',lip:'#211515'},worldHeight:208,segmented:true,
+  arms:[
+   {root:[162,229],joint:[128,344],end:[128,515],mask:'M162 222 L180 228 L170 268 L162 333 L156 400 L159 420 L130 426 L122 402 L121 347 L127 291 L139 248 Z M130 421 L157 425 L157 454 L170 479 L168 499 L157 516 L149 509 L147 490 L138 509 L131 504 L133 482 L122 472 L116 458 L120 438 Z'},
+   {root:[352,229],joint:[384,344],end:[385,515],mask:'M352 222 L334 228 L344 268 L352 333 L358 400 L355 420 L384 426 L392 402 L393 347 L387 291 L375 248 Z M384 421 L357 425 L357 454 L344 479 L346 499 L357 516 L365 509 L367 490 L376 509 L383 504 L381 482 L392 472 L398 458 L394 438 Z'}],
+  legs:[
+   {root:[218,470],joint:[219,579],end:[213,711],mask:'M194 470 L263 470 L263 526 L256 570 L260 624 L258 677 L267 699 L254 730 L145 738 L142 725 L174 706 L188 681 L186 626 L190 577 L184 526 Z'},
+   {root:[300,470],joint:[300,579],end:[310,711],mask:'M266 470 L358 470 L359 526 L351 577 L354 626 L352 681 L371 706 L365 730 L261 738 L253 725 L262 699 L260 677 L260 624 L264 570 L258 526 Z'}]},
+ esteban:{width:511,ground:738,top:18,center:255,hipY:448,head:[128,16,229,208],mouth:{x:220,y:161,rx:20,ry:4,skin:'#f0954c',lip:'#171719'},worldHeight:208,segmented:true,
+  arms:[
+   {root:[173,240],joint:[162,339],end:[150,495],mask:'M174 235 Q157 237 153 257 L146 292 L145 337 L150 389 L150 447 L137 458 L123 478 L120 493 L127 500 L139 485 L137 504 L144 505 L157 484 L170 462 L167 440 L167 395 L169 350 L180 300 L184 258 Z'},
+   {root:[342,240],joint:[353,339],end:[377,495],mask:'M341 235 Q358 237 362 257 L369 292 L370 337 L365 389 L365 447 L378 458 L392 478 L395 493 L388 500 L376 485 L378 504 L371 505 L358 484 L345 462 L348 440 L348 395 L346 350 L335 300 L331 258 Z'}],
+  legs:[
+   {root:[218,451],joint:[219,583],end:[215,711],mask:'M188 451 L263 451 L264 511 L253 555 L256 610 L248 667 L246 695 L262 713 L255 735 L142 737 L142 724 L186 706 L197 680 L190 622 L190 565 Z'},
+   {root:[293,451],joint:[294,583],end:[301,711],mask:'M265 451 L341 451 L338 565 L337 622 L327 680 L343 706 L359 724 L356 737 L243 735 L236 713 L253 695 L250 667 L245 610 L254 555 L264 511 Z'}]},
+ marcos:{width:511,ground:739,top:17,center:255,hipY:460,head:[144,17,166,206],mouth:{x:236,y:153,rx:22,ry:4,skin:'#c5a485',lip:'#161718'},worldHeight:208,segmented:true,
+  arms:[
+   {root:[157,239],joint:[143,339],end:[142,500],mask:'M157 234 Q140 236 139 255 L134 292 L133 339 L137 395 L137 448 L124 461 L112 483 L112 499 L120 504 L131 489 L130 506 L137 507 L150 484 L166 460 L163 439 L164 393 L168 348 L175 300 L177 258 Z'},
+   {root:[350,239],joint:[365,339],end:[366,500],mask:'M349 234 Q366 236 367 255 L372 292 L373 339 L369 395 L369 448 L382 461 L394 483 L394 499 L386 504 L375 489 L376 506 L369 507 L356 484 L340 460 L343 439 L342 393 L338 348 L331 300 L329 258 Z'}],
+  legs:[
+   {root:[218,467],joint:[219,581],end:[218,712],mask:'M195 467 L267 467 L267 526 L258 575 L264 630 L260 685 L267 705 L250 731 L152 739 L151 725 L188 706 L196 681 L194 630 L191 576 Z'},
+   {root:[294,467],joint:[295,581],end:[307,712],mask:'M268 467 L335 467 L331 576 L329 630 L326 681 L346 706 L363 725 L362 739 L265 731 L249 705 L257 685 L253 630 L256 575 L264 526 Z'}]}
 };
 function rotatePoint(root,angle,length){return {x:root.x+Math.sin(angle)*length,y:root.y+Math.cos(angle)*length};}
+const clamp=(value,min=0,max=1)=>Math.max(min,Math.min(max,value));
+const rotateVector=(p,angle)=>({x:p.x*Math.cos(angle)-p.y*Math.sin(angle),y:p.x*Math.sin(angle)+p.y*Math.cos(angle)});
+const angleBetween=(a,b)=>Math.atan2(b.y-a.y,b.x-a.x);
+const angleDelta=(a,b)=>Math.atan2(Math.sin(b-a),Math.cos(b-a));
 export function sampleCharacterPose(id,options={}){
  if(id==='dani')return sampleDaniPose(options);const m=MODELS[id];if(!m)throw Error('Unknown character');const driver=sampleDaniPose(options),scale=(m.ground-m.top)/980,bodyScale=scale*(m.bodyMotion??1),bodyX=driver.bodyX*bodyScale,bodyY=driver.bodyY*bodyScale,tilt=driver.tilt;
- if(m.wholeSprite)return {bodyX,bodyY,tilt};
+ if(m.segmented){
+  const walking=clamp(options.walkBlend??(options.phase==='walk'?1:0)),cycle=options.stride||0,air=options.phase==='jump'||options.phase==='fall',lift=air?Math.sin(Math.PI*clamp(options.jumpProgress||0)):0;
+  const rotateLimb=(limb,angle)=>{const root={x:limb.root[0],y:limb.root[1]},joint0={x:limb.joint[0],y:limb.joint[1]},end0={x:limb.end[0],y:limb.end[1]},jointOffset=rotateVector({x:joint0.x-root.x,y:joint0.y-root.y},angle),endOffset=rotateVector({x:end0.x-root.x,y:end0.y-root.y},angle);return {root,joint:{x:root.x+jointOffset.x,y:root.y+jointOffset.y},end:{x:root.x+endOffset.x,y:root.y+endOffset.y},angle};};
+  const legs=m.legs.map((limb,side)=>{const phase=cycle+side*Math.PI,outward=side?1:-1,angle=Math.sin(phase)*.035*walking+outward*lift*.08;return rotateLimb(limb,angle);});
+  const arms=m.arms.map((limb,side)=>{const outward=side?-1:1,walk=Math.sin(cycle+side*Math.PI)*.04*walking,idle=options.reduced?0:Math.sin((options.time||0)*2.1)*.008,angle=walk+outward*(idle+lift*.1);return rotateLimb(limb,angle);});
+  return {bodyX,bodyY,tilt,legs,arms};
+ }
  const anchor=p=>({x:m.center+bodyX+(p.x-m.center)*Math.cos(tilt)-(p.y-m.hipY)*Math.sin(tilt),y:m.hipY+bodyY+(p.x-m.center)*Math.sin(tilt)+(p.y-m.hipY)*Math.cos(tilt)});
  const output={bodyX,bodyY,tilt};
  for(let side=0;side<2;side++){
