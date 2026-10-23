@@ -3,7 +3,7 @@ import {isStaff} from './account-roles.mjs';
 import {createArcadeProgress} from './arcade-progress.mjs';
 
 export const arcadeGames=Object.freeze([
- {id:'x-million',name:'THE X MILLION',character:'Bonju',url:'/simulator/x-million/',cover:'/simulator/x-million/assets/stage.webp',description:'Una pregunta puede llevarte al millón. Juega individual o compite en vivo con tus amigos.',questionCount:150,defaultPublic:false},
+ {id:'x-million',name:'THE X MILLION',character:'Bonju',url:'/simulator/x-million/',cover:'/arcade/x-million-cover.webp',description:'Una pregunta puede llevarte al millón. Juega individual o compite en vivo con tus amigos.',questionCount:150,defaultPublic:false},
  {id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-poster.png',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}
 ]);
 
