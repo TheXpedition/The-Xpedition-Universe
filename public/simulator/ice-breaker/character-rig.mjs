@@ -176,6 +176,11 @@ export const MODELS={
    {root:[218,467],joint:[219,581],end:[218,712],mask:'M195 467 L267 467 L267 526 L258 575 L264 630 L260 685 L267 705 L250 731 L152 739 L151 725 L188 706 L196 681 L194 630 L191 576 Z'},
    {root:[294,467],joint:[295,581],end:[307,712],mask:'M268 467 L335 467 L331 576 L329 630 L326 681 L346 706 L363 725 L362 739 L265 731 L249 705 L257 685 L253 630 L256 575 L264 526 Z'}]}
 };
+// Keep the measured landmark fields shared with the original articulated rigs.
+for(const model of Object.values(MODELS))if(model.segmented){
+ model.hips=model.legs.map(limb=>v(...limb.root));model.knees=model.legs.map(limb=>v(...limb.joint));model.ankles=model.legs.map(limb=>v(...limb.end));
+ model.shoulders=model.arms.map(limb=>v(...limb.root));model.elbows=model.arms.map(limb=>v(...limb.joint));model.wrists=model.arms.map(limb=>v(...limb.end));
+}
 function rotatePoint(root,angle,length){return {x:root.x+Math.sin(angle)*length,y:root.y+Math.cos(angle)*length};}
 const clamp=(value,min=0,max=1)=>Math.max(min,Math.min(max,value));
 const rotateVector=(p,angle)=>({x:p.x*Math.cos(angle)-p.y*Math.sin(angle),y:p.x*Math.sin(angle)+p.y*Math.cos(angle)});
@@ -188,7 +193,7 @@ export function sampleCharacterPose(id,options={}){
   const poseLimb=(limb,upperAngle,lowerAngle)=>{const root={x:limb.root[0],y:limb.root[1]},joint0={x:limb.joint[0],y:limb.joint[1]},end0={x:limb.end[0],y:limb.end[1]},upper=rotateVector({x:joint0.x-root.x,y:joint0.y-root.y},upperAngle),joint={x:root.x+upper.x,y:root.y+upper.y},lower=rotateVector({x:end0.x-joint0.x,y:end0.y-joint0.y},upperAngle+lowerAngle),end={x:joint.x+lower.x,y:joint.y+lower.y};return {root,joint,end,upperAngle,lowerAngle};};
   const legs=m.legs.map((limb,side)=>{const phase=cycle+side*Math.PI,outward=side?1:-1,upperAngle=Math.sin(phase)*.045*walking+outward*lift*.1,lowerAngle=Math.sin(phase+.45)*.09*walking+outward*lift*.07;return poseLimb(limb,upperAngle,lowerAngle);});
   const arms=m.arms.map((limb,side)=>{const outward=side?-1:1,walk=Math.sin(cycle+side*Math.PI)*.05*walking,idle=options.reduced?0:Math.sin((options.time||0)*2.1)*.008,upperAngle=walk+outward*(idle+lift*.12),lowerAngle=Math.sin(cycle+side*Math.PI+.85)*.055*walking+outward*lift*.05;return poseLimb(limb,upperAngle,lowerAngle);});
-  return {bodyX,bodyY,tilt,legs,arms};
+  return {bodyX,bodyY,tilt,legs,arms,farLeg:legs[0],nearLeg:legs[1],farArm:arms[0],nearArm:arms[1]};
  }
  const anchor=p=>({x:m.center+bodyX+(p.x-m.center)*Math.cos(tilt)-(p.y-m.hipY)*Math.sin(tilt),y:m.hipY+bodyY+(p.x-m.center)*Math.sin(tilt)+(p.y-m.hipY)*Math.cos(tilt)});
  const output={bodyX,bodyY,tilt};

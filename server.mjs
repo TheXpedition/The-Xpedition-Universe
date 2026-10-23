@@ -7,6 +7,7 @@ import {createModeration} from './community-moderation.mjs';
 import {createCasting} from './casting.mjs';
 import {createShowdownGame} from './showdown-game.mjs';
 import {createArcade} from './arcade.mjs';
+import {createXMillion} from './x-million.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
 import {createInteractions} from './social-interactions.mjs';
@@ -323,6 +324,7 @@ async function api(req, res, url) {
     user: await safeUser(u, true)
   });}
   if(await pushNotifications.handle(req,res,url,u))return;
+  if(await xMillion.handle(req,res,url,u))return;
   if(await progression.handle(req,res,url,u))return;
   if (p === '/api/profiles' && method === 'GET') return json(res, {
     profiles: await profiles()
@@ -805,9 +807,11 @@ const casting=createCasting({db,json,fail,checkRate,body,progression,catalog});
 function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
 const showdown=createShowdownGame({db,json,fail,body,checkRate,progression,characters:JSON.parse(fs.readFileSync(path.join(publicDir,'showdown/characters.json'),'utf8')),notify,messageView,pushNotifications,serialize});
 const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
+const xMillion=createXMillion({db,json,fail,body,checkRate,access:arcade.access,notify,serialize});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   if(url.pathname.startsWith('/api/showdown'))return api(req,res,url);
+  if(url.pathname.startsWith('/api/x-million'))return serialize(()=>api(req,res,url));
   // Casting reads can advance expired questions. Serialize them with other writes.
   if(url.pathname.startsWith('/api/casting/')||url.pathname.startsWith('/api/moderation/auditions'))return serialize(()=>api(req,res,url));
   // Image review runs in a worker before taking the write lock so chat stays responsive.
@@ -842,18 +846,24 @@ const server = http.createServer(async (req, res) => {
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
     if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
-    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
+    const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':url.pathname==='/simulator/x-million'||url.pathname==='/simulator/x-million/'?'/simulator/x-million/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
-    const arcadeFile=/^simulator\/ice-breaker(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));
+    const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
+    const arcadeFile=/^simulator\/(?:ice-breaker|x-million)(?:\/|$)/i.test(arcadePath);
     if(arcadeFile){
       res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');
-      const game=await arcade.access('ice-breaker',await getSession(req));
+      const player=await getSession(req),isXMillion=arcadePath.toLowerCase().startsWith('simulator/x-million/');
+      let game=await arcade.access(isXMillion?'x-million':'ice-breaker',player);
+      // THE X MILLION reuses Ice Breaker's character rigs and reference art.
+      // Serve only those shared assets when THE X MILLION itself is open.
+      const sharedCharacterAsset=/^simulator\/ice-breaker\/(?:characters\.mjs|dani-lines\.mjs|character-renderer\.mjs|dani-renderer\.mjs|character-rig\.mjs|dani-rig\.mjs|art\/(?:dani|[a-z0-9][a-z0-9-]*-reference)\.png)$/i.test(arcadePath);
+      if(!game.canPlay&&sharedCharacterAsset){const xMillion=await arcade.access('x-million',player);if(xMillion.canPlay)game=xMillion;}
       if(!game.canPlay){
         if(path.extname(filename)==='.html'){
-          const html='<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Juego cerrado · The Xpedition</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#080e1b;color:#e8f4f7;font:16px system-ui"><main style="max-width:460px;padding:32px"><p style="color:#8ae2e3">THE XPEDITION · PRUEBA PRIVADA</p><h1>Esta expedición sigue bajo llave.</h1><p style="line-height:1.7">Ice Breaker está cerrado al público. Solo el staff puede probarlo hasta que lo habilite desde Moderación.</p><a style="color:#8ae2e3" href="/#simuladores">← Volver a Simuladores</a></main></body></html>';
+          const html='<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Juego cerrado · The Xpedition</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#080e1b;color:#e8f4f7;font:16px system-ui"><main style="max-width:460px;padding:32px"><p style="color:#8ae2e3">THE XPEDITION · PRUEBA PRIVADA</p><h1>Esta expedición sigue bajo llave.</h1><p style="line-height:1.7">'+game.name+' está cerrado al público. Solo el staff puede entrar hasta que lo habilite desde Moderación.</p><a style="color:#8ae2e3" href="/#simuladores">← Volver a Simuladores</a></main></body></html>';
           res.writeHead(403,{'Content-Type':'text/html; charset=utf-8','Content-Length':Buffer.byteLength(html)});return res.end(req.method==='HEAD'?undefined:html);
         }
         fail(403,'Este juego está cerrado al público. Solo el staff puede acceder.');

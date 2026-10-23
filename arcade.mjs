@@ -2,12 +2,15 @@ import {randomUUID} from 'node:crypto';
 import {isStaff} from './account-roles.mjs';
 import {createArcadeProgress} from './arcade-progress.mjs';
 
-export const arcadeGames=Object.freeze([{id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-poster.png',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}]);
+export const arcadeGames=Object.freeze([
+ {id:'x-million',name:'THE X MILLION',character:'Bonju',url:'/simulator/x-million/',cover:'/simulator/x-million/assets/stage.webp',description:'Una pregunta puede llevarte al millón. Juega individual o compite en vivo con tus amigos.',questionCount:150,defaultPublic:false},
+ {id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-poster.png',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}
+]);
 
 export function createArcade({db,json,fail,body,checkRate,progression,now=Date.now,everyone=()=>{}}){
  const find=id=>{const game=arcadeGames.find(g=>g.id===id);if(!game)fail(404,'Juego no encontrado.');return game;};
  async function access(id,user){
-  const game=find(id),row=await db.one('SELECT public_enabled,updated FROM arcade_access WHERE game_id=?',id),publicEnabled=Number(row?.public_enabled)===1;
+  const game=find(id),row=await db.one('SELECT public_enabled,updated FROM arcade_access WHERE game_id=?',id),publicEnabled=row?Number(row.public_enabled)===1:!!game.defaultPublic;
   return {...game,publicEnabled,canPlay:publicEnabled||isStaff(user?.id),staffPreview:!publicEnabled&&isStaff(user?.id),updated:Number(row?.updated||0)};
  }
  const progress=createArcadeProgress({db,json,fail,body,checkRate,access,progression,now});
