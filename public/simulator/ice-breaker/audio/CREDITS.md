@@ -58,3 +58,19 @@ Todas estas grabaciones se normalizaron y convirtieron a PCM mono de 22.050 Hz. 
 | Pier | es-MX-JorgeNeural | Registro muy grave y ritmo pausado, con tono oscuro. |
 | Esteban | es-CO-GonzaloNeural | Voz masculina joven y directa. |
 | Marcos | es-VE-SebastianNeural | Voz venezolana masculina, cálida, grave y pausada. |
+
+
+## Ivan Serrano, Mary Hao, Marianito, Gabriel Sab, Alice, Oscar, Bruno y Doppel
+
+44 frases sintetizadas con voces de Microsoft mediante `edge-tts`. Audio PCM mono de 22.050 Hz, volumen normalizado y reproducción local durante el juego. Las interpretaciones son sintéticas; los descriptores de estilo no representan la voz de un actor real.
+
+| Personaje | Voz | Interpretación aplicada |
+| --- | --- | --- |
+| Ivan Serrano | es-MX-DaliaNeural | Femenina dulce, suave y principesca; tono elevado. |
+| Mary Hao | es-ES-ElviraNeural | Femenina tierna, brillante y entusiasta. |
+| Marianito | es-CL-LorenzoNeural | Masculina joven y relajada; registro elevado moderadamente. |
+| Gabriel Sab | es-UY-MateoNeural | Masculina reservada, grave y pausada. |
+| Alice | es-AR-ElenaNeural | Femenina lenta, grave y melancólica. |
+| Oscar | es-CO-GonzaloNeural | Masculina colombiana, dicción natural. |
+| Bruno | es-PR-VictorNeural | Masculina aguda, coqueta y teatral. |
+| Doppel | es-PE-AlexNeural | Registro intermedio, cadencia neutra y tranquila. |

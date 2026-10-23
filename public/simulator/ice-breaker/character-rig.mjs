@@ -1,5 +1,6 @@
 import {sampleDaniPose,solveLimb} from './dani-rig.mjs';
 import {NEW_CAST_RIGS} from './new-cast-rigs.mjs';
+import {ADDITIONAL_CAST_RIGS} from './additional-cast-rigs.mjs';
 const v=(x,y)=>({x,y}),len=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 // Joints are measured on each supplied model, never stretched onto Dani's body.
 export const MODELS={
@@ -120,7 +121,7 @@ export const MODELS={
   hips:[v(179,594),v(338,594)],knees:[v(197,664),v(341,664)],ankles:[v(189,725),v(350,725)],shoulders:[v(151,283),v(385,283)],elbows:[v(89,374),v(440,374)],wrists:[v(75,480),v(447,480)],skin:'#202121',pants:'#2d2821',upperWidths:[49,51],lowerWidths:[35,38],armWidths:[42,45],handScale:1.1,shorts:.38,legPattern:'triangles',footMotion:.40,bodyMotion:.65,shoulderCap:1.25,
   skirt:'M112 474 L410 452 L418 603 Q346 629 267 615 L254 590 L248 616 L102 606 Z',
   feet:[[115,709,121,45],[306,710,85,44]],mouth:{x:232,y:184,rx:20,ry:6},worldHeight:211,headMask:'M167 0 H377 V141 L351 185 L334 213 L304 229 H224 L193 208 L176 186 Z'},
- ...NEW_CAST_RIGS
+ ...NEW_CAST_RIGS,...ADDITIONAL_CAST_RIGS
 };
 function rotatePoint(root,angle,length){return {x:root.x+Math.sin(angle)*length,y:root.y+Math.cos(angle)*length};}
 export function sampleCharacterPose(id,options={}){
@@ -133,6 +134,7 @@ export function sampleCharacterPose(id,options={}){
   output[name+'Leg']=solveLimb(anchor(m.hips[side]),target,len(m.hips[side],m.knees[side]),len(m.knees[side],m.ankles[side]));
   const a=driver[name+'Arm'],upper=Math.atan2(a.joint.x-a.root.x,a.joint.y-a.root.y),lower=Math.atan2(a.end.x-a.joint.x,a.end.y-a.joint.y),root=anchor(m.shoulders[side]),joint=rotatePoint(root,upper,len(m.shoulders[side],m.elbows[side]));
   output[name+'Arm']={root,joint,end:rotatePoint(joint,lower,len(m.elbows[side],m.wrists[side])),angle:lower};
+  if(m.holdArm===side){const heldUpper=Math.atan2(m.elbows[side].x-m.shoulders[side].x,m.elbows[side].y-m.shoulders[side].y)-tilt,heldLower=Math.atan2(m.wrists[side].x-m.elbows[side].x,m.wrists[side].y-m.elbows[side].y)-tilt,heldJoint=rotatePoint(root,heldUpper,len(m.shoulders[side],m.elbows[side]));output[name+'Arm']={root,joint:heldJoint,end:rotatePoint(heldJoint,heldLower,len(m.elbows[side],m.wrists[side])),angle:heldLower};}
  }
  return output;
 }

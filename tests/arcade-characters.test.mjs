@@ -3,8 +3,8 @@ import {CHARACTERS,characterConfig} from '../public/simulator/ice-breaker/charac
 import {MODELS,sampleCharacterPose} from '../public/simulator/ice-breaker/character-rig.mjs';
 import {newRun,jumpTo,stepRun} from '../public/simulator/ice-breaker/engine.mjs';
 const length=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
-test('thirty-two selectable characters preserve their own lines and complete recorded audio',()=>{
- assert.deepEqual(CHARACTERS.map(c=>c.name),['Dani','Bayron','Felix','Andromeda','Isabel','Peggy','Eris','Ximena','Vita','Iñaella Rose','Daelly','Coronel','Julián','Alexandro','Catalina','Luciano','Ignacio Ricci','Lalamila','Lucas Mendez','Cocomong','Bryan Montalvo','Beto','Greg','Sal Lua','Ivy','Eduard','Kim Camila','Carlos Harrington','Nahuee','Pier','Esteban','Marcos']);assert.equal(characterConfig('unknown').id,'dani');assert.deepEqual(CHARACTERS.map(c=>c.fall.length),[8,3,3,4,4,4,5,5,5,6,5,6,5,7,7,8,5,5,7,6,6,5,6,6,6,6,5,5,6,5,4,6]);
+test('forty selectable characters preserve their own lines and complete recorded audio',()=>{
+ assert.deepEqual(CHARACTERS.map(c=>c.name),['Dani','Bayron','Felix','Andromeda','Isabel','Peggy','Eris','Ximena','Vita','Iñaella Rose','Daelly','Coronel','Julián','Alexandro','Catalina','Luciano','Ignacio Ricci','Lalamila','Lucas Mendez','Cocomong','Bryan Montalvo','Beto','Greg','Sal Lua','Ivy','Eduard','Kim Camila','Carlos Harrington','Nahuee','Pier','Esteban','Marcos','Ivan Serrano','Mary Hao','Marianito','Gabriel Sab','Alice','Oscar','Bruno','Doppel']);assert.equal(characterConfig('unknown').id,'dani');assert.deepEqual(CHARACTERS.map(c=>c.fall.length),[8,3,3,4,4,4,5,5,5,6,5,6,5,7,7,8,5,5,7,6,6,5,6,6,6,6,5,5,6,5,4,6,5,6,5,6,7,4,6,5]);
  const ids=new Set();for(const c of CHARACTERS.slice(1)){assert.equal(c.ambient.length,0);assert(fs.existsSync(new URL('../public/simulator/ice-breaker/'+c.image,import.meta.url)));for(const line of c.fall){assert(!ids.has(line.id),'Unique audio identity');ids.add(line.id);const a=fs.readFileSync(new URL('../public/simulator/ice-breaker/audio/'+line.id+'.wav',import.meta.url));assert.equal(a.toString('ascii',0,4),'RIFF');assert(a.length>16000);assert(!/cagué|andromierda|genshit|mierda|mamada|pinche|perra|ximierdota|joder|coño|gilipollas|hijueputa|\bporno\b|erótica|gonorrea|mamaguevo/i.test(line.text));assert(!/[*]/.test(line.spoken));}}
 });
 test('new models keep their measured limb lengths through every walk and jump pose',()=>{
@@ -14,6 +14,7 @@ test('new models keep their measured limb lengths through every walk and jump po
  }
 });
 test('latest eight take visible steps and fold their knees during a jump',()=>{
+ assert(!fs.readFileSync(new URL('../public/simulator/ice-breaker/art/bruno-reference.png',import.meta.url)).equals(fs.readFileSync(new URL('../public/simulator/ice-breaker/art/doppel-reference.png',import.meta.url))),'Doppel uses the hedgehog reference instead of Bruno');
  for(const character of CHARACTERS.slice(-8)){
   const model=MODELS[character.id],cycle=Array.from({length:120},(_,i)=>sampleCharacterPose(character.id,{phase:'walk',stride:i/120*Math.PI*2,walkBlend:1}));
   for(const key of ['farLeg','nearLeg']){
