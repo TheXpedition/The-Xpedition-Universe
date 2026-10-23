@@ -74,3 +74,21 @@ Todas estas grabaciones se normalizaron y convirtieron a PCM mono de 22.050 Hz. 
 | Oscar | es-CO-GonzaloNeural | Masculina colombiana, dicción natural. |
 | Bruno | es-PR-VictorNeural | Masculina aguda, coqueta y teatral. |
 | Doppel | es-PE-AlexNeural | Registro intermedio, cadencia neutra y tranquila. |
+
+
+## Bodega Bodeguita, Leandro, Renzo, Miss Kopp, Solf, Ari Salgado, Pablo, Luis, Plastique Doll y Teseo
+
+56 frases sintetizadas con diez voces base distintas de Microsoft mediante `edge-tts`, una por cada personaje de este grupo. Archivos WAV PCM mono de 22.050 Hz, volumen normalizado y reproducción local. Los ajustes de interpretación se aplican además de la voz base; ningún personaje de este grupo comparte la misma voz base con otro del grupo.
+
+| Personaje | Voz base | Ritmo | Tono | Interpretación |
+| --- | --- | --- | --- | --- |
+| Bodega Bodeguita | es-MX-JorgeNeural | +9% | +15Hz | TikToker, enérgica y expresiva |
+| Leandro | es-CL-LorenzoNeural | +1% | +6Hz | Masculina joven y coqueta |
+| Renzo | es-ES-AlvaroNeural | -8% | -18Hz | Locutor, grave y clara |
+| Miss Kopp | es-MX-DaliaNeural | +13% | +62Hz | Muy aguda, chillona y traviesa |
+| Solf | es-CO-SalomeNeural | +5% | +17Hz | Felina, animada y teatral |
+| Ari Salgado | es-EC-LuisNeural | +2% | +1Hz | Masculina joven latina |
+| Pablo | es-AR-TomasNeural | -7% | -10Hz | Argentina, grave y seductora |
+| Luis | es-GT-AndresNeural | +6% | +12Hz | Masculina joven y vivaz |
+| Plastique Doll | es-US-PalomaNeural | -4% | +7Hz | Diva, altiva y cortante |
+| Teseo | es-BO-MarceloNeural | -12% | -4Hz | Masculina pausada y pedante |
