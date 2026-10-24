@@ -31,7 +31,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
   if(p&&stamp-p.lastSeen>=3000){p.lastSeen=stamp;s.revision++;}
  }
  async function chat(room,after=0){const rows=await db.all('SELECT c.id,c.sender,c.text,c.created,u.name,u.avatar FROM showdown_chat c JOIN users u ON u.id=c.sender WHERE c.room=? AND c.created>? ORDER BY c.created DESC,c.id DESC LIMIT 60',room,after);return rows.reverse().map(r=>({id:r.id,sender:r.sender,name:r.name,avatar:r.avatar,text:r.text,created:Number(r.created)}));}
- async function response(record,user,{includeChat=false}={}){const s=record.state;const view=showdownPublicView(s,user.id,now(),characters);return {...view,...await rewards(s,user.id),soloClassic:s.mode==='solo',soloSnapshot:s.mode==='solo'?s.soloSnapshot||null:null,soloRevision:s.soloRevision||0,shareUrl:s.status==='lobby'?'/#showdown/'+s.id+'/'+record.secret:null,...(includeChat?{chat:await chat(s.id)}:{})};}
+ async function response(record,user,{includeChat=false}={}){const s=record.state,spectator=!!user.apocalypseStaff&&!member(s,user.id)&&Array.isArray(s.spectators)&&s.spectators.includes(user.id);const view=showdownPublicView(s,user.id,now(),characters,{spectator});return {...view,isStaff:!!user.apocalypseStaff,...await rewards(s,user.id),soloClassic:s.mode==='solo',soloSnapshot:s.mode==='solo'?s.soloSnapshot||null:null,soloRevision:s.soloRevision||0,shareUrl:s.status==='lobby'?'/#showdown/'+s.id+'/'+record.secret:null,...(includeChat?{chat:await chat(s.id)}:{})};}
  async function notifyInvitation(room,user,target){
   const stamp=now(),old=await db.one('SELECT * FROM showdown_invites WHERE room=? AND target=?',room.state.id,target);
   if(old&&stamp-Number(old.created)<300000)return {alreadySent:true};
@@ -70,11 +70,13 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    await serialize(()=>db.transaction(async()=>{await db.run('INSERT INTO showdown_rooms(id,host,mode,status,snapshot,secret,created,updated) VALUES(?,?,?,?,?,?,?,?)',id,user.id,state.mode,state.status,JSON.stringify(state),secret,stamp,stamp);await db.run('INSERT INTO showdown_members(room,user_id,joined) VALUES(?,?,?)',id,user.id,stamp);}));
    const record={state,secret,dbRevision:0,persisted:state.revision,access:stamp,flushing:null,error:null};cache.set(id,record);json(res,{room:await response(record,user,{includeChat:true})},201);return true;
   }
-  const match=path.match(/^\/api\/showdown\/rooms\/([a-f0-9-]+)(?:\/(join|action|character|bots|start|invite|chat|leave|close|solo|restart))?$/);
+  const match=path.match(/^\/api\/showdown\/rooms\/([a-f0-9-]+)(?:\/(join|spectate|action|character|bots|start|invite|chat|leave|close|solo|restart))?$/);
   if(!match)fail(404,'No encontramos esa sala.');
   const [,,action]=match,id=match[1],record=await getRecord(id);let s=record.state;
   if(!action&&method==='GET'){
    if(!member(s,user.id)){
+    if(user.apocalypseStaff&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)){advance(record,user);json(res,{room:await response(record,user)});return true;}
+    if(user.apocalypseStaff&&!url.searchParams.get('invite')){json(res,{preview:{id,host:'Showdown',mode:s.mode,status:s.status,players:s.players.filter(p=>!p.bot).length,canSpectate:true},owned:true,wallet:await progression.wallet(user.id),price:SHOWDOWN_PRICE});return true;}
     if(url.searchParams.get('invite')!==record.secret)fail(403,'Necesitas una invitación para entrar en esta sala.');
     const owner=await db.one('SELECT name FROM users WHERE id=?',s.host);json(res,{preview:{id,host:owner?.name||'Un explorador',mode:s.mode,status:s.status,players:s.players.filter(p=>!p.bot).length},owned:await progression.canPlay(user.id,'showdown'),wallet:await progression.wallet(user.id),price:SHOWDOWN_PRICE});return true;
    }
@@ -86,7 +88,13 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    await queue(id,async()=>{await flush(record);joinShowdown(s,user,now());await serialize(()=>db.run('INSERT INTO showdown_members(room,user_id,joined,left_at) VALUES(?,?,?,NULL) ON CONFLICT(room,user_id) DO UPDATE SET left_at=NULL',id,user.id,now()));await flush(record);});
    notify(ids(s),'showdown-room',{id,revision:s.revision});json(res,{room:await response(record,user,{includeChat:true})});return true;
   }
-  if(!member(s,user.id))fail(403,'Esta sala es privada.');
+  if(action==='spectate'&&method==='POST'){
+   if(!user.apocalypseStaff)fail(403,'Solo el Staff puede entrar como espectador.');if(s.mode!=='multi'||s.status==='closed')fail(409,'Solo puedes espectar una sala con amigos que siga abierta.');if(member(s,user.id)&&s.status!=='lobby')fail(409,'No puedes convertir un personaje en espectador después de iniciar la temporada.');
+   await queue(id,async()=>{await flush(record);s.spectators??=[];if(!s.spectators.includes(user.id))s.spectators.push(user.id);const player=member(s,user.id);if(player){s.players=s.players.filter(p=>p.userId!==user.id);if(s.host===user.id)s.host=s.players.find(p=>p.userId&&p.present)?.userId||s.host;}s.revision++;await serialize(()=>db.run('INSERT INTO showdown_members(room,user_id,joined,left_at) VALUES(?,?,?,NULL) ON CONFLICT(room,user_id) DO UPDATE SET left_at=NULL',id,user.id,now()));await flush(record);});
+   notify([...ids(s),...s.spectators],'showdown-room',{id,revision:s.revision});json(res,{room:await response(record,user,{includeChat:true})});return true;
+  }
+  if(!member(s,user.id)&&user.apocalypseStaff&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)&&!action&&method==='GET'){advance(record,user);json(res,{room:await response(record,user)});return true;}
+  if(!member(s,user.id)&&!(user.apocalypseStaff&&action==='chat'&&method==='GET'&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)))fail(403,'Esta sala es privada.');
   if(action==='restart'&&method==='POST'){
    if(s.host!==user.id)fail(403,'Solo el líder de la sala puede volver a simular.');
    await paid(user.id);

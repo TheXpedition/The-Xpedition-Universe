@@ -60,7 +60,7 @@ async function loadApocalypseParticipants(){
 await loadApocalypseParticipants();
 function setApocalypseParticipant(id,enabled){if(enabled)apocalypseParticipantIds.add(id);else apocalypseParticipantIds.delete(id);}
 function setApocalypseStyleOverride(id,enabled){apocalypseStyleOverrides.set(id,!!enabled);}
-function isApocalypseParticipant(id){return apocalypseStyleOverrides.has(id)?apocalypseStyleOverrides.get(id):apocalypseParticipantIds.has(id)||accountRole(id).staff;}
+function isApocalypseParticipant(id){return apocalypseStyleOverrides.has(id)?apocalypseStyleOverrides.get(id):apocalypseParticipantIds.has(id);}
 const fail = (status, message) => {
   throw Object.assign(new Error(message), {
     status
@@ -111,6 +111,7 @@ function userFields(u) {
     following: Number(u.following || 0),
     level: levelFor(Number(u.public_xp || 0)),
     apocalypseParticipant:isApocalypseParticipant(u.id),
+    apocalypseStaff:!!accountRole(u.id).staff,
     ...accountRole(u.id),
     genderIdentity:u.gender_identity||'',pronouns:u.pronouns||'',
     cover:u.cover_file?'/api/profile-covers/'+encodeURIComponent(u.id)+'?v='+u.cover_updated:null,coverPosition:Number(u.cover_position??50),
@@ -416,6 +417,7 @@ async function api(req, res, url) {
     });
   }
   if(await arcade.handle(req,res,url,u))return;
+  if(u)u.apocalypseStaff=!!accountRole(u.id).staff;
   if(await showdown.handle(req,res,url,u))return;
   if(await casting.handle(req,res,url,u))return;
   if(await moderation.handle(req,res,url,u))return;
