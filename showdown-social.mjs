@@ -29,10 +29,12 @@ export function socialAction(s,p,target,action,now){
  }
  s.socialSerial=Math.max(s.socialSerial||0,s.socialLog.at(-1)?.id||0)+1;s.socialLog.push({id:s.socialSerial,actor:p.id,target:q.id,action,accepted,at:now});s.socialLog=s.socialLog.slice(-80);s.revision++;
 }
-export function socialView(s,me){
- const alliances=s.botAlliances?.[me]||{},relations=Object.fromEntries(s.players.filter(p=>p.bot&&p.id!==me).map(p=>{const status=alliances[p.id]?.status;return [p.id,status==='active'?'Alianza':status==='abandoned'?'Abandonó la alianza':status==='rejected'?'No aceptó':relationshipLabel(affinity(s,p.id,me))];}));
- const featured=s.players.map(p=>{const others=s.players.filter(q=>q.id!==p.id),target=others.sort((a,b)=>Math.abs(affinity(s,p.id,b.id))-Math.abs(affinity(s,p.id,a.id)))[0];const n=affinity(s,p.id,target?.id);return {actor:p.id,target:target?.id,feeling:n<=-25?'odia a':n>=65?'le gusta':n>=25?'le agrada':'le da igual'};});
- return {relations,featured,log:s.socialLog||[],alliances,activeAllianceCount:activeBotAllianceCount(s,me)};
+export function socialView(s,me,allowedIds=null){
+ const allowed=allowedIds?new Set(allowedIds):null,players=s.players.filter(p=>!allowed||allowed.has(p.id));
+ const alliances=Object.fromEntries(Object.entries(s.botAlliances?.[me]||{}).filter(([id])=>!allowed||allowed.has(id))),relations=Object.fromEntries(players.filter(p=>p.bot&&p.id!==me).map(p=>{const status=alliances[p.id]?.status;return [p.id,status==='active'?'Alianza':status==='abandoned'?'Abandonó la alianza':status==='rejected'?'No aceptó':relationshipLabel(affinity(s,p.id,me))];}));
+ const featured=players.map(p=>{const others=players.filter(q=>q.id!==p.id),target=others.sort((a,b)=>Math.abs(affinity(s,p.id,b.id))-Math.abs(affinity(s,p.id,a.id)))[0];const n=affinity(s,p.id,target?.id);return {actor:p.id,target:target?.id,feeling:n<=-25?'odia a':n>=65?'le gusta':n>=25?'le agrada':'le da igual'};});
+ const log=(s.socialLog||[]).filter(e=>!allowed||allowed.has(e.actor)&&allowed.has(e.target));
+ return {relations,featured,log,alliances,activeAllianceCount:activeBotAllianceCount(s,me)};
 }
 export function challengePerformance(s,p,challenge){const c=SHOWDOWN_CHALLENGES.find(c=>c.id===challenge),area=c?.area||'Rapidez';return (p.stats?.[area]??3)/5;}
 export function prepareAssignments(s,r){const c=SHOWDOWN_CHALLENGES.find(c=>c.id===r.challenge);if(!c?.assignment)return;r.assignments??={};r.slots=r.pool.map((_,i)=>({id:'slot'+i,label:c.assignment==='teams'?`Equipo ${i<Math.ceil(r.pool.length/2)?'Luz':'Sombra'} · Puesto ${i%Math.ceil(r.pool.length/2)+1}`:c.assignment==='order'?`Turno ${i+1}`:`${['Protagonista','Antagonista','Narrador','Comedia','Acción','Revelación','Cameo','Voz principal','Doblaje','Final'][i]||'Papel '+(i+1)}`}));}
