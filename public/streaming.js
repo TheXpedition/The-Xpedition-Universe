@@ -18,6 +18,7 @@ renderChrome=function(){
   document.title='The Xpedition';
 };
 const featuredItems=()=>['apocalypse-ii','japan','safari','antarctica','traitor2','traitor-showdown'].map(id=>allContent().find(item=>item.id===id));
+function deferHeroPreview(){return window.matchMedia('(max-width: 750px), (pointer: coarse)').matches||navigator.connection?.saveData||/^(slow-2g|2g)$/.test(navigator.connection?.effectiveType||'');}
 const contentPreviews={
   'apocalypse-ii':{src:'media/apocalypse-ii-preview.mp4',title:'Campria Apocalypse II',season:'Temporada 13',note:'Temporada 13 · Estreno 2026 · Audiciones abiertas',description:'Cinco años después, Campria regresa. La continuación de Apocalypse nos enfrenta a un nuevo fin del mundo. Maria Villegas, Bonju y Dua Lingo están de vuelta. Ahora falta tu historia.'},
   antarctica:{src:'media/antarctica-preview.mp4',title:'The Xpedition Antarctica',season:'Primera temporada',note:'Primera temporada · 2022',description:'Un destino extremo. Una expedición que lo cambió todo. Revive la expedición donde comenzó esta historia.'},
@@ -33,7 +34,7 @@ function featureHero(){
   const primary=item.disabled||!item.url?'<button class="btn primary" disabled>Próximamente</button>':`<a class="btn primary" href="${esc(item.url)}" ${item.id==='showdown'&&item.kind==='Simulador'?'data-sd="open-integrated"':item.id==='apocalypse-ii'?'data-casting="open"':item.integrated?`data-season-action="open-season" data-id="${esc(item.id)}"`:'target="_blank" rel="noopener noreferrer"'}>${icon('play')} ${esc(item.actionLabel||'Ir a la temporada')}</a>`;
   return `<section class="feature-hero" data-content-id="${esc(item.id)}" aria-label="Destacado: ${esc(item.name)}">
     <img class="feature-image" src="${esc(contentArt(item))}" alt="" fetchpriority="high">
-    ${preview?`<video class="feature-video" id="featurePreview" src="${esc(window.matchMedia('(max-width:750px)').matches?preview.src.replace('.mp4','-mobile.mp4'):preview.src)}" data-fallback-src="${esc(preview.src)}" autoplay muted loop playsinline webkit-playsinline preload="auto" poster="${esc(contentArt(item))}" aria-label="Previa de ${esc(preview.title)}"></video>`:''}
+    ${preview?`<video class="feature-video" id="featurePreview" ${deferHeroPreview()?`data-deferred-src="${esc(preview.src.replace('.mp4','-mobile.mp4'))}"`:`src="${esc(preview.src)}" autoplay`} data-fallback-src="${esc(preview.src)}" muted loop playsinline webkit-playsinline preload="${deferHeroPreview()?'none':'metadata'}" poster="${esc(contentArt(item))}" aria-label="Previa de ${esc(preview.title)}"></video>`:''}
     <div class="feature-shade"></div>
     <div class="feature-copy">
       <div class="feature-kicker"><span class="original-mark">X</span> THE XPEDITION ORIGINAL</div>
@@ -52,7 +53,7 @@ function featureHero(){
 }
 function selectFeature(index){
  const items=featuredItems();state.featureIndex=(index+items.length)%items.length;
- $('#featuredArea').innerHTML=featureHero();setupPreview(true);
+ $('#featuredArea').innerHTML=featureHero();setupPreview(false);
 }
 icons.chevronLeft='<path d="m15 5-7 7 7 7"/>';
 icons.chevronRight='<path d="m9 5 7 7-7 7"/>';
@@ -245,6 +246,7 @@ function watchPreview(video){
 function updatePreviewPlayback(userGesture=false){
  const video=currentPreview;if(!video)return;
  const status=previewStates.get(video);if(!status)return;
+ if(status.deferred){if(!userGesture){status.blocked=true;previewHint('Toca ▶ para reproducir la previa');updatePreviewButtons();return;}video.src=video.dataset.deferredSrc;video.removeAttribute('data-deferred-src');status.deferred=false;video.load();}
  if(!previewCanPlay(video)){video.pause();clearTimeout(status.timer);status.timer=null;return;}
  if(userGesture)status.blocked=false;
  if(status.pending||status.blocked&&!userGesture)return;
@@ -268,7 +270,7 @@ function setupPreview(userGesture=false){
   clearTimeout(previewStates.get(previous)?.timer);previous.removeAttribute('src');previous.load();
  }
  currentPreview=video;if(!video)return;
- const status={pending:false,blocked:false,retries:0,fallback:false,lastProgress:Date.now(),timer:null};previewStates.set(video,status);
+ const status={pending:false,blocked:!!video.dataset.deferredSrc,deferred:!!video.dataset.deferredSrc,retries:0,fallback:false,lastProgress:Date.now(),timer:null};previewStates.set(video,status);
  video.defaultMuted=true;video.muted=state.previewMuted;video.playsInline=true;previewOnscreen=true;
  video.addEventListener('progress',()=>{status.lastProgress=Date.now();});
  video.addEventListener('playing',()=>{if(video!==currentPreview)return;video.classList.add('is-playing');status.blocked=false;clearTimeout(status.timer);status.timer=null;previewHint();updatePreviewButtons();});
