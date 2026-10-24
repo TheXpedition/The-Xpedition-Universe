@@ -5,12 +5,13 @@
 .apocalypse-profile-cover{border-color:#9c2a26;background:radial-gradient(ellipse at 75% 20%,#ff713433,transparent 40%),linear-gradient(105deg,#170e13ee,#341619cc 48%,#141019ee),url('backdrops/antarctica.jpg') center 40%/cover;box-shadow:inset 0 -35px 65px #10080ddd,0 0 25px #a42d2340}
 .profile-overview>.avatar-wrap.apocalypse-avatar>.avatar{border-radius:22px;border-width:3px}
 .profile-overview>.avatar-wrap.apocalypse-avatar>.apocalypse-avatar-sigil{width:27px;height:27px;font-size:15px;right:-6px;bottom:-6px}
-.apocalypse-profile-badges{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
-.apocalypse-profile-badges span{display:inline-flex;align-items:center;border:1px solid #ff684c66;border-radius:999px;padding:5px 10px;background:linear-gradient(110deg,#4c1717,#211314);color:#ffbd84;font-size:10px;font-weight:800;letter-spacing:.025em;box-shadow:inset 0 0 12px #fa5a2420}
+.profile-identity{min-width:0}
+.apocalypse-profile-badges{display:flex;flex-wrap:wrap;align-items:flex-start;gap:7px;margin-top:11px;min-width:0;width:100%;overflow:visible}
+.apocalypse-profile-badges span{display:inline-flex;flex:0 0 auto;align-items:center;min-height:32px;max-width:100%;border:1px solid #ff684c66;border-radius:999px;padding:6px 11px;background:linear-gradient(110deg,#4c1717,#211314);color:#ffbd84;font-size:10px;line-height:1.25;font-weight:800;letter-spacing:.015em;white-space:nowrap;overflow:visible;box-shadow:inset 0 0 12px #fa5a2420}
 .post-author .avatar-wrap.apocalypse-avatar{flex:0 0 auto;border-radius:50%;padding:2px}
 .post-author .avatar-wrap.apocalypse-avatar>.avatar{border-width:1px}
 .post-author .apocalypse-avatar-sigil{width:15px;height:15px;right:-3px;bottom:-2px;font-size:9px}
-.apocalypse-post-role{display:block;margin-top:5px;color:#ff9c70;font-size:10px;font-style:normal;font-weight:800;letter-spacing:.02em}
+.apocalypse-post-role{display:block;margin-top:5px;color:#ff9c70;font-size:10px;font-style:normal;font-weight:800;letter-spacing:.02em;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
 .apocalypse-cast-confirmed{display:flex;align-items:center;gap:14px;padding:13px;border:1px solid #d34c3966;border-radius:15px;background:linear-gradient(130deg,#301719,#17121b 65%);box-shadow:inset 0 0 24px #fb4d2513,0 8px 18px #0003}
 .apocalypse-cast-confirmed>div>span{color:#ff986e;font-size:8px;font-weight:900;letter-spacing:.08em}
 .apocalypse-cast-confirmed h3{margin:2px 0;font-size:15px}
@@ -23,4 +24,6 @@
 .audition-slots{padding-top:2px}
 .audition-slots .cast-slot em{color:#ffb58e}
 .mod-apocalypse-style{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;padding:12px 14px;border:1px solid #e05b3b66;border-radius:12px;background:linear-gradient(110deg,#331718,#17121b);color:#ffc18f;font-size:12px;font-weight:700}
-@media(max-width:700px){.apocalypse-profile-badges{gap:5px}.apocalypse-profile-badges span{font-size:9px;padding:4px 8px}.apocalypse-cast-frame{flex-basis:62px;width:62px;height:68px}.apocalypse-cast-confirmed{gap:10px;padding:10px}}
+.mod-apocalypse-style>*{min-width:0;overflow-wrap:anywhere}
+.cast-slot em{display:block;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.apocalypse-profile-badges{gap:6px;margin-top:10px}.apocalypse-profile-badges span{min-height:30px;font-size:9px;padding:6px 9px;letter-spacing:0}.apocalypse-post-role{font-size:9px}.apocalypse-cast-frame{flex-basis:62px;width:62px;height:68px}.apocalypse-cast-confirmed{gap:10px;padding:10px}.apocalypse-cast-confirmed>div{min-width:0}.apocalypse-cast-confirmed>div>span{display:block;line-height:1.35;overflow-wrap:anywhere}.mod-apocalypse-style{align-items:flex-start;flex-direction:column}.mod-apocalypse-style .btn{width:100%;white-space:normal}}
