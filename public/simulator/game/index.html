@@ -6890,8 +6890,9 @@ runChallenge.addEventListener("click", (e) => {
 
   if (chosen) {
     const allowed = 1;
+    const duelComebackReuse = episode === 9 && castSize !== 15 && comebackMode === "Duelos" && chosen === "Duelos";
 
-    if (usedCount(chosen) >= allowed) {
+    if (usedCount(chosen) >= allowed && !duelComebackReuse) {
       toast("Ese reto ya se usó al máximo en esta simulación.");
       return;
     }

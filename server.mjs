@@ -47,6 +47,20 @@ const hashToken = v => createHash('sha256').update(v).digest('hex');
 const one = (sql, ...args) => db.one(sql, ...args);
 const all = (sql, ...args) => db.all(sql, ...args);
 const run = (sql, ...args) => db.run(sql, ...args);
+const apocalypseParticipantIds=new Set();
+const apocalypseStyleOverrides=new Map();
+async function loadApocalypseParticipants(){
+  const [assigned,overrides]=await Promise.all([
+    all("SELECT user_id FROM casting_entries WHERE season='apocalypse-ii' AND direct_slot IS NOT NULL UNION SELECT user_id FROM apocalypse_cast WHERE audition_slot IS NOT NULL"),
+    all('SELECT user_id,style_override FROM apocalypse_cast WHERE style_override IS NOT NULL')
+  ]);
+  apocalypseParticipantIds.clear();for(const row of assigned)apocalypseParticipantIds.add(row.user_id);
+  apocalypseStyleOverrides.clear();for(const row of overrides)apocalypseStyleOverrides.set(row.user_id,!!Number(row.style_override));
+}
+await loadApocalypseParticipants();
+function setApocalypseParticipant(id,enabled){if(enabled)apocalypseParticipantIds.add(id);else apocalypseParticipantIds.delete(id);}
+function setApocalypseStyleOverride(id,enabled){apocalypseStyleOverrides.set(id,!!enabled);}
+function isApocalypseParticipant(id){return apocalypseStyleOverrides.has(id)?apocalypseStyleOverrides.get(id):apocalypseParticipantIds.has(id)||accountRole(id).staff;}
 const fail = (status, message) => {
   throw Object.assign(new Error(message), {
     status
@@ -96,6 +110,7 @@ function userFields(u) {
     followers: Number(u.followers || 0),
     following: Number(u.following || 0),
     level: levelFor(Number(u.public_xp || 0)),
+    apocalypseParticipant:isApocalypseParticipant(u.id),
     ...accountRole(u.id),
     genderIdentity:u.gender_identity||'',pronouns:u.pronouns||'',
     cover:u.cover_file?'/api/profile-covers/'+encodeURIComponent(u.id)+'?v='+u.cover_updated:null,coverPosition:Number(u.cover_position??50),
@@ -802,8 +817,8 @@ if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta soli
 if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bono adicional solicitado aplicado una sola vez: 5000 monedas.');
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
-const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields});
-const casting=createCasting({db,json,fail,checkRate,body,progression,catalog});
+const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields,setApocalypseStyleOverride});
+const casting=createCasting({db,json,fail,checkRate,body,progression,catalog,onParticipantChange:setApocalypseParticipant,isParticipant:isApocalypseParticipant});
 function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
 const showdown=createShowdownGame({db,json,fail,body,checkRate,progression,characters:JSON.parse(fs.readFileSync(path.join(publicDir,'showdown/characters.json'),'utf8')),notify,messageView,pushNotifications,serialize});
 const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});

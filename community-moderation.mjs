@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { isStaff, accountRole, setAccountVerification } from './account-roles.mjs';
 import { levelFor } from './progression.mjs';
 
-export function createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify=()=>{},userFields}){
+export function createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify=()=>{},userFields,setApocalypseStyleOverride=()=>{}}){
  const profileRow='SELECT u.*,COALESCE(pr.tickets,0) AS tickets,COALESCE(pr.coins,0) AS coins,COALESCE(pr.xp,0) AS public_xp FROM users u LEFT JOIN user_progression pr ON pr.user_id=u.id';
  const profile=u=>({...(userFields?userFields(u):{id:u.id,name:u.name,avatar:u.avatar,bio:u.bio,created:u.created}),...accountRole(u.id),level:levelFor(Number(u.public_xp||0)),coins:Number(u.coins||0),tickets:Number(u.tickets||0)});
  const page=url=>{const offset=Number(url.searchParams.get('offset')||0);if(!Number.isSafeInteger(offset)||offset<0||offset>1000000)fail(400,'Página inválida.');return offset;};
@@ -32,7 +32,7 @@ export function createModeration({db,json,fail,checkRate,everyone,body,storage,p
    const count=await db.one('SELECT COUNT(*) AS n FROM users u'+where,...args);
    json(res,{profiles:rows.slice(0,25).map(profile),hasMore:rows.length>25,total:Number(count.n),offset});return true;
   }
-  const selected=path.match(/^\/api\/moderation\/profiles\/([^/]+)(?:\/(verification|grant))?$/);
+  const selected=path.match(/^\/api\/moderation\/profiles\/([^/]+)(?:\/(verification|grant|apocalypse-style))?$/);
   if(selected){
    const id=decodeURIComponent(selected[1]),person=await db.one(profileRow+' WHERE u.id=?',id);
    if(!person)fail(404,'Cuenta no encontrada.');
@@ -45,6 +45,16 @@ export function createModeration({db,json,fail,checkRate,everyone,body,storage,p
      await audit(user,input.verified?'verify':'unverify',id,{name:person.name});
     });
     setAccountVerification(id,input.verified);everyone('profiles',{});json(res,{profile:profile(person)});return true;
+   }
+   if(selected[2]==='apocalypse-style'&&method==='PUT'){
+    checkRate(req,'apocalypse-style',100,3600000);const input=await body(req);
+    if(typeof input.enabled!=='boolean')fail(400,'Indica si se debe mostrar o quitar el estilo de Apocalypse II.');
+    const timestamp=Date.now();
+    await db.transaction(async()=>{
+     await db.run('INSERT INTO apocalypse_cast(user_id,style_override,updated_by,updated) VALUES(?,?,?,?) ON CONFLICT(user_id) DO UPDATE SET style_override=excluded.style_override,updated_by=excluded.updated_by,updated=excluded.updated',id,input.enabled?1:0,user.id,timestamp);
+     await audit(user,input.enabled?'apocalypse-style':'remove-apocalypse-style',id,{name:person.name,enabled:input.enabled});
+    });
+    setApocalypseStyleOverride(id,input.enabled);everyone('profiles',{});json(res,{profile:profile(person)});return true;
    }
    if(selected[2]==='grant'&&method==='POST'){
     checkRate(req,'staff-grant',100,3600000);const input=await body(req),coins=input.coins,tickets=input.tickets,reason=String(input.reason||'').trim();
