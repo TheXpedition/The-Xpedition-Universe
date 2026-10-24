@@ -94,7 +94,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    notify([...ids(s),...s.spectators],'showdown-room',{id,revision:s.revision});json(res,{room:await response(record,user,{includeChat:true})});return true;
   }
   if(!member(s,user.id)&&user.apocalypseStaff&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)&&!action&&method==='GET'){advance(record,user);json(res,{room:await response(record,user)});return true;}
-  if(!member(s,user.id)&&!(user.apocalypseStaff&&action==='chat'&&method==='GET'&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)))fail(403,'Esta sala es privada.');
+  if(!member(s,user.id)&&!(user.apocalypseStaff&&action==='chat'&&['GET','POST'].includes(method)&&Array.isArray(s.spectators)&&s.spectators.includes(user.id)))fail(403,'Esta sala es privada.');
   if(action==='restart'&&method==='POST'){
    if(s.host!==user.id)fail(403,'Solo el líder de la sala puede volver a simular.');
    await paid(user.id);
@@ -126,7 +126,7 @@ export function createShowdownGame({db,json,fail,body,checkRate,progression,char
    const mid=typeof input.id==='string'&&/^[a-f0-9-]{36}$/.test(input.id)?input.id:randomUUID();
    const previous=await db.one('SELECT room,sender FROM showdown_chat WHERE id=?',mid);if(previous&&(previous.room!==id||previous.sender!==user.id))fail(409,'Ese mensaje pertenece a otra cuenta.');
    if(!previous)await db.run('INSERT INTO showdown_chat(id,room,sender,text,created) VALUES(?,?,?,?,?)',mid,id,user.id,text,now());
-   notify(ids(s),'showdown-chat',{id});json(res,{messages:await chat(id)});return true;
+   notify([...ids(s),...(s.spectators||[])],'showdown-chat',{id});json(res,{messages:await chat(id)});return true;
   }
   if(action==='invite'&&method==='POST'){
    checkRate(req,'showdown-invite',30,3600000);if(s.status!=='lobby'||s.mode!=='multi')fail(409,'Las invitaciones se envían antes de empezar una sala con amigos.');
