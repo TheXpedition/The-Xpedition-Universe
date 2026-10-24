@@ -202,13 +202,17 @@ export function createProgression({db,shop,catalog,body,json,fail,checkRate,seri
      for(const name of b.representatives)if(!await owned(user.id,'character',name))fail(403,'Este personaje no pertenece a tu colección.');
      reps=[...new Set(b.representatives)];
     }
+    // Keep an episode pending until it is eligible for its reward. Previously
+    // we advanced run.episode even when the 15s anti-farming window was active,
+    // permanently skipping the tickets and coins for fast episodes.
     const advanced=episode>Number(run.episode)&&now()-Number(run.last_reward)>=15000;
+    const acceptedEpisode=advanced?episode:Number(run.episode);
     const persist=b.manual===true||(b.persist!==false&&(await preferences(user.id)).autosave);
-    const saved=await db.run('UPDATE game_runs SET snapshot=?,revision=revision+1,episode=?,updated=?,last_reward=?,representatives=? WHERE id=? AND user_id=? AND revision=?',persist?snapshot:run.snapshot,episode,persist?now():Number(run.updated),advanced?now():Number(run.last_reward),JSON.stringify(reps),run.id,user.id,run.revision);
+    const saved=await db.run('UPDATE game_runs SET snapshot=?,revision=revision+1,episode=?,updated=?,last_reward=?,representatives=? WHERE id=? AND user_id=? AND revision=?',persist?snapshot:run.snapshot,acceptedEpisode,persist?now():Number(run.updated),advanced?now():Number(run.last_reward),JSON.stringify(reps),run.id,user.id,run.revision);
     if(!saved.changes)fail(409,'La partida se ha actualizado en otra ventana. Vuelve a cargarla.');
-    if(advanced)await grant(user.id,'episode:'+run.id+':'+episode,{tickets:2,coins:6,xp:12,label:'Episodio '+episode+' completado'});
+    if(advanced)await grant(user.id,'episode:'+run.id+':'+acceptedEpisode,{tickets:2,coins:6,xp:12,label:'Episodio '+acceptedEpisode+' completado'});
     await limited(user.id,'started',8,run.id,{tickets:1,label:'Una nueva expedición'});
-    json(res,{revision:Number(run.revision)+1,wallet:await wallet(user.id),saved:persist,savedAt:persist?now():null});return true;
+    json(res,{revision:Number(run.revision)+1,episode:acceptedEpisode,wallet:await wallet(user.id),saved:persist,savedAt:persist?now():null});return true;
    }
    if(method==='POST'&&match[2]==='decision'){
     if(Number(run.decisions)>=40||now()-Number(run.last_decision||run.created)<1200){json(res,{wallet:await wallet(user.id)});return true;}
