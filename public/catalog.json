@@ -1,5 +1,17 @@
 {
   "roster": [
+    "Laura Bozzo",
+    "Moria Casán",
+    "Lyn May",
+    "Lula da Silva",
+    "Miss Peggy",
+    "Jessica Rabbit",
+    "Caillou",
+    "Oso Odisea",
+    "Okami",
+    "Stella",
+    "Kiara Mileena",
+    "Alice S. Jewels",
     "Adriana Pereira",
     "Agus",
     "Alex Yo Hender",
@@ -1544,6 +1556,54 @@
     ]
   },
   "characters": [
+    {
+      "name": "Laura Bozzo",
+      "image": "personajes/laura-bozzo.png"
+    },
+    {
+      "name": "Moria Casán",
+      "image": "personajes/moria-casan.png"
+    },
+    {
+      "name": "Lyn May",
+      "image": "personajes/lyn-may.png"
+    },
+    {
+      "name": "Lula da Silva",
+      "image": "personajes/lula-da-silva.png"
+    },
+    {
+      "name": "Miss Peggy",
+      "image": "personajes/miss-peggy.png"
+    },
+    {
+      "name": "Jessica Rabbit",
+      "image": "personajes/jessica-rabbit.png"
+    },
+    {
+      "name": "Caillou",
+      "image": "personajes/caillou.png"
+    },
+    {
+      "name": "Oso Odisea",
+      "image": "personajes/oso-odisea.png"
+    },
+    {
+      "name": "Okami",
+      "image": "personajes/okami.png"
+    },
+    {
+      "name": "Stella",
+      "image": "personajes/stella.png"
+    },
+    {
+      "name": "Kiara Mileena",
+      "image": "personajes/kiara-mileena.png"
+    },
+    {
+      "name": "Alice S. Jewels",
+      "image": "personajes/alice-s-jewels.png"
+    },
     {
       "name": "Adriana Pereira",
       "image": "personajes/adrianapereira.png"

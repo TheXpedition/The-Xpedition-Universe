@@ -100,3 +100,11 @@ dialog{overscroll-behavior:contain}
  .sim-toast{font-size:13px;line-height:1.7;padding:16px 18px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.shop-feature-label{display:flex;align-items:center;gap:12px;margin:0 32px 12px;padding:11px 14px;border:1px solid #e3b771;border-radius:11px;background:linear-gradient(90deg,#fff3dc,#fffaf2);color:#75522d}
+.shop-feature-label span{font-size:9px;font-weight:900;letter-spacing:.14em;color:#aa5b30}
+.shop-feature-label b{font-size:12px}
+.shop-tag.new{background:#d94d25;color:#fff;font-size:9px;letter-spacing:.09em;box-shadow:0 2px 8px #7d281b55}
+.shop-card.shop-new{border-color:#efb183}
+.shop-card.shop-new .shop-card-art{background:#ffebcc}
+@media(max-width:620px){.shop-feature-label{margin:0 15px 12px;padding:10px 12px}.shop-feature-label b{font-size:11px}}
