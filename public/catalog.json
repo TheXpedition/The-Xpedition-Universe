@@ -1558,51 +1558,75 @@
   "characters": [
     {
       "name": "Laura Bozzo",
-      "image": "personajes/laura-bozzo.png"
+      "image": "personajes/laura-bozzo.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Moria Casán",
-      "image": "personajes/moria-casan.png"
+      "image": "personajes/moria-casan.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Lyn May",
-      "image": "personajes/lyn-may.png"
+      "image": "personajes/lyn-may.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Lula da Silva",
-      "image": "personajes/lula-da-silva.png"
+      "image": "personajes/lula-da-silva.png",
+      "pronouns": "Él / He",
+      "exclusiveIcon": true
     },
     {
       "name": "Miss Peggy",
-      "image": "personajes/miss-peggy.png"
+      "image": "personajes/miss-peggy.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Jessica Rabbit",
-      "image": "personajes/jessica-rabbit.png"
+      "image": "personajes/jessica-rabbit.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Caillou",
-      "image": "personajes/caillou.png"
+      "image": "personajes/caillou.png",
+      "pronouns": "Él / He",
+      "exclusiveIcon": true
     },
     {
       "name": "Oso Odisea",
-      "image": "personajes/oso-odisea.png"
+      "image": "personajes/oso-odisea.png",
+      "pronouns": "They / Them",
+      "exclusiveIcon": true
     },
     {
       "name": "Okami",
-      "image": "personajes/okami.png"
+      "image": "personajes/okami.png",
+      "pronouns": "They / Them",
+      "exclusiveIcon": true
     },
     {
       "name": "Stella",
-      "image": "personajes/stella.png"
+      "image": "personajes/stella.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Kiara Mileena",
-      "image": "personajes/kiara-mileena.png"
+      "image": "personajes/kiara-mileena.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Alice S. Jewels",
-      "image": "personajes/alice-s-jewels.png"
+      "image": "personajes/alice-s-jewels.png",
+      "pronouns": "Ella / She",
+      "exclusiveIcon": true
     },
     {
       "name": "Adriana Pereira",

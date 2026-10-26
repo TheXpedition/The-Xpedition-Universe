@@ -492,7 +492,9 @@ async function api(req, res, url) {
     const b = await body(req);
     const name = b.name === undefined ? u.name : checkName(b.name);
     const avatar = b.avatar === undefined ? u.avatar : b.avatar;
-    if (!catalog.characters.some(c => c.name === avatar)) fail(400, 'Elige un personaje del catálogo.');
+    const avatarCharacter=catalog.characters.find(c=>c.name===avatar);
+    if (!avatarCharacter) fail(400, 'Elige un personaje del catálogo.');
+    if (b.avatar!==undefined&&b.avatar!==u.avatar&&avatarCharacter.exclusiveIcon&&!await one('SELECT 1 FROM economy_inventory WHERE user_id=? AND item_id=?',u.id,characterId(avatar))) fail(403,'Compra este personaje en la tienda para usarlo como ícono.');
     const bio = b.bio === undefined ? u.bio : String(b.bio).trim();
     if (bio.length > 600) fail(400, 'La biografía admite hasta 600 caracteres.');
     const saved = b.saved === undefined ? JSON.parse(u.saved) : b.saved;
