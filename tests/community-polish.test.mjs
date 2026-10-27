@@ -16,6 +16,72 @@ function messenger(stickers=[]){
 }
 const settle=()=>new Promise(resolve=>setTimeout(resolve,25));
 
+function chatAccess(){
+ const dom=new JSDOM('<section class="composer-area"><form class="composer"><textarea></textarea></form><p class="composer-caption">Escribe tu mensaje</p></section>',{url:'https://test.invalid/#mensajes',runScripts:'outside-only'}),w=dom.window;
+ w.$=selector=>w.document.querySelector(selector);
+ w.state={user:{id:'viewer'},active:'group',conversations:[{id:'group',type:'group',onlyAdminWrite:true,members:[{id:'viewer',role:'member'}]}]};
+ w.updateChatStatus=()=>{};
+ const code=fs.readFileSync(new URL('../public/streaming.js',import.meta.url),'utf8');
+ w.eval(code.slice(code.indexOf('function updateComposerAccess('),code.indexOf('chatInfo=function(){')));
+ return {dom,w,conversation:w.state.conversations[0]};
+}
+
+test('actualizar presencia y estado del grupo cien veces conserva un solo aviso de administradores',()=>{
+ const {dom,w}=chatAccess();try{
+  w.updateChatStatus();const notice=w.document.querySelector('.chat-locked');
+  for(let i=0;i<100;i++)w.updateChatStatus();
+  assert.equal(w.document.querySelectorAll('.chat-locked').length,1);
+  assert.equal(w.document.querySelector('#chatLocked'),notice,'se conserva el aviso sin volver a añadirlo');
+  assert(w.document.querySelector('.composer').classList.contains('hidden'));
+  const area=w.document.querySelector('.composer-area');
+  for(let i=0;i<30;i++)area.insertAdjacentHTML('beforeend','<div class="chat-locked">Aviso duplicado anterior</div>');
+  w.updateChatStatus();assert.equal(w.document.querySelectorAll('.chat-locked').length,1);assert.equal(w.document.querySelector('#chatLocked'),notice);
+ }finally{dom.window.close();}
+});
+
+test('el aviso desaparece al abrir la escritura, cambiar de chat o recibir permisos de administrador o moderador',()=>{
+ const {dom,w,conversation}=chatAccess();try{
+  for(const change of [()=>{conversation.onlyAdminWrite=false;},()=>{conversation.type='dm';},()=>{conversation.members[0].role='admin';},()=>{conversation.members[0].role='mod';}]){
+   conversation.type='group';conversation.onlyAdminWrite=true;conversation.members[0].role='member';
+   w.updateChatStatus();assert.equal(w.document.querySelectorAll('.chat-locked').length,1);
+   change();w.updateChatStatus();
+   assert.equal(w.document.querySelectorAll('.chat-locked').length,0);
+   assert(!w.document.querySelector('.composer').classList.contains('hidden'));
+   assert(!w.document.querySelector('.composer-caption').classList.contains('hidden'));
+  }
+ }finally{dom.window.close();}
+});
+
+function toastFixture(mobile=true){
+ const dom=new JSDOM('<div id="toasts" class="toasts"></div>',{url:'https://test.invalid',runScripts:'outside-only'}),w=dom.window;
+ const timers=[];w.$=selector=>w.document.querySelector(selector);w.matchMedia=()=>({matches:mobile});w.setTimeout=(callback,delay)=>{timers.push({callback,delay});return timers.length;};
+ const code=fs.readFileSync(new URL('../public/app.js',import.meta.url),'utf8');
+ w.eval(code.slice(code.indexOf('const toast = '),code.indexOf('async function api('))+'\nwindow.notifyTest=toast;');
+ return {dom,w,timers};
+}
+
+test('repetir cien veces un aviso flotante no lo duplica ni prolonga su duración',()=>{
+ const {dom,w,timers}=toastFixture();try{
+  for(let i=0;i<100;i++)w.notifyTest('Solo administradores pueden escribir.',true);
+  assert.equal(w.document.querySelectorAll('.toast').length,1);assert.equal(timers.length,1);
+  assert.equal(timers[0].delay,5500);assert(w.document.querySelector('.toast.error'));
+  timers[0].callback();assert.equal(w.document.querySelectorAll('.toast').length,0);
+  w.notifyTest('Solo administradores pueden escribir.',true);assert.equal(w.document.querySelectorAll('.toast').length,1);
+ }finally{dom.window.close();}
+});
+
+test('las ráfagas de avisos muestran como máximo uno en celular y dos en escritorio',()=>{
+ for(const mobile of [true,false]){
+  const {dom,w,timers}=toastFixture(mobile);try{
+   for(let i=0;i<100;i++)w.notifyTest('Aviso '+i);
+   const notices=[...w.document.querySelectorAll('.toast')];assert.equal(notices.length,mobile?1:2);
+   assert.equal(notices.at(-1).textContent,'Aviso 99');
+   for(const timer of timers.slice(0,-1))timer.callback();assert.equal(w.document.querySelector('.toast').textContent,'Aviso 99');
+   timers.at(-1).callback();assert.equal(w.document.querySelectorAll('.toast').length,0);
+  }finally{dom.window.close();}
+ }
+});
+
 test('todos los transparentes preceden a los cuadros aun con favoritos, en chat y publicaciones',async()=>{
  const stickers=JSON.parse(fs.readFileSync(new URL('../public/stickers.json',import.meta.url),'utf8')),opaque=stickers.find(s=>!s.transparent),transparent=stickers.filter(s=>s.transparent).at(-1),{dom,w}=messenger(stickers);
  try{w.state.user.stickerFavorites=[opaque.id,transparent.id];await settle();

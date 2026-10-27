@@ -19,7 +19,15 @@ const avatar = (p,cls='') => `<span class="avatar-wrap ${p.apocalypseParticipant
 const getProfile = id => state.profiles.find(p=>p.id===id);
 const allContent = () => Object.values(state.catalog.content).flat();
 const saved = id => state.user?.saved.includes(id);
-const toast = (message,error=false) => {const el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=message;$('#toasts').append(el);setTimeout(()=>el.remove(),5500);};
+const toast = (message,error=false) => {
+  const root=$('#toasts'),text=String(message??'');if(!root||!text.trim())return;
+  const existing=[...root.children].find(el=>el.textContent===text);
+  if(existing){if(error)existing.classList.add('error');return;}
+  const limit=window.matchMedia('(max-width: 750px)').matches?1:2;
+  while(root.children.length>=limit)root.firstElementChild.remove();
+  const el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=text;
+  root.append(el);setTimeout(()=>el.remove(),5500);
+};
 async function api(url, options={}) {
   if(state.publicOnly)throw new Error('La comunidad todavía no está disponible. Puedes seguir explorando las temporadas, los personajes y los simuladores.');
   let response;

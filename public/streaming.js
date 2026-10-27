@@ -171,7 +171,10 @@ function updateComposerAccess(c){
   const role=c.members.find(m=>m.id===state.user.id)?.role;
   const locked=c.type==='group'&&c.onlyAdminWrite&&!['admin','mod'].includes(role);
   composer.classList.toggle('hidden',locked);$('.composer-caption')?.classList.toggle('hidden',locked);
-  $('#chatLocked')?.remove();if(locked)area.insertAdjacentHTML('beforeend','<div class="chat-locked">Solo administradores y moderadores pueden escribir en este grupo.</div>');
+  const notices=[...area.querySelectorAll('.chat-locked')],notice=locked?notices.shift():null;
+  notices.forEach(duplicate=>duplicate.remove());
+  if(notice)notice.id='chatLocked';
+  else if(locked)area.insertAdjacentHTML('beforeend','<div class="chat-locked" id="chatLocked">Solo administradores y moderadores pueden escribir en este grupo.</div>');
 }
 const baseChatStatus=updateChatStatus;
 updateChatStatus=function(){baseChatStatus();const c=state.conversations.find(c=>c.id===state.active);if(c)updateComposerAccess(c);};
