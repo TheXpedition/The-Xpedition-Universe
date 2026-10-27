@@ -378,9 +378,87 @@
     "okami": "okami",
     "stella": "stella",
     "kiaramileena": "kiaramileena",
-    "alicesjewels": "alicesjewels"
+    "alicesjewels": "alicesjewels",
+    "niurkamarcos": "niurkamarcos",
+    "drapolo": "drapolo",
+    "latigresa": "latigresa",
+    "laveneno": "laveneno",
+    "lavenenito": "lavenenito",
+    "barbie": "barbie"
   },
   "items": [
+    {
+      "id": "character:niurkamarcos",
+      "kind": "character",
+      "name": "Niurka Marcos",
+      "image": "/personajes/niurka-marcos.png",
+      "starter": false,
+      "price": 500,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 0
+    },
+    {
+      "id": "character:drapolo",
+      "kind": "character",
+      "name": "Dra. Polo",
+      "image": "/personajes/dra-polo.png",
+      "starter": false,
+      "price": 500,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 1
+    },
+    {
+      "id": "character:latigresa",
+      "kind": "character",
+      "name": "La Tigresa",
+      "image": "/personajes/la-tigresa.png",
+      "starter": false,
+      "price": 500,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 2
+    },
+    {
+      "id": "character:laveneno",
+      "kind": "character",
+      "name": "La Veneno",
+      "image": "/personajes/la-veneno.png",
+      "starter": false,
+      "price": 500,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 3
+    },
+    {
+      "id": "character:lavenenito",
+      "kind": "character",
+      "name": "La Venenito",
+      "image": "/personajes/la-venenito.png",
+      "starter": false,
+      "price": 300,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 4
+    },
+    {
+      "id": "character:barbie",
+      "kind": "character",
+      "name": "Barbie",
+      "image": "/personajes/barbie.png",
+      "starter": false,
+      "price": 1000,
+      "level": 1,
+      "premium": false,
+      "isNew": true,
+      "newOrder": 5
+    },
     {
       "id": "character:laurabozzo",
       "kind": "character",
@@ -394,7 +472,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 0
+      "newOrder": 6
     },
     {
       "id": "character:moriacasan",
@@ -409,7 +487,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 1
+      "newOrder": 7
     },
     {
       "id": "character:lynmay",
@@ -424,7 +502,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 2
+      "newOrder": 8
     },
     {
       "id": "character:luladasilva",
@@ -439,7 +517,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 3
+      "newOrder": 9
     },
     {
       "id": "character:misspeggy",
@@ -454,7 +532,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 4
+      "newOrder": 10
     },
     {
       "id": "character:jessicarabbit",
@@ -469,7 +547,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 5
+      "newOrder": 11
     },
     {
       "id": "character:caillou",
@@ -484,7 +562,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 6
+      "newOrder": 12
     },
     {
       "id": "character:osoodisea",
@@ -499,7 +577,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 7
+      "newOrder": 13
     },
     {
       "id": "character:okami",
@@ -514,7 +592,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 8
+      "newOrder": 14
     },
     {
       "id": "character:stella",
@@ -529,7 +607,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 9
+      "newOrder": 15
     },
     {
       "id": "character:kiaramileena",
@@ -544,7 +622,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 10
+      "newOrder": 16
     },
     {
       "id": "character:alicesjewels",
@@ -559,7 +637,7 @@
       "talent": "Un personaje nuevo para tu elenco",
       "isNew": true,
       "featuredGroup": "Primera Fila",
-      "newOrder": 11
+      "newOrder": 17
     },
     {
       "id": "character:adrianapereira",

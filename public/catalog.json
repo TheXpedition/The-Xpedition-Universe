@@ -1,5 +1,11 @@
 {
   "roster": [
+    "Niurka Marcos",
+    "Dra. Polo",
+    "La Tigresa",
+    "La Veneno",
+    "La Venenito",
+    "Barbie",
     "Laura Bozzo",
     "Moria Casán",
     "Lyn May",
@@ -1556,6 +1562,36 @@
     ]
   },
   "characters": [
+    {
+      "name": "Niurka Marcos",
+      "image": "personajes/niurka-marcos.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Dra. Polo",
+      "image": "personajes/dra-polo.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "La Tigresa",
+      "image": "personajes/la-tigresa.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "La Veneno",
+      "image": "personajes/la-veneno.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "La Venenito",
+      "image": "personajes/la-venenito.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Barbie",
+      "image": "personajes/barbie.png",
+      "exclusiveIcon": true
+    },
     {
       "name": "Laura Bozzo",
       "image": "personajes/laura-bozzo.png",
