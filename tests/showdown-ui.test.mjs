@@ -9,6 +9,32 @@ const characters=JSON.parse(fs.readFileSync(new URL('../public/showdown/characte
 const runtime=fs.readFileSync(new URL('../public/showdown/simulator.js',import.meta.url),'utf8').replace("import('/showdown/config.mjs')",'Promise.resolve({})');
 function renderer(){const dom=new JSDOM('<main id="main"></main><dialog id="modal"><div id="modalContent"></div></dialog><div id="toasts"></div>',{url:'http://localhost/#showdown',runScripts:'outside-only',pretendToBeVisual:true});const c=dom.getInternalVMContext();c.CSS={escape:s=>String(s)};vm.runInContext(`const $=(s)=>document.querySelector(s),$$=(s)=>[...document.querySelectorAll(s)];const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const state={route:'showdown',user:{id:'human'},profiles:[]};function startStream(){}function api(){}function time(){return '12:00';}function icon(){return '<svg></svg>';}function closeModal(){}function renderChrome(){}function norm(v){return String(v).toLowerCase();}function toast(){}function requireAuth(){return true;}`,c);vm.runInContext(fs.readFileSync(new URL('../public/showdown/stage.js',import.meta.url),'utf8'),c);vm.runInContext(runtime,c);vm.runInContext(fs.readFileSync(new URL('../public/showdown/experience.js',import.meta.url),'utf8'),c);c.qaConfig={SHOWDOWN_STATS,SHOWDOWN_SOCIAL_ACTIONS};vm.runInContext('sdUI.config=qaConfig',c);c.qaData={characters,formats:Object.values(SHOWDOWN_FORMATS),challenges:SHOWDOWN_CHALLENGES,ownedCharacters:characters.map(c=>c.id),owned:true,wallet:{coins:500},rooms:[]};vm.runInContext('sdUI.data=qaData',c);return {dom,c,render(view){c.qaView=view;vm.runInContext('sdUI.room=qaView;sdUI.offset=qaView.serverTime-Date.now();sdGameShell(qaView);sdAcceptRoom(qaView,true)',c);},eval:s=>vm.runInContext(s,c)};}
 
+test('el selector multijugador muestra todos los personajes nuevos comprados y permite confirmar uno',async t=>{
+ const ui=renderer();t.after(()=>ui.dom.window.close());
+ const latest=JSON.parse(fs.readFileSync(new URL('../public/simulator/catalog.json',import.meta.url))).items.filter(item=>item.kind==='character'&&item.isNew);
+ const owned=latest.map(item=>item.id.slice('character:'.length));ui.c.qaData.ownedCharacters=owned;
+ const s=createShowdown({id:'new-characters',host:'human',mode:'multi',now:Date.now()});joinShowdown(s,{id:'human',name:'Anfitrión'},Date.now());
+ ui.c.qaLobby=showdownPublicView(s,'human',Date.now(),characters);ui.eval('sdUI.room=qaLobby;sdLobby(qaLobby)');
+ ui.c.modal=html=>{ui.dom.window.document.querySelector('#modalContent').innerHTML=html;};
+ ui.c.api=async(path,options={})=>{
+  if(path==='/showdown')return ui.c.qaData;
+  assert.equal(path,'/showdown/rooms/new-characters/character');
+  selectShowdownCharacter(s,'human',options.body.character,characters);
+  return {room:showdownPublicView(s,'human',Date.now(),characters)};
+ };
+ await ui.eval('sdChooseCharacter()');
+ const doc=ui.dom.window.document,buttons=[...doc.querySelectorAll('[data-sd="pick-character"]')];
+ assert.equal(buttons.length,latest.length);
+ for(const item of latest){
+  const button=buttons.find(button=>button.dataset.character===item.id.slice('character:'.length));
+  assert(button,item.name+' aparece en el selector');assert.equal(button.disabled,false,item.name+' se puede elegir');
+  assert.equal(button.querySelector('strong').textContent,item.name);assert.equal(button.querySelector('img').getAttribute('src'),item.image);
+ }
+ buttons[0].click();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(doc.querySelector('.sd-cast-slot.mine strong').textContent,latest[0].name);
+ assert.equal(doc.querySelector('.sd-cast-slot.mine img').getAttribute('src'),latest[0].image);
+});
+
 test('crear una sala con amigos abre el lobby y permite pasar al escenario cuando ambos están listos',async t=>{
  const ui=renderer();t.after(()=>ui.dom.window.close());
  const s=createShowdown({id:'new-lobby',host:'human',mode:'multi',now:Date.now()});

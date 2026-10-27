@@ -20,6 +20,45 @@ const make=(u,mode='solo',format=3)=>request(u,'/rooms','POST',{mode,format});
 const choose=(u,id,c)=>request(u,'/rooms/'+id+'/character','POST',{character:c});
 const starter=shop.items.filter(i=>i.kind==='character'&&i.starter).map(i=>i.id.replace('character:',''));
 
+test('todos los personajes de la tienda están disponibles en Showdown con su identificador de compra e imágenes válidas',()=>{
+ const byId=new Map(characters.map(character=>[character.id,character]));
+ assert.equal(byId.size,characters.length,'el catálogo no contiene personajes duplicados');
+ for(const item of shop.items.filter(item=>item.kind==='character')){
+  const character=byId.get(item.id.slice('character:'.length));
+  assert(character,item.name+' falta en Showdown');
+  for(const image of [character.image,character.figure])assert(fs.existsSync(new URL('../public'+image,import.meta.url)),image);
+ }
+});
+
+test('los personajes nuevos comprados se pueden elegir en multijugador y conservar al comenzar y reconectar',async()=>{
+ const latest=shop.items.filter(item=>item.kind==='character'&&item.isNew);
+ assert(latest.length>=18,'se incluyen las últimas tandas de personajes');
+ const host=await user(1000+latest.reduce((total,item)=>total+item.price,0)),friend=await user();
+ await buy(host);await buy(friend);
+ const {room}=await make(host,'multi'),id=room.id,token=room.shareUrl.split('/').at(-1);
+ await request(friend,'/rooms/'+id+'/join','POST',{token});await choose(friend,id,starter[0]);
+ for(const item of latest){
+  const characterId=item.id.slice('character:'.length);
+  assert.equal((await choose(host,id,characterId)).status,403,item.name+' requiere tenerlo en la colección');
+  const res={};await progression.handle({method:'POST',payload:{item:item.id}},res,new URL('http://localhost/api/economy/buy'),host);
+  assert.equal(res.status,200,item.name+' se compra con su precio actual');
+  const selected=await choose(host,id,characterId);assert.equal(selected.status,200,item.name+' se puede elegir');
+  const current=selected.room.players.find(player=>player.id===host.id).character;
+  assert.equal(current.id,characterId);assert.equal(current.name,item.name);assert.equal(current.image,item.image);
+ }
+ const data=await request(host);
+ for(const item of latest){const id=item.id.slice('character:'.length);assert(data.ownedCharacters.includes(id));assert(data.characters.some(character=>character.id===id));}
+ const balanceAfterPurchases=(await progression.wallet(host.id)).coins;
+ const selected=latest.at(-1),selectedId=selected.id.slice('character:'.length);
+ const started=await request(host,'/rooms/'+id+'/start','POST',{fillBots:true});assert.equal(started.status,200);
+ assert.equal(started.room.players.length,18);assert.equal(new Set(started.room.players.map(player=>player.character.id)).size,18);
+ assert.equal(started.room.players.find(player=>player.id===host.id).character.id,selectedId);
+ await game.close();game=createShowdownGame(options);
+ const restored=await request(host,'/rooms/'+id);assert.equal(restored.status,200);
+ assert.equal(restored.room.players.find(player=>player.id===host.id).character.id,selectedId);
+ assert.equal((await progression.wallet(host.id)).coins,balanceAfterPurchases,'reconectar conserva el saldo tras las compras');
+});
+
 test('Showdown sustituye a Japan, cuesta exactamente 1000 una vez y está disponible en nivel 1 para cada jugador',async()=>{
  const mode=shop.modes.find(m=>m.id==='showdown');assert.equal(mode.price,1000);assert.equal(mode.noLevelRequirement,true);assert(!mode.upcoming);assert(!shop.modes.some(m=>m.id==='japan'));
  const actor=await user(),poor=await user(999);assert.equal((await request(null)).status,401);assert.equal((await make(actor)).status,403);assert.equal((await buy(poor)).status,409);
