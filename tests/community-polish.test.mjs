@@ -26,6 +26,20 @@ function chatAccess(){
  return {dom,w,conversation:w.state.conversations[0]};
 }
 
+test('Añadir miembros aparece para el staff aunque no administre el grupo, y conserva las opciones de los demás roles',()=>{
+ for(const scenario of [{staff:true,role:'member',type:'group',canAdd:true},{staff:false,role:'admin',type:'group',canAdd:true},{staff:false,role:'member',type:'group',canAdd:false},{staff:false,role:'mod',type:'group',canAdd:false},{staff:true,role:'member',type:'dm',canAdd:false}]){
+  const dom=new JSDOM('<div id="modalContent"></div>',{url:'https://test.invalid/#mensajes',runScripts:'outside-only'}),w=dom.window;
+  try{
+   w.$=selector=>w.document.querySelector(selector);w.state={user:{id:'viewer',staff:scenario.staff},active:'chat',conversations:[{id:'chat',title:'Grupo de prueba',type:scenario.type,members:[{id:'viewer',name:'Yo',role:scenario.role},{id:'other',name:'Otra persona',role:'member'}]}]};
+   w.modal=html=>{w.document.querySelector('#modalContent').innerHTML=html;};w.chatTitle=conversation=>conversation.title;w.esc=value=>String(value);w.avatar=()=>'';w.icon=()=>'<svg></svg>';w.chatInfo=()=>{};
+   const code=fs.readFileSync(new URL('../public/streaming.js',import.meta.url),'utf8'),start=code.indexOf('chatInfo=function(){');
+   w.eval(code.slice(start,code.indexOf("document.addEventListener('change'",start)));w.chatInfo();
+   assert.equal(w.document.querySelectorAll('[data-action="add-members"]').length,scenario.canAdd?1:0,JSON.stringify(scenario));
+   if(scenario.role!=='admin'){assert.equal(w.document.querySelector('#groupRename'),null);assert.equal(w.document.querySelector('[data-group-role]'),null);}
+  }finally{dom.window.close();}
+ }
+});
+
 test('actualizar presencia y estado del grupo cien veces conserva un solo aviso de administradores',()=>{
  const {dom,w}=chatAccess();try{
   w.updateChatStatus();const notice=w.document.querySelector('.chat-locked');

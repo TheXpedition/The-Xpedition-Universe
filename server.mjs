@@ -559,7 +559,8 @@ async function api(req, res, url) {
     const b = await body(req);
     const type = b.type === 'group' ? 'group' : 'dm';
     const ids = [...new Set([u.id, ...Array.isArray(b.members) ? b.members : []])];
-    if (ids.length < 2 || ids.length > 30 || ids.some(id => typeof id !== 'string')) fail(400, 'Elige entre 1 y 29 cuentas registradas.');
+    if (ids.length < 2 || ids.some(id => typeof id !== 'string')) fail(400, 'Elige al menos una cuenta registrada.');
+    if (type === 'group' && !accountRole(u.id).staff && ids.length > 30) fail(400, 'Elige entre 1 y 29 cuentas registradas.');
     for (const uid of ids) if (!await one('SELECT 1 FROM users WHERE id=?', uid)) fail(400, 'Cuenta no encontrada.');
     if (type === 'dm' && ids.length !== 2) fail(400, 'Un chat directo tiene dos participantes.');
     const id = type === 'dm' ? 'dm:' + ids.sort().join(':') : randomUUID();
@@ -701,10 +702,12 @@ async function api(req, res, url) {
       });
     }
     if (action === 'members' && method === 'POST') {
-      if (conv.type !== 'group' || (await one('SELECT role FROM members WHERE conversation=? AND user_id=?', id, u.id)).role !== 'admin') fail(403, 'Solo la persona que creó el grupo puede añadir miembros.');
+      const staff = accountRole(u.id).staff;
+      if (conv.type !== 'group' || !staff && (await one('SELECT role FROM members WHERE conversation=? AND user_id=?', id, u.id)).role !== 'admin') fail(403, 'Solo un administrador del grupo o el staff puede añadir miembros.');
       const b = await body(req);
       const ids = [...new Set(Array.isArray(b.members) ? b.members : [])];
-      if (ids.length + (await memberIds(id)).length > 30 || ids.some(x => typeof x !== 'string')) fail(400, 'Miembros inválidos o límite de 30 alcanzado.');
+      if (ids.some(x => typeof x !== 'string')) fail(400, 'Miembros inválidos.');
+      if (!staff && ids.length + (await memberIds(id)).length > 30) fail(400, 'Límite de 30 miembros alcanzado.');
       for (const uid of ids) if (!await one('SELECT 1 FROM users WHERE id=?', uid)) fail(400, 'Cuenta no encontrada.');
       for (const uid of ids) await run('INSERT INTO members(conversation,user_id) VALUES(?,?) ON CONFLICT DO NOTHING', id, uid);
       notify(await memberIds(id), 'conversations', {});
