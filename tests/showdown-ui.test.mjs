@@ -9,6 +9,75 @@ const characters=JSON.parse(fs.readFileSync(new URL('../public/showdown/characte
 const runtime=fs.readFileSync(new URL('../public/showdown/simulator.js',import.meta.url),'utf8').replace("import('/showdown/config.mjs')",'Promise.resolve({})');
 function renderer(){const dom=new JSDOM('<main id="main"></main><dialog id="modal"><div id="modalContent"></div></dialog><div id="toasts"></div>',{url:'http://localhost/#showdown',runScripts:'outside-only',pretendToBeVisual:true});const c=dom.getInternalVMContext();c.CSS={escape:s=>String(s)};vm.runInContext(`const $=(s)=>document.querySelector(s),$$=(s)=>[...document.querySelectorAll(s)];const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const state={route:'showdown',user:{id:'human'},profiles:[]};function startStream(){}function api(){}function time(){return '12:00';}function icon(){return '<svg></svg>';}function closeModal(){}function renderChrome(){}function norm(v){return String(v).toLowerCase();}function toast(){}function requireAuth(){return true;}`,c);vm.runInContext(fs.readFileSync(new URL('../public/showdown/stage.js',import.meta.url),'utf8'),c);vm.runInContext(runtime,c);vm.runInContext(fs.readFileSync(new URL('../public/showdown/experience.js',import.meta.url),'utf8'),c);c.qaConfig={SHOWDOWN_STATS,SHOWDOWN_SOCIAL_ACTIONS};vm.runInContext('sdUI.config=qaConfig',c);c.qaData={characters,formats:Object.values(SHOWDOWN_FORMATS),challenges:SHOWDOWN_CHALLENGES,ownedCharacters:characters.map(c=>c.id),owned:true,wallet:{coins:500},rooms:[]};vm.runInContext('sdUI.data=qaData',c);return {dom,c,render(view){c.qaView=view;vm.runInContext('sdUI.room=qaView;sdUI.offset=qaView.serverTime-Date.now();sdGameShell(qaView);sdAcceptRoom(qaView,true)',c);},eval:s=>vm.runInContext(s,c)};}
 
+test('crear una sala con amigos abre el lobby y permite pasar al escenario cuando ambos están listos',async t=>{
+ const ui=renderer();t.after(()=>ui.dom.window.close());
+ const s=createShowdown({id:'new-lobby',host:'human',mode:'multi',now:Date.now()});
+ joinShowdown(s,{id:'human',name:'Anfitrión'},Date.now());
+ const calls=[];
+ ui.c.api=async(path,options={})=>{
+  calls.push({path,options});
+  if(path==='/showdown')return ui.c.qaData;
+  if(path==='/showdown/rooms')return {room:showdownPublicView(s,'human',Date.now(),characters)};
+  if(path==='/showdown/rooms/new-lobby/chat')return {messages:[]};
+  if(path==='/showdown/rooms/new-lobby')return {room:showdownPublicView(s,'human',Date.now(),characters)};
+  if(path==='/showdown/rooms/new-lobby/start'){
+   beginShowdown(s,characters,Date.now(),options.body);
+   return {room:showdownPublicView(s,'human',Date.now(),characters)};
+  }
+  throw new Error('Petición inesperada: '+path);
+ };
+ ui.c.go=path=>{
+  ui.dom.reconfigure({url:'http://localhost/#'+path});
+  ui.c.navigation=ui.eval('renderShowdownSimulator()');
+ };
+ ui.eval('sdEntry(true)');
+ const doc=ui.dom.window.document;
+ doc.querySelector('[data-sd="create"][data-mode="multi"]').click();
+ await new Promise(resolve=>setImmediate(resolve));
+ assert(ui.c.navigation,'crear la sala navega a su URL');await ui.c.navigation;
+ assert.equal(calls.find(c=>c.path==='/showdown/rooms').options.body.mode,'multi');
+ assert(doc.querySelector('.sd-lobby'),'la sala reemplaza la pantalla de carga');
+ assert(!doc.querySelector('.sd-loading'));assert(!doc.querySelector('.sd-error'));
+ assert(doc.querySelector('[data-sd="character"]'));
+ assert(doc.querySelector('[data-sd="copy-link"]'));assert(doc.querySelector('[data-sd="invite"]'));
+ assert.equal(doc.querySelector('#sdFillBots').checked,false);
+ assert.equal(doc.querySelector('[data-sd="start"]').disabled,true);
+ doc.querySelector('[data-sd="chat-toggle"]').click();assert.equal(doc.querySelector('#sdChat').hidden,false);
+ selectShowdownCharacter(s,'human',characters[0].id,characters);
+ joinShowdown(s,{id:'friend',name:'Amiga'},Date.now());selectShowdownCharacter(s,'friend',characters[1].id,characters);
+ ui.c.qaLobby=showdownPublicView(s,'human',Date.now(),characters);ui.eval('sdAcceptRoom(qaLobby)');
+ assert.equal(doc.querySelectorAll('.sd-cast-slot').length,2);
+ assert.equal(doc.querySelectorAll('[data-sd="character"]').length,1);
+ assert.equal(doc.querySelector('#sdChat').hidden,false);
+ assert.equal(doc.querySelector('[data-sd="start"]').disabled,false);
+ doc.querySelector('#sdFillBots').checked=true;
+ doc.querySelector('[data-sd="start"]').click();await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(calls.find(c=>c.path.endsWith('/start')).options.body.fillBots,true);
+ assert.equal(s.status,'running');assert(doc.querySelector('#sdStage h1'));assert(!doc.querySelector('.sd-lobby'));
+});
+
+test('retomar una sala abre el lobby para invitados y staff sin bloquear el chat',async t=>{
+ const s=createShowdown({id:'saved-lobby',host:'human',mode:'multi',now:Date.now()});
+ for(const id of ['human','friend'])joinShowdown(s,{id,name:id},Date.now());
+ for(const role of ['host','friend','spectator']){
+  const ui=renderer();t.after(()=>ui.dom.window.close());
+  const id=role==='host'?'human':role==='friend'?'friend':'staff';
+  ui.eval('state.user.id='+JSON.stringify(id));
+  const view=showdownPublicView(s,id,Date.now(),characters,{spectator:role==='spectator'});view.isStaff=role==='spectator';
+  ui.c.api=async path=>path==='/showdown'?ui.c.qaData:path.endsWith('/chat')?{messages:[]}:{room:view};
+  ui.dom.reconfigure({url:'http://localhost/#showdown/saved-lobby'});
+  await ui.eval('renderShowdownSimulator()');
+  const doc=ui.dom.window.document;
+  assert(doc.querySelector('.sd-lobby'),role);assert(!doc.querySelector('.sd-loading'),role);
+  doc.querySelector('[data-sd="chat-toggle"]').click();assert.equal(doc.querySelector('#sdChat').hidden,false,role);
+  assert.equal(doc.querySelector('#sdChatText').disabled,false,role);
+  if(role==='spectator'){
+   assert(doc.querySelector('.sd-lobby.spectator'));assert(doc.querySelector('.sd-spectator-banner'));
+   assert(!doc.querySelector('[data-sd="start"]'));assert.equal(doc.querySelectorAll('[data-sd="character"]').length,0);
+  }else assert.equal(doc.querySelectorAll('[data-sd="character"]').length,1,role);
+ }
+});
+
 test('todas las fases de los tres formatos tienen pantalla, reloj y acciones válidas, sin filtrar rankings ni track anticipado',()=>{
  for(const format of [2,3,4]){const ui=renderer(),s=createShowdown({id:'qa',host:'human',format,seed:47,now:1000});joinShowdown(s,{id:'human',name:'Usuario <QA>'},1000);selectShowdownCharacter(s,'human',characters[0].id,characters);beginShowdown(s,characters,1000,{fillBots:true});let n=0,at=1000;const phases=new Set();while(s.status==='running'&&n++<200){const view=showdownPublicView(s,'human',at,characters);ui.render(view);const doc=ui.dom.window.document;phases.add(s.phase);assert(doc.querySelector('#sdStage h1'),s.phase+' tiene título');assert(doc.querySelector('#sdClock'),s.phase+' tiene reloj');assert(!doc.querySelector('.sd-track-table'));assert(!doc.querySelector('script'));assert(!doc.body.innerHTML.includes('undefined'));assert(!doc.body.innerHTML.includes('[object Object]'));if(s.phase==='ranking'&&view.current.pool.includes('human')){const picks=doc.querySelectorAll('[data-sd="rank-pick"]');assert.equal(picks.length,view.current.pool.length-1);assert(![...picks].some(p=>p.dataset.id==='human'));}if(s.phase==='voteReveal'){at=s.phaseAt+9000;tickShowdown(s,at);ui.render(showdownPublicView(s,'human',at,characters));assert.equal(doc.querySelectorAll('.sd-star-transfer').length,1);}at=s.deadline;tickShowdown(s,at);}
   assert.equal(s.status,'finished');ui.render(showdownPublicView(s,'human',at,characters));assert(ui.dom.window.document.querySelector('.sd-champion'));ui.eval('sdUI.track=true;sdRenderStage(sdUI.room)');assert.equal(ui.dom.window.document.querySelectorAll('.sd-track-table tbody tr').length,18);assert(ui.dom.window.document.querySelector('[data-sd="download-track"]'));assert(phases.has('semifinalists'));assert(phases.has('wildcard'));assert(phases.has('ranking'));assert(phases.has('rival'));ui.dom.window.close();}
