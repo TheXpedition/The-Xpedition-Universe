@@ -2780,7 +2780,7 @@ $("#nextEpisode").addEventListener("click", ()=>{
   go(3); updateEpisodeUI();
 });
 
-$("#downloadTrackJpg").addEventListener('click',()=>parent.XPDownloadShowdownTrack({title:'SHOWDOWN · MI TEMPORADA',filename:'Showdown-solitario',columns:Array.from({length:visibleTrEpisodes()},(_,i)=>({label:'E'+(i+1),group:i<9?groupOrder[Math.floor(i/3)]:'Semifinal / Final',color:i<9?groupColors[groupOrder[Math.floor(i/3)]]:'#8451ac'})),rows:Array.from($('#trkBody').children).map(tr=>{const r=trackData.find(r=>r.name===tr.dataset.name);return {name:r.name,image:imgFor(r.name)[0],cells:r.cells.slice(0,visibleTrEpisodes()).map(c=>c.txt||'')};})}));
+$("#downloadTrackJpg").addEventListener('click',()=>parent.XPDownloadShowdownTrack({title:'SHOWDOWN · MI TEMPORADA',filename:'Showdown-solitario',columns:Array.from({length:visibleTrEpisodes()},(_,i)=>({label:'E'+(i+1),group:i<9?groupOrder[Math.floor(i/3)]:'Semifinal / Final',color:i<9?groupColors[groupOrder[Math.floor(i/3)]]:'#8451ac'})),rows:Array.from($('#trkBody').children).map(tr=>{const r=trackData.find(r=>r.name===tr.dataset.name);return {name:r.name,image:imgFor(r.name)[0],cells:r.cells.slice(0,visibleTrEpisodes())};})}));
 $("#restartSim").addEventListener("click", ()=>{ parent.ShowdownSoloHost.restart(); });
 $("#homeBtn").addEventListener("click", ()=>{ parent.location.hash='showdown'; });
 

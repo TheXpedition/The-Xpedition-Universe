@@ -29,6 +29,16 @@ test('la simulación solo recupera elenco, distribución, estrellas y tabla al c
  const app=create(3);app.click('#randomCast');app.click('#nextBtn');app.click('#confirmFormat');for(let i=0;i<3;i++){app.click('#distRandomBtn');app.click('#distContinueBtn');}app.click('#runChallenge');app.click('#randomTop2');app.click('#confirmTop2');app.click('#arenaContinueBtn');app.click('#toTrack');const checkpoint=app.saved.findLast(s=>s.stage==='track');assert(checkpoint);const restored=create(3,checkpoint);restored.flush();assert.equal(restored.evaluate('episode'),checkpoint.vars.episode);assert.equal(restored.evaluate('JSON.stringify(stars)'),JSON.stringify(checkpoint.vars.stars));assert.equal(restored.dom.window.document.querySelectorAll('#trkBody tr').length,18);assert.equal(restored.dom.window.document.querySelector('.stage.active').id,'stage-6');restored.click('#nextEpisode');assert.equal(restored.evaluate('episode'),2);app.dom.window.close();restored.dom.window.close();
 });
 
+test('descargar el track solo conserva el estilo TOP2 del WIN que pierde el lipsync',()=>{
+ const app=create(3);try{
+  let exported;app.dom.window.XPDownloadShowdownTrack=payload=>{exported=payload;};
+  app.evaluate("trackData=parent.ShowdownSoloHost.characters.slice(0,18).map(c=>({name:c.name,group:'Rosa',cells:[]}));setTR(trackData[0].name,1,'win','WIN');setTR(trackData[1].name,1,'top2','WIN');buildTRTable();");
+  app.click('#downloadTrackJpg');
+  const winner=exported.rows.find(row=>row.name===characters[0].name).cells[0],loser=exported.rows.find(row=>row.name===characters[1].name).cells[0];
+  assert.equal(winner.txt,'WIN');assert.equal(winner.cls,'win');assert.equal(loser.txt,'WIN');assert.equal(loser.cls,'top2');
+ }finally{app.dom.window.close();}
+});
+
 test('el track record solo agrega columnas cuando hay un episodio jugado',()=>{
  const app=create(3),doc=app.dom.window.document;
  app.evaluate("trackData=parent.ShowdownSoloHost.characters.slice(0,18).map(c=>({name:c.name,group:'Rosa',cells:[]}));setTR(trackData[0].name,1,'win','WIN');buildTRTable();");

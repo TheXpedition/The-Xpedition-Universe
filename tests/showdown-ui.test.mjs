@@ -104,6 +104,41 @@ test('retomar una sala abre el lobby para invitados y staff sin bloquear el chat
  }
 });
 
+test('el WIN del perdedor del lipsync de bracket usa el color de TOP2 en pantalla y JPG, sin cambiar el registro',async t=>{
+ const ui=renderer();t.after(()=>ui.dom.window.close());
+ const s=createShowdown({id:'track-colors',host:'human',mode:'multi',seed:47,now:1000});
+ for(const [index,id]of ['human','friend'].entries()){joinShowdown(s,{id,name:id},1000);selectShowdownCharacter(s,id,characters[index].id,characters);}
+ beginShowdown(s,characters,1000,{fillBots:true});let guard=0;
+ while(s.status==='running'&&guard++<200)tickShowdown(s,s.deadline);
+ assert.equal(s.status,'finished');
+ const view=showdownPublicView(s,'human',s.phaseAt,characters),before=JSON.stringify(view.track);
+ ui.c.qaView=view;ui.eval('sdUI.room=qaView;');
+ const doc=ui.dom.window.document,style=doc.createElement('style');style.textContent=fs.readFileSync(new URL('../public/showdown/simulator.css',import.meta.url),'utf8');doc.head.append(style);
+ doc.querySelector('#main').innerHTML=ui.eval('sdTrackScreen(qaView)');
+ const episode=view.episodes.find(episode=>episode.key.endsWith('e1')),winner=episode.winner,loser=episode.top.find(id=>id!==winner);
+ const column=ui.eval('sdTrackColumns(qaView)').findIndex(column=>column.key===episode.key);
+ const cellFor=id=>[...doc.querySelectorAll('.sd-track-table tbody tr')].find(row=>row.querySelector('th strong').textContent===view.players.find(player=>player.id===id).character.name).querySelectorAll('td')[column];
+ const won=cellFor(winner),lost=cellFor(loser),top2=doc.querySelector('.sd-track-legend .record-top2');
+ assert.equal(won.textContent,'WIN');assert.equal(lost.textContent,'WIN');assert(won.classList.contains('record-win'));assert(lost.classList.contains('record-top2'));
+ assert.equal(ui.dom.window.getComputedStyle(lost).backgroundColor,ui.dom.window.getComputedStyle(top2).backgroundColor);
+ assert.notEqual(ui.dom.window.getComputedStyle(won).backgroundColor,ui.dom.window.getComputedStyle(lost).backgroundColor);
+ let exported;ui.c.XPDownloadShowdownTrack=async payload=>{exported=payload;};await ui.eval('sdDownloadTrack()');
+ const payload=exported.rows.find(row=>row.name===view.players.find(player=>player.id===loser).character.name).cells[column];
+ assert.equal(payload.txt,'WIN');assert.equal(payload.cls,'top2');assert.equal(JSON.stringify(view.track),before);
+});
+
+test('el JPG distingue el WIN de estilo TOP2 del WIN ganador y conserva el texto',async()=>{
+ const rectangles=[],labels=[];let clicked=false;
+ const ctx={scale(){},strokeRect(){},fillRect(x,y,width,height){rectangles.push({x,y,width,height,color:this.fillStyle});},fillText(text,x,y){labels.push({text,x,y,color:this.fillStyle});}};
+ const canvas={getContext:()=>ctx,toBlob:callback=>callback({})},link={click(){clicked=true;},remove(){}};
+ const context={window:{},document:{createElement:tag=>tag==='canvas'?canvas:link,body:{append(){}}},URL:{createObjectURL:()=> 'blob:track',revokeObjectURL(){}},setTimeout:()=>0};
+ vm.runInNewContext(fs.readFileSync(new URL('../public/showdown/track-export.js',import.meta.url),'utf8'),context);
+ await context.window.XPDownloadShowdownTrack({columns:[{label:'1'},{label:'2'},{label:'3'},{label:'4'}],rows:[{name:'Participante',cells:[{txt:'WIN',cls:'win'},{txt:'WIN',cls:'top2'},'TOP2','WIN']}]});
+ const backgrounds=rectangles.filter(rect=>rect.y===98&&rect.width===72),texts=labels.filter(label=>label.y===128);
+ assert.equal(backgrounds[1].color,backgrounds[2].color);assert.notEqual(backgrounds[0].color,backgrounds[1].color);assert.equal(backgrounds[0].color,backgrounds[3].color);
+ assert.deepEqual(texts.map(label=>label.text),['WIN','WIN','TOP2','WIN']);assert.equal(texts[1].color,texts[2].color);assert(clicked);
+});
+
 test('todas las fases de los tres formatos tienen pantalla, reloj y acciones válidas, sin filtrar rankings ni track anticipado',()=>{
  for(const format of [2,3,4]){const ui=renderer(),s=createShowdown({id:'qa',host:'human',format,seed:47,now:1000});joinShowdown(s,{id:'human',name:'Usuario <QA>'},1000);selectShowdownCharacter(s,'human',characters[0].id,characters);beginShowdown(s,characters,1000,{fillBots:true});let n=0,at=1000;const phases=new Set();while(s.status==='running'&&n++<200){const view=showdownPublicView(s,'human',at,characters);ui.render(view);const doc=ui.dom.window.document;phases.add(s.phase);assert(doc.querySelector('#sdStage h1'),s.phase+' tiene título');assert(doc.querySelector('#sdClock'),s.phase+' tiene reloj');assert(!doc.querySelector('.sd-track-table'));assert(!doc.querySelector('script'));assert(!doc.body.innerHTML.includes('undefined'));assert(!doc.body.innerHTML.includes('[object Object]'));if(s.phase==='ranking'&&view.current.pool.includes('human')){const picks=doc.querySelectorAll('[data-sd="rank-pick"]');assert.equal(picks.length,view.current.pool.length-1);assert(![...picks].some(p=>p.dataset.id==='human'));}if(s.phase==='voteReveal'){at=s.phaseAt+9000;tickShowdown(s,at);ui.render(showdownPublicView(s,'human',at,characters));assert.equal(doc.querySelectorAll('.sd-star-transfer').length,1);}at=s.deadline;tickShowdown(s,at);}
   assert.equal(s.status,'finished');ui.render(showdownPublicView(s,'human',at,characters));assert(ui.dom.window.document.querySelector('.sd-champion'));ui.eval('sdUI.track=true;sdRenderStage(sdUI.room)');assert.equal(ui.dom.window.document.querySelectorAll('.sd-track-table tbody tr').length,18);assert(ui.dom.window.document.querySelector('[data-sd="download-track"]'));assert(phases.has('semifinalists'));assert(phases.has('wildcard'));assert(phases.has('ranking'));assert(phases.has('rival'));ui.dom.window.close();}
