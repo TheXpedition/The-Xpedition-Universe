@@ -14,6 +14,7 @@ import {createInteractions} from './social-interactions.mjs';
 import {moderationStatus,warmModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
 import {openStorage} from './storage.mjs';
+import {createPasswordRecovery} from './password-recovery.mjs';
 import {randomBytes, randomUUID, scrypt as scryptCb, timingSafeEqual, createHash} from 'node:crypto';
 import {promisify} from 'node:util';
 import fs from 'node:fs';
@@ -98,6 +99,7 @@ async function verifyPassword(password, stored) {
   const actual = Buffer.from(hash, 'hex');
   return actual.length === candidate.length && timingSafeEqual(actual, candidate);
 }
+const passwordRecovery=createPasswordRecovery({db,body,json,fail,checkRate,serialize,passwordHash,verifyPassword,apiKey:firebaseConfig.apiKey,closeSessions:id=>{for(const stream of events.get(id)||[])stream.res.end();}});
 function userFields(u) {
   return {
     id: u.id,
@@ -357,6 +359,7 @@ async function api(req, res, url) {
     });
   }
   if (p.startsWith('/api/auth/') && method === 'POST') checkRate(req, 'auth', 30, 15 * 60000);
+  if(await passwordRecovery.handle(req,res,url))return;
   if (p === '/api/auth/register' && method === 'POST') {
     const b = await body(req);
     const name = checkName(b.name);
@@ -382,7 +385,10 @@ async function api(req, res, url) {
     if (typeof b.password !== 'string' || b.password.length > 128) fail(400, 'Revisa tu usuario y contraseña.');
     let account = await one('SELECT * FROM users WHERE email=? OR name_key=?', canonical(b.login), canonical(b.login));
     if (account) {
-      if (!await verifyPassword(b.password, account.password)) fail(401, 'Usuario o contraseña incorrectos.');
+      if (!await verifyPassword(b.password, account.password)) {
+        account=await passwordRecovery.signInAfterReset(account,b.password);
+        if(!account)fail(401, 'Usuario o contraseña incorrectos.');
+      }
     } else if (String(b.login).includes('@')) {
       const remote = await firebaseRequest('signInWithPassword', {
         email: b.login,
@@ -521,6 +527,7 @@ async function api(req, res, url) {
     const password = await passwordHash(b.password);
     await db.transaction(async () => {
       await run('UPDATE users SET password=? WHERE id=?', password, u.id);
+      await run('DELETE FROM password_recovery_requests WHERE user_id=?',u.id);
       await run('DELETE FROM sessions WHERE user_id=?', u.id);
       await makeSession(req, res, u.id, false);
     });
@@ -832,6 +839,7 @@ const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
 const xMillion=createXMillion({db,json,fail,body,checkRate,access:arcade.access,notify,serialize});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
+  if(url.pathname==='/api/auth/forgot-password')return api(req,res,url);
   if(url.pathname.startsWith('/api/showdown'))return api(req,res,url);
   if(url.pathname.startsWith('/api/x-million'))return serialize(()=>api(req,res,url));
   // Casting reads can advance expired questions. Serialize them with other writes.

@@ -6,6 +6,7 @@ import path from 'node:path';
 const schema = `
 CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY,name TEXT NOT NULL,name_key TEXT UNIQUE NOT NULL,email TEXT UNIQUE NOT NULL,password TEXT,firebase_id TEXT UNIQUE,avatar TEXT NOT NULL,bio TEXT NOT NULL DEFAULT '',created INTEGER NOT NULL,saved TEXT NOT NULL DEFAULT '[]');
 CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS password_recovery_requests(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,requested INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS push_configuration(name TEXT PRIMARY KEY,public_key TEXT NOT NULL,private_key TEXT NOT NULL,created INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS push_subscriptions(endpoint_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,session_token TEXT NOT NULL REFERENCES sessions(token) ON DELETE CASCADE,subscription TEXT NOT NULL,created INTEGER NOT NULL,updated INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS push_subscriptions_user ON push_subscriptions(user_id);
