@@ -5,7 +5,7 @@ import {serverDatabase} from './world-server-store.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import {openDatabase} from './database.mjs';
-import {loadAccountVerifications} from './account-roles.mjs';
+import {loadAccountVerifications,isStaff} from './account-roles.mjs';
 import {createWorldAuth} from './world-auth.mjs';
 import {createReviewEntry,reviewEntryConfiguration} from './world-review-entry.mjs';
 import {applicationURL} from './world-gateway.mjs';
@@ -72,7 +72,7 @@ const server=http.createServer(async(req,res)=>{
   const headers={'Content-Type':mime[path.extname(filename)]||'application/octet-stream','Content-Length':stat.size,'Accept-Ranges':'bytes'};let start=0,end=stat.size-1,status=200;
   if(req.headers.range){const m=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);if(!m||!m[1]&&!m[2]){res.writeHead(416,{'Content-Range':'bytes */'+stat.size});return res.end();}start=m[1]?Number(m[1]):Math.max(0,stat.size-Number(m[2]));end=m[1]&&m[2]?Math.min(stat.size-1,Number(m[2])):stat.size-1;if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=stat.size||end<start){res.writeHead(416,{'Content-Range':'bytes */'+stat.size});return res.end();}status=206;headers['Content-Range']='bytes '+start+'-'+end+'/'+stat.size;headers['Content-Length']=end-start+1;}
   res.writeHead(status,headers);if(req.method==='HEAD')return res.end();const stream=fs.createReadStream(filename,{start,end});stream.on('error',()=>res.destroy());stream.pipe(res);
- }catch(e){if(res.headersSent)return res.end();if(!e.status)console.error(e);json(res,{error:e.status?e.message:'No se pudo completar la operación.'},e.status||500);}
+ }catch(e){if(res.headersSent)return res.end();if(!e.status)console.error(e);const actor=!e.status?await getSession(req).catch(()=>null):null;json(res,{error:e.status?e.message:'No se pudo completar la operación.',...(!e.status&&isStaff(actor?.id)?{diagnostic:{code:e.code||e.name,message:String(e.message).slice(0,240)}}:{})},e.status||500);}
 });
 server.on('upgrade',(req,socket,head)=>{
  if(req.url?.split('?')[0]==='/juegos/reto-pelotas/ws'){

@@ -7,7 +7,7 @@ export async function startWorld(){
  if(window.XpeditionWorldServer){document.title=window.XpeditionWorldServer.name+' · World';const footer=document.querySelector('.games-footer>span');if(footer)footer.textContent='THE XPEDITION WORLD · '+window.XpeditionWorldServer.name;}
  clearBootWallpaper(gate);const display=createBootDisplay(gate),progress=new BootProgress((n,id)=>{if(turn===generation)display.update(n,id);});
  try{
-  const bootstrap=progress.track('account',(async()=>{const r=await fetch('/api/world/bootstrap',{credentials:'same-origin',cache:'no-store'}),data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'No se pudo entrar a World.'),{status:r.status});return data;})());
+  const bootstrap=progress.track('account',(async()=>{const r=await fetch('/api/world/bootstrap',{credentials:'same-origin',cache:'no-store'}),data=await r.json();if(!r.ok){if(data.diagnostic)console.error('World bootstrap:',data.diagnostic.code,data.diagnostic.message);throw Object.assign(Error(data.error||'No se pudo entrar a World.'),{status:r.status});}return data;})());
   const work=[
    progress.track('art',bootstrap.then(data=>{const equipped=data.shop?.equipped.wallpaper,chosen=data.shop?.catalog.wallpapers.find(w=>w.id===equipped);return showBootWallpaper(gate,chosen?.image||'/assets/branding/apocalypse/portada-reparto.webp?v=30f0948cae6a',{isCurrent:()=>turn===generation});})),
    progress.track('logo',loadBootImage('/assets/branding/apocalypse/apocalypse-ii-logo.webp')),
