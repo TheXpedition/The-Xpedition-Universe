@@ -1,0 +1,736 @@
+{
+  "version": 2,
+  "character": "bonju",
+  "status": "articulation-review",
+  "reference": {
+    "origin": [
+      14,
+      68
+    ],
+    "width": 306,
+    "height": 980
+  },
+  "bones": {
+    "root": {
+      "parent": null,
+      "pivot": [
+        178,
+        444
+      ]
+    },
+    "pelvis": {
+      "parent": "root",
+      "pivot": [
+        178,
+        444
+      ]
+    },
+    "torso": {
+      "parent": "pelvis",
+      "pivot": [
+        178,
+        444
+      ]
+    },
+    "neck": {
+      "parent": "torso",
+      "pivot": [
+        157,
+        288
+      ]
+    },
+    "head": {
+      "parent": "neck",
+      "pivot": [
+        157,
+        284
+      ]
+    },
+    "hairLeft": {
+      "parent": "head",
+      "pivot": [
+        129,
+        156
+      ]
+    },
+    "hairCentre": {
+      "parent": "head",
+      "pivot": [
+        183,
+        123
+      ]
+    },
+    "hairRight": {
+      "parent": "head",
+      "pivot": [
+        247,
+        160
+      ]
+    },
+    "hairBack": {
+      "parent": "head",
+      "pivot": [
+        174,
+        152
+      ]
+    },
+    "upperL": {
+      "parent": "torso",
+      "pivot": [
+        98,
+        320
+      ]
+    },
+    "foreL": {
+      "parent": "upperL",
+      "pivot": [
+        81,
+        444
+      ]
+    },
+    "handL": {
+      "parent": "foreL",
+      "pivot": [
+        63,
+        562
+      ]
+    },
+    "upperR": {
+      "parent": "torso",
+      "pivot": [
+        220,
+        330
+      ]
+    },
+    "foreR": {
+      "parent": "upperR",
+      "pivot": [
+        247,
+        446
+      ]
+    },
+    "handR": {
+      "parent": "foreR",
+      "pivot": [
+        271,
+        563
+      ]
+    },
+    "thighL": {
+      "parent": "pelvis",
+      "pivot": [
+        152,
+        536
+      ]
+    },
+    "calfL": {
+      "parent": "thighL",
+      "pivot": [
+        157,
+        718
+      ]
+    },
+    "footL": {
+      "parent": "calfL",
+      "pivot": [
+        137,
+        932
+      ]
+    },
+    "thighR": {
+      "parent": "pelvis",
+      "pivot": [
+        213,
+        536
+      ]
+    },
+    "calfR": {
+      "parent": "thighR",
+      "pivot": [
+        201,
+        716
+      ]
+    },
+    "footR": {
+      "parent": "calfR",
+      "pivot": [
+        193,
+        932
+      ]
+    },
+    "dress": {
+      "parent": "pelvis",
+      "pivot": [
+        178,
+        444
+      ]
+    },
+    "eyes": {
+      "parent": "head",
+      "pivot": [
+        176,
+        207
+      ]
+    },
+    "mouth": {
+      "parent": "head",
+      "pivot": [
+        179,
+        238
+      ]
+    }
+  },
+  "parts": {
+    "hairCentre": {
+      "x": 2,
+      "y": 2,
+      "w": 110,
+      "h": 350,
+      "offset": [
+        141,
+        71
+      ],
+      "bone": "hairCentre"
+    },
+    "hairLeft": {
+      "x": 114,
+      "y": 2,
+      "w": 128,
+      "h": 375,
+      "offset": [
+        14,
+        74
+      ],
+      "bone": "hairLeft"
+    },
+    "hairRight": {
+      "x": 244,
+      "y": 2,
+      "w": 66,
+      "h": 290,
+      "offset": [
+        251,
+        95
+      ],
+      "bone": "hairRight"
+    },
+    "head": {
+      "x": 312,
+      "y": 2,
+      "w": 132,
+      "h": 133,
+      "offset": [
+        107,
+        152
+      ],
+      "bone": "head"
+    },
+    "eyes": {
+      "x": 446,
+      "y": 2,
+      "w": 103,
+      "h": 32,
+      "offset": [
+        124,
+        190
+      ],
+      "bone": "eyes"
+    },
+    "mouth": {
+      "x": 551,
+      "y": 2,
+      "w": 55,
+      "h": 28,
+      "offset": [
+        150,
+        225
+      ],
+      "bone": "mouth"
+    },
+    "torso": {
+      "x": 608,
+      "y": 2,
+      "w": 165,
+      "h": 139,
+      "offset": [
+        85,
+        284
+      ],
+      "bone": "torso"
+    },
+    "upperR": {
+      "x": 775,
+      "y": 2,
+      "w": 50,
+      "h": 148,
+      "offset": [
+        206,
+        301
+      ],
+      "bone": "upperR"
+    },
+    "upperL": {
+      "x": 827,
+      "y": 2,
+      "w": 47,
+      "h": 144,
+      "offset": [
+        73,
+        307
+      ],
+      "bone": "upperL"
+    },
+    "pelvis": {
+      "x": 876,
+      "y": 2,
+      "w": 77,
+      "h": 30,
+      "offset": [
+        142,
+        419
+      ],
+      "bone": "pelvis"
+    },
+    "foreL": {
+      "x": 955,
+      "y": 2,
+      "w": 60,
+      "h": 118,
+      "offset": [
+        46,
+        444
+      ],
+      "bone": "foreL"
+    },
+    "foreR": {
+      "x": 2,
+      "y": 379,
+      "w": 72,
+      "h": 132,
+      "offset": [
+        218,
+        446
+      ],
+      "bone": "foreR"
+    },
+    "thighL": {
+      "x": 76,
+      "y": 379,
+      "w": 83,
+      "h": 106,
+      "offset": [
+        113,
+        612
+      ],
+      "bone": "thighL"
+    },
+    "dress": {
+      "x": 161,
+      "y": 379,
+      "w": 171,
+      "h": 201,
+      "offset": [
+        88,
+        449
+      ],
+      "bone": "dress"
+    },
+    "thighR": {
+      "x": 334,
+      "y": 379,
+      "w": 54,
+      "h": 201,
+      "offset": [
+        184,
+        515
+      ],
+      "bone": "thighR"
+    },
+    "handL": {
+      "x": 390,
+      "y": 379,
+      "w": 52,
+      "h": 95,
+      "offset": [
+        30,
+        562
+      ],
+      "bone": "handL"
+    },
+    "handR": {
+      "x": 444,
+      "y": 379,
+      "w": 54,
+      "h": 88,
+      "offset": [
+        258,
+        563
+      ],
+      "bone": "handR"
+    },
+    "calfR": {
+      "x": 500,
+      "y": 379,
+      "w": 55,
+      "h": 216,
+      "offset": [
+        164,
+        716
+      ],
+      "bone": "calfR"
+    },
+    "calfL": {
+      "x": 557,
+      "y": 379,
+      "w": 83,
+      "h": 214,
+      "offset": [
+        100,
+        718
+      ],
+      "bone": "calfL"
+    },
+    "footL": {
+      "x": 642,
+      "y": 379,
+      "w": 100,
+      "h": 116,
+      "offset": [
+        100,
+        932
+      ],
+      "bone": "footL"
+    },
+    "footR": {
+      "x": 744,
+      "y": 379,
+      "w": 88,
+      "h": 110,
+      "offset": [
+        166,
+        932
+      ],
+      "bone": "footR"
+    },
+    "elbowL": {
+      "x": 834,
+      "y": 379,
+      "w": 44,
+      "h": 43,
+      "offset": [
+        68,
+        422
+      ],
+      "bone": "foreL",
+      "kind": "original-joint-overlap"
+    },
+    "elbowR": {
+      "x": 880,
+      "y": 379,
+      "w": 47,
+      "h": 46,
+      "offset": [
+        217,
+        423
+      ],
+      "bone": "foreR",
+      "kind": "original-joint-overlap"
+    },
+    "wristL": {
+      "x": 929,
+      "y": 379,
+      "w": 37,
+      "h": 35,
+      "offset": [
+        44,
+        545
+      ],
+      "bone": "handL",
+      "kind": "original-joint-overlap"
+    },
+    "wristR": {
+      "x": 968,
+      "y": 379,
+      "w": 47,
+      "h": 37,
+      "offset": [
+        248,
+        545
+      ],
+      "bone": "handR",
+      "kind": "original-joint-overlap"
+    },
+    "kneeL": {
+      "x": 2,
+      "y": 597,
+      "w": 74,
+      "h": 69,
+      "offset": [
+        113,
+        684
+      ],
+      "bone": "calfL",
+      "kind": "original-joint-overlap"
+    },
+    "kneeR": {
+      "x": 78,
+      "y": 597,
+      "w": 47,
+      "h": 71,
+      "offset": [
+        178,
+        682
+      ],
+      "bone": "calfR",
+      "kind": "original-joint-overlap"
+    },
+    "ankleL": {
+      "x": 127,
+      "y": 597,
+      "w": 50,
+      "h": 41,
+      "offset": [
+        112,
+        911
+      ],
+      "bone": "footL",
+      "kind": "original-joint-overlap"
+    },
+    "ankleR": {
+      "x": 179,
+      "y": 597,
+      "w": 44,
+      "h": 43,
+      "offset": [
+        167,
+        910
+      ],
+      "bone": "footR",
+      "kind": "original-joint-overlap"
+    },
+    "neckCover": {
+      "x": 225,
+      "y": 597,
+      "w": 45,
+      "h": 36,
+      "offset": [
+        135,
+        267
+      ],
+      "bone": "head",
+      "kind": "original-joint-overlap"
+    },
+    "hipFillL": {
+      "x": 272,
+      "y": 597,
+      "w": 87,
+      "h": 124,
+      "offset": [
+        106,
+        521
+      ],
+      "bone": "thighL",
+      "kind": "supplied-hidden-thigh"
+    },
+    "hipFillLArt": {
+      "x": 361,
+      "y": 597,
+      "w": 87,
+      "h": 188,
+      "offset": [
+        106,
+        521
+      ],
+      "bone": "thighL",
+      "kind": "supplied-complete-thigh"
+    },
+    "hipFillR": {
+      "x": 450,
+      "y": 597,
+      "w": 79,
+      "h": 128,
+      "offset": [
+        173,
+        522
+      ],
+      "bone": "thighR",
+      "kind": "supplied-hidden-thigh"
+    },
+    "hipFillRArt": {
+      "x": 531,
+      "y": 597,
+      "w": 79,
+      "h": 168,
+      "offset": [
+        173,
+        522
+      ],
+      "bone": "thighR",
+      "kind": "supplied-complete-thigh"
+    },
+    "upperFillL": {
+      "x": 612,
+      "y": 597,
+      "w": 42,
+      "h": 133,
+      "offset": [
+        72,
+        315
+      ],
+      "bone": "upperL",
+      "kind": "supplied-hidden-upperarm"
+    },
+    "upperFillLArt": {
+      "x": 656,
+      "y": 597,
+      "w": 43,
+      "h": 137,
+      "offset": [
+        71,
+        315
+      ],
+      "bone": "upperL",
+      "kind": "supplied-complete-upperarm"
+    },
+    "upperFillR": {
+      "x": 701,
+      "y": 597,
+      "w": 50,
+      "h": 126,
+      "offset": [
+        206,
+        323
+      ],
+      "bone": "upperR",
+      "kind": "supplied-hidden-upperarm"
+    },
+    "upperFillRArt": {
+      "x": 753,
+      "y": 597,
+      "w": 51,
+      "h": 133,
+      "offset": [
+        206,
+        323
+      ],
+      "bone": "upperR",
+      "kind": "supplied-complete-upperarm"
+    },
+    "eyesPlate": {
+      "x": 806,
+      "y": 597,
+      "w": 103,
+      "h": 32,
+      "offset": [
+        124,
+        190
+      ],
+      "bone": "eyes",
+      "kind": "facial-cover"
+    },
+    "mouthPlate": {
+      "x": 911,
+      "y": 597,
+      "w": 55,
+      "h": 28,
+      "offset": [
+        150,
+        225
+      ],
+      "bone": "mouth",
+      "kind": "facial-cover"
+    },
+    "closedL": {
+      "x": 968,
+      "y": 597,
+      "w": 54,
+      "h": 14,
+      "offset": [
+        124,
+        201
+      ],
+      "bone": "eyes",
+      "kind": "expression"
+    },
+    "closedR": {
+      "x": 2,
+      "y": 787,
+      "w": 40,
+      "h": 11,
+      "offset": [
+        187,
+        201
+      ],
+      "bone": "eyes",
+      "kind": "expression"
+    },
+    "talk1": {
+      "x": 44,
+      "y": 787,
+      "w": 50,
+      "h": 32,
+      "offset": [
+        153,
+        224
+      ],
+      "bone": "mouth",
+      "kind": "expression"
+    },
+    "talk2": {
+      "x": 96,
+      "y": 787,
+      "w": 50,
+      "h": 34,
+      "offset": [
+        153,
+        224
+      ],
+      "bone": "mouth",
+      "kind": "expression"
+    }
+  },
+  "order": [
+    "hipFillL",
+    "hipFillR",
+    "kneeL",
+    "kneeR",
+    "ankleL",
+    "ankleR",
+    "thighL",
+    "calfL",
+    "footL",
+    "thighR",
+    "calfR",
+    "footR",
+    "pelvis",
+    "upperFillL",
+    "upperFillR",
+    "torso",
+    "elbowL",
+    "wristL",
+    "upperL",
+    "foreL",
+    "handL",
+    "elbowR",
+    "wristR",
+    "upperR",
+    "foreR",
+    "handR",
+    "dress",
+    "neckCover",
+    "head",
+    "eyes",
+    "mouth",
+    "hairLeft",
+    "hairCentre",
+    "hairRight"
+  ],
+  "validation": {
+    "staticPixelDifferences": 0,
+    "visibleParts": 21,
+    "originalJointOverlaps": 9,
+    "animationApproved": false
+  },
+  "atlasRevision": "268165b1744e5a25",
+  "referenceRevision": "855dee531cc244f8"
+}

@@ -1,0 +1,3 @@
+Original procedural water textures authored for The Xpedition.
+Rebuild: node tools/build-water-audio.mjs
+Stereo PCM WAV, 22050 Hz. Waterfall, river, shore and three swimming strokes.

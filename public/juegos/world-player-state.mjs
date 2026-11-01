@@ -1,0 +1,3 @@
+// Movement records describe the current state; standing cannot retain an old seat.
+export function normalizeWorldPlayer(player){const seated=player.state==='sit'||player.state==='sleep';return {...player,sleeping:player.state==='sleep',moving:seated?false:!!player.moving,seatId:seated?(player.seatId??null):null,seatSlot:seated?(player.seatSlot??null):null};}
+export function mergeWorldPlayer(previous,incoming,now){const snapshot=normalizeWorldPlayer({...previous,...incoming});return {...snapshot,previous:{x:previous.x,y:previous.y,z:previous.z,walk:previous.walk,at:now}};}

@@ -1,0 +1,16 @@
+@import url('/juegos/universe-fonts.css');
+:root{--bg:#17150f;--panel:#261f17;--panel2:#342b20;--text:#f3ead7;--muted:#c5b69a;--line:#69523b;--accent:#e9a34e}
+body{background:var(--bg);color:var(--text);font-family:Manrope,system-ui,sans-serif}
+.app{background:var(--bg)}.topbar,.sidebar{background:#211b14f5;border-color:var(--line)}
+button,input,select{font-family:inherit}button,.outline-btn,.icon-btn{color:var(--text);border:1px solid var(--line);background:var(--panel2);border-radius:5px;box-shadow:0 3px #100e0b}
+button:hover:not(:disabled){border-color:#e9a34e;background:#4c3824}button:focus-visible,a:focus-visible{outline:3px solid #efbe70;outline-offset:3px}
+.gold-btn{background:#e9a34e;color:#24180e;border:2px solid #ffce85;font-weight:900;border-radius:5px}.gold-btn:hover:not(:disabled){background:#ffc978;color:#24180e}
+.join-card,.wait-card,.panel,.scoreboard,.help-card{background:#241e16f5;border:2px solid #7b5a3a;border-radius:10px;box-shadow:0 8px 0 #100d0a,0 24px 70px #0007}
+.join-card h2,.wait-card h2,.score-team strong{font-family:'World Condensed',Impact,sans-serif}.eyebrow,.panel-title,.picker-label,.top-nav span{color:#d8ba87}.network i,.dot{background:#a4b57a}
+input,select{background:#191711;color:var(--text);border-color:var(--line);border-radius:5px}.cast-card{background:#30281e;border-color:#705438}.cast-card.selected{border-color:#ffbd62;background:#634724}
+.character-gallery{max-height:clamp(180px,35dvh,320px);overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#a47640 #1d1913;scrollbar-width:thin;padding:4px 7px 5px 3px}.join-card{max-height:calc(100dvh - 110px);overflow-y:auto;overscroll-behavior:contain}.cast-card:focus-visible{outline-offset:1px}
+.room-share,.roster-player{background:var(--panel2);border-color:var(--line)}.arena-tabs{background:#1d1913}.arena-tabs .active{background:#513b24;color:#ffc978;border-color:#c48c4e}
+.teamA{background:#283d3544}.teamB{background:#633f2944}.countdown{color:#ffe4b3}.toast{background:#2f2418;border-color:#e9a34e;color:#ffebc5}
+.marquee,.lower-strip,.rules{border-color:var(--line)}.footer,.tip,.room-details{color:var(--muted)}.game-holder{border-color:#7b5a3a;background:#332719}.scoreboard{border-bottom-color:#b88446}
+.touch-controls button{background:#382a1de8;border:2px solid #d5a45b;color:#ffe8bf}.brand-symbol{color:#ef793f}.return-world{color:#e4c99c}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}

@@ -1,0 +1,38 @@
+# Optional standalone setup. The primary render.yaml also provisions World.
+services:
+  - type: web
+    name: the-xpedition-world
+    runtime: node
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: node world-server.mjs
+    healthCheckPath: /api/health
+    numInstances: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PERSISTENCE_MODE
+        value: supabase
+      - key: UNIVERSE_URL
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: DATABASE_URL
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_URL
+      - key: DATABASE_PASSWORD
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_PASSWORD
+      - key: SECURE_COOKIES
+        value: "true"
+      - key: TRUST_PROXY
+        value: "true"

@@ -1,0 +1,16 @@
+import {SHELTER_MATERIALS} from './world-shelters.mjs';
+const shapes={
+ nails:'<path fill="#a7b1b5" d="m20 15 12-5 5 12-4 3 24 51-1 10-7-6-25-51-4 1Zm30 3 15 2-2 12-5-1-9 49-6 9-1-11 9-48-4-1Z"/>',
+ planks:'<path fill="#b87c40" d="m9 38 65-21 14 24-64 23Zm8 30 64-21 7 15-65 22Z"/><path d="m22 41 51-16M31 52l46-15M30 70l46-14M39 78l40-13" stroke="#80552e"/>',
+ foundation:'<path fill="#92958c" d="m10 61 11-21 25-4 13 20-9 24-30 1Zm43-20 6-21 19-4 13 20-8 18-19 2Zm5 26 12-14 18 8-3 22-24 1Z"/><path d="m24 48 15-3M64 28l10-3M67 69l10-6" stroke="#c4c8bc"/>',
+ brackets:'<path fill="#a6aba5" d="M12 15h17v47h34v17H12Zm38 0h33v15H65v24H50Z"/><g fill="#343d3b"><circle cx="20" cy="28" r="3"/><circle cx="20" cy="67" r="3"/><circle cx="49" cy="70" r="3"/><circle cx="57" cy="22" r="3"/><circle cx="58" cy="43" r="3"/></g>',
+ roofing:'<path fill="#8b9c9c" d="m12 32 58-17 16 51-58 17Z"/><path d="m22 33 14 43m-3-46 14 43m-3-46 14 43m-3-46 14 43m-3-46 14 43" stroke="#c7d0c6" stroke-width="5"/>',
+ cement:'<path fill="#c3b89d" d="m24 15 48 2-4 11 13 48-12 9-43-2-12-10 12-44Z"/><path fill="#727870" d="m29 40 38 1 5 29-45-1Z"/><path d="m29 21 35 1M35 50h25M39 58h17" stroke="#ddd6bd"/>',
+ tarp:'<path fill="#637d69" d="m12 30 57-15 17 50-57 18Z"/><path fill="#91a389" d="m12 30 25 2 49 33-57 18Z"/><path d="m37 32 33 42M20 35l48-13M28 72l45-12" stroke="#b7c0a0"/><g fill="#b6a673"><circle cx="19" cy="34" r="3"/><circle cx="67" cy="23" r="3"/><circle cx="32" cy="75" r="3"/><circle cx="77" cy="62" r="3"/></g>',
+ wiring:'<path d="M24 75C0 41 26 10 54 21s36 53 8 59S23 52 40 39s35 7 23 22-23 3-17-6" fill="none" stroke="#bb7849" stroke-width="10"/><path d="m25 74-8 10m45-4 15 4" stroke="#e7ad70" stroke-width="6"/>',
+ beams:'<path fill="#9d693d" d="m9 34 22-11 56 37-23 14Zm2 22 15-8 52 33-15 9Z"/><path fill="#c39156" d="m9 34 22 4 56 22-23 14Z"/><path d="m21 39 43 25M25 57l36 24" stroke="#69452c"/>',
+ rope:'<g fill="none" stroke="#bfa06a" stroke-width="8"><ellipse cx="45" cy="43" rx="28" ry="24"/><ellipse cx="45" cy="43" rx="18" ry="15"/><ellipse cx="45" cy="43" rx="8" ry="6"/><path d="M69 43q15 15 1 30L57 86M23 55 12 77"/></g><path d="m60 72 11 7m-56-9 7 5" stroke="#6d573a"/>'
+};
+export function shelterMaterialArt(id){return '<svg class="shelter-item-art" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" fill="none" stroke="#493c2b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(shapes[id]||'')+'</svg>';}
+const images=new Map();
+export function drawShelterSupply(c,p,{active=false}={}){let im=images.get(p.shelterSupply);if(!im&&typeof Image!=='undefined'){im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(shelterMaterialArt(p.shelterSupply));images.set(p.shelterSupply,im);}const x=p.x,y=p.y*.62;c.save();c.fillStyle='#19160d55';c.beginPath();c.ellipse(x,y+3,30,7,0,0,Math.PI*2);c.fill();if(im?.complete&&im.width)c.drawImage(im,x-43,y-80,86,86);if(active){const name=SHELTER_MATERIALS.find(m=>m.id===p.shelterSupply)?.name||'Material de construcción';c.font='600 15px "World Condensed",sans-serif';c.textAlign='center';c.lineWidth=4;c.strokeStyle='#17120c';c.strokeText(name,x,y-88);c.fillStyle='#f7e0af';c.fillText(name,x,y-88);}c.restore();}

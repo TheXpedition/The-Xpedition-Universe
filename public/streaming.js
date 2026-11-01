@@ -7,11 +7,11 @@ icons.play='<path d="m9 5 11 7-11 7z" fill="currentColor" stroke="none"/>';
 icons.pause='<path d="M8 5v14M16 5v14" stroke-width="4"/>';
 icons.volume='<path d="M11 4 6 8H3v8h3l5 4zM15 8a6 6 0 0 1 0 8m3-11a10 10 0 0 1 0 14"/>';
 icons.muted='<path d="M11 4 6 8H3v8h3l5 4zM16 9l5 6m0-6-5 6"/>';
-const streamNav=[['inicio','Inicio'],['explorar','Explorar'],['noticias','Noticias'],['comunidad','Comunidad'],['guardados','Mi lista'],['simuladores','Simuladores'],['universo','El universo']];
+const streamNav=[['inicio','Inicio'],['world','World'],['explorar','Explorar'],['noticias','Noticias'],['comunidad','Comunidad'],['guardados','Mi lista'],['simuladores','Simuladores'],['universo','El universo']];
 renderChrome=function(){
   const activeRoute=['temporada','premios'].includes(state.route)?'explorar':state.route;
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);document.body.dataset.view=state.route;
-  $('#navigation').innerHTML=streamNav.map(([route,label],i)=>`<a href="#${route}" class="nav-link ${route===activeRoute?'active':''} ${i>=5?'nav-extra':''}" ${activeRoute===route?'aria-current="page"':''}><span>${label}</span></a>`).join('');
+  $('#navigation').innerHTML=streamNav.map(([route,label],i)=>`<a href="#${route}" class="nav-link ${route===activeRoute?'active':''} ${['simuladores','universo'].includes(route)?'nav-extra':''}" ${activeRoute===route?'aria-current="page"':''}><span>${label}</span></a>`).join('');
   $('#accountActions').innerHTML=state.user?`<button class="icon-button" data-action="go-messages" aria-label="Ver mensajes${unread?', '+unread+' sin leer':''}" style="position:relative">${icon('chat')}${unread?`<span style="position:absolute;right:-2px;top:-2px;background:#9570cd;color:white;font-size:8px;border-radius:4px;padding:0 4px">${unread}</span>`:''}</button><button data-action="account-menu" aria-label="Opciones de ${esc(state.user.name)}" aria-expanded="false">${avatar(state.user)}</button>`:`<button class="link-button" data-action="login">Iniciar sesión</button><button class="btn primary small" data-action="register">Regístrate</button>`;
   const currentSeason=state.route==='temporada'?allContent().find(item=>item.id===decodeURIComponent(location.hash.split('/')[1]||'')):null;
   const currentEdition=state.route==='premios'?state.catalog?.content.awards.find(item=>'edicion-'+item.edition===decodeURIComponent(location.hash.split('/')[1]||'')):null;

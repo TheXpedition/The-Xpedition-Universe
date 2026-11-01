@@ -1,0 +1,121 @@
+/* Shared provisions and private reserves, using the existing ash/ember materials. */
+body #modal.food-dialog{width:min(1120px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 28px);padding:25px;background-color:#17120f;background-image:url('/juegos/ui/scratches.svg'),url('/juegos/ui/ash-grain.svg');color:#f1dec2;border:1px solid #8b5532;box-shadow:0 24px 90px #000d,inset 0 0 0 4px #0d0907,inset 0 0 0 5px #9a633345}
+.world-food-panel{--food-amber:#f5b66b;--food-edge:#745035;--food-muted:#bba489;font-family:Manrope,system-ui,sans-serif;padding-top:5px}
+.world-food-panel *{box-sizing:border-box}
+.food-panel-heading{display:flex;align-items:center;gap:14px;padding-right:25px}
+.food-heading-symbol{flex:none;display:grid;place-items:center;width:51px;height:56px;color:#f1b165;background:#342114;border:1px solid #966036;box-shadow:inset 0 0 0 3px #180f0a;clip-path:polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px)}
+.food-heading-symbol svg{width:30px;height:34px}
+.world-food-panel :is(h2,h3,p){margin:0}
+.world-food-panel h2{color:#ffe5bb;font:700 clamp(24px,3vw,34px)/1.1 'World Condensed',sans-serif;letter-spacing:.4px;margin-top:4px}
+.food-eyebrow{font:800 9px/1.3 Manrope,system-ui,sans-serif;letter-spacing:1.5px;color:#c99359}
+.food-capacity{margin-left:auto;text-align:right;font-size:12px;color:#bba489;white-space:nowrap}
+.food-capacity b{font-size:23px;color:#ffe1b3;font-variant-numeric:tabular-nums}
+.food-capacity small{display:block;font-size:9px;margin-top:1px;text-transform:uppercase;letter-spacing:.7px}
+.food-panel-intro{font-size:12px;line-height:1.7;color:var(--food-muted);padding:14px 0 18px}
+.food-fridge-doors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}
+.food-door{min-width:0;position:relative;border:1px solid #6c4a30;border-radius:5px;background:linear-gradient(105deg,#211a14,#161310 45%,#21180f);box-shadow:inset 0 0 0 4px #100c09,inset 0 0 0 5px #4f38294d,0 5px 15px #0005;padding:13px 14px 11px}
+.food-door:after{content:'';position:absolute;pointer-events:none;top:89px;bottom:43px;width:3px;background:linear-gradient(#b17b4b,#61452d,#b17b4b);box-shadow:1px 1px #050403,2px 0 #d3a47122;border-radius:3px}
+.food-door[data-food-door=left]{padding-right:21px}.food-door[data-food-door=right]{padding-left:21px}
+.food-door[data-food-door=left]:after{right:7px}.food-door[data-food-door=right]:after{left:7px}
+.food-door>header{display:flex;align-items:center;gap:10px;min-height:52px;padding-bottom:13px;border-bottom:1px solid #604026;margin-bottom:10px}
+.food-team-mark{display:grid;place-items:center;width:30px;height:34px;background:#5e2c1c;color:#f9c194;border:1px solid #ae6337;font:700 18px 'World Condensed',sans-serif;flex:none}
+.food-door[data-food-door=right] .food-team-mark{background:#293440;border-color:#586b73;color:#b8d1d2}
+.food-door h3{color:#f4d6b0;font:700 22px/1.1 'World Condensed',sans-serif;overflow-wrap:anywhere;margin-top:3px}
+.food-door .food-eyebrow{font-size:8px;letter-spacing:1.1px}
+.food-stock-count{margin-left:auto;text-align:right;font:700 22px/1 'World Condensed',sans-serif;color:#d2b897;font-variant-numeric:tabular-nums}
+.food-stock-count small{display:block;color:#927d65;font:600 8px/1.4 Manrope,system-ui,sans-serif;margin-top:4px}
+.food-slots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-height:min(40dvh,374px);overflow-y:auto;overscroll-behavior:contain;scrollbar-color:#7e5133 #15100c;padding:2px 4px 4px 2px}
+.world-food-panel button{font-family:Manrope,system-ui,sans-serif;cursor:pointer}
+.world-food-panel button:focus-visible,.world-food-panel input:focus-visible,.food-staff summary:focus-visible{outline:2px solid #ffd39b;outline-offset:3px}
+.food-slot{position:relative;display:flex;min-width:0;min-height:103px;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 5px 7px;color:#e2ccb0;border:1px solid #57412e;border-radius:3px;background:linear-gradient(145deg,#34271c,#211911 70%);box-shadow:inset 0 1px #c18b4630,0 2px 3px #0005;transition:border-color .15s,background-color .15s,transform .15s}
+.food-slot:hover:not(:disabled){border-color:#bb7a3d;background:linear-gradient(145deg,#493321,#2d1c11);transform:translateY(-1px)}
+.food-slot.is-selected{border-color:#ffad53;box-shadow:inset 0 0 0 1px #b25c25,0 0 10px #d7742333;background:linear-gradient(145deg,#5c3420,#2e1b10)}
+.food-slot-art{display:grid;place-items:center;width:48px;height:47px;filter:drop-shadow(0 3px 2px #0005)}
+.food-art{width:100%;height:100%;display:block;overflow:visible}
+.food-slot-name{display:block;max-width:100%;text-align:center;font-size:9px;font-weight:700;line-height:1.35;min-height:24px;overflow-wrap:anywhere}
+.food-slot-quantity{position:absolute;right:4px;top:4px;min-width:17px;padding:2px 4px;background:#130c07;border:1px solid #715031;color:#ffd291;font:800 9px/1.1 Manrope,system-ui,sans-serif;border-radius:3px;font-variant-numeric:tabular-nums}
+.food-slot.is-empty{background:#17120f;border-style:dashed;border-color:#443428;color:#847361;box-shadow:none}
+.food-slot.is-empty .food-slot-art{opacity:.18;filter:grayscale(.7)}
+.food-slot.is-empty .food-slot-quantity{color:#7b6956;border-color:#3d2d22}
+.food-door>footer{padding-top:11px;color:#a28a70;font-size:9px;line-height:1.4}
+.food-detail{display:flex;align-items:center;gap:17px;padding:16px 18px;margin-top:17px;border:1px solid #815333;background:linear-gradient(100deg,#342114,#211711 42%,#15110d);box-shadow:inset 0 0 0 3px #0c0906;min-height:117px;border-radius:4px}
+.food-detail-art{flex:none;width:72px;height:72px;filter:drop-shadow(0 4px 3px #0006)}
+.food-detail-copy{min-width:0;flex:1}
+.food-detail h3{font:700 25px/1.15 'World Condensed',sans-serif;color:#ffe0b7;margin-top:4px}
+.food-nutrition{color:#f3b871;font-size:11px;line-height:1.6;margin-top:5px!important}
+.food-detail-hint{font-size:10px;line-height:1.5;color:#bca286;margin-top:5px!important}
+.food-detail-symbol{display:grid;place-items:center;flex:none;width:44px;height:54px;color:#856343}
+.food-detail-symbol svg{width:35px;height:39px}
+.food-detail.is-unselected h3{font-size:23px;color:#c8ac8b}.food-detail.is-unselected p{font-size:11px;color:#9f8b74;margin-top:6px;line-height:1.5}
+.food-primary,.food-secondary{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:42px;padding:10px 18px;border-radius:3px;border:1px solid #ba7b3d;background:linear-gradient(#ffb466,#d97a2a);box-shadow:inset 0 1px #ffe6b066,0 3px #6e351a;color:#281206;font-size:12px;font-weight:800;white-space:nowrap}
+.food-primary span{font-size:19px;font-weight:500;line-height:1}.food-primary:hover:not(:disabled){filter:brightness(1.1)}
+.world-food-panel button:disabled{cursor:default;opacity:.46;transform:none}
+.food-secondary{min-height:34px;padding:8px 12px;color:#d6b895;background:linear-gradient(#38271b,#241910);border:1px solid #755133;box-shadow:inset 0 1px #a4794125,0 2px #100b07;font-size:10px}
+.food-secondary:hover:not(:disabled){border-color:#d99954;color:#ffe2b5}
+.food-danger{color:#eab0a2;border-color:#7f493b;background:linear-gradient(#45271e,#2f1a14)}
+.food-error,.food-notice{font-size:11px;line-height:1.5;padding:10px 13px;margin-top:12px!important;border:1px solid #9b4e37;background:#3a1b13;color:#ffcaad;border-radius:3px}
+.food-notice{border-color:#74643a;background:#292415;color:#e7d6a4}
+.food-error[hidden],.food-notice[hidden]{display:none}
+.food-staff{margin-top:18px;border-top:1px solid #583b28;padding-top:13px}
+.food-staff summary{cursor:pointer;font-size:11px;font-weight:800;color:#d9a66d;letter-spacing:.5px;padding:3px 0}
+.food-staff>p{font-size:10px;line-height:1.6;color:#a38c73;margin:11px 0}
+.food-staff-actions{display:flex;gap:9px;flex-wrap:wrap;margin:12px 0}
+.food-team-names{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:13px}
+.food-team-names label,.food-stock-edit label{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:#bca58a;font-size:10px;min-width:0}
+.food-team-names label>span{flex-basis:100%}
+.food-staff input{min-width:0;width:130px;flex:1;border:1px solid #705036;background:#100c09;color:#f0d5b1;padding:9px;font:11px Manrope,system-ui,sans-serif;border-radius:3px}
+.food-stock-edit{display:flex;align-items:flex-end;gap:10px;padding-top:15px;margin-top:15px;border-top:1px solid #4b3322}
+.food-stock-edit label{display:flex;flex-direction:column;align-items:flex-start;gap:7px;flex:1}
+.food-stock-edit input{width:100%;max-width:170px}
+.food-stock-edit{display:block}
+.food-stock-product{margin-bottom:11px;color:#bca58a;font-size:10px}
+.food-stock-product h4{margin:5px 0;font:700 20px/1.2 'World Condensed',sans-serif;color:#e9c79b}
+.food-stock-product b{color:#ffcb8f}
+.food-stock-controls{display:flex;align-items:flex-end;flex-wrap:wrap;gap:8px}
+.food-stock-controls label{flex:none;min-width:85px;max-width:110px}
+.food-stock-controls input{width:100%}
+.food-staff-select{font-size:10px;color:#ab9378;line-height:1.6;padding:7px 0}
+.food-section-label{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #65442c;padding:3px 0 11px;margin-bottom:12px;color:#bba286;font-size:10px}
+.food-section-label h3{font:700 21px 'World Condensed',sans-serif;color:#ead2af}
+.food-inventory-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:9px;max-height:46dvh;overflow-y:auto;scrollbar-color:#7e5133 #15100c;padding:2px 5px 4px 2px;overscroll-behavior:contain}
+.food-vacant-slot{display:grid;place-items:center;min-height:103px;border:1px dashed #4c3828;border-radius:3px;background:#130e0a66;color:#4c3928;font-size:24px;box-shadow:inset 0 2px 5px #0004}
+.food-empty-note{padding:13px 0 0;color:#bda587;font-size:11px;line-height:1.6}
+@media(max-width:980px){.food-slots{grid-template-columns:repeat(3,minmax(0,1fr))}.food-inventory-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.food-door h3{font-size:20px}.food-detail{gap:13px}.food-detail-art{width:62px;height:62px}}
+@media(max-width:600px){body #modal.food-dialog{width:calc(100vw - 16px);padding:18px 12px;max-height:calc(100dvh - 16px)}.food-panel-heading{gap:9px;padding-right:18px}.food-heading-symbol{width:37px;height:43px}.food-heading-symbol svg{width:24px;height:29px}.food-panel-heading .food-eyebrow{font-size:7px;letter-spacing:.7px}.food-panel-heading h2{font-size:24px}.food-capacity{font-size:9px}.food-capacity b{font-size:19px}.food-capacity small{font-size:7px;letter-spacing:0}.food-panel-intro{font-size:10px;padding:12px 0 14px}.food-fridge-doors{gap:8px}.food-door{padding:9px 8px}.food-door[data-food-door=left]{padding-right:12px}.food-door[data-food-door=right]{padding-left:12px}.food-door:after{width:2px;top:77px;bottom:41px}.food-door[data-food-door=left]:after{right:4px}.food-door[data-food-door=right]:after{left:4px}.food-door>header{gap:5px;min-height:53px;padding-bottom:9px}.food-team-mark{display:none}.food-door .food-eyebrow{font-size:6px;letter-spacing:.4px}.food-door h3{font-size:18px}.food-stock-count{font-size:16px}.food-stock-count small{font-size:6px}.food-slots{gap:4px;max-height:35dvh;padding-right:2px}.food-slot{min-height:83px;padding:9px 2px 4px;gap:2px}.food-slot-art{width:33px;height:34px}.food-slot-name{font-size:7px;min-height:24px;line-height:1.25}.food-slot-quantity{right:2px;top:2px;font-size:7px;min-width:13px;padding:1px 3px}.food-door>footer{font-size:7px;padding-top:8px}.food-detail{gap:9px;padding:13px 10px;flex-wrap:wrap;min-height:105px}.food-detail-art{width:47px;height:47px}.food-detail h3{font-size:23px}.food-detail .food-eyebrow{font-size:7px;letter-spacing:.7px}.food-nutrition{font-size:9px}.food-detail-hint{font-size:9px}.food-detail .food-primary{margin-left:auto;min-height:36px;padding:8px 15px;font-size:11px}.food-detail-copy{flex-basis:calc(100% - 65px)}.food-detail-symbol{width:34px}.food-detail.is-unselected div{flex:1}.food-detail.is-unselected h3{font-size:20px}.food-detail.is-unselected p{font-size:10px}.food-team-names{gap:10px}.food-team-names label{gap:6px}.food-team-names .food-secondary{white-space:normal;width:100%;font-size:9px}.food-staff input{width:100%;padding:8px}.food-inventory-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.food-vacant-slot{min-height:83px}.food-stock-edit{align-items:flex-end}.food-stock-edit>.food-secondary{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.food-slot{transition:none}}
+
+/* A personal bag is a compact overlay; the shared double-door fridge stays wide. */
+body #modal.food-dialog:has([data-food-mode=inventory]){width:min(680px,calc(100vw - 24px));max-height:min(560px,80dvh);padding:19px 20px;overflow-y:auto}
+.world-food-panel[data-food-mode=inventory]{padding-top:0}
+[data-food-mode=inventory] .food-panel-heading{gap:10px}
+[data-food-mode=inventory] .food-heading-symbol{width:40px;height:44px}
+[data-food-mode=inventory] .food-heading-symbol svg{width:25px;height:29px}
+[data-food-mode=inventory] .food-panel-heading h2{font-size:26px}
+[data-food-mode=inventory] .food-panel-heading .food-eyebrow{font-size:7px;letter-spacing:.9px}
+[data-food-mode=inventory] .food-panel-intro{font-size:10px;line-height:1.6;padding:11px 0 12px}
+[data-food-mode=inventory] .food-section-label{padding:0 0 8px;margin-bottom:9px}
+[data-food-mode=inventory] .food-section-label h3{font-size:19px}
+[data-food-mode=inventory] .food-inventory-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;max-height:min(24dvh,190px)}
+[data-food-mode=inventory] :is(.food-slot,.food-vacant-slot){min-height:78px}
+[data-food-mode=inventory] .food-slot{padding:7px 3px 5px;gap:2px}
+[data-food-mode=inventory] .food-slot-art{width:34px;height:34px}
+[data-food-mode=inventory] .food-slot-name{font-size:8px;min-height:22px}
+[data-food-mode=inventory] .food-detail{margin-top:12px;min-height:98px;padding:12px;gap:12px}
+[data-food-mode=inventory] .food-detail-art{width:49px;height:49px}
+[data-food-mode=inventory] .food-detail h3{font-size:23px}
+[data-food-mode=inventory] .food-detail-hint{font-size:9px}
+[data-food-mode=inventory] .food-empty-note{font-size:10px;padding-top:9px}
+@media(max-width:600px){body #modal.food-dialog:has([data-food-mode=inventory]){padding:16px 12px;width:calc(100vw - 20px)}[data-food-mode=inventory] .food-inventory-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-height:min(28dvh,180px);gap:6px}[data-food-mode=inventory] .food-panel-heading h2{font-size:24px}[data-food-mode=inventory] .food-heading-symbol{width:33px;height:39px}[data-food-mode=inventory] .food-panel-heading .food-eyebrow{font-size:6px;letter-spacing:.4px}[data-food-mode=inventory] .food-detail{gap:9px}[data-food-mode=inventory] .food-detail-art{width:42px;height:42px}.food-stock-controls{gap:6px}.food-stock-controls label{min-width:75px;max-width:90px}.food-stock-controls .food-secondary{min-height:34px;padding:8px 10px}}
+
+.world-food-panel .food-slot{display:grid!important;grid-template-rows:48px minmax(25px,auto);justify-items:center;align-content:center;gap:7px;overflow:hidden;padding:23px 6px 9px!important;min-height:116px}
+.world-food-panel .food-slot-art{display:flex;align-items:center;justify-content:center;width:46px!important;height:46px!important;min-width:0;overflow:hidden}
+.world-food-panel .food-slot-art :is(svg,img){display:block;max-width:100%!important;max-height:100%!important;width:100%!important;height:100%!important;object-fit:contain;position:static!important}
+.world-food-panel .food-slot-name{position:static!important;display:block!important;width:100%;margin:0;line-height:1.35;overflow-wrap:anywhere;z-index:1}
+.world-food-panel[data-food-mode=inventory] .food-slot{grid-template-rows:36px minmax(24px,auto);min-height:106px}
+.world-food-panel[data-food-mode=inventory] .food-slot-art{width:36px!important;height:36px!important}
+.food-detail-actions{display:grid;gap:7px;flex:none}.food-detail-actions button{width:100%}.food-discard{background:#21150e;color:#d5ac85;border:1px solid #765038;padding:8px 14px;border-radius:3px;cursor:pointer}
+
+.world-food-panel .food-detail-art{display:grid;place-items:center;box-sizing:border-box;width:64px;min-width:64px;max-width:64px;height:64px;padding:5px;overflow:hidden}
+.world-food-panel .food-detail-art>:is(svg,img){display:block;position:static!important;width:54px!important;height:54px!important;max-width:100%!important;max-height:100%!important;margin:0;object-fit:contain;background:none}
+.world-food-panel .food-detail-copy{min-width:0;overflow-wrap:anywhere}
+@media(max-width:600px){.world-food-panel .food-detail{display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px}.world-food-panel .food-detail-art{width:48px;min-width:48px;max-width:48px;height:48px;padding:3px}.world-food-panel .food-detail-actions{grid-column:2;justify-self:start}}

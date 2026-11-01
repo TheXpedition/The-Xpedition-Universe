@@ -1,0 +1,157 @@
+{
+  "sofa": {
+    "width": 421,
+    "height": 211,
+    "bytes": 24032
+  },
+  "chair": {
+    "width": 238,
+    "height": 214,
+    "bytes": 15864
+  },
+  "bunk": {
+    "width": 296,
+    "height": 248,
+    "bytes": 25102
+  },
+  "fireplace": {
+    "width": 313,
+    "height": 254,
+    "bytes": 28488
+  },
+  "picnic": {
+    "width": 437,
+    "height": 219,
+    "bytes": 34074
+  },
+  "table": {
+    "width": 287,
+    "height": 151,
+    "bytes": 14068
+  },
+  "counter": {
+    "width": 353,
+    "height": 254,
+    "bytes": 35968
+  },
+  "locker": {
+    "width": 144,
+    "height": 230,
+    "bytes": 10752
+  },
+  "crate": {
+    "width": 259,
+    "height": 240,
+    "bytes": 24360
+  },
+  "barrel": {
+    "width": 199,
+    "height": 246,
+    "bytes": 19832
+  },
+  "bags": {
+    "width": 239,
+    "height": 237,
+    "bytes": 19482
+  },
+  "lamp": {
+    "width": 162,
+    "height": 259,
+    "bytes": 15144
+  },
+  "rug": {
+    "width": 438,
+    "height": 214,
+    "bytes": 28586
+  },
+  "camera": {
+    "width": 147,
+    "height": 237,
+    "bytes": 14224
+  },
+  "dock": {
+    "width": 324,
+    "height": 208,
+    "bytes": 22626
+  },
+  "ship": {
+    "width": 357,
+    "height": 216,
+    "bytes": 26862
+  },
+  "pine": {
+    "width": 289,
+    "height": 369,
+    "bytes": 34844
+  },
+  "cave": {
+    "width": 535,
+    "height": 338,
+    "bytes": 52658
+  },
+  "rock": {
+    "width": 473,
+    "height": 275,
+    "bytes": 34272
+  },
+  "tent": {
+    "width": 510,
+    "height": 325,
+    "bytes": 63914
+  },
+  "challenge": {
+    "width": 483,
+    "height": 333,
+    "bytes": 46668
+  },
+  "sign": {
+    "width": 309,
+    "height": 317,
+    "bytes": 28392
+  },
+  "crystal": {
+    "width": 457,
+    "height": 317,
+    "bytes": 43538
+  },
+  "platform": {
+    "width": 460,
+    "height": 328,
+    "bytes": 58494
+  },
+  "pole": {
+    "width": 215,
+    "height": 324,
+    "bytes": 22496
+  },
+  "firepit": {
+    "width": 504,
+    "height": 363,
+    "bytes": 70276
+  },
+  "fence": {
+    "width": 542,
+    "height": 295,
+    "bytes": 55292
+  },
+  "tower": {
+    "width": 422,
+    "height": 541,
+    "bytes": 102728
+  },
+  "hotspring": {
+    "width": 625,
+    "height": 376,
+    "bytes": 94926
+  },
+  "telescope": {
+    "width": 320,
+    "height": 437,
+    "bytes": 48598
+  },
+  "workbench": {
+    "width": 524,
+    "height": 419,
+    "bytes": 100136
+  }
+}

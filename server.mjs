@@ -1,3 +1,4 @@
+import {createWorldGateway} from './world-gateway.mjs';
 import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
 import {createProgression,levelFor} from './progression.mjs';
@@ -324,6 +325,7 @@ async function api(req, res, url) {
     if (!req.headers['content-type']?.startsWith('application/json')) fail(415, 'Usa contenido JSON.');
   }
   const u = await getSession(req);
+  if(await world.handle(req,res,url,u))return;
   if (p === '/api/config' && method === 'GET') return json(res, {
     firebase: firebaseConfig,
     google: googleInfo,
@@ -835,6 +837,7 @@ const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,
 const casting=createCasting({db,json,fail,checkRate,body,progression,catalog,onParticipantChange:setApocalypseParticipant,isParticipant:isApocalypseParticipant});
 function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
 const showdown=createShowdownGame({db,json,fail,body,checkRate,progression,characters:JSON.parse(fs.readFileSync(path.join(publicDir,'showdown/characters.json'),'utf8')),notify,messageView,pushNotifications,serialize});
+const world=createWorldGateway({db,json,fail,getSession,body});
 const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
 const xMillion=createXMillion({db,json,fail,body,checkRate,access:arcade.access,notify,serialize});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
@@ -876,6 +879,7 @@ const server = http.createServer(async (req, res) => {
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
     if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
+    if(/^\/juegos(?:\/|$)/i.test(decodeURIComponent(url.pathname)))return await world.launch(req,res);
     const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':url.pathname==='/simulator/x-million'||url.pathname==='/simulator/x-million/'?'/simulator/x-million/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const filename = path.resolve(publicDir, '.' + relative);
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');

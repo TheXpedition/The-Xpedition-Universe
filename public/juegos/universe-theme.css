@@ -1,0 +1,6 @@
+@import url('/juegos/universe-fonts.css');
+/* Shared with the live Universe home: styles.css, verified 2026-10-24. */
+:root{color-scheme:dark;--bg:#090d16;--panel:#101622;--panel2:#151d2c;--line:#232d3e;--text:#f3f5fa;--muted:#8f9bb0;--accent:#b6f65b;--teal:#65e2cc;--blue:#8fb6ff;--danger:#ff8e9e;--radius:20px;--ink:#17200f;--cream:var(--text);--gold:var(--accent);--cyan:var(--teal);--rail:100px;--top:76px;font:14px/1.6 Manrope,system-ui,sans-serif;color:var(--text);background:var(--bg)}
+::selection{background:#b6f65b55}
+.brand-symbol{display:inline-grid;place-items:center;flex-shrink:0;font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;line-height:1;background:var(--accent);color:#141b11;width:42px;height:43px;border-radius:13px;transform:rotate(-7deg);letter-spacing:-3px}
+.universe-wordmark{font:700 12px/1.4 'Space Grotesk',sans-serif;letter-spacing:.8px;color:var(--text);white-space:nowrap}.universe-wordmark small{display:block;font:600 8px/1.6 Manrope,sans-serif;letter-spacing:2.5px;color:var(--muted);margin-top:2px}.universe-wordmark b{font-weight:600;letter-spacing:.3px;color:var(--accent)}

@@ -1,0 +1,252 @@
+[
+  {
+    "id": "dani",
+    "name": "Dani",
+    "portraitIndex": 0
+  },
+  {
+    "id": "bayron",
+    "name": "Bayron",
+    "portraitIndex": 1
+  },
+  {
+    "id": "felix",
+    "name": "Felix",
+    "portraitIndex": 2
+  },
+  {
+    "id": "andromeda",
+    "name": "Andromeda",
+    "portraitIndex": 3
+  },
+  {
+    "id": "isabel",
+    "name": "Isabel",
+    "portraitIndex": 4
+  },
+  {
+    "id": "peggy",
+    "name": "Peggy",
+    "portraitIndex": 5
+  },
+  {
+    "id": "eris",
+    "name": "Eris",
+    "portraitIndex": 6
+  },
+  {
+    "id": "ximena",
+    "name": "Ximena",
+    "portraitIndex": 7
+  },
+  {
+    "id": "vita",
+    "name": "Vita",
+    "portraitIndex": 8
+  },
+  {
+    "id": "inaella",
+    "name": "Iñaella Rose",
+    "portraitIndex": 9
+  },
+  {
+    "id": "daelly",
+    "name": "Daelly",
+    "portraitIndex": 10
+  },
+  {
+    "id": "coronel",
+    "name": "Coronel",
+    "portraitIndex": 11
+  },
+  {
+    "id": "julian",
+    "name": "Julián",
+    "portraitIndex": 12
+  },
+  {
+    "id": "alexandro",
+    "name": "Alexandro",
+    "portraitIndex": 13
+  },
+  {
+    "id": "catalina",
+    "name": "Catalina",
+    "portraitIndex": 14
+  },
+  {
+    "id": "luciano",
+    "name": "Luciano",
+    "portraitIndex": 15
+  },
+  {
+    "id": "ignacio",
+    "name": "Ignacio Ricci",
+    "portraitIndex": 16
+  },
+  {
+    "id": "lalamila",
+    "name": "Lalamila",
+    "portraitIndex": 17
+  },
+  {
+    "id": "lucasmendez",
+    "name": "Lucas Mendez",
+    "portraitIndex": 18
+  },
+  {
+    "id": "cocomong",
+    "name": "Cocomong",
+    "portraitIndex": 19
+  },
+  {
+    "id": "bryan",
+    "name": "Bryan Montalvo",
+    "portraitIndex": 20
+  },
+  {
+    "id": "beto",
+    "name": "Beto",
+    "portraitIndex": 21
+  },
+  {
+    "id": "greg",
+    "name": "Greg",
+    "portraitIndex": 22
+  },
+  {
+    "id": "sallua",
+    "name": "Sal Lua",
+    "portraitIndex": 23
+  },
+  {
+    "id": "ivy",
+    "name": "Ivy",
+    "portraitIndex": 24
+  },
+  {
+    "id": "eduard",
+    "name": "Eduard",
+    "portraitIndex": 25
+  },
+  {
+    "id": "kimcamila",
+    "name": "Kim Camila",
+    "portraitIndex": 26
+  },
+  {
+    "id": "carlosharrington",
+    "name": "Carlos Harrington",
+    "portraitIndex": 27
+  },
+  {
+    "id": "nahuee",
+    "name": "Nahuee",
+    "portraitIndex": 28
+  },
+  {
+    "id": "pier",
+    "name": "Pier",
+    "portraitIndex": 29
+  },
+  {
+    "id": "esteban",
+    "name": "Esteban",
+    "portraitIndex": 30
+  },
+  {
+    "id": "marcos",
+    "name": "Marcos",
+    "portraitIndex": 31
+  },
+  {
+    "id": "ivanserrano",
+    "name": "Ivan Serrano",
+    "portraitIndex": 32
+  },
+  {
+    "id": "maryhao",
+    "name": "Mary Hao",
+    "portraitIndex": 33
+  },
+  {
+    "id": "marianito",
+    "name": "Marianito",
+    "portraitIndex": 34
+  },
+  {
+    "id": "gabrielsab",
+    "name": "Gabriel Sab",
+    "portraitIndex": 35
+  },
+  {
+    "id": "alice",
+    "name": "Alice",
+    "portraitIndex": 36
+  },
+  {
+    "id": "oscar",
+    "name": "Oscar",
+    "portraitIndex": 37
+  },
+  {
+    "id": "bruno",
+    "name": "Bruno",
+    "portraitIndex": 38
+  },
+  {
+    "id": "doppel",
+    "name": "Doppel",
+    "portraitIndex": 39
+  },
+  {
+    "id": "bodegabodeguita",
+    "name": "Bodega Bodeguita",
+    "portraitIndex": 40
+  },
+  {
+    "id": "leandro",
+    "name": "Leandro",
+    "portraitIndex": 41
+  },
+  {
+    "id": "renzo",
+    "name": "Renzo",
+    "portraitIndex": 42
+  },
+  {
+    "id": "misskopp",
+    "name": "Miss Kopp",
+    "portraitIndex": 43
+  },
+  {
+    "id": "solf",
+    "name": "Solf",
+    "portraitIndex": 44
+  },
+  {
+    "id": "arisalgado",
+    "name": "Ari Salgado",
+    "portraitIndex": 45
+  },
+  {
+    "id": "pablo",
+    "name": "Pablo",
+    "portraitIndex": 46
+  },
+  {
+    "id": "luis",
+    "name": "Luis",
+    "portraitIndex": 47
+  },
+  {
+    "id": "plastiquedoll",
+    "name": "Plastique Doll",
+    "portraitIndex": 48
+  },
+  {
+    "id": "teseo",
+    "name": "Teseo",
+    "portraitIndex": 49
+  }
+]

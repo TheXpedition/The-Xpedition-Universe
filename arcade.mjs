@@ -7,11 +7,13 @@ export const arcadeGames=Object.freeze([
  {id:'ice-breaker',name:'Antarctica — Ice Breaker',character:'Dani',url:'/simulator/ice-breaker/',cover:'/arcade/ice-breaker-poster.png',description:'Acompaña a Dani entre glaciares, recoge cristales y encuentra el camino a la base.'}
 ]);
 
-export function createArcade({db,json,fail,body,checkRate,progression,now=Date.now,everyone=()=>{}}){
- const find=id=>{const game=arcadeGames.find(g=>g.id===id);if(!game)fail(404,'Juego no encontrado.');return game;};
+export function createArcade({db,json,fail,body,checkRate,progression,now=Date.now,everyone=()=>{},worldChallenge=async()=>false,canCompete=async()=>true,worldOnly=false}){
+ const games=worldOnly?arcadeGames.filter(g=>g.id==='ice-breaker'):arcadeGames;
+ const find=id=>{const game=games.find(g=>g.id===id);if(!game)fail(404,'Juego no encontrado.');return game;};
  async function access(id,user){
   const game=find(id),row=await db.one('SELECT public_enabled,updated FROM arcade_access WHERE game_id=?',id),publicEnabled=row?Number(row.public_enabled)===1:!!game.defaultPublic;
-  return {...game,publicEnabled,canPlay:publicEnabled||isStaff(user?.id),staffPreview:!publicEnabled&&isStaff(user?.id),updated:Number(row?.updated||0)};
+  const permitted=worldOnly?await worldChallenge(user):publicEnabled||isStaff(user?.id)||id==='ice-breaker'&&await worldChallenge(user),eligible=id!=='ice-breaker'||isStaff(user?.id)||await canCompete(user);
+  return {...game,publicEnabled,canPlay:permitted&&eligible,staffPreview:!publicEnabled&&isStaff(user?.id),updated:Number(row?.updated||0)};
  }
  const progress=createArcadeProgress({db,json,fail,body,checkRate,access,progression,now});
  async function handle(req,res,url,user){
@@ -21,7 +23,7 @@ export function createArcade({db,json,fail,body,checkRate,progression,now=Date.n
   res.setHeader?.('Cache-Control','private, no-store');res.setHeader?.('Vary','Cookie');
   if(admin){if(!user)fail(401,'Inicia sesión.');if(!isStaff(user.id))fail(403,'Solo el Staff puede administrar los juegos.');}
   if(req.method==='GET'){
-   json(res,list?{games:await Promise.all(arcadeGames.map(g=>access(g.id,user)))}:{game:await access(selected[1],user)});return true;
+   json(res,list?{games:await Promise.all(games.map(g=>access(g.id,user)))}:{game:await access(selected[1],user)});return true;
   }
   if(admin&&selected&&req.method==='PUT'){
    const game=find(selected[1]);checkRate(req,'arcade-access',60,3600000);const input=await body(req);

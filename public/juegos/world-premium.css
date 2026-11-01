@@ -1,0 +1,57 @@
+/* The Xpedition World — editorial art-direction pass. Non-destructive over existing UI. */
+:root{--xp-ink:#071d36;--xp-night:#07172b;--xp-ice:#c6edff;--xp-sky:#3aa5d2;--xp-gold:#ffdc83;--xp-paper:#fff4d5}
+body:not(.is-playing){padding:14px clamp(13px,2.2vw,42px) 24px;background:radial-gradient(ellipse at 45% -30%,#4288b8 0,#17466b 36%,#071c33 76%)}
+body:not(.is-playing) .world-sky{background:linear-gradient(180deg,#1745697c,#071e32ee),url('/juegos/polar/panorama.webp') center 33%/cover fixed;filter:saturate(1.17)}
+body:not(.is-playing) .world-top{max-width:1700px;min-height:105px;margin:0 auto;padding:8px 0 10px;gap:24px}
+body:not(.is-playing) .expedition-pass{position:relative;top:auto;left:auto;width:195px;min-width:195px;min-height:66px;box-shadow:0 8px 0 #020d1c88,0 22px 35px #020d1c77;border:1px solid #d4e7ef84;background:linear-gradient(115deg,#123b5cfa,#08243ef3);padding:8px 10px;border-radius:5px}
+body:not(.is-playing) .expedition-pass .portrait{width:46px;height:51px}
+body:not(.is-playing) .wood-logo{width:156px}
+body:not(.is-playing) .expedition-heading h1{font:900 clamp(28px,2.5vw,42px)/1 'World Condensed','Arial Narrow',Impact,sans-serif;letter-spacing:.7px;color:#ffefc7;text-transform:uppercase;text-shadow:0 5px 4px #071b2c,0 0 28px #154769}
+body:not(.is-playing) .expedition-heading p{font-weight:900;color:#a3e6ff;letter-spacing:2.2px}
+body:not(.is-playing) .top-tools{flex-wrap:wrap;justify-content:flex-end;max-width:240px}
+body:not(.is-playing) .world-layout{max-width:1700px;gap:14px;margin:0 auto;display:flex;flex-direction:column}
+body:not(.is-playing) .wood-nav{position:relative;top:auto;left:auto;width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;padding:7px;border:1px solid #8db8d077;background:linear-gradient(95deg,#092640e8,#153d5ae5 55%,#071b31e9);border-radius:7px;box-shadow:0 5px 0 #0715267a,0 16px 30px #07152655}
+body:not(.is-playing) .wood-nav button{min-width:0;width:auto;min-height:51px;justify-content:center;padding:7px 6px;flex-direction:row;gap:9px;letter-spacing:.2px;background:transparent;border:1px solid transparent;border-radius:4px;color:#b7d8e9;box-shadow:none}
+body:not(.is-playing) .wood-nav button:hover{background:#2a6794b0;color:#fff}
+body:not(.is-playing) .wood-nav button.active{background:linear-gradient(180deg,#ffe7a5,#e6bc66);color:#18334b;border-color:#ffe2a3;box-shadow:0 4px 0 #947349,0 0 18px #ffc65b42}
+body:not(.is-playing) .wood-nav strong{font:900 clamp(14px,1.35vw,21px)/1 'World Condensed',Impact,sans-serif}
+body:not(.is-playing) .wood-nav svg{stroke-width:2.3;width:23px;height:23px}
+body:not(.is-playing) .ice-shell{min-height:calc(100dvh - 215px);padding:clamp(11px,1.4vw,24px);background:linear-gradient(145deg,#113a56d9,#061f39f3);border:1px solid #86bcd8b5;border-radius:10px;box-shadow:0 15px 65px #010e20a9,inset 0 1px 0 #d4f4ff40}
+body:not(.is-playing) .menu-grid{gap:17px}
+body:not(.is-playing) .character-grid{gap:11px;grid-template-columns:repeat(8,minmax(0,1fr));max-height:min(66dvh,610px)}
+body:not(.is-playing) .character-card{border-radius:6px;overflow:hidden;background:linear-gradient(160deg,#19466b,#2d6483);border:1px solid #9ad8f17a;box-shadow:inset 0 2px 0 #ffffff21,0 6px 0 #0b2130}
+body:not(.is-playing) .character-card.selected{background:linear-gradient(#4e7fa2,#174363);border:2px solid #ffdc81;box-shadow:0 0 0 2px #bd872a66,0 5px 0 #815d2e,0 9px 24px #041b2b9e}
+body:not(.is-playing) .character-detail{background:linear-gradient(170deg,#2e6ca0,#0e2f54 70%);border:1px solid #93d5f1;box-shadow:0 12px 25px #0005,inset 0 1px 0 #ffffff3d;border-radius:7px}
+body:not(.is-playing) .character-detail h2{font:900 44px/1 'World Condensed',Impact,sans-serif;text-shadow:0 3px 0 #153251}
+body:not(.is-playing) .filters{border-radius:6px;overflow:hidden;background:#071c31c0;border:1px solid #a3d0e956;padding:5px}
+body:not(.is-playing) .filter.active{background:#285878;border-color:#bad5e5;border-radius:4px;color:#fbe8c2}
+body:not(.is-playing) .character-search{border:1px solid #80aeca;border-radius:4px}
+body:not(.is-playing) .map-layout{height:min(76dvh,880px);min-height:600px;grid-template-columns:minmax(0,1fr) clamp(255px,22vw,340px);gap:16px}
+body:not(.is-playing) .map-overview{height:100%;border:3px solid #83c1e4;border-radius:9px;box-shadow:0 12px 40px #001226a8,inset 0 0 45px #041f4a9c;position:relative}
+body:not(.is-playing) .map-overview:after{content:'';pointer-events:none;position:absolute;inset:0;border-radius:6px;box-shadow:inset 0 0 50px #0b396b66}
+body:not(.is-playing) .map-pin{font:900 clamp(11px,1vw,14px) 'World Condensed',Impact,sans-serif;color:#e6f8ff;background:linear-gradient(180deg,#174463,#0c2b48);border:1px solid #c4f1ff;box-shadow:0 2px 0 #0b2135,0 4px 12px #0a2544ba;letter-spacing:.3px;border-radius:4px;padding:7px 10px}
+body:not(.is-playing) .map-pin.selected{background:linear-gradient(#ffe9ad,#efbc61);border-color:#ffebae;color:#163450;box-shadow:0 5px 16px #ffbb6655,0 3px #947548}
+body:not(.is-playing) .zone-detail{background:linear-gradient(150deg,#17486ed9,#081b32f7);border:1px solid #90d6f4;border-radius:7px;padding:17px;box-shadow:0 8px 28px #051729aa}
+body:not(.is-playing) .zone-detail h2{font:900 37px/1 'World Condensed',Impact,sans-serif;color:#ffdf93}
+body:not(.is-playing) .zone-preview{border-radius:5px;box-shadow:0 7px 14px #071b2b77;border-color:#b1e6f5}
+body:not(.is-playing) .map-tools{background:linear-gradient(90deg,#041b32e4,#0e2f4bcc);border-radius:5px;backdrop-filter:blur(7px)}
+body:not(.is-playing) .yellow-button{background:linear-gradient(180deg,#ffe9ad,#f0be57);font:900 21px 'World Condensed',Impact,sans-serif;border-radius:4px;letter-spacing:.7px;color:#18334e;border:1px solid #fff1c0;box-shadow:0 4px 0 #805721,0 8px 20px #0413248a;transition:transform .15s,filter .15s}
+body:not(.is-playing) .yellow-button:hover{transform:translateY(-2px);filter:brightness(1.09)}
+body:not(.is-playing) .small-button{border-radius:4px;font-weight:800}
+.challenge-catalog-heading{padding:6px 0 16px;border-bottom:1px solid #9dc6de57;margin-bottom:17px}.challenge-catalog-heading h2{font:900 clamp(30px,4vw,52px)/1 'World Condensed',Impact,sans-serif;color:#ffe1a5;margin:6px 0}.challenge-catalog-heading p{margin:0;color:#bad9e9}
+.challenge-world-card,.challenge-dodge-card{display:grid!important;grid-template-columns: minmax(0,1.14fr) minmax(285px,.86fr);gap:16px;margin-bottom:22px;background:linear-gradient(140deg,#102e4b,#091d35);border:1px solid #81b8d3;padding:11px;border-radius:6px;box-shadow:0 10px 20px #0003}
+.challenge-world-card .challenge-art,.challenge-dodge-card .challenge-art{min-height:345px;aspect-ratio:1.7;position:relative;border-radius:5px;overflow:hidden}
+.challenge-world-card .challenge-art canvas,.challenge-dodge-card .challenge-art img{display:block;width:100%;height:100%;object-fit:cover}
+.challenge-dodge-art:after{position:absolute;content:'';inset:20% 0 0;background:linear-gradient(transparent,#061629df);pointer-events:none}
+.challenge-dodge-art>div{position:absolute;bottom:22px;left:26px;z-index:2}
+.challenge-dodge-art h2{font:900 clamp(48px,5vw,78px)/.85 'World Condensed',Impact,sans-serif;letter-spacing:-1px;color:#fff;text-shadow:0 5px 4px #031d38}
+.challenge-copy{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:15px 18px}.challenge-copy h2{margin:0}.challenge-copy p{margin:0}.challenge-status{display:flex;flex-wrap:wrap;gap:9px;color:#ffe4ae;font:800 13px 'World Condensed';letter-spacing:.9px}.challenge-status span{border:1px solid #6998b4;background:#183955;padding:7px 11px;border-radius:4px}
+#staff-panel{border-color:#bf9654;box-shadow:0 9px 0 #061c2b66,0 25px 65px #0008}
+#staff-panel .staff-tabs button{font-weight:900;letter-spacing:.6px;border-radius:3px}
+.is-playing .zone-bar{background:linear-gradient(120deg,#103752f7,#0a2944f7);border:1px solid #9bd5eb;box-shadow:0 6px 25px #06162d7a}
+.is-playing #portal{background:linear-gradient(#ffe5aa,#e7b660);font:900 18px 'World Condensed';border-radius:4px;border:2px solid #fff2c3}
+.is-playing .play-bottom{background:#081b30e8;border:1px solid #629ac0;border-radius:5px;backdrop-filter:blur(6px)}
+.is-playing .wood-nav{border-radius:5px;box-shadow:0 8px 24px #0006}
+@media(max-width:1200px){body:not(.is-playing) .wood-nav strong{font-size:15px}body:not(.is-playing) .character-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:800px){body:not(.is-playing){padding:95px 10px 70px}body:not(.is-playing) .world-top{min-height:0;height:0;padding:0}body:not(.is-playing) .expedition-pass{position:fixed;left:10px;top:10px;width:68px;min-width:68px;z-index:12;padding:5px}body:not(.is-playing) .expedition-pass>div{display:none}body:not(.is-playing) .wood-logo{position:fixed;top:10px;left:89px;width:130px;z-index:12}body:not(.is-playing) .top-tools{position:fixed;right:10px;top:10px;z-index:12}body:not(.is-playing) .wood-nav{position:fixed;top:auto;left:7px;right:7px;bottom:8px;width:auto;z-index:20;grid-template-columns:repeat(6,minmax(0,1fr));padding:5px;gap:3px}body:not(.is-playing) .wood-nav button{min-height:48px;flex-direction:column;gap:2px;padding:2px}body:not(.is-playing) .wood-nav strong{font-size:10px}body:not(.is-playing) .wood-nav svg{width:20px;height:20px}body:not(.is-playing) .ice-shell{padding:10px;min-height:calc(100dvh - 180px)}body:not(.is-playing) .map-layout{height:auto;min-height:0;display:flex;flex-direction:column}body:not(.is-playing) .map-overview{height:53dvh;min-height:360px}body:not(.is-playing) .zone-detail{min-height:245px}body:not(.is-playing) .character-grid{grid-template-columns:repeat(4,minmax(0,1fr));max-height:65dvh}.challenge-world-card,.challenge-dodge-card{grid-template-columns:1fr!important}.challenge-world-card .challenge-art,.challenge-dodge-card .challenge-art{min-height:250px}}
+@media(max-width:520px){body:not(.is-playing) .wood-nav strong{font-size:9px}body:not(.is-playing) .wood-nav button{padding:4px 0}body:not(.is-playing) .zone-detail h2{font-size:28px}body:not(.is-playing) .character-grid{grid-template-columns:repeat(3,minmax(0,1fr))}body:not(.is-playing) .map-pin{font-size:9px;padding:5px 6px}.challenge-world-card .challenge-art,.challenge-dodge-card .challenge-art{min-height:200px} .challenge-dodge-art h2{font-size:48px}}

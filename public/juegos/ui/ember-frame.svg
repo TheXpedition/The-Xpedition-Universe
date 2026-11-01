@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="96" viewBox="0 0 128 96" fill="none">
+  <!-- Sixteen-pixel slices keep every cut and glint inside an unstretched corner. -->
+  <path d="M13 1H115L127 13V83L115 95H13L1 83V13Z" stroke="#180a04" stroke-width="2"/>
+  <path d="M13 1H115L127 13V83L115 95H13L1 83V13Z" stroke="#cb702f" stroke-width="1.25"/>
+  <path d="M15 5H113L123 15V81L113 91H15L5 81V15Z" stroke="#5e351b" stroke-width="1"/>
+  <path d="M16 7H112L121 16V80L112 89H16L7 80V16Z" stroke="#e49b4530" stroke-width=".7"/>
+  <g stroke="#ffcb7c" stroke-width="1.1" stroke-linecap="round">
+    <path d="M4 12L12 4M116 4L124 12M4 84L12 92M116 92L124 84"/>
+  </g>
+  <g stroke="#db6b28" stroke-width=".8" stroke-linecap="round" opacity=".7">
+    <path d="M14 3H16M112 3H114M3 14V16M125 14V16M3 80V82M125 80V82M14 93H16M112 93H114"/>
+  </g>
+</svg>

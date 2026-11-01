@@ -1,0 +1,1 @@
+export function protocolAudience(state){const duelists=new Set(state.duel?.ids||[]),people=new Map();for(const p of [...state.roster,...state.visitors])if(p.connected&&!duelists.has(p.id))people.set(p.id,p);return people.size;}

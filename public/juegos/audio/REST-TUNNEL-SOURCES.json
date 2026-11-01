@@ -1,0 +1,38 @@
+[
+  {
+    "file": "sleep-snore-male-loop.wav",
+    "title": "Man Snoring",
+    "url": "https://bigsoundbank.com/man-snoring-s0170.html",
+    "author": "Joseph SARDIN · BigSoundBank / LaSonothèque",
+    "license": "CC0-1.0",
+    "processing": "PCM 22.05 kHz, DC removal, gentle low-pass, level matching, 1.5 s overlap loop",
+    "sourceSha256": "15beda9b18ba9b0a6ef311940092a8f29b3e6d95438bca1336eb92c2dc1c60dc",
+    "seconds": 22.5,
+    "channels": 1,
+    "peak": 0.85
+  },
+  {
+    "file": "sleep-breath-female-loop.wav",
+    "title": "Ronflement femme",
+    "url": "https://lasonotheque.org/ronflement-femme-s0653.html",
+    "author": "Joseph SARDIN · BigSoundBank / LaSonothèque",
+    "license": "CC0-1.0",
+    "processing": "PCM 22.05 kHz, DC removal, gentle low-pass, level matching, 1.5 s overlap loop",
+    "sourceSha256": "5c8377ad3f0867874b24f307d9179a77c304ad041b236a18533499283c60d478",
+    "seconds": 26.5,
+    "channels": 1,
+    "peak": 0.85
+  },
+  {
+    "file": "tunnel-drips-loop.wav",
+    "title": "Cave #2",
+    "url": "https://bigsoundbank.com/cave-2-s2136.html",
+    "author": "Joseph SARDIN · BigSoundBank / LaSonothèque",
+    "license": "CC0-1.0",
+    "processing": "PCM 22.05 kHz, DC removal, gentle low-pass, level matching, 1.5 s overlap loop",
+    "sourceSha256": "1e3aef5d86262b597901590866c2149727a6eb8b4bf1674121f1b61432e59a77",
+    "seconds": 68.5,
+    "channels": 2,
+    "peak": 0.85
+  }
+]

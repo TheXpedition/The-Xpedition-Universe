@@ -54,14 +54,52 @@ CREATE INDEX IF NOT EXISTS showdown_chat_room ON showdown_chat(room,created);
 CREATE TABLE IF NOT EXISTS showdown_invites(room TEXT NOT NULL REFERENCES showdown_rooms(id) ON DELETE CASCADE,target TEXT NOT NULL REFERENCES users(id),inviter TEXT NOT NULL REFERENCES users(id),message TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(room,target));
 CREATE TABLE IF NOT EXISTS x_million_rooms(id TEXT PRIMARY KEY,code TEXT UNIQUE NOT NULL,mode TEXT NOT NULL,status TEXT NOT NULL,host_id TEXT,state TEXT NOT NULL,created INTEGER NOT NULL,updated INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS x_million_rooms_updated ON x_million_rooms(updated);
-CREATE TABLE IF NOT EXISTS x_million_questions(id TEXT PRIMARY KEY,created_by TEXT NOT NULL REFERENCES users(id),question TEXT NOT NULL,choices TEXT NOT NULL,correct_index INTEGER NOT NULL,category TEXT NOT NULL,difficulty TEXT NOT NULL,created INTEGER NOT NULL);`;
+CREATE TABLE IF NOT EXISTS x_million_questions(id TEXT PRIMARY KEY,created_by TEXT NOT NULL REFERENCES users(id),question TEXT NOT NULL,choices TEXT NOT NULL,correct_index INTEGER NOT NULL,category TEXT NOT NULL,difficulty TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_intro_views(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,version TEXT NOT NULL,completed BIGINT NOT NULL DEFAULT 0,session TEXT NOT NULL,started BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS world_access(resource TEXT PRIMARY KEY,enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN (0,1)),updated_by TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_preferences(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,character_id TEXT NOT NULL DEFAULT 'dani',favorites TEXT NOT NULL DEFAULT '[]',visited TEXT NOT NULL DEFAULT '[]',last_zone TEXT NOT NULL DEFAULT 'base',x INTEGER NOT NULL DEFAULT 600,y INTEGER NOT NULL DEFAULT 530,diary TEXT NOT NULL DEFAULT '',updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_character_reservations(character_id TEXT PRIMARY KEY,user_id TEXT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_memorials(id TEXT PRIMARY KEY,user_id TEXT REFERENCES users(id) ON DELETE SET NULL,name TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_discoveries(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,zone TEXT NOT NULL,object_id TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(user_id,zone,object_id));
+CREATE TABLE IF NOT EXISTS world_vitals(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_wellness(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_environment(id TEXT PRIMARY KEY,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_survival_state(id TEXT PRIMARY KEY,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_medical_supply(id TEXT PRIMARY KEY,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_clinic_roles(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,enabled INTEGER NOT NULL DEFAULT 1,updated_by TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_clinic_appointments(id TEXT PRIMARY KEY,patient_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nurse_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,status TEXT NOT NULL,cost INTEGER NOT NULL DEFAULT 100,created INTEGER NOT NULL,updated INTEGER NOT NULL,expires INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS world_clinic_appointments_patient ON world_clinic_appointments(patient_id,status,updated);
+CREATE INDEX IF NOT EXISTS world_clinic_appointments_nurse ON world_clinic_appointments(nurse_id,status,updated);
+CREATE TABLE IF NOT EXISTS world_clinic_invoices(id TEXT PRIMARY KEY,appointment_id TEXT NOT NULL REFERENCES world_clinic_appointments(id),patient_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nurse_id TEXT NOT NULL REFERENCES users(id),amount INTEGER NOT NULL CHECK(amount>=1 AND amount<=100000),reason TEXT NOT NULL,status TEXT NOT NULL,created INTEGER NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_clinic_events(id TEXT PRIMARY KEY,patient_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nurse_id TEXT REFERENCES users(id),kind TEXT NOT NULL,data TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS world_clinic_events_patient ON world_clinic_events(patient_id,created);
+CREATE TABLE IF NOT EXISTS world_clinic_notes(id TEXT PRIMARY KEY,patient_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nurse_id TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_food_state(id TEXT PRIMARY KEY,state TEXT NOT NULL,revision INTEGER NOT NULL DEFAULT 0,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_food_inventory(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,food_id TEXT NOT NULL,quantity INTEGER NOT NULL CHECK(quantity>=0 AND quantity<=48),updated INTEGER NOT NULL,PRIMARY KEY(user_id,food_id));
+CREATE TABLE IF NOT EXISTS world_chat(id TEXT PRIMARY KEY,zone TEXT NOT NULL,sender TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,text TEXT NOT NULL,created INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS world_chat_zone ON world_chat(zone,created);
+CREATE TABLE IF NOT EXISTS world_seasons(id TEXT PRIMARY KEY,name TEXT NOT NULL,state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_contestants(season TEXT NOT NULL REFERENCES world_seasons(id),user_id TEXT NOT NULL REFERENCES users(id),status TEXT NOT NULL DEFAULT 'active',team TEXT NOT NULL DEFAULT '',points INTEGER NOT NULL DEFAULT 0,seat INTEGER NOT NULL DEFAULT 0,muted_until INTEGER NOT NULL DEFAULT 0,updated INTEGER NOT NULL,PRIMARY KEY(season,user_id));
+CREATE TABLE IF NOT EXISTS world_ceremonies(id TEXT PRIMARY KEY,season TEXT NOT NULL REFERENCES world_seasons(id),state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_votes(ceremony TEXT NOT NULL REFERENCES world_ceremonies(id),round INTEGER NOT NULL,user_id TEXT NOT NULL REFERENCES users(id),target TEXT NOT NULL REFERENCES users(id),created INTEGER NOT NULL,PRIMARY KEY(ceremony,round,user_id));
+CREATE TABLE IF NOT EXISTS world_permissions(user_id TEXT PRIMARY KEY REFERENCES users(id),permissions TEXT NOT NULL,updated_by TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_actors(user_id TEXT PRIMARY KEY REFERENCES users(id),state TEXT NOT NULL,updated INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_handoffs(token TEXT PRIMARY KEY,parent_token TEXT NOT NULL REFERENCES sessions(token) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id),expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_sessions(token TEXT PRIMARY KEY,parent_token TEXT NOT NULL REFERENCES sessions(token) ON DELETE CASCADE,user_id TEXT NOT NULL REFERENCES users(id),expires INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS world_shop_profiles(user_id TEXT PRIMARY KEY REFERENCES users(id),purchases INTEGER NOT NULL DEFAULT 0,pet TEXT,wallpaper TEXT,updated BIGINT NOT NULL);
+CREATE TABLE IF NOT EXISTS world_shop_items(id TEXT PRIMARY KEY,owner TEXT NOT NULL REFERENCES users(id),kind TEXT NOT NULL,ref TEXT NOT NULL,state TEXT NOT NULL,payload TEXT NOT NULL,created BIGINT NOT NULL,updated BIGINT NOT NULL);
+CREATE INDEX IF NOT EXISTS world_shop_owner ON world_shop_items(owner,state);
+CREATE UNIQUE INDEX IF NOT EXISTS world_shop_collectible ON world_shop_items(owner,kind,ref) WHERE state='owned' AND kind IN ('character','pet','wallpaper');
+CREATE TABLE IF NOT EXISTS world_shop_operations(user_id TEXT NOT NULL REFERENCES users(id),id TEXT NOT NULL,fingerprint TEXT NOT NULL,response TEXT NOT NULL,created BIGINT NOT NULL,PRIMARY KEY(user_id,id));
+CREATE TABLE IF NOT EXISTS world_shop_notices(id TEXT PRIMARY KEY,owner TEXT NOT NULL REFERENCES users(id),kind TEXT NOT NULL,payload TEXT NOT NULL,seen INTEGER NOT NULL DEFAULT 0,created BIGINT NOT NULL);
+`;
 
 const profileColumns = [['gender_identity',"TEXT NOT NULL DEFAULT ''"],['pronouns',"TEXT NOT NULL DEFAULT ''"],['orientation',"TEXT NOT NULL DEFAULT ''"],['orientation_visible','INTEGER NOT NULL DEFAULT 0'],['sticker_favorites',"TEXT NOT NULL DEFAULT '[]'"]];
-const tables = ['users','sessions','password_recovery_requests','push_configuration','push_subscriptions','follows','conversations','members','messages','reactions','news_likes','posts','post_mentions','character_views','character_visits','profile_covers','post_reactions','post_comments','comment_reactions','community_removals','profile_verifications','moderation_actions','arcade_access','arcade_runs','user_progression','economy_rewards','economy_inventory','simulator_preferences','activity_days','game_runs','casting_seasons','casting_entries','apocalypse_cast','showdown_rooms','showdown_members','showdown_chat','showdown_invites','x_million_rooms','x_million_questions'];
+const tables = ["users","sessions","password_recovery_requests","push_configuration","push_subscriptions","follows","conversations","members","messages","reactions","news_likes","posts","post_mentions","character_views","character_visits","profile_covers","post_reactions","post_comments","comment_reactions","community_removals","profile_verifications","moderation_actions","arcade_access","arcade_runs","user_progression","economy_rewards","economy_inventory","simulator_preferences","activity_days","game_runs","casting_seasons","casting_entries","apocalypse_cast","showdown_rooms","showdown_members","showdown_chat","showdown_invites","x_million_rooms","x_million_questions","world_intro_views","world_access","world_preferences","world_character_reservations","world_memorials","world_discoveries","world_vitals","world_wellness","world_environment","world_survival_state","world_medical_supply","world_clinic_roles","world_clinic_appointments","world_clinic_invoices","world_clinic_events","world_clinic_notes","world_food_state","world_food_inventory","world_chat","world_seasons","world_contestants","world_ceremonies","world_votes","world_permissions","world_actors","world_handoffs","world_sessions","world_shop_profiles","world_shop_items","world_shop_operations","world_shop_notices"];
 function postgresSQL(sql) {
   let n = 0;
   // SQL strings are fixed in the server. Values always travel separately as parameters.
-  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|password_recovery_requests|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|arcade_access|arcade_runs|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries|apocalypse_cast|showdown_rooms|showdown_members|showdown_chat|showdown_invites|x_million_rooms|x_million_questions)\b/g, token => {
+  return sql.replace(/'(?:''|[^'])*'|\?|\browid\b|\b(?:users|sessions|password_recovery_requests|push_configuration|push_subscriptions|follows|conversations|members|messages|reactions|news_likes|posts|post_mentions|character_views|character_visits|profile_covers|post_reactions|post_comments|comment_reactions|community_removals|profile_verifications|moderation_actions|arcade_access|arcade_runs|user_progression|economy_rewards|economy_inventory|simulator_preferences|activity_days|game_runs|casting_seasons|casting_entries|apocalypse_cast|showdown_rooms|showdown_members|showdown_chat|showdown_invites|x_million_rooms|x_million_questions|world_intro_views|world_access|world_preferences|world_character_reservations|world_memorials|world_discoveries|world_vitals|world_wellness|world_environment|world_survival_state|world_medical_supply|world_clinic_roles|world_clinic_appointments|world_clinic_invoices|world_clinic_events|world_clinic_notes|world_food_state|world_food_inventory|world_chat|world_seasons|world_contestants|world_ceremonies|world_votes|world_permissions|world_actors|world_handoffs|world_sessions|world_shop_profiles|world_shop_items|world_shop_operations|world_shop_notices)\b/g, token => {
     if (token.startsWith("'")) return token;
     if (token === '?') return '$' + ++n;
     if (token === 'rowid') return 'xp_sequence';
@@ -117,15 +155,18 @@ export async function openDatabase(dataDir) {
   pool.on('error', error=>console.error('Conexión de base de datos interrumpida:',error.code||'DATABASE_ERROR'));
   const context = new AsyncLocalStorage();
   const query = (sql,args=[]) => (context.getStore()||pool).query(postgresSQL(sql),args);
+  const installation=await pool.connect();
   try {
-    await pool.query('CREATE SCHEMA IF NOT EXISTS xpedition; REVOKE ALL ON SCHEMA xpedition FROM PUBLIC;');
+    await installation.query('BEGIN');
+    await installation.query('SELECT pg_advisory_xact_lock(20261101)');
+    await installation.query('CREATE SCHEMA IF NOT EXISTS xpedition; REVOKE ALL ON SCHEMA xpedition FROM PUBLIC;');
     let pgSchema = schema.replace(/\bINTEGER\b/g,'BIGINT').replace('CREATE TABLE IF NOT EXISTS messages(', 'CREATE TABLE IF NOT EXISTS messages(xp_sequence BIGSERIAL UNIQUE,');
     // Index names are schema-qualified by PostgreSQL through their table.
-    await pool.query(postgresSQL(pgSchema));
-    await pool.query('ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0');
-    for(const [name,type] of profileColumns)await pool.query(`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`);
-    for (const table of tables) await pool.query(`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY;`);
-    await pool.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;
+    await installation.query(postgresSQL(pgSchema));
+    await installation.query('ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0');
+    for(const [name,type] of profileColumns)await installation.query(`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`);
+    for (const table of tables) await installation.query(`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY;`);
+    await installation.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;
       REVOKE ALL ON ALL SEQUENCES IN SCHEMA xpedition FROM PUBLIC;
       DO $$ BEGIN
         IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname='anon') THEN
@@ -139,7 +180,8 @@ export async function openDatabase(dataDir) {
           REVOKE ALL ON ALL SEQUENCES IN SCHEMA xpedition FROM authenticated;
         END IF;
       END $$;`);
-  } catch(error) { await pool.end(); throw error; }
+    await installation.query('COMMIT');installation.release();
+  } catch(error) { await installation.query('ROLLBACK').catch(()=>{});installation.release();await pool.end();throw error; }
   return {
     kind:'postgres',
     one: async (sql,...args)=>(await query(sql,args)).rows[0],

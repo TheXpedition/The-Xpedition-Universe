@@ -1,0 +1,122 @@
+import {GRIP_EVENTS,eventDrain,eventPrecision} from './events.mjs';
+import {driveBots} from './bots.mjs';
+import {GRIP_MAPS,BOOTHS,placeAttendee,ensureAttendee,nearbyNode,gripPath,stepAttendee,exitTowards,walkThroughDoor,monitorSpot} from './navigation.mjs';
+import {GRIP_IDS} from './assets.mjs';
+import {SWIMWEAR} from './swimwear.mjs';
+import {worldCharacter} from '../world-characters.mjs';
+export const TITLE='THE LAST GRIP';
+export const PHASE_LABELS={closed:'Acceso cerrado',lobby:'Lobby abierto',opening:'Introducción',arrival:'Llegada al recinto',intro:'Presentación del episodio',guide:'Cómo jugar',changing:'Vestidores',preparation:'Preparación',draw:'Sorteo de ronda',ready:'Competidores a sus puestos',active:'Resiste. Calcula. Aguanta.',ending:'Últimas caídas',results:'Resultados de ronda',finalReady:'Semifinal · balance de clasificación',winner:'Only one remains',finished:'Episodio finalizado'};
+export const LOCATIONS={runway:{name:'Pista de llegada',floor:815,left:80,right:1570,next:'entrance',previous:null},entrance:{name:'Entrada al recinto',floor:820,left:100,right:1540,next:'monitor',previous:'runway'},monitor:{name:'Monitor principal',floor:820,left:100,right:1550,next:'changing',previous:'entrance'},changing:{name:'Vestidores',floor:825,left:80,right:1550,next:'stands',previous:'monitor'},stands:{name:'Gradas',floor:800,left:100,right:1540,next:'platform',previous:'changing'},platform:{name:'Plataforma de presentación',floor:740,left:500,right:1500,next:null,previous:'stands'}};
+const defaults={timingVersion:2,baseDrain:.9,pulseInterval:1500,pulseDuration:700,pulseDelay:150,speedMultiplier:1,arrivalDuration:8000,drawInterval:850,disconnectGrace:45000,guideDuration:5000,readyDuration:3000,resultDuration:6000,fallDuration:2300};
+export function createEpisode({id='grip',now=Date.now()}={}){return {version:1,id,phase:'closed',revision:0,clock:0,at:now,started:null,paused:false,roster:[],visitors:[],rounds:[],round:null,qualifiers:[],winner:null,chat:[],aftercare:[],audit:[],events:[],event:null,returns:{},config:{...defaults},media:{opening:null,presentation:null,draws:[{},{},{}]},created:now};}
+export function normalizeEpisode(s){s.visitors||=[];s.aftercare||=[];s.events||=s.event?[s.event]:[];s.media||={opening:null,presentation:null,draws:[{},{},{}]};if(!s.config.timingVersion)Object.assign(s.config,{timingVersion:2,pulseInterval:1500,pulseDuration:700,pulseDelay:150});s.config={...defaults,...s.config};for(const p of [...s.roster,...s.visitors])ensureAttendee(p);return s;}
+const need=(condition,message)=>{if(!condition)throw Object.assign(Error(message),{status:409});};
+const bounded=v=>Math.max(0,Math.min(100,Number(v)||0));
+export function drainPenalty(v={}){return Math.min(.2,((100-bounded(v.health??100))*.0006+(100-bounded(v.hunger??100))*.0005+(100-bounded(v.energy??100))*.0005+(100-bounded(v.sleep??100))*.0005+bounded(v.stress)*.0003));}
+export function shuffle(items,random=Math.random){const a=[...items];for(let i=a.length-1;i>0;i--){const j=Math.floor(random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+export function isEngaged(s,id){return !['closed','lobby','finished'].includes(s.phase)&&[...s.roster,...(s.visitors||[])].some(p=>p.id===id);}
+export function touch(s,kind,actor='server',detail={}){s.revision++;s.audit.push({clock:s.clock,kind,actor,...detail});if(s.audit.length>1000)s.audit.shift();}
+export function phase(s,value){s.phase=value;s.phaseAt=s.clock;if(value==='intro')returnToMonitor(s);if(['opening','arrival','intro','guide','draw','ready','active','ending','results','winner'].includes(value))for(const p of [...s.roster,...(s.visitors||[])]){p.path=[];p.input=null;}touch(s,'phase','server',{phase:value});}
+const hash=value=>{let h=2166136261;for(const c of value)h=Math.imul(h^c.charCodeAt(0),16777619);return (h>>>0)/4294967296;};
+const mix32=n=>{n=Math.imul(n^(n>>>16),0x7feb352d);n=Math.imul(n^(n>>>15),0x846ca68b);return (n^(n>>>16))>>>0;};
+export function returnToMonitor(s,onlyId){for(const [i,p]of [...s.roster,...s.visitors].entries()){if(onlyId&&p.id!==onlyId)continue;const spot=monitorSpot(i);placeAttendee(p,'monitor',p.characterId==='isabel'?[225,774]:[spot.x,spot.y]);p.botGoal=null;p.botHoldUntil=s.clock+2500;}}
+export function pulseAt(s){const r=s.round;if(!r||s.phase!=='active')return null;let t=r.timing||{at:r.at,index:0,speed:s.config.speedMultiplier||1};if(r.nextTiming&&s.clock>=r.nextTiming.at)t=r.nextTiming;const interval=s.config.pulseInterval/t.speed,duration=s.config.pulseDuration/t.speed,local=Math.floor(Math.max(0,s.clock-t.at)/interval),index=t.index+local,start=t.at+local*interval+(s.config.pulseDelay??150)/t.speed;return {id:r.id+':'+index,index,start,end:start+duration,progress:(s.clock-start)/duration,speed:t.speed,cycleStart:t.at+local*interval,interval,duration};}
+export function precision(s){const elapsed=s.round?Math.max(0,(s.clock-s.round.at)/1000):0,pulse=pulseAt(s),index=pulse?.index||0,seed=Math.floor(hash(s.round?.id||s.id)*4294967296),jitter=mix32(seed^Math.imul(index+1,0x9e3779b1))/4294967296,right=(index+(seed&1))%2;return {center:(right?.65:.17)+jitter*.18,perfect:Math.max(.025,.075-elapsed*.0003)*eventPrecision(s),good:Math.max(.075,.18-elapsed*.00055)*eventPrecision(s)};}
+
+const sample=key=>mix32(Math.floor(hash(key)*4294967296))/4294967296;
+export function participant(s,id){return s.roster.find(p=>p.id===id);}
+export function attendee(s,id){return participant(s,id)||(s.visitors||[]).find(p=>p.id===id);}
+function person(actor,i){const p={id:actor.id,name:actor.name,characterId:actor.characterId,role:actor.role||'participant',ready:false,changed:false,connected:true,lastSeen:0,area:'runway',x:135+(i%9)*166,lane:Math.floor(i/9),facing:1,walk:0,vitals:{...actor.vitals},origin:actor.origin};placeAttendee(p,'runway',[500+i%6*135,590+Math.floor(i/6)*70]);return p;}
+export function visibleReveals(s){const r=s.round;if(!r)return [];if(s.phase!=='draw')return r.reveals||[];return (r.reveals||[]).filter(v=>s.clock>=v.start);}
+export function cinematicFor(s){
+ if(s.phase==='opening'&&s.media?.opening)return {...s.media.opening,key:s.id+':opening',start:s.phaseAt,placement:'fullscreen'};
+ if(s.phase==='intro'&&s.media?.presentation)return {...s.media.presentation,key:s.id+':presentation:'+s.phaseAt,start:s.phaseAt,placement:'monitor'};
+ if(s.phase==='draw'){const v=visibleReveals(s).at(-1);if(v?.video&&s.clock<v.end)return {...v.video,key:s.round.id+':'+v.id,start:v.start,placement:'fullscreen',name:v.name};}return null;
+}
+function draw(s,random,final=false){
+ const remaining=final?s.qualifiers:s.roster.filter(p=>!s.rounds.some(r=>r.members.includes(p.id))).map(p=>p.id);need(remaining.length>0,'No quedan participantes por sortear.');
+ const roundsLeft=Math.ceil(remaining.length/6),size=final?remaining.length:Math.ceil(remaining.length/roundsLeft),members=final?[...remaining]:shuffle(remaining,random).slice(0,size),number=s.rounds.length+1;
+ let cursor=s.clock;const reveals=members.map(id=>{const p=participant(s,id),video=final?null:s.media?.draws?.[number-1]?.[p.characterId],start=cursor;cursor+=video?video.duration+500:s.config.drawInterval;return {id,name:p.name,start,end:cursor,video};});
+ s.round={id:s.id+':'+(final?'final':number),number,final,members,reveals,drawEnd:cursor+1000,drawAt:s.clock,at:null,falls:[],actors:{},tieOrder:shuffle(members,random)};
+ for(const id of members){const p=participant(s,id);s.round.actors[id]={stamina:100,penalty:drainPenalty(p.vitals),lastPulse:null,lastResult:null,entryVitals:{...p.vitals}};placeAttendee(p,'stands',[800+(members.indexOf(id)%3)*120,690+Math.floor(members.indexOf(id)/3)*65]);}phase(s,final?'ready':'draw');
+}
+export function applyEpisode(s,action,{actor,staff=false,now=Date.now(),random=Math.random}={}){
+ normalizeEpisode(s);need(action&&typeof action.type==='string','Acción del episodio inválida.');const type=action.type,p=attendee(s,actor?.id);
+ if(type==='join'){need(s.phase==='lobby','El staff debe abrir el lobby.');need(!participant(s,actor?.id),'Ya tienes una plaza en el lobby.');need(s.roster.length<18,'Las 18 plazas están ocupadas.');need(actor?.role==='participant','Puedes entrar como espectador y usar los vestidores.');need(!s.roster.some(q=>q.characterId===actor.characterId),'Ese personaje ya tiene una plaza.');s.visitors=s.visitors.filter(q=>q.id!==actor.id);s.roster.push(person(actor,s.roster.length));touch(s,type,actor.id);return true;}
+ if(type==='visit'){need(!['closed','finished'].includes(s.phase),'El recinto todavía no está abierto.');if(!p){const v=person(actor,s.roster.length+s.visitors.length);if(!['lobby','opening','arrival'].includes(s.phase))placeAttendee(v,actor.characterId==='isabel'?'monitor':'stands',actor.characterId==='isabel'?[225,774]:GRIP_MAPS.stands.spawn);s.visitors.push(v);}touch(s,type,actor.id);return true;}
+ if(['leave','ready','change','pulse','move','area','path','interact'].includes(type)){
+  need(p,'Primero entra al recinto.');
+  if(type==='leave'){need(s.phase==='lobby'||!participant(s,p.id),'El episodio ya empezó.');s.roster=s.roster.filter(q=>q!==p);s.visitors=s.visitors.filter(q=>q!==p);}
+  if(type==='ready'){need(participant(s,p.id),'Los espectadores no ocupan plazas de competición.');need(['lobby','changing','preparation'].includes(s.phase),'No es momento de prepararse.');need(s.phase==='lobby'||p.changed,'Confirma el vestuario antes de prepararte.');p.ready=action.ready===true;}
+  if(type==='change'){const n=action.target?GRIP_MAPS[p.area].nodes.find(n=>n.kind==='booth'&&n.id===action.target&&Math.hypot(p.x-n.x,p.y-n.y)<=n.range):nearbyNode(p);need(p.area==='changing'&&n?.kind==='booth'&&(!action.target||action.target===n.id),'Acércate a una cortina de vestidor y pulsa E.');need(isEngaged(s,p.id)&&!s.paused&&!['opening','arrival'].includes(s.phase),'Los vestidores todavía no están abiertos.');need(SWIMWEAR[p.characterId],'No se ha recibido un traje de baño para este personaje.');p.path=[];p.input=null;p.changed=!p.changed;p.ready=!!participant(s,p.id)&&p.changed;p.lastBooth=n.id;}
+  if(type==='interact'){need(isEngaged(s,p.id)&&!s.paused,'El recinto está en pausa.');const n=action.target?GRIP_MAPS[p.area].nodes.find(n=>n.id===action.target&&Math.hypot(p.x-n.x,p.y-n.y)<=n.range):nearbyNode(p);need(n,'Acércate al objeto para usar E.');if(n.kind==='booth')return applyEpisode(s,{type:'change',target:n.id},{actor,staff,now,random});if(n.kind==='door')return applyEpisode(s,{type:'area',area:n.to},{actor,staff,now,random});if(n.kind==='clinic')return {clinic:true};}
+
+  if(type==='pulse'){need(s.phase==='active'&&!s.paused,'La ronda no está activa.');const a=s.round.actors[p.id];need(a&&!s.round.falls.some(f=>f.id===p.id),'Estás en las gradas.');const pulse=pulseAt(s);need(a.lastPulse!==pulse.id,'Ya respondiste a este pulso.');need(pulse.progress>=0&&pulse.progress<=1,'Espera a que comience el pulso.');const d=Math.abs(pulse.progress-precision(s).center),bands=precision(s),result=d<=bands.perfect?'perfect':d<=bands.good?'good':'fail';a.lastPulse=pulse.id;a.lastResult={result,clock:s.clock};a.stamina=bounded(a.stamina+({perfect:4,good:2,fail:-6}[result]));touch(s,'pulse',p.id,{result,pulse:pulse.id});return result;}
+  if(['move','area','path'].includes(type)){
+   need(isEngaged(s,p.id)&&!s.paused,'El episodio no permite moverse ahora.');need(!['opening','arrival','intro','guide'].includes(s.phase),'Espera a que termine la presentación.');need(!(['active','ending'].includes(s.phase)&&s.round.members.includes(p.id)&&!s.round.falls.some(f=>f.id===p.id)),'Estás colgado en la arena.');
+   if(type==='move'){p.path=[];p.input={x:Math.sign(Number(action.x)||0),y:Math.sign(Number(action.y)||0),run:action.run===true,at:s.clock};return true;}
+   if(type==='path'){const n=action.target&&GRIP_MAPS[p.area].nodes.find(n=>n.id===action.target),target=n||{x:Number(action.x),y:Number(action.y)};need(Number.isFinite(target.x)&&Number.isFinite(target.y),'Destino inválido.');const path=gripPath(p.area,p,target);need(path.length,'No hay un camino transitable hasta ese punto.');p.path=path;p.pathRun=action.run===true;p.input=null;return true;}
+   const n=GRIP_MAPS[p.area].nodes.find(n=>n.kind==='door'&&n.to===action.area);need(n,'Usa un acceso conectado del recinto.');need(Math.hypot(p.x-n.x,p.y-n.y)<=n.range,'Acércate al acceso visible del mapa.');placeAttendee(p,n.to,n.spawn);
+  }
+
+  touch(s,type,p.id);return true;
+ }
+ if(!staff)throw Object.assign(Error('Solo Dirección puede controlar el episodio.'),{status:403});
+ if(type==='open'){need(['closed','finished'].includes(s.phase),'Ya hay un episodio abierto.');if(s.phase==='finished'){const cfg=s.config,media=s.media;Object.assign(s,createEpisode({id:action.instanceId||'grip-'+now,now}));s.config={...cfg,speedMultiplier:1};s.media=media;}phase(s,'lobby');}
+ else if(type==='close'){need(s.phase==='lobby','Finaliza el episodio para devolver a los participantes.');s.roster=[];s.visitors=[];phase(s,'closed');}
+ else if(type==='fillBots'){need(s.phase==='lobby','Los bots solo pueden añadirse antes de empezar.');for(const characterId of shuffle(GRIP_IDS.filter(id=>!s.roster.some(p=>p.characterId===id)&&!s.visitors.some(p=>p.characterId===id)),random)){if(s.roster.length>=18)break;const c=worldCharacter(characterId),bot=person({id:s.id+':bot:'+characterId,name:c.name,characterId,role:'participant',vitals:{health:95,hunger:90,energy:90,sleep:90,stress:15}},s.roster.length);bot.bot=true;bot.ready=true;s.roster.push(bot);}}
+ else if(type==='removeBots'){need(s.phase==='lobby','Los bots solo se retiran antes de empezar.');s.roster=s.roster.filter(p=>!p.bot);}
+ else if(type==='kick'){need(s.phase==='lobby','Solo puedes liberar plazas antes de empezar.');s.roster=s.roster.filter(q=>q.id!==action.target);}
+ else if(type==='start'){need(s.phase==='lobby','El episodio ya está en marcha.');need(s.roster.length>=2,'Se necesitan al menos dos participantes.');need(s.roster.every(p=>p.ready&&p.connected),'Falta alguien por prepararse o conectarse.');need(s.roster.every(p=>GRIP_IDS.includes(p.characterId)),'Faltan PNG de agarre para uno o más participantes.');need(s.roster.length===18||action.confirmReduced===true,'Confirma el formato reducido.');s.started=now;for(const p of [...s.roster,...s.visitors]){p.ready=false;p.changed=false;p.area='runway';p.input=null;}phase(s,s.media?.opening?'opening':'arrival');}
+ else if(type==='replayIntro'){need(['intro','changing','preparation','guide'].includes(s.phase),'La presentación no está disponible en esta fase.');phase(s,'intro');}
+ else if(type==='guide'){need(s.phase==='intro','Primero presenta el episodio.');need(!s.media?.presentation||s.clock-s.phaseAt>=s.media.presentation.duration,'Espera a que termine el video.');phase(s,'guide');}
+ else if(type==='changing'){need(['intro','guide'].includes(s.phase),'Primero presenta el episodio.');need(s.phase==='guide'||!s.media?.presentation,'Espera a que termine el video.');phase(s,'changing');}
+ else if(type==='prepare'){need(s.phase==='changing'&&s.roster.every(p=>p.changed&&p.ready),'Falta confirmar vestuario o preparación.');phase(s,'preparation');}
+ else if(type==='beginRound'&&s.phase==='ready'&&!s.round?.autoStart){return applyEpisode(s,{type:'startRound'},{actor,staff,now,random});}
+ else if(type==='beginRound'){need(['changing','preparation','results','finalReady'].includes(s.phase),'Espera a que termine la ronda y se anuncien los clasificados.');need(!s.round||s.phase!=='results'||s.round.returned,'Espera al anuncio de los dos clasificados.');const final=s.roster.every(p=>s.rounds.some(r=>r.members.includes(p.id)));draw(s,random,final);s.round.autoStart=true;}
+ else if(type==='draw'){need(['preparation','results'].includes(s.phase),'Termina la ronda antes del siguiente sorteo.');draw(s,random);}
+ else if(type==='setSpeed'){need(Number.isInteger(action.value)&&action.value>=1&&action.value<=4,'Selecciona rapidez x1, x2, x3 o x4.');if(s.phase==='active'){const p=pulseAt(s);s.round.timing=s.round.nextTiming&&s.clock>=s.round.nextTiming.at?s.round.nextTiming:s.round.timing||{at:s.round.at,index:0,speed:p.speed};s.round.nextTiming={at:p.cycleStart+p.interval,index:p.index+1,speed:action.value};}s.config.speedMultiplier=action.value;}
+ else if(type==='startRound'){need(s.phase==='ready','El sorteo aún no ha terminado.');s.round.at=s.clock;s.round.effort=0;s.round.timing={at:s.clock,index:0,speed:s.config.speedMultiplier||1};s.round.nextTiming=null;for(const p of [...s.roster,...s.visitors])p.input=null;phase(s,'active');}
+ else if(type==='final'){need(['results','finalReady'].includes(s.phase)&&s.roster.every(p=>s.rounds.some(r=>r.members.includes(p.id))),'Faltan rondas clasificatorias.');draw(s,random,true);}
+ else if(type==='pause'){need(!['closed','lobby','finished'].includes(s.phase)&&!s.paused,'No hay una ronda que pausar.');s.paused=true;}
+ else if(type==='resume'){need(s.paused,'El episodio ya está en marcha.');s.paused=false;}
+ else if(type==='event'){need(s.phase==='active'&&!s.paused,'La ronda debe estar activa.');need(GRIP_EVENTS[action.event],'Evento desconocido.');const existing=s.events.find(e=>e.kind===action.event);if(action.enabled===false||existing&&action.enabled!==true)s.events=s.events.filter(e=>e.kind!==action.event);else if(!existing)s.events.push({kind:action.event,warningAt:s.clock,start:s.clock+3000,end:null});s.event=s.events[0]||null;}
+ else if(type==='clearEvents'){s.events=[];s.event=null;}
+ else if(type==='finish'){need(!['closed','lobby','finished'].includes(s.phase)&&action.confirm===true,'Confirma el regreso al campamento.');if(s.round&&s.round.at!==null)for(const id of s.round.members)recordEffort(s,s.round,id,s.round.falls.some(f=>f.id===id));for(const p of [...s.roster,...s.visitors])if(!p.bot)s.returns[p.id]=p.origin;phase(s,'finished');s.paused=false;}
+ else throw Object.assign(Error('Acción desconocida.'),{status:400});touch(s,type,actor?.id||'staff',{target:action.target});return true;
+}
+
+function recordEffort(s,r,id,fell=false){const p=participant(s,id);if(!p||p.bot||r.at===null)return;const key=r.id+':'+id;if(s.aftercare.some(e=>e.id===key))return;const fall=r.falls.find(f=>f.id===id);s.aftercare.push({id:key,userId:id,roundId:r.id,seconds:Math.max(0,r.effort??((fall?.clock??s.clock)-r.at)/1000),fell,baseline:{...(r.actors[id]?.entryVitals||p.vitals)},applied:false});}
+
+export function tickEpisode(s,now=Date.now()){
+ normalizeEpisode(s);const delta=Math.max(0,Math.min(1000,now-s.at));s.at=now;if(s.paused||['closed','lobby','finished'].includes(s.phase))return false;s.clock+=delta;
+ if(s.phase==='opening'&&s.clock-s.phaseAt>=s.media.opening.duration)phase(s,'arrival');
+ if(s.phase==='arrival'&&s.clock-s.phaseAt>=s.config.arrivalDuration)phase(s,'intro');
+ if(s.phase==='intro'&&s.media?.presentation&&s.clock-s.phaseAt>=s.media.presentation.duration)phase(s,'guide');
+ if(s.phase==='guide'&&s.clock-s.phaseAt>=s.config.guideDuration)phase(s,'changing');
+ if(s.phase==='draw'&&s.clock>=(s.round.drawEnd??s.round.drawAt+s.round.members.length*s.config.drawInterval+1000))phase(s,'ready');
+ if(s.phase==='ready'&&s.round.autoStart&&s.clock-s.phaseAt>=s.config.readyDuration)applyEpisode(s,{type:'startRound'},{staff:true,now});
+ if(s.phase==='ending'&&s.clock-s.phaseAt>=s.config.fallDuration){const r=s.round;if(r.final){s.winner=r.survivors[0];phase(s,'winner');}else{s.qualifiers.push(...r.survivors);s.rounds.push(structuredClone(r));phase(s,'results');}}
+ if(['results','winner'].includes(s.phase)&&!s.round.returned&&s.clock-s.phaseAt>=s.config.resultDuration){returnToMonitor(s);s.round.returned=true;touch(s,'round-return');if(s.phase==='results'&&s.roster.every(p=>s.rounds.some(r=>r.members.includes(p.id))))phase(s,'finalReady');}
+ driveBots(s,{apply:(p,action)=>applyEpisode(s,action,{actor:{id:p.id},now}),hash});
+ for(const p of [...s.roster,...s.visitors]){const input=p.input&&s.clock-p.input.at<350?p.input:{x:0,y:0,run:p.pathRun===true};const wasMoving=!!(p.path.length||input.x||input.y);stepAttendee(p,{...input,run:input.run&&p.canRun!==false,speedFactor:p.moveScale??1},delta/1000);if(wasMoving&&!['opening','arrival','intro','guide'].includes(s.phase)&&!(['active','ending'].includes(s.phase)&&s.round.members.includes(p.id)&&!s.round.falls.some(f=>f.id===p.id)))walkThroughDoor(p);}
+
+
+ s.events=s.events.filter(e=>e.end===null||s.clock<=e.end);s.event=s.events[0]||null;if(s.phase!=='active')return true;
+ const r=s.round,elapsed=(s.clock-r.at)/1000,alive=r.members.filter(id=>!r.falls.some(f=>f.id===id)),keep=r.final?1:Math.min(2,r.members.length),pulse=pulseAt(s),activeEvent=s.event&&s.clock>=s.event.start;
+
+ r.effort=(r.effort||0)+delta/1000*pulse.speed;
+ const base=s.config.baseDrain*pulse.speed*(1+elapsed*.007+(elapsed>180?(elapsed-180)*.1:0))*eventDrain(s),crossings=[];
+ for(const id of alive){const a=r.actors[id],p=participant(s,id),before=a.stamina,drain=base*(1+a.penalty)*delta/1000;a.stamina=Math.max(0,before-drain);
+  if(p.bot&&a.lastPulse!==pulse.id){const chance=sample(id+':chance:'+pulse.index),slip=sample(id+':slip:'+pulse.index)<.08?(sample(id+':side:'+pulse.index)>.5?.25:-.25):0,aim=precision(s).center+(sample(id+':aim:'+pulse.index)-.5)*(.28+.035*(pulse.speed-1))+slip;if(chance>.10+.025*(pulse.speed-1)&&pulse.progress>=Math.max(.05,Math.min(.95,aim))&&pulse.progress<=1)applyEpisode(s,{type:'pulse'},{actor:{id},now});}
+  if(pulse.progress>1&&a.lastPulse!==pulse.id){a.stamina=Math.max(0,a.stamina-6);a.lastPulse=pulse.id;a.lastResult={result:'miss',clock:s.clock};}
+  const offline=!p.bot&&!p.connected&&s.clock-p.lastSeen>s.config.disconnectGrace;if(a.stamina<=0||offline)crossings.push({id,clock:offline?s.clock-delta:s.clock-(drain>0&&before<=drain?delta*(1-before/drain):0),reason:offline?'Desconexión prolongada':'Agarre agotado'});
+ }
+ crossings.sort((a,b)=>a.clock-b.clock||r.tieOrder.indexOf(a.id)-r.tieOrder.indexOf(b.id));for(const f of crossings){if(alive.length-r.falls.filter(f=>alive.includes(f.id)).length<=keep)break;r.falls.push({...f,seconds:Math.max(0,(f.clock-r.at)/1000)});returnToMonitor(s,f.id);recordEffort(s,r,f.id,true);touch(s,'fall',f.id,{round:r.id,reason:f.reason});}
+ const remaining=r.members.filter(id=>!r.falls.some(f=>f.id===id));if(remaining.length<=keep){for(const id of remaining)recordEffort(s,r,id);s.events=[];s.event=null;r.survivors=remaining;r.duration=(s.clock-r.at)/1000;r.end=s.clock;phase(s,'ending');}return true;
+}
+export function episodeView(s,{selfId,staff=false,now=Date.now()}={}){
+ normalizeEpisode(s);const revealed=s.phase==='draw'?visibleReveals(s).map(v=>v.id):s.round?.members;
+ const round=s.round&&{...s.round,members:revealed,actors:Object.fromEntries(Object.entries(s.round.actors).filter(([id])=>revealed.includes(id)).map(([id,a])=>[id,{stamina:Math.round(a.stamina*10)/10,lastResult:a.lastResult}]))};if(round){delete round.tieOrder;round.reveals=visibleReveals(s);}
+ const clean=({vitals,origin,input,...p})=>p;return {id:s.id,phase:s.phase,phaseAt:s.phaseAt,revision:s.revision,clock:s.clock,serverTime:now,paused:s.paused,selfId,staff,engaged:isEngaged(s,selfId),config:{speedMultiplier:s.config.speedMultiplier||1,pulseInterval:s.config.pulseInterval,pulseDuration:s.config.pulseDuration,pulseDelay:s.config.pulseDelay,drawInterval:s.config.drawInterval},roster:s.roster.map(clean),visitors:s.visitors.map(clean),round,qualifiers:s.qualifiers,winner:s.winner,event:s.event,events:s.events,canBeginRound:s.phase==='ready'&&!s.round?.autoStart||['changing','preparation','finalReady'].includes(s.phase)||s.phase==='results'&&s.round?.returned===true,cinematic:cinematicFor(s),mediaReady:{opening:!!s.media.opening,presentation:!!s.media.presentation,draws:s.media.draws?.map(r=>Object.keys(r).length)||[]},rounds:s.rounds.map(r=>({number:r.number,members:r.members,survivors:r.survivors,falls:r.falls,duration:r.duration})),missing:{helicopter:false,voice:false,standingSwimwear:false,hanging:s.roster.filter(p=>!GRIP_IDS.includes(p.characterId)).map(p=>p.characterId)},ownPenalty:participant(s,selfId)?Math.round(drainPenalty(participant(s,selfId).vitals)*100):0};
+}
