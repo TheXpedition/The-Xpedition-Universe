@@ -3,7 +3,8 @@ import {BootProgress,createBootDisplay,loadBootImage,clearBootWallpaper,showBoot
 let generation=0;
 export async function startWorld(){
  const turn=++generation,universe=window.XpeditionUniverseURL||'',gate=document.querySelector('#loading');document.body.classList.add('is-booting');
- for(const a of document.querySelectorAll('a[href="/#inicio"]'))a.href=universe+'/#inicio';
+ for(const a of document.querySelectorAll('a[href="/#inicio"]')){a.href=universe+'/#inicio';if(window.parent!==window)a.target='_top';}
+ if(window.XpeditionWorldServer){document.title=window.XpeditionWorldServer.name+' · World';const footer=document.querySelector('.games-footer>span');if(footer)footer.textContent='THE XPEDITION WORLD · '+window.XpeditionWorldServer.name;}
  clearBootWallpaper(gate);const display=createBootDisplay(gate),progress=new BootProgress((n,id)=>{if(turn===generation)display.update(n,id);});
  try{
   const bootstrap=progress.track('account',(async()=>{const r=await fetch('/api/world/bootstrap',{credentials:'same-origin',cache:'no-store'}),data=await r.json();if(!r.ok)throw Object.assign(Error(data.error||'No se pudo entrar a World.'),{status:r.status});return data;})());
@@ -26,7 +27,7 @@ export async function startWorld(){
   if(turn!==generation)return;
   const message=error.status===401?'Entra con tu cuenta de The Xpedition para continuar.':error.status===403?'World sigue en pruebas privadas. Tu cuenta necesita acceso autorizado.':error.message||'No se pudo preparar el mundo.';
   gate.hidden=false;display.error(message);const actions=gate.querySelector('#boot-actions');actions.replaceChildren();
-  if(error.status===401){const login=document.createElement('a');login.href=universe+'/juegos/';login.textContent='ENTRAR A MI CUENTA';actions.append(login);}
+  if(error.status===401){const login=document.createElement('a');login.href=universe+'/#world';login.textContent='ENTRAR A MI CUENTA';actions.append(login);}
   const retry=document.createElement('button');retry.type='button';retry.textContent='VOLVER A INTENTAR';retry.onclick=()=>location.reload();actions.append(retry);
  }
 }

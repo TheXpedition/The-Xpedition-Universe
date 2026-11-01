@@ -1,4 +1,5 @@
 import {createWorldGateway} from './world-gateway.mjs';
+import {createWorldCompanion} from './world-companion.mjs';
 import http from 'node:http';
 import {createSocial,identityValues} from './social.mjs';
 import {createProgression,levelFor} from './progression.mjs';
@@ -875,13 +876,15 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(self), geolocation=()');
   try {
     const url = new URL(req.url, 'http://localhost');
+    if(await worldCompanion.handle(req,res,url))return;
     if (url.pathname.startsWith('/api/')) return await dispatchApi(req, res, url);
     if (!['GET', 'HEAD'].includes(req.method)) fail(405, 'Método no permitido.');
     if(url.pathname==='/ads.txt'){const content=adsText(monetization);if(!content)fail(404,'La cuenta de publicidad todavía no está configurada.');res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Cache-Control':'no-cache','Content-Length':Buffer.byteLength(content)});return res.end(req.method==='HEAD'?undefined:content);}
     if(/^\/simulator\/(game|traitor|house)(\/|\/index\.html)?$/.test(decodeURIComponent(url.pathname))&&!await getSession(req)){res.writeHead(302,{Location:'/simulator/'});return res.end();}
     if(/^\/juegos(?:\/|$)/i.test(decodeURIComponent(url.pathname)))return await world.launch(req,res);
     const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':url.pathname==='/simulator/x-million'||url.pathname==='/simulator/x-million/'?'/simulator/x-million/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
-    const filename = path.resolve(publicDir, '.' + relative);
+    const introAliases={'/world-intro-player.mjs':'/world-intro-player.mjs','/world-intro-player.css':'/world-intro-player.css','/world-intro-video.mp4':'/juegos/media/the-x-world-intro.mp4','/world-intro-video-mobile.mp4':'/juegos/media/the-x-world-intro-mobile.mp4'};
+    const filename = path.resolve(publicDir, '.' + (introAliases[url.pathname]||relative));
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
@@ -948,7 +951,9 @@ const server = http.createServer(async (req, res) => {
     }, status);
   }
 });
-server.listen(Number(process.env.PORT || 3000), process.env.HOST || '127.0.0.1', () => console.log(`The Xpedition · http://localhost:${server.address().port}\nBase de datos: ${db.kind} · archivos: ${storage.kind}`));
+const worldCompanion=createWorldCompanion({publicURL:()=>process.env.RENDER_EXTERNAL_URL||'http://127.0.0.1:'+server.address().port});
+server.on('upgrade',(req,socket,head)=>worldCompanion.upgrade(req,socket,head));
+server.listen(Number(process.env.PORT || 3000), process.env.HOST || '127.0.0.1', () => {console.log(`The Xpedition · http://localhost:${server.address().port}\nBase de datos: ${db.kind} · archivos: ${storage.kind}`);void worldCompanion.start().catch(error=>console.error('World companion:',error.message));});
 if(process.env.NODE_ENV==='production')warmModeration(fs.readFileSync(path.join(publicDir,'backdrops/apocalypse-top.png')));
 setInterval(async () => {
   try {
@@ -961,6 +966,7 @@ setInterval(async () => {
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => {
   for (const set of events.values()) for (const stream of set) stream.res.end();
   server.close(async () => {
+    await worldCompanion.close();
     await showdown.close();
     await db.close();
     process.exit(0);

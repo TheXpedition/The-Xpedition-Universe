@@ -1,7 +1,8 @@
 import {isStaff} from './account-roles.mjs';
+import {hasApocalypseStyle} from './world-profile-access.mjs';
 
 export function createWorldParticipation({db,now=Date.now}){
- async function confirmed(id){return !!await db.one("SELECT user_id FROM casting_entries WHERE season=? AND user_id=? AND direct_slot IS NOT NULL UNION SELECT user_id FROM apocalypse_cast WHERE user_id=? AND audition_slot IS NOT NULL",'apocalypse-ii',id,id);}
+ async function confirmed(id){return hasApocalypseStyle(db,id);}
  async function role(user,{staff=isStaff(user?.id)}={}){
   if(!user)return {role:'spectator',confirmed:false,active:false};
   const accepted=await confirmed(user.id),entry=await db.one('SELECT status FROM world_contestants WHERE season=? AND user_id=?','antarctica-1',user.id);

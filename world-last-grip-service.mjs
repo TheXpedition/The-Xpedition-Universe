@@ -7,7 +7,7 @@ import {MediaGate} from './public/juegos/last-grip/media-gate.mjs';
 import {EPISODE_MEDIA} from './public/juegos/last-grip/media-config.mjs';
 import {worldCharacter} from './public/juegos/world-characters.mjs';
 export function episodeMediaFor(saved={}){return {...structuredClone(EPISODE_MEDIA),...saved,presentation:saved.presentation||structuredClone(EPISODE_MEDIA.presentation),draws:EPISODE_MEDIA.draws.map((round,i)=>({...round,...saved.draws?.[i]}))};}
-export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnvironment=()=>null,onAftermath=async()=>{},synthesizeAnnouncement,onMariaMessage,canMariaAnnounce,canParticipate=async()=>true}){
+export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnvironment=()=>null,onAftermath=async()=>{},synthesizeAnnouncement,onMariaMessage,canMariaAnnounce,canParticipate=async()=>true,autoBots=false}){
  let state=createEpisode({id:randomUUID(),now:now()}),queue=Promise.resolve(),closed=false,lastSave=0,lastWire=0,dirty=false;
  const subscribers=new Set();
  const announcements=createGripAnnouncements({now,synthesize:synthesizeAnnouncement,onReady:announcement=>{if(announcement.episodeId!==state.id)return;for(const c of clients.values())if(isEngaged(state,c.user.id)||subscribers.has(c.user.id)&&(attendee(state,c.user.id)||c.direct))send(c,{type:'grip-announcement',announcement});},onError:m=>{const c=[...clients.values()].find(c=>c.user.id===m.userId);if(c)send(c,{type:'error',message:'No se pudo generar la voz de este anuncio. El mensaje permanece en el chat; puedes volver a enviarlo.'});}});
@@ -30,6 +30,11 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
   if(director&&['start','draw','final','beginRound'].includes(input.type)){for(const p of state.roster){const live=[...clients.values()].find(q=>q.user.id===p.id);if(live){if(input.type==='start')p.origin={zone:live.zone.id,x:live.p.x,y:live.p.y};p.vitals={...live.vitals};p.connected=true;}}}
   if(director&&input.type==='open'&&state.phase==='finished')await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','last-grip:history:'+state.id,JSON.stringify(state),now());
   if(input.type==='open'&&director)state.media=structuredClone(EPISODE_MEDIA);
+  if(autoBots&&director&&input.type==='start'&&state.phase==='lobby'){
+   const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions'),excluded=new Set(row?JSON.parse(row.state):[]);
+   for(const live of clients.values())if(!live.direct&&await canParticipate(live.user)&&worldCharacter(live.characterId)?.role==='participant'&&!excluded.has(live.characterId)&&!state.roster.some(p=>p.id===live.user.id)&&!state.roster.some(p=>p.characterId===live.characterId))applyEpisode(state,{type:'join'},{actor:actorFor(live),now:now()});
+   applyEpisode(state,{type:'fillBots'},{actor,staff:true,now:now()});state.roster=state.roster.filter(p=>!excluded.has(p.characterId));input={...input,confirmReduced:true};dirty=true;await save();publish();
+  }
   if(['start','fillBots'].includes(input.type)&&director)for(const live of clients.values())if(!attendee(state,live.user.id))applyEpisode(state,{type:'visit'},{actor:actorFor(live),now:now()});
   const result=applyEpisode(state,input,{actor,staff:director,now:now(),random:()=>randomInt(0,0x1000000)/0x1000000});
   if(input.type==='start')for(const live of clients.values())if(isEngaged(state,live.user.id))stop(live);
