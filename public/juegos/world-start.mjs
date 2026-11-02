@@ -22,7 +22,7 @@ export async function startWorld(){
   ]);
   const module=loaded.at(-1);
   let worldApp;await progress.track('interface',(async()=>{worldApp=await module.bootWorld({...data,deferNetwork:!!data.intro});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})());
-  document.querySelector('#world-main').setAttribute('aria-busy','false');await display.finish();await playWorldIntro(data.intro);if(data.protocolInvite){location.replace(data.protocolInvite);return;}worldApp?.startNetwork();
+  document.querySelector('#world-main').setAttribute('aria-busy','false');if(data.intro)document.body.classList.add('is-intro-pending');await display.finish();try{await playWorldIntro(data.intro);}finally{document.body.classList.remove('is-intro-pending');}if(data.protocolInvite){location.replace(data.protocolInvite);return;}worldApp?.startNetwork();
  }catch(error){
   if(turn!==generation)return;
   const message=error.status===401?'Entra con tu cuenta de The Xpedition para continuar.':error.status===403?'World sigue en pruebas privadas. Tu cuenta necesita acceso autorizado.':error.message||'No se pudo preparar el mundo.';

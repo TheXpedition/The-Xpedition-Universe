@@ -10,3 +10,5 @@
 @media(max-aspect-ratio:1/1){.boot-art{object-fit:contain}.boot-bleed{filter:blur(18px) brightness(.7)}.boot-logo{width:62vw}}
 
 .boot-art{opacity:0}.boot-art-ready .boot-art{opacity:1}
+
+.is-intro-pending:after{content:"";position:fixed;inset:0;background:#000;z-index:9998;pointer-events:auto}

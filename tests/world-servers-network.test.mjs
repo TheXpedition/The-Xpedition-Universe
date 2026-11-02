@@ -1,3 +1,4 @@
+import vm from 'node:vm';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawn} from 'node:child_process';import {createHash} from 'node:crypto';import {WebSocket} from 'ws';
 import {openDatabase} from '../database.mjs';import {serverDatabase} from '../world-server-store.mjs';
 const STAFF='92354719-8816-4e25-9199-0dc9a99f7da1',root=path.resolve(import.meta.dirname,'..'),hash=value=>createHash('sha256').update(value).digest('hex');
@@ -17,10 +18,21 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
   async function enter(id,server){const launch=await fetch(base+'/juegos/?server='+server,{headers:{Cookie:'xp_session='+id},redirect:'manual'});assert.equal(launch.status,302);const target=new URL(launch.headers.get('location'));assert(target.pathname.includes('/world-play/servers/'+server+'/auth'));const prefix=base+'/world-play/servers/'+server,ticket=new URLSearchParams(target.hash.slice(1)).get('ticket');const response=await fetch(prefix+'/api/world/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticket})});assert.equal(response.status,200,await response.clone().text());return {prefix,cookie:response.headers.get('set-cookie').split(';')[0]};}
   const girlA=await enter('girl',a),girlB=await enter('girl',b),staffA=await enter(STAFF,a),staffB=await enter(STAFF,b);
   const call=async(actor,url,method='GET',body)=>{const response=await fetch(actor.prefix+url,{method,headers:{Cookie:actor.cookie,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});return {status:response.status,...await response.json()};};
-  for(const actor of [girlA,girlB]){const boot=await call(actor,'/api/world/bootstrap');assert.equal(boot.status,200);assert.equal(boot.intro.seen,false);assert.equal(boot.user.wallet.coins,0);assert.equal(boot.participation.role,'participant');assert.equal((await call(actor,'/api/world/preferences','PUT',{characterId:'bruno'})).status,200);}
+  async function browserClient(actor){
+   const response=await fetch(actor.prefix+'/juegos/world-ui.mjs',{headers:{Cookie:actor.cookie}});assert.equal(response.status,200);
+   const source=await response.text(),apiSource=source.split('\n').find(line=>line.startsWith('async function api(url,'));
+   assert(apiSource,'Actual browser API helper must be served');
+   const browserFetch=(url,options)=>fetch(new URL(url,base),{...options,headers:{...options?.headers,Cookie:actor.cookie}});
+   const api=vm.runInNewContext('('+apiSource+')',{fetch:browserFetch,JSON,Error});
+   const socketExpression=source.match(/const ws=new WebSocket\((.*?)\);state.socket/)[1];
+   const socketURL=vm.runInNewContext(socketExpression,{location:new URL(base),state:{zone:'base'},encodeURIComponent});
+   return {api,socketURL};
+  }
+  for(const actor of [girlA,girlB,staffA,staffB])actor.browser=await browserClient(actor);
+  for(const actor of [girlA,girlB]){const boot=await call(actor,'/api/world/bootstrap');assert.equal(boot.status,200);assert.equal(boot.intro.seen,false);assert.equal(boot.user.wallet.coins,0);assert.equal(boot.participation.role,'participant');assert.equal((await actor.browser.api('/world/preferences',{characterId:'bruno'},'PUT')).profile.characterId,'bruno');}
   for(const actor of [staffA,staffB])assert.equal((await call(actor,'/api/world/preferences','PUT',{characterId:'maria-villegas'})).status,200);
   const aDb=await serverDatabase(db,a),bDb=await serverDatabase(db,b);await aDb.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,2,1)','girl','apple');assert.equal(await bDb.one('SELECT quantity FROM world_food_inventory WHERE user_id=?','girl'),undefined);assert.equal((await db.one('SELECT coins FROM user_progression WHERE user_id=?','girl')).coins,999);
-  async function connect(actor){const messages=[],socket=new WebSocket(actor.prefix.replace('http:','ws:')+'/api/world/live?zone=base',{headers:{Origin:base,Cookie:actor.cookie}}),peer={socket,messages};peers.push(peer);socket.on('message',raw=>messages.push(JSON.parse(raw)));await until(()=>messages.some(m=>m.type==='welcome'));return peer;}
+  async function connect(actor){const messages=[],socket=new WebSocket(actor.browser.socketURL,{headers:{Origin:base,Cookie:actor.cookie}}),peer={socket,messages};peers.push(peer);socket.on('message',raw=>messages.push(JSON.parse(raw)));await until(()=>messages.some(m=>m.type==='welcome'));return peer;}
   const ga=await connect(girlA),gb=await connect(girlB),sa=await connect(staffA),sb=await connect(staffB),send=(peer,data)=>peer.socket.send(JSON.stringify(data));
   for(const peer of [sa,sb])send(peer,{type:'protocol-subscribe'});send(sa,{type:'protocol-action',action:{type:'open'}});await until(()=>sa.messages.some(m=>m.type==='protocol-state'&&m.episode.phase==='LOBBY'));assert(!sb.messages.some(m=>m.type==='protocol-state'&&m.episode.phase==='LOBBY'));
   send(sa,{type:'protocol-action',action:{type:'start'}});const protocol=await until(()=>sa.messages.find(m=>m.type==='protocol-state'&&m.episode.phase==='ELIMINATION_LOADING'));assert.equal(protocol.episode.roster.filter(p=>p.bot).length,17);assert.equal(protocol.episode.roster.find(p=>!p.bot)?.id,'girl');const invite=await until(()=>ga.messages.find(m=>m.type==='protocol-start'));assert.equal(invite.url,'/world-play/servers/'+a+'/juegos/x-protocol/');assert(!gb.messages.some(m=>m.type==='protocol-start'));

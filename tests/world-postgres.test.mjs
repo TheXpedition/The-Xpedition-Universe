@@ -1,3 +1,5 @@
+import http from 'node:http';
+import { WebSocket } from 'ws';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -13,7 +15,7 @@ import { WORLD_MAPS } from '../public/juegos/world-maps.mjs';
 
 test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', { timeout: 60000 }, async () => {
  const pg = new PGlite(), ctx = new AsyncLocalStorage();
- let tail = Promise.resolve(), world;
+ let tail = Promise.resolve(), world, liveServer, liveSocket;
  const query = async (sql, args = []) => {
   if (!ctx.getStore()) await tail;
   return (ctx.getStore() || pg).query(postgresSQL(sql), args, { parsers: { 20: Number } });
@@ -42,10 +44,10 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   await scoped.run('INSERT INTO world_access(resource,enabled,updated_by,updated) VALUES(?,1,?,?)', 'world', staff, Date.now());
   const fail = (status, message) => { throw Object.assign(Error(message), { status }); };
   let output;
-  const json = (_res, value) => { output = value; }, body = async () => ({}), serialize = async fn => fn();
+  const json = (_res, value) => { output = value; }, body = async () => ({characterId:'maria-villegas'}), serialize = async fn => fn();
   const progression = createProgression({ db: scoped, shop: JSON.parse(fs.readFileSync(new URL('../public/simulator/catalog.json', import.meta.url))), catalog: JSON.parse(fs.readFileSync(new URL('../public/catalog.json', import.meta.url))), body, json, fail, checkRate() {}, serialize, notify: async () => {} });
   const arcade = createArcade({ db: scoped, json, fail, body, checkRate() {}, progression, worldOnly: true });
-  world = createWorld({ db: scoped, json, fail, body, getSession: async () => null, progression, arcade, serverConfig: { id, name: 'Postgres test', autoBots: true } });
+  world = createWorld({ db: scoped, json, fail, body, getSession: async () => user, progression, arcade, serverConfig: { id, name: 'Postgres test', autoBots: true } });
   const user = { id: staff, name: 'SQL test' };
   const bootstrap = () => world.handle({ method: 'GET' }, { setHeader() {}, getHeader() {} }, new URL('http://localhost/api/world/bootstrap'), user);
   await bootstrap();
@@ -58,8 +60,24 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   await bootstrap();
   assert.equal(output.profile.x, 891);
   assert.equal(output.profile.y, 1198);
+  await world.handle({method:'PUT'},{setHeader(){},getHeader(){}},new URL('http://localhost/api/world/preferences'),user);
+  assert.equal(output.profile.characterId,'maria-villegas');
+  liveServer=http.createServer();liveServer.on('upgrade',(req,socket,head)=>void world.upgrade(req,socket,head));
+  await new Promise(resolve=>liveServer.listen(0,'127.0.0.1',resolve));
+  const origin='http://127.0.0.1:'+liveServer.address().port;
+  const welcome=await new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>reject(Error('PostgreSQL World socket did not connect')),15000);
+   liveSocket=new WebSocket(origin.replace('http:','ws:')+'/api/world/live?zone=base',{headers:{Origin:origin}});
+   liveSocket.once('error',error=>{clearTimeout(timer);reject(error);});
+   liveSocket.on('message',raw=>{const message=JSON.parse(raw);if(message.type==='welcome'){clearTimeout(timer);resolve(message);}});
+  });
+  assert.equal(welcome.selfId,staff);
+  assert.equal(welcome.zone,'base');
+  assert.equal(welcome.players.find(player=>player.id===staff)?.characterId,'maria-villegas');
  } finally {
+  if(liveSocket){liveSocket.terminate();}
   if (world) await world.close();
+  if(liveServer)await new Promise(resolve=>liveServer.close(resolve));
   await pg.close();
  }
 });

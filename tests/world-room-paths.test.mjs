@@ -5,3 +5,9 @@ test('room URLs retain their server while relative imports and chat remain uncha
  assert.equal(roomText("https://example.com/juegos/file",prefix),"https://example.com/juegos/file");
  assert.deepEqual(roomData({url:'/juegos/x-protocol/',text:'/juegos/mi mensaje',media:{url:'/api/world/voice/one.mp3'}},prefix),{url:prefix+'/juegos/x-protocol/',text:'/juegos/mi mensaje',media:{url:prefix+'/api/world/voice/one.mp3'}});
 });
+
+test('World API helpers and live sockets use their room even when paths are concatenated',()=>{
+ const prefix='/world-play/servers/example';
+ assert.equal(roomText("fetch('/api'+url);",prefix),"fetch('"+prefix+"/api'+url);");
+ assert.equal(roomText("new WebSocket('wss://'+location.host+'/api/world/live?zone='+zone)",prefix),"new WebSocket('wss://'+location.host+'"+prefix+"/api/world/live?zone='+zone)");
+});
