@@ -15,6 +15,7 @@ test('finished Last Grip results survive duplicate ceremony starts, cancellation
  let time=Date.now(),service,starts=0;const messages=[];
  const staff={user:{id:staffId,name:'Staff'},characterId:'maria-villegas',direct:true,vitals:{health:100,hunger:100,energy:100,sleep:100,stress:0},zone:{id:'base'},p:{x:600,y:700},ws:{readyState:1}};
  const clients=new Map([['staff',staff]]),action=input=>service.handle(staff,{type:'protocol-action',action:input});
+ const control=async(input,user=staff.user)=>{const res={};await service.handleHttp({method:'POST'},res,new URL('http://test/api/world/x-protocol/control'),user,{body:async()=>input,json:(_res,data)=>{res.data=data;}});return res.data;};
  const current=async()=>JSON.parse((await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol')).state);
  const make=()=>createProtocolService({db,clients,send:(_c,value)=>messages.push(value),can:async user=>user.id===staffId,now:()=>time,beforeStart:async()=>{starts++;}});
  try{
@@ -27,7 +28,7 @@ test('finished Last Grip results survive duplicate ceremony starts, cancellation
   await action({type:'fillBots'});await action({type:'start',ceremonyId:id,expectedPhase:'LOBBY'});await action({type:'start',ceremonyId:id,expectedPhase:'LOBBY'});
   assert.equal(starts,1);assert.equal(service.phase(),'ELIMINATION_LOADING');assert.equal((await current()).events.filter(e=>e.phase==='ELIMINATION_LOADING').length,1);
   await assert.rejects(action({type:'cancel',ceremonyId:'previous-ceremony'}),/ceremonia anterior/);
-  await action({type:'pause'});await action({type:'cancel',ceremonyId:id,expectedPhase:'ELIMINATION_LOADING'});const returned=await current();await action({type:'cancel',ceremonyId:id});assert.equal((await current()).phaseAt,returned.phaseAt);
+  await assert.rejects(control({type:'cancel'},{id:'outsider'}),/Solo Dirección/);await control({type:'pause'});await control({type:'pause'});await control({type:'resume'});await control({type:'resume'});await control({type:'pause'});clients.clear();await control({type:'cancel',ceremonyId:id,expectedPhase:'RESULTS_SELECTION'});clients.set('staff',staff);const returned=await current();await action({type:'cancel',ceremonyId:id});assert.equal((await current()).phaseAt,returned.phaseAt);
   for(let i=0;i<10&&service.phase()!=='ELIMINATION_FINISHED';i++){time+=1000;await new Promise(resolve=>setTimeout(resolve,70));}
   assert.equal(service.phase(),'ELIMINATION_FINISHED');await assert.rejects(action({type:'start'}),/resultado del reto sigue guardado/);
   const sources=await protocolResults(db,time);assert.equal(sources.length,1);assert.equal(sources[0].ranking.length,18);assert.equal(sources[0].ranking[0].characterId,'joseserna');

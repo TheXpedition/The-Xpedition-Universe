@@ -2,7 +2,6 @@ import {WorldPets} from '../world-pets.mjs';
 import {activeGripEvents} from './events.mjs';
 import {GRIP_MAPS} from './navigation.mjs';
 import {paintSpeechBubble} from '../world-speech-bubbles.mjs';
-import {ITEM_ART_RECTS} from '../world-item-art.mjs';
 import {GRIP_POSES} from './assets.mjs';
 import {castHeightRatio} from '../world-cast-proportions.mjs';
 import {worldCharacter} from '../world-characters.mjs';
@@ -14,7 +13,7 @@ const text=(c,line,x,y,size=24,color='#ffe6c4',align='center')=>{c.font=`700 ${s
 export class GripRenderer{
  constructor(canvas,{loadImage,bank}={}){this.canvas=canvas;this.pets=new WorldPets();this.bubbles=new Map();this.anchors=new Map();this.images=new Map();this.pending=new Map();this.loadImage=loadImage||((src)=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=src;}));this.bank=bank;this.failed=new Set();}
  image(src){if(this.images.has(src))return this.images.get(src);if(!this.pending.has(src)&&!this.failed.has(src)){this.pending.set(src,this.loadImage(src).then(im=>{this.images.set(src,im);return im;}).catch(()=>this.failed.add(src)).finally(()=>this.pending.delete(src)));}return null;}
- async preload(ids=[]){this.image('/juegos/survival/survival-atlas.png');this.image('/juegos/last-grip/media/helicopter.png');for(const name of ['arena','pit','runway','monitor','changing','stands','platform','entrance'])this.image(ART+name+'.webp');for(const id of ids){if(SWIMWEAR[id])this.image(SWIMWEAR[id].image);if(GRIP_POSES[id])this.image(GRIP_POSES[id].image);this.image('/juegos/cast-apocalypse/'+id+'-portrait.webp');this.image('/juegos/cast-apocalypse/'+id+'-original.png');}this.image('/juegos/cast-apocalypse/maria-villegas-original.png');await Promise.all([...this.pending.values()]);}
+ async preload(ids=[]){this.image(ART+'medical-station.png');this.image('/juegos/last-grip/media/helicopter.png');for(const name of ['arena','pit','runway','monitor','changing','stands','platform','entrance'])this.image(ART+name+'.webp');for(const id of ids){if(SWIMWEAR[id])this.image(SWIMWEAR[id].image);if(GRIP_POSES[id])this.image(GRIP_POSES[id].image);this.image('/juegos/cast-apocalypse/'+id+'-portrait.webp');this.image('/juegos/cast-apocalypse/'+id+'-original.png');}this.image('/juegos/cast-apocalypse/maria-villegas-original.png');await Promise.all([...this.pending.values()]);}
  render(s,{selfId=s.selfId,time=Date.now(),area,review=false,overlay=false,cssScale=1,hud=true,arenaView}={}){
  this.anchors.clear();const c=this.canvas.getContext('2d'),W=this.canvas.width,H=this.canvas.height;c.setTransform(W/1672,0,0,H/941,0,0);c.clearRect(0,0,1672,941);if(activeGripEvents(s).some(e=>e.kind==='shake'))c.translate(Math.sin(time/46)*2,Math.cos(time/39)*1.5);
  const self=[...s.roster,...(s.visitors||[])].find(p=>p.id===selfId),arena=(arenaView??(!self||!['changing','runway','entrance','monitor'].includes(area||self.area)))&&['draw','ready','active','ending','results','finalReady','winner'].includes(s.phase),place=area||self?.area||'stands',scene=arena?'arena':s.phase==='arrival'?'runway':s.phase==='intro'?'monitor':['lobby','closed','finished'].includes(s.phase)?'entrance':place;
@@ -72,19 +71,7 @@ export class GripRenderer{
  speak(message){if(message?.userId&&message.text)this.bubbles.set(message.userId,{text:String(message.text).slice(0,280),until:Date.now()+Math.min(12000,5000+String(message.text).length*35)});}
  speech(c,{time,width,height,cssScale}){for(const [id,b]of this.bubbles){if(Date.now()>b.until){this.bubbles.delete(id);continue;}const a=this.anchors.get(id);if(a)paintSpeechBubble(c,b.text,{...a,width,height,cssScale});}}
  signs(c,area){for(const n of GRIP_MAPS[area]?.nodes||[]){if(n.kind==='door'){const x=n.anchor.x,y=n.anchor.y;fill(c,x-89,y-19,178,28,'#2c1b11dc',3);text(c,n.name,x,y+1,15,'#e5bf84');}else if(n.kind==='booth'){fill(c,n.anchor.x-14,434,28,24,'#362015e8',3);text(c,n.id.slice(-1),n.anchor.x,452,16,'#e5bf84');}}}
- clinic(c){
-  const polygon=(points,color)=>{c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.closePath();c.fillStyle=color;c.fill();c.strokeStyle='#281c15';c.lineWidth=4;c.stroke();};
-  c.save();c.lineJoin='round';c.shadowColor='#10090499';c.shadowBlur=13;c.shadowOffsetY=8;
-  fill(c,110,527,13,212,'#5d4230',2);fill(c,324,527,12,212,'#5d4230',2);
-  polygon([[92,552],[114,506],[307,505],[350,550],[327,570],[113,570]],'#65543b');polygon([[114,506],[221,492],[307,505],[350,550],[92,552]],'#8b7653');
-  c.shadowBlur=0;c.shadowOffsetY=0;for(let x=119;x<332;x+=25){c.strokeStyle='#392a1d66';c.lineWidth=2;c.beginPath();c.moveTo(x,532);c.lineTo(x-4,552);c.stroke();}
-  fill(c,128,570,182,35,'#302216',3);text(c,'ENFERMERÍA',219,594,21,'#e1c997');
-  fill(c,123,674,196,57,'#61432c',2);polygon([[111,672],[312,667],[335,685],[126,693]],'#9c7446');
-  c.strokeStyle='#352417';c.lineWidth=2;for(const y of [698,713,727]){c.beginPath();c.moveTo(130,y);c.lineTo(316,y-4);c.stroke();}
-  fill(c,166,695,102,42,'#ab9c76',2);fill(c,207,700,19,32,'#813e2f',1);fill(c,197,710,39,12,'#813e2f',1);
-  const im=this.image('/juegos/survival/survival-atlas.png');if(im)for(const [i,index]of [24,25].entries()){const [x,y,w,h]=ITEM_ART_RECTS[index];c.drawImage(im,x,y,w,h,153+i*85,631,45*w/h,45);}
-  c.restore();
- }
+ clinic(c){const station=this.image(ART+'medical-station.png');if(station){c.drawImage(station,492,624,230,153);text(c,'ENFERMERÍA',609,620,16,'#f1d6b0');}}
 
  hud(c,s,selfId){const r=s.round,p=pulseAt(s),bands=precision(s),a=r.actors[selfId],x=576,y=785,w=520,bx=x+18,bw=w-36;fill(c,x,y,w,104,'#1d100df5',8);c.strokeStyle='#bd7b3c';c.lineWidth=1;c.strokeRect(x+3,y+3,w-6,98);text(c,r.final?'GRAN FINAL':'CLASIFICATORIA '+r.number,x+18,y+23,17,'#e7bd87','left');text(c,(r.members.length-r.falls.length)+' EN COMPETENCIA',x+w-18,y+23,17,'#e7bd87','right');fill(c,bx,y+36,bw,15,'#100a08',3);fill(c,bx+bw*(bands.center-bands.good),y+36,bw*bands.good*2,15,'#9b672d',0);fill(c,bx+bw*(bands.center-bands.perfect),y+36,bw*bands.perfect*2,15,'#f3d89b',0);if(p.progress>=0&&p.progress<=1)fill(c,bx+bw*p.progress,y+32,3,23,'#fff4db',0);const result=a?.lastResult,label=result&&s.clock-result.clock<750?{perfect:'¡PERFECTO! +4',good:'BIEN +2',fail:'FALLO −6',miss:'SIN RESPUESTA −6'}[result.result]:'ESPACIO · AFERRARSE';text(c,label,836,y+80,19,'#ffb060');text(c,a?Math.ceil(a.stamina)+'%':'GRADAS',x+w-18,y+80,17,'#efcf9e','right');}
 

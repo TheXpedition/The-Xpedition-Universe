@@ -19,6 +19,7 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
   const girlA=await enter('girl',a),girlB=await enter('girl',b),staffA=await enter(STAFF,a),staffB=await enter(STAFF,b);
   const call=async(actor,url,method='GET',body)=>{const response=await fetch(actor.prefix+url,{method,headers:{Cookie:actor.cookie,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body)});return {status:response.status,...await response.json()};};
   async function browserClient(actor){
+   for(const asset of ['/world-landscape.mjs','/world-landscape.css','/juegos/game-chrome.mjs']){const page=await fetch(actor.prefix+asset,{headers:{Cookie:actor.cookie}});assert.equal(page.status,200,asset+' must load inside the selected server');}
    const response=await fetch(actor.prefix+'/juegos/world-ui.mjs',{headers:{Cookie:actor.cookie}});assert.equal(response.status,200);
    const source=await response.text(),apiSource=source.split('\n').find(line=>line.startsWith('async function api(url,'));
    assert(apiSource,'Actual browser API helper must be served');
