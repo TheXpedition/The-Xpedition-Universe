@@ -1,7 +1,7 @@
 # World servers
 
 STAFF creates servers directly at the main site's `#world` page. Each server has
-its own season, inventory, economy, character ownership, health, shelters, weather,
+its own season, inventory,  character ownership, health, shelters, weather,
 challenge results, elimination order and track record. A new server has no game
 progress and requires the full intro again, even for an existing site account.
 Only the actual Apocalypse profile style grants player entry; explicit style
@@ -47,3 +47,5 @@ Browser checks cover creation, separate entries and full automatic first playbac
 
 Close World in Moderation before maintenance. Previous code is preserved in Git
 backup branches. Rollback code without deleting any World tables.
+
+Monedas y tickets pertenecen al perfil y se comparten entre todos los servidores; las compras descuentan de ese saldo único. Los objetos comprados, personajes, mascotas, wallpapers y avances permanecen en el servidor correspondiente. María Villegas se incluye automáticamente en la colección del STAFF, sin compra y sin poder transferirla.

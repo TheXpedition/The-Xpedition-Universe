@@ -1,10 +1,10 @@
 import {schema} from './database.mjs';
 import {AsyncLocalStorage} from 'node:async_hooks';
 
-// Accounts, login and profile styles belong to the site. All game state belongs
-// to one World server, including its economy, intro and character reservations.
+// Account balances and their reward ledger belong to the profile. Inventories,
+// season progress, intro and character reservations belong to one World server.
 const shared=new Set(['world_sessions','world_handoffs','world_servers','world_server_leases']);
-const extra=new Set(['user_progression','economy_rewards','economy_inventory','activity_days','game_runs','simulator_preferences','arcade_runs','arcade_access','moderation_actions']);
+const extra=new Set(['economy_inventory','game_runs','simulator_preferences','arcade_runs','arcade_access','moderation_actions']);
 export const SERVER_TABLES=Object.freeze([...schema.matchAll(/CREATE TABLE IF NOT EXISTS (\w+)/g)].map(m=>m[1]).filter(name=>name.startsWith('world_')&&!shared.has(name)||extra.has(name)));
 export async function serverDatabase(base,id,{leaseOwner}={}){
  if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id))throw Error('Identificador de servidor inválido.');

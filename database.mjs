@@ -131,7 +131,7 @@ export async function openDatabase(dataDir) {
       one: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).get(...args)),
       all: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).all(...args)),
       run: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).run(...args)),
-      transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release;sqliteTail=new Promise(resolve=>release=resolve);await previous;database.exec('BEGIN');try{const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){database.exec('ROLLBACK');throw e;}finally{release();}},
+      transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release;sqliteTail=new Promise(resolve=>release=resolve);await previous;database.exec('BEGIN IMMEDIATE');try{const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){database.exec('ROLLBACK');throw e;}finally{release();}},
       close: async ()=>database.close()
     };
   }

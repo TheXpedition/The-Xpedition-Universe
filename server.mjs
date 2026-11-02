@@ -963,12 +963,17 @@ setInterval(async () => {
   }
   for (const [key, value] of limits) if (value.until < stamp()) limits.delete(key);
 }, 60000).unref();
+let shuttingDown=false;
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => {
+  if(shuttingDown)return;shuttingDown=true;
   for (const set of events.values()) for (const stream of set) stream.res.end();
-  server.close(async () => {
+  const drained=new Promise(resolve=>server.close(resolve));
+  void (async()=>{
+    // Save active World sessions before waiting for their proxied sockets to close.
     await worldCompanion.close();
     await showdown.close();
+    await drained;
     await db.close();
     process.exit(0);
-  });
+  })().catch(error=>{console.error('Graceful shutdown:',error.code||error.message);process.exitCode=1;});
 });
