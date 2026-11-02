@@ -19,6 +19,18 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
  const save=async()=>{if(state.winner&&state.completedId!==state.id){state.completedAt=now();state.completedId=state.id;}await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated', 'last-grip',JSON.stringify(state),now());lastSave=now();dirty=false;};
  function actorFor(c){return {id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};}
  function snapshot(c){return {...episodeView(state,{selfId:c.user.id,staff:!!c.direct,now:now()}),announcements:announcements.live(state.id),environment:getEnvironment(),mediaWaiting:mediaGate.pending()&&cinematicFor(state)&&state.clock>=cinematicFor(state).start+cinematicFor(state).duration-1,ownVitals:{...c.vitals}};}
+ async function excludedCharacters(){const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions');return new Set(row?JSON.parse(row.state):[]);}
+ async function enrollUser(live,{prepared=false,excluded=new Set()}={}){
+  if(live.direct||!await canParticipate(live.user)||live.wellness?.life?.status!=='alive'||worldCharacter(live.characterId)?.role!=='participant'||excluded.has(live.characterId))return false;
+  const existing=state.roster.find(p=>p.id===live.user.id);if(existing){existing.connected=true;if(prepared)existing.ready=true;return false;}
+  if(state.roster.some(p=>!p.bot&&p.characterId===live.characterId))return false;
+  if(state.roster.length>=18&&!state.roster.some(p=>p.bot))return false;
+  state.roster=state.roster.filter(p=>!p.bot||p.characterId!==live.characterId);
+  if(state.roster.length>=18){const bot=state.roster.findIndex(p=>p.bot);if(bot>=0)state.roster.splice(bot,1);}
+  applyEpisode(state,{type:'join'},{actor:actorFor(live),now:now()});
+  const joined=state.roster.find(p=>p.id===live.user.id);if(prepared)joined.ready=true;return true;
+ }
+ async function fillUsers(){const excluded=await excludedCharacters();let added=0;for(const live of clients.values())if(await enrollUser(live,{prepared:true,excluded}))added++;return {added,total:state.roster.filter(p=>!p.bot).length};}
  async function flushEffort(){for(const record of state.aftercare||[])if(!record.applied){await onAftermath(record);record.applied=true;dirty=true;}}
  function syncActors(){for(const c of clients.values()){const p=attendee(state,c.user.id);if(p){if(c.direct&&!state.roster.includes(p)&&p.characterId!==c.characterId){p.characterId=c.characterId;p.name=worldCharacter(c.characterId)?.name||c.user.name;p.changed=false;touch(state,'staff-character',c.user.id);dirty=true;}p.petId=c.petId||null;p.vitals={...c.vitals};const m=mobility(c.wellness,c.vitals);p.moveScale=m.speedFactor;p.canRun=m.canRun;}}}
  function publish(){for(const c of clients.values())if(subscribers.has(c.user.id)||isEngaged(state,c.user.id))send(c,{type:'grip-state',episode:snapshot(c)});lastWire=now();}
@@ -30,13 +42,20 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
   if(director&&['start','draw','final','beginRound'].includes(input.type)){for(const p of state.roster){const live=[...clients.values()].find(q=>q.user.id===p.id);if(live){if(input.type==='start')p.origin={zone:live.zone.id,x:live.p.x,y:live.p.y};p.vitals={...live.vitals};p.connected=true;}}}
   if(director&&input.type==='open'&&state.phase==='finished')await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','last-grip:history:'+state.id,JSON.stringify(state),now());
   if(input.type==='open'&&director)state.media=structuredClone(EPISODE_MEDIA);
+  if(input.type==='fillUsers'&&(!director||state.phase!=='lobby'))throw Object.assign(Error(director?'Los usuarios se completan antes de iniciar el episodio.':'Solo Dirección puede completar con usuarios.'),{status:director?409:403});
+  let result;
+  if(director&&input.type==='fillUsers'){result=await fillUsers();touch(state,'fillUsers',c.user.id,result);}
+  if(input.type==='join'&&state.phase==='lobby'&&!state.roster.some(p=>p.id===c.user.id)){
+   const joined=await enrollUser(c,{excluded:await excludedCharacters()});if(joined)result=true;
+  }
+  if(director&&input.type==='fillBots'&&state.phase==='lobby')await fillUsers();
   if(autoBots&&director&&input.type==='start'&&state.phase==='lobby'){
-   const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions'),excluded=new Set(row?JSON.parse(row.state):[]);
-   for(const live of clients.values())if(!live.direct&&await canParticipate(live.user)&&worldCharacter(live.characterId)?.role==='participant'&&!excluded.has(live.characterId)&&!state.roster.some(p=>p.id===live.user.id)&&!state.roster.some(p=>p.characterId===live.characterId))applyEpisode(state,{type:'join'},{actor:actorFor(live),now:now()});
+   const excluded=await excludedCharacters();await fillUsers();
    applyEpisode(state,{type:'fillBots'},{actor,staff:true,now:now()});state.roster=state.roster.filter(p=>!excluded.has(p.characterId));input={...input,confirmReduced:true};dirty=true;await save();publish();
   }
   if(['start','fillBots'].includes(input.type)&&director)for(const live of clients.values())if(!attendee(state,live.user.id))applyEpisode(state,{type:'visit'},{actor:actorFor(live),now:now()});
-  const result=applyEpisode(state,input,{actor,staff:director,now:now(),random:()=>randomInt(0,0x1000000)/0x1000000});
+  if(result===undefined)result=applyEpisode(state,input,{actor,staff:director,now:now(),random:()=>randomInt(0,0x1000000)/0x1000000});
+  if(director&&input.type==='fillBots'){const excluded=await excludedCharacters();state.roster=state.roster.filter(p=>!excluded.has(p.characterId));}
   if(input.type==='start')for(const live of clients.values())if(isEngaged(state,live.user.id))stop(live);
   if(input.type==='visit'&&isEngaged(state,c.user.id))stop(c);
   if(input.type==='finish')for(const live of clients.values())if(state.returns[live.user.id])stop(live);
