@@ -17,7 +17,7 @@ export function createWorldServers({db,json,fail,body,access,now=Date.now}){
   if(!user)fail(401,'Entra con tu cuenta para ver los servidores.');const staff=isStaff(user.id);
   if(!staff&&!await hasApocalypseStyle(db,user.id))fail(403,'El acceso está reservado a los perfiles con estilo Apocalypse II.');
   const gate=await access(user);if(!staff&&!gate.canPlay)fail(403,'World está reservado al STAFF por ahora.');
-  if(req.method==='GET'&&!match[1]){const rows=await db.all('SELECT * FROM world_servers ORDER BY created DESC,id');json(res,{servers:rows.map(view).filter(s=>staff||s.enabled),staff,configured:gate.configured,inline:gate.inline,publicEnabled:gate.publicEnabled});return true;}
+  if(req.method==='GET'&&!match[1]){const rows=await db.all('SELECT * FROM world_servers ORDER BY created DESC,id');json(res,{servers:rows.map(view).filter(s=>staff||s.enabled),staff,configured:gate.configured,inline:gate.inline,publicEnabled:gate.publicEnabled,...(staff?{runtime:{memoryLimitMB:Math.round(process.constrainedMemory()/1048576),availableMB:Math.round(process.availableMemory()/1048576),residentMB:Math.round(process.memoryUsage().rss/1048576)}}:{})});return true;}
   if(!staff)fail(403,'Solo el STAFF puede crear o administrar servidores.');
   if(req.method==='POST'&&!match[1]){
    const input=await body(req),name=typeof input.name==='string'?input.name.replace(/[\u0000-\u001f]/g,' ').trim().slice(0,60):'';

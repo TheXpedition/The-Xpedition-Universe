@@ -28,6 +28,13 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
    const socketURL=vm.runInNewContext(socketExpression,{location:new URL(base),state:{zone:'base'},encodeURIComponent});
    return {api,socketURL};
   }
+  const cold=await main('/api/world/servers',STAFF,'POST',{name:'Media without a simulation'}),coldPrefix=base+'/world-play/servers/'+cold.server.id;
+  const mediaPath='/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4';
+  assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined);
+  const video=await fetch(coldPrefix+mediaPath,{headers:{Cookie:girlA.cookie,Range:'bytes=0-31'}});assert.equal(video.status,206);assert.equal(video.headers.get('content-type'),'video/mp4');assert.equal((await video.arrayBuffer()).byteLength,32);
+  const videoHead=await fetch(coldPrefix+mediaPath,{method:'HEAD',headers:{Cookie:girlA.cookie}});assert.equal(videoHead.status,200);assert.equal(Number(videoHead.headers.get('content-length')),10015270);
+  assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined,'streaming the intro must not allocate or restart a game worker');
+  assert.equal((await fetch(coldPrefix+mediaPath)).status,401);
   for(const actor of [girlA,girlB,staffA,staffB])actor.browser=await browserClient(actor);
   for(const actor of [girlA,girlB]){const boot=await call(actor,'/api/world/bootstrap');assert.equal(boot.status,200);assert.equal(boot.intro.seen,false);assert.equal(boot.user.wallet.coins,999);assert.equal(boot.shop.wallet.coins,999);assert.equal(boot.shop.wallet.tickets,55);assert(!boot.shop.inventory.some(item=>item.ref==='maria-villegas'));assert.equal(boot.participation.role,'participant');assert.equal((await actor.browser.api('/world/preferences',{characterId:'bruno'},'PUT')).profile.characterId,'bruno');}
   for(const actor of [staffA,staffB]){const boot=await call(actor,'/api/world/bootstrap');assert.equal(boot.shop.inventory.filter(item=>item.ref==='maria-villegas').length,1);assert(!boot.shop.catalog.characters.some(item=>item.id==='maria-villegas'));assert.equal(boot.characterAvailability.characters['maria-villegas'].selectable,true);assert.equal((await actor.browser.api('/world/preferences',{characterId:'maria-villegas'},'PUT')).profile.characterId,'maria-villegas');}
