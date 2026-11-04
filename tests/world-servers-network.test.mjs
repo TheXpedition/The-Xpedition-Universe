@@ -33,6 +33,13 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
   const cold=await main('/api/world/servers',STAFF,'POST',{name:'Media without a simulation'}),coldPrefix=base+'/world-play/servers/'+cold.server.id;
   const mediaPath='/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4';
   assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined);
+  for(const asset of ['/juegos/','/juegos/world-ui.mjs','/juegos/x-protocol/','/juegos/x-protocol/assets.json','/juegos/last-grip/','/juegos/bonju-chef/','/world-landscape.mjs']){
+   const response=await fetch(coldPrefix+asset,{headers:{Cookie:girlA.cookie}});assert.equal(response.status,200,asset);const source=await response.text();
+   if(asset==='/juegos/world-ui.mjs')assert(source.includes('/world-play/servers/'+cold.server.id+'/api/world/live'),'static JS keeps its server-scoped socket');
+   const tag=response.headers.get('etag');assert(tag);const fresh=await fetch(coldPrefix+asset,{headers:{Cookie:girlA.cookie,'If-None-Match':tag}});assert.equal(fresh.status,304,asset);
+  }
+  assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined,'HTML and all art load without starting a simulation or reserving an active room');
+  assert.equal((await fetch(coldPrefix+'/juegos/x-protocol/')).status,401,'a cached asset grant cannot authorize another account');
   const video=await fetch(coldPrefix+mediaPath,{headers:{Cookie:girlA.cookie,Range:'bytes=0-31'}});assert.equal(video.status,206);assert.equal(video.headers.get('content-type'),'video/mp4');assert.equal((await video.arrayBuffer()).byteLength,32);
   const videoHead=await fetch(coldPrefix+mediaPath,{method:'HEAD',headers:{Cookie:girlA.cookie}});assert.equal(videoHead.status,200);assert.equal(Number(videoHead.headers.get('content-length')),10015270);
   assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined,'streaming the intro must not allocate or restart a game worker');

@@ -20,8 +20,10 @@ export async function serverDatabase(base,id,{leaseOwner}={}){
  async function fence(){if(!leaseOwner)return;const row=await base.one('SELECT owner,expires FROM world_server_leases WHERE server_id=?'+(base.kind==='postgres'?' FOR UPDATE':''),id);if(row?.owner!==leaseOwner||Number(row.expires)<=Date.now())throw Object.assign(Error('El servidor se está recuperando. Vuelve a entrar.'),{status:409});}
  await base.transaction(async()=>{
   await fence();
-  for(const sql of statements)await base.run(rewrite(base.kind==='postgres'?sql.replace(/\bINTEGER\b/g,'BIGINT'):sql));
-  if(base.kind==='postgres')for(const table of SERVER_TABLES){const name=names.get(table);await base.run('ALTER TABLE '+name+' ENABLE ROW LEVEL SECURITY');await base.run('REVOKE ALL ON TABLE '+name+' FROM PUBLIC');}
+  const ddl=statements.map(sql=>rewrite(base.kind==='postgres'?sql.replace(/\bINTEGER\b/g,'BIGINT'):sql));
+  if(base.kind==='postgres')for(const table of SERVER_TABLES){const name=names.get(table);ddl.push('ALTER TABLE '+name+' ENABLE ROW LEVEL SECURITY','REVOKE ALL ON TABLE '+name+' FROM PUBLIC');}
+  // One round trip instead of hundreds during a room restart on hosted Postgres.
+  if(base.exec)await base.exec(ddl.join(';')+';');else for(const sql of ddl)await base.run(sql);
  });
  const transaction=fn=>base.transaction(async()=>{await fence();return fencing.run(true,fn);});
  async function run(sql,...args){if(leaseOwner&&!fencing.getStore()&&/^\s*(?:INSERT|UPDATE|DELETE|REPLACE|ALTER|CREATE)/i.test(sql))return transaction(()=>base.run(rewrite(sql),...args));return base.run(rewrite(sql),...args);}

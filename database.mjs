@@ -109,7 +109,7 @@ export function postgresSQL(sql) {
   });
 }
 
-export async function openDatabase(dataDir) {
+export async function openDatabase(dataDir,{initialize=true}={}) {
   if (!process.env.DATABASE_URL) {
     if (process.env.PERSISTENCE_MODE === 'supabase') throw new Error('Falta DATABASE_URL. Configura la conexión Session pooler de Supabase.');
     fs.mkdirSync(dataDir, { recursive:true });
@@ -131,6 +131,7 @@ export async function openDatabase(dataDir) {
       one: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).get(...args)),
       all: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).all(...args)),
       run: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).run(...args)),
+      exec: async sql=>sqliteQuery(()=>database.exec(sql)),
       // BEGIN can fail while another World worker owns the writer lock. Release
       // our queue even then, or later session reads would wait forever.
       transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release,begun=false;sqliteTail=new Promise(resolve=>release=resolve);try{await previous;database.exec('BEGIN IMMEDIATE');begun=true;const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){if(begun)database.exec('ROLLBACK');throw e;}finally{release();}},
@@ -159,7 +160,7 @@ export async function openDatabase(dataDir) {
   pool.on('error', error=>console.error('Conexión de base de datos interrumpida:',error.code||'DATABASE_ERROR'));
   const context = new AsyncLocalStorage();
   const query = (sql,args=[]) => (context.getStore()||pool).query(postgresSQL(sql),args);
-  const installation=await pool.connect();
+  if(initialize){const installation=await pool.connect();
   try {
     await installation.query('BEGIN');
     await installation.query('SELECT pg_advisory_xact_lock(20261101)');
@@ -167,9 +168,9 @@ export async function openDatabase(dataDir) {
     let pgSchema = schema.replace(/\bINTEGER\b/g,'BIGINT').replace('CREATE TABLE IF NOT EXISTS messages(', 'CREATE TABLE IF NOT EXISTS messages(xp_sequence BIGSERIAL UNIQUE,');
     // Index names are schema-qualified by PostgreSQL through their table.
     await installation.query(postgresSQL(pgSchema));
-    await installation.query('ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0');
-    for(const [name,type] of profileColumns)await installation.query(`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`);
-    for (const table of tables) await installation.query(`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY;`);
+    await installation.query(['ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0',
+      ...profileColumns.map(([name,type])=>`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`),
+      ...tables.map(table=>`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY`)].join(';'));
     await installation.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;
       REVOKE ALL ON ALL SEQUENCES IN SCHEMA xpedition FROM PUBLIC;
       DO $$ BEGIN
@@ -185,12 +186,14 @@ export async function openDatabase(dataDir) {
         END IF;
       END $$;`);
     await installation.query('COMMIT');installation.release();
-  } catch(error) { await installation.query('ROLLBACK').catch(()=>{});installation.release();await pool.end();throw error; }
+  } catch(error) { await installation.query('ROLLBACK').catch(()=>{});installation.release();await pool.end();throw error; }}
   return {
     kind:'postgres',
     one: async (sql,...args)=>(await query(sql,args)).rows[0],
     all: async (sql,...args)=>(await query(sql,args)).rows,
     run: async (sql,...args)=>({changes:(await query(sql,args)).rowCount}),
+    // Schema statements are fixed server code, without interpolated user values.
+    exec: async sql=>{await (context.getStore()||pool).query(postgresSQL(sql));},
     transaction: async fn=>{
       const client=await pool.connect();
       try { await client.query('BEGIN'); const value=await context.run(client,fn); await client.query('COMMIT'); return value; }

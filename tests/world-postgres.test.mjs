@@ -25,6 +25,7 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   one: async (sql, ...args) => (await query(sql, args)).rows[0],
   all: async (sql, ...args) => (await query(sql, args)).rows,
   run: async (sql, ...args) => ({ changes: (await query(sql, args)).affectedRows }),
+  exec: async sql => (ctx.getStore() || pg).exec(postgresSQL(sql)),
   transaction: async fn => {
    const previous = tail; let release;
    tail = new Promise(resolve => { release = resolve; });

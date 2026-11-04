@@ -22,7 +22,7 @@ test('local controls stop without waiting for a packet, preserve phase across st
  const seated={...p,state:'sit',seatId:'chair'};assert.equal(local.sample(seated,80,1080,map),seated);
  const wallMap={...map,props:[{x:820,y:800,w:20,h:300,solid:true,height:400}]},blocked=new WorldLocalMotion();blocked.setInput({x:1,y:0});blocked.sample(p,0,1000,wallMap);assert.equal(blocked.sample(p,50,1050,wallMap).moving,false);
  const slow=new WorldLocalMotion();slow.setInput({x:1,y:0,run:true});const low={...p,speedFactor:.35,canRun:false};slow.sample(low,0,1000,map);assert(slow.sample(low,50,1050,map).x-p.x<4);
- const other={...p,characterId:'bruno'};assert.equal(local.sample(other,90,1090,map),other);
+ const other={...p,characterId:'bruno'};local.setInput({x:1,y:0});local.sample(other,90,1090,map);assert(local.sample(other,110,1110,map).x>other.x);
 });
 test('prediction consumes snapshots mutated into the same player object, as the live UI does',()=>{
  const p=actor(),local=new WorldLocalMotion();local.setInput({x:1,y:0});local.sample(p,0,1000,map);local.sample(p,16,1016,map);

@@ -14,7 +14,7 @@ import {createWorldMessages} from './world-messages.mjs';
 import {createArcade} from './arcade.mjs';
 import {createDodgeballNetwork} from './dodgeball-network.mjs';
 import {createProgression} from './progression.mjs';
-const root=import.meta.dirname,publicDir=path.join(root,'public'),base=await openDatabase(path.resolve(process.env.DATA_DIR||path.join(root,'data')));
+const root=import.meta.dirname,publicDir=path.join(root,'public'),base=await openDatabase(path.resolve(process.env.DATA_DIR||path.join(root,'data')),{initialize:process.env.WORLD_DATABASE_READY!=='true'});
 const serverId=process.env.WORLD_SCOPE_ID||'',serverRow=serverId?await base.one('SELECT * FROM world_servers WHERE id=?',serverId):null;
 if(serverId&&!serverRow)throw Error('El servidor de World no existe.');
 const serverConfig=serverRow?{id:serverRow.id,name:serverRow.name,...JSON.parse(serverRow.settings)}:null;

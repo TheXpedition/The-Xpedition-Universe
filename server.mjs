@@ -13,7 +13,7 @@ import {createXMillion} from './x-million.mjs';
 import {monetizationConfig,adsText} from './monetization.mjs';
 import {createPushNotifications} from './push-notifications.mjs';
 import {createInteractions} from './social-interactions.mjs';
-import {moderationStatus,warmModeration} from './moderation.mjs';
+import {moderationStatus,warmModeration,releaseIdleModeration} from './moderation.mjs';
 import {openDatabase} from './database.mjs';
 import {openStorage} from './storage.mjs';
 import {createPasswordRecovery} from './password-recovery.mjs';
@@ -951,10 +951,10 @@ const server = http.createServer(async (req, res) => {
     }, status);
   }
 });
-const worldCompanion=createWorldCompanion({publicURL:()=>process.env.RENDER_EXTERNAL_URL||'http://127.0.0.1:'+server.address().port});
+const worldCompanion=createWorldCompanion({beforeWorld:releaseIdleModeration,publicURL:()=>process.env.RENDER_EXTERNAL_URL||'http://127.0.0.1:'+server.address().port});
 server.on('upgrade',(req,socket,head)=>worldCompanion.upgrade(req,socket,head));
 server.listen(Number(process.env.PORT || 3000), process.env.HOST || '127.0.0.1', () => {console.log(`The Xpedition · http://localhost:${server.address().port}\nBase de datos: ${db.kind} · archivos: ${storage.kind}`);void worldCompanion.start().catch(error=>console.error('World companion:',error.message));});
-if(process.env.NODE_ENV==='production')warmModeration(fs.readFileSync(path.join(publicDir,'backdrops/apocalypse-top.png')));
+if(process.env.NODE_ENV==='production'&&(!process.constrainedMemory()||process.constrainedMemory()>=1024*1024*1024))void warmModeration(fs.readFileSync(path.join(publicDir,'backdrops/apocalypse-top.png')));
 setInterval(async () => {
   try {
     await run('DELETE FROM sessions WHERE expires<?', stamp());

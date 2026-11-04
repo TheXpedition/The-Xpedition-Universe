@@ -1,4 +1,14 @@
 {
-  "release": "world-20261104-pajamas-bathroom-v2",
-  "features": ["purchased-characters", "pajamas-18", "sanitation", "connection-retention"]
+  "release": "world-20261104-runtime-recovery-v3",
+  "features": [
+    "purchased-characters",
+    "pajamas-18",
+    "sanitation",
+    "connection-retention",
+    "idle-memory-release",
+    "cold-static-loading",
+    "batched-postgres-start",
+    "smooth-local-controls",
+    "live-backpressure"
+  ]
 }
