@@ -30,7 +30,7 @@ test('el selector multijugador muestra todos los personajes nuevos comprados y p
   assert(button,item.name+' aparece en el selector');assert.equal(button.disabled,false,item.name+' se puede elegir');
   assert.equal(button.querySelector('strong').textContent,item.name);assert.equal(button.querySelector('img').getAttribute('src'),item.image);
  }
- buttons[0].click();await new Promise(resolve=>setImmediate(resolve));
+ buttons.find(button=>button.dataset.character===latest[0].id.slice('character:'.length)).click();await new Promise(resolve=>setImmediate(resolve));
  assert.equal(doc.querySelector('.sd-cast-slot.mine strong').textContent,latest[0].name);
  assert.equal(doc.querySelector('.sd-cast-slot.mine img').getAttribute('src'),latest[0].image);
 });

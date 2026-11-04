@@ -1,5 +1,11 @@
 {
   "roster": [
+    "Guillermo",
+    "Roger",
+    "Ari Santana",
+    "Paprika Liger",
+    "Ima Ima Ame",
+    "Mudae",
     "Niurka Marcos",
     "Dra. Polo",
     "La Tigresa",
@@ -1562,6 +1568,36 @@
     ]
   },
   "characters": [
+    {
+      "name": "Guillermo",
+      "image": "personajes/guillermo.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Roger",
+      "image": "personajes/roger.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Ari Santana",
+      "image": "personajes/ari-santana.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Paprika Liger",
+      "image": "personajes/paprika-liger.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Ima Ima Ame",
+      "image": "personajes/ima-ima-ame.png",
+      "exclusiveIcon": true
+    },
+    {
+      "name": "Mudae",
+      "image": "personajes/mudae.png",
+      "exclusiveIcon": true
+    },
     {
       "name": "Niurka Marcos",
       "image": "personajes/niurka-marcos.png",
