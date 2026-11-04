@@ -10,7 +10,7 @@ test('staff fills connected human users before bots and summons participants fro
   assert(latest().roster.every(p=>!p.bot));assert.deepEqual(new Set(latest().roster.map(p=>p.id)),new Set(['connected-a','connected-b']));assert(!a.messages.some(m=>m.type==='protocol-start'));
   f.send(staff,{type:'protocol-action',action:{type:'fillBots'}});await f.until(()=>latest()?.roster.length===18);assert.equal(latest().roster.filter(p=>!p.bot).length,2);
   f.send(staff,{type:'protocol-action',action:{type:'start'}});await f.until(()=>a.messages.some(m=>m.type==='protocol-start')&&b.messages.some(m=>m.type==='protocol-start'));
-  assert(!visitor.messages.some(m=>m.type==='protocol-start'));assert.equal((await f.call('/api/world/bootstrap','connected-a')).protocolInvite,'/juegos/x-protocol/');
+  assert(visitor.messages.some(m=>m.type==='protocol-start'),'connected spectators enter the same loading screen');assert.equal((await f.call('/api/world/bootstrap','connected-a')).protocolInvite,'/juegos/x-protocol/');
   assert.deepEqual((await f.call('/api/world/x-protocol/history','connected-a')).episodes,[]);
   const reconnected=await f.connect('connected-b',{claim:false});await f.until(()=>reconnected.messages.some(m=>m.type==='protocol-start'));
   f.send(staff,{type:'protocol-action',action:{type:'cancel'}});await f.until(()=>staff.messages.some(m=>m.type==='protocol-return'));assert.equal((await f.call('/api/world/bootstrap','connected-a')).protocolInvite,null);
@@ -20,3 +20,20 @@ test('real World sockets open an independent ceremony, enforce roles and movemen
  const bytes=Buffer.alloc(128,65);let upload=await fetch(f.base+'/api/world/x-protocol/media',{method:'POST',headers:{Cookie:'xp_world_session=protocol-a','Content-Type':'video/mp4'},body:bytes});assert.equal(upload.status,403);upload=await fetch(f.base+'/api/world/x-protocol/media',{method:'POST',headers:{Cookie:'xp_world_session='+STAFF_ID,'Content-Type':'video/mp4'},body:bytes});assert.equal(upload.status,200);const media=await upload.json(),range=await fetch(f.base+media.url,{headers:{Cookie:'xp_world_session=protocol-a',Range:'bytes=30-49'}});assert.equal(range.status,206);assert.equal((await range.arrayBuffer()).byteLength,20);
  f.send(staff,{type:'protocol-action',action:{type:'start'}});await f.until(()=>latest(a)?.engaged);f.send(staff,{type:'protocol-action',action:{type:'pause'}});await f.until(()=>latest(a)?.paused);const saved=await f.call('/api/world/bootstrap','protocol-a');assert.equal(saved.profile.characterId,'bruno');assert.equal(saved.profile.lastZone,'base');assert(!latest(b).roster.some(p=>p.origin||p.vitals));f.send(a,{type:'enter',zone:'cocina'});await f.until(()=>a.messages.some(m=>m.type==='error'&&/dentro de The X Protocol/.test(m.message)));const changed=await f.call('/api/world/preferences','protocol-a','PUT',{characterId:'ivy'});assert.equal(changed.status,409);f.send(a,{type:'protocol-chat',text:'Seguimos en el recinto nuevo'});await f.until(()=>b.messages.some(m=>m.type==='protocol-chat'&&m.message.text==='Seguimos en el recinto nuevo'));f.send(staff,{type:'protocol-action',action:{type:'resume'}});await f.until(()=>!latest(a)?.paused);f.send(staff,{type:'protocol-action',action:{type:'cancel'}});await f.until(()=>a.messages.some(m=>m.type==='protocol-return'));assert.equal((await f.call('/api/world/bootstrap','protocol-a')).profile.lastZone,'base');
  }finally{await f.close();}});
+test('live start from the shared visualization asks for bots and synchronizes all real sockets before intro',async()=>{
+ const f=await liveFixture('protocol-shared-entry',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'live-human',character:'bruno',zone:'cocina',x:1000,y:700},{id:'live-observer',character:'dani',zone:'base',x:1100,y:700,spectator:true}]);
+ try{const peers=await Promise.all([STAFF_ID,'live-human','live-observer'].map(id=>f.connect(id))),[staff,human,observer]=peers;
+  const plan=await f.call('/api/world/x-protocol/start-plan',STAFF_ID);assert.equal(plan.status,200);assert.equal(plan.connected,1);assert.equal(plan.missing,17);
+  assert.equal((await f.call('/api/world/x-protocol/start-live','live-human','POST',{fillBots:true})).status,403);
+  assert.equal((await f.call('/api/world/x-protocol/start-live',STAFF_ID,'POST',{fillBots:false})).status,409);
+  const start=await f.call('/api/world/x-protocol/start-live',STAFF_ID,'POST',{fillBots:true});assert.equal(start.status,200);
+  await f.until(()=>peers.every(p=>p.messages.some(m=>m.type==='protocol-start')));
+  for(const id of [STAFF_ID,'live-human','live-observer'])assert.equal((await f.call('/api/world/bootstrap',id)).protocolInvite,'/juegos/x-protocol/');
+  for(const p of peers)f.send(p,{type:'protocol-subscribe'});
+  const latest=p=>p.messages.filter(m=>m.type==='protocol-state').at(-1)?.episode;await f.until(()=>peers.every(p=>latest(p)?.phase==='ELIMINATION_LOADING'));
+  assert.equal(latest(staff).roster.filter(p=>!p.bot).length,1);assert(!latest(staff).roster.some(p=>p.id==='live-observer'));assert.equal(latest(staff).loading.total,3);
+  for(const p of [staff,human])f.send(p,{type:'protocol-ready',ceremonyId:start.ceremonyId});await f.until(()=>latest(staff).loading?.ready===2);assert.equal(latest(observer).phase,'ELIMINATION_LOADING');
+  f.send(observer,{type:'protocol-ready',ceremonyId:start.ceremonyId});await f.until(()=>peers.every(p=>latest(p)?.phase==='INTRO_VIDEO'));
+  await f.call('/api/world/x-protocol/control',STAFF_ID,'POST',{type:'cancel',ceremonyId:start.ceremonyId});await f.until(()=>peers.every(p=>p.messages.some(m=>m.type==='protocol-return')));
+ }finally{await f.close();}
+});

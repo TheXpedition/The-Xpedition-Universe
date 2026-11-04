@@ -1,0 +1,215 @@
+/* Shared clinical interface. Component colors are explicit so host-page rules
+   cannot wash out text on parchment or change the size of medical controls. */
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result,.clinical-record,.world-clinic-panel){
+ --clinic-ink:#2e2017;--clinic-paper:#f4dfb6;--clinic-paper-muted:#d9b985;--clinic-metal:#231c17;--clinic-line:#956d46;--clinic-text:#f5e6cc;--clinic-muted:#cbbb9f;--clinic-red:#813e32;--clinic-green:#a8c58b;
+ box-sizing:border-box;font-family:Manrope,Arial,sans-serif;font-size:13px;line-height:1.55;isolation:isolate;
+}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result,.clinical-record,.world-clinic-panel) *{box-sizing:border-box;}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) :is(h1,h2,h3,h4,p){text-wrap:pretty;overflow-wrap:anywhere;}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) :is(button,input,select,textarea){font-family:Manrope,Arial,sans-serif;letter-spacing:0;}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) button{min-height:38px;border-radius:5px;font-size:12px;line-height:1.35;transition:background-color .15s,border-color .15s,transform .15s;touch-action:manipulation;}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) button:focus-visible{outline:2px solid #e4ba77;outline-offset:3px;}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) button:active:not(:disabled){transform:translateY(1px);}
+:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result)::backdrop{background:#0c0906c9;backdrop-filter:blur(3px);}
+:is(.clinic-player,.psychology-player,.maternity-player){border:1px solid #ad8051;box-shadow:0 28px 100px #0009,inset 0 0 0 3px #38291d;border-radius:10px;}
+:is(.clinic-player,.psychology-player,.maternity-player)>header{background:linear-gradient(115deg,#443022,#211b16);border-bottom:1px solid #a87d4a;min-height:66px;padding:12px 20px;gap:16px;}
+:is(.clinic-player,.psychology-player,.maternity-player)>header :is(h1,h2){color:#ffebc7;font:700 clamp(23px,2.1vw,30px)/1.12 'World Condensed',Arial,sans-serif;margin:3px 0 0;}
+:is(.clinic-player,.psychology-player,.maternity-player)>header small{color:#e1bf8c;font-size:9px;line-height:1.5;letter-spacing:1.7px;}
+:is(.clinic-player,.psychology-player)>header button{display:grid;place-items:center;width:34px;min-width:34px;height:34px;min-height:34px;padding:7px;border:1px solid #967148;background:#251d17;}
+:is(.clinic-player,.psychology-player)>header button svg{display:block;width:18px;height:18px;margin:0;}
+
+/* Consultation: illustration on the left, a readable work surface on the right. */
+.clinic-player{width:min(1180px,calc(100vw - 28px));max-height:calc(100dvh - 28px);background:#211a14;}
+.clinic-player .care-layout{grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);}
+.clinic-player .care-scene{align-self:stretch;display:flex;align-items:center;background:radial-gradient(ellipse at center,#4b3520,#1d1712 75%);border-right:1px solid #705435;}
+.clinic-player .care-scene canvas{width:100%;object-fit:contain;max-height:calc(100dvh - 135px);}
+.clinic-player .care-identities{left:16px;right:16px;bottom:13px;gap:12px;}
+.clinic-player .care-identities span{background:#1b150ee8;border:1px solid #ac8252;border-radius:4px;padding:5px 11px;color:#ffe5b9;font:700 15px/1.3 'World Condensed',Arial,sans-serif;-webkit-text-stroke:0;text-shadow:none;min-width:90px;max-width:46%;}
+.clinic-player .care-console{gap:14px;padding:22px;background:linear-gradient(135deg,#f5dfb4,#ddbd88);color:var(--clinic-ink);border-left:0;}
+.clinic-player .care-steps{display:flex;gap:8px;margin:0;padding:0 0 15px;border-bottom:1px solid #b28e5f;}
+.clinic-player .care-steps li{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;text-align:center;font-size:10px;line-height:1.35;color:#68513a;}
+.clinic-player .care-steps li b{height:26px;width:26px;background:#e0c38f;border-color:#a88351;color:#3b2a1b;}
+.clinic-player .care-steps li.current{color:#321e10;font-weight:800;}
+.clinic-player .care-steps li.current b{background:#75392b;border-color:#75392b;color:#ffe9c4;box-shadow:0 0 0 3px #75392b18;}
+.clinic-player .care-steps li.done{color:#3e5b30;}.clinic-player .care-steps li.done b{color:#f0f7d7;background:#4d6c3e;border-color:#4d6c3e;}
+.clinic-player .care-controls{min-height:220px;align-content:center;gap:14px;}
+.clinic-player .care-caption small{color:#75462a;font-size:9px;font-weight:800;letter-spacing:1.25px;}
+.clinic-player .care-caption h3{color:#302014;font:700 26px/1.18 'World Condensed',Arial,sans-serif;margin:7px 0 9px;}
+.clinic-player .care-caption p{color:#513b28;font-size:12px;line-height:1.65;margin:0;}
+.clinic-player .care-tools{gap:9px;}.clinic-player .care-tools button{min-height:78px;background:#f9e8c5;color:#442c1a;border:1px solid #b38a56;font-size:11px;padding:11px 8px;box-shadow:0 2px 0 #a7824e20;}
+.clinic-player .care-tools button svg{width:28px;height:28px;color:#744228;}
+.clinic-player .care-tools button:hover:not(:disabled){background:#fff0cf;border-color:#704829;}
+.clinic-player .care-primary{color:#fff0cf;background:linear-gradient(#884b35,#653324);border-color:#79412d;min-height:42px;font-size:12px;box-shadow:0 3px 0 #4a28151a;}
+.clinic-player .care-primary:hover:not(:disabled){background:#914f35;}
+.clinic-player .care-comfort button{background:#f5e6c8;color:#51331f;border:1px solid #a78150;font-size:11px;}.clinic-player .care-comfort button[aria-pressed=true]{background:#4e683b;color:#fff5d7;}
+.clinic-player .care-hits small{color:#503723;font-size:11px;}.clinic-player .care-hits>span{background:#d1b583;border-color:#8c6e42;}.clinic-player .care-hits>span.hit{background:#597f42;border-color:#345727;}
+.clinic-player .care-feedback{color:#693b24;font-size:11px;min-height:0;}.clinic-player .care-feedback:empty{display:none;}
+.clinic-player .care-cancel{color:#7e382c;background:transparent;font-size:10px;border-color:#bc9770;min-height:30px;}
+.clinic-player .care-outcome>span{background:#e1e5b8;border-color:#7b8b51;color:#415c2b;}
+
+/* Private chat. Each surface defines both foreground and background. */
+:is(.care-console,.psychology-console,.maternity-console) .care-chat{border-top:1px solid #b08e5c;margin-top:auto;padding-top:13px;color:#3b291c;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat h4{font:800 11px/1.4 Manrope,Arial,sans-serif;color:#513522;margin:0 0 8px;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat-history{max-height:112px;scrollbar-color:#967349 #ddc294;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat-history p{display:grid;gap:3px;color:#37271b;background:#f9e9c8;border:1px solid #ccb184;border-radius:4px;padding:7px 9px;font-size:11px;line-height:1.5;margin:0 0 5px;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat-history strong{color:#7c362a;font-size:10px;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat-history .own strong{color:#3d5f32;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat form{display:flex;gap:7px;margin:8px 0 0;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat input{height:38px;min-height:38px;font-size:12px;line-height:1.4;background:#fff2d6;color:#302014;border:1px solid #a27e4c;padding:8px 10px;border-radius:5px;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat input::placeholder{color:#6d5943;opacity:1;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat button{height:38px;width:38px;min-width:38px;min-height:38px;padding:9px;background:#75402c;border-color:#75402c;color:#fff0cf;display:grid;place-items:center;}
+:is(.care-console,.psychology-console,.maternity-console) .care-chat button svg{width:18px;height:18px;display:block;}
+
+/* Psychological interview. */
+.psychology-player{width:min(1180px,calc(100vw - 28px));color:#f5e6cc;background:#201a14;}
+.psychology-player .psychology-layout{grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);}
+.psychology-player .psychology-scene{align-self:stretch;display:flex;align-items:center;background:radial-gradient(ellipse,#4b3520,#1d1712);}
+.psychology-player .psychology-scene>span{left:15px;right:15px;bottom:14px;padding:7px 12px;background:#21180fef;border:1px solid #a27c4e;border-radius:4px;color:#ffebc6;font-size:15px;line-height:1.3;-webkit-text-stroke:0;}
+.psychology-player .psychology-console{display:flex;flex-direction:column;gap:9px;padding:22px;background:linear-gradient(135deg,#f4dfb4,#ddbc87);color:#302014;border-left:1px solid #98734a;}
+.psychology-player .psychology-console h3{color:#302014;font-size:26px;line-height:1.2;margin:7px 0;}
+.psychology-player .psychology-console p,.psychology-player .psychology-guide{color:#4d3826;font-size:12px;line-height:1.65;}
+.psychology-player .psychology-steps{gap:12px;font-size:10px;color:#715941;margin:0 0 9px;}
+.psychology-player .psychology-steps li{border-color:#b99a6b;padding-bottom:10px;}.psychology-player .psychology-steps .current{color:#6a3024;border-color:#803c2e;font-weight:800;}
+.psychology-player .psychology-answers button{background:#f9e9c7;color:#462d1c;border-color:#b18a58;text-align:left;justify-content:flex-start;font-size:12px;padding:10px 12px;}
+.psychology-player .psychology-console>button{background:#783e2c;color:#fff0cf;border-color:#6b3424;}
+.psychology-player .psychology-treatment{color:#342215;background:#fff0d2;border-color:#a3804e;color-scheme:light;font-size:12px;min-height:38px;}
+.psychology-player .psychology-error{padding:0 20px;color:#f7b6a0;background:#281911;}.psychology-player .psychology-error:empty{display:none;}
+
+/* Nurse introduction. */
+.clinic-guide{width:720px;background:#281d15;color:#fae6c4;padding:25px;border:1px solid #b08750;}
+.clinic-guide p{font-size:13px;line-height:1.65;color:#ddc6a3;}.clinic-guide h2{color:#ffe8bf;font-size:31px;}
+.clinic-guide ol{gap:12px;margin:20px 0;}.clinic-guide li{padding:17px;background:linear-gradient(135deg,#3e2b1d,#2b2017);border-color:#8f6942;}
+.clinic-guide li b{font-size:14px;line-height:1.4;color:#ffe3b1;}.clinic-guide li span{font-size:12px;line-height:1.65;color:#dac3a1;}
+.clinic-guide>button{min-height:40px;padding:10px 20px;background:linear-gradient(#b98849,#8b6031);color:#21150c;border-color:#e2b775;font-size:12px;}
+
+/* Maternity: stage, task and chat occupy separate areas. */
+.maternity-player{width:min(1440px,calc(100vw - 24px));max-width:calc(100vw - 24px);height:min(850px,calc(100dvh - 24px));max-height:calc(100dvh - 24px);color:#f8e4be;overflow:hidden;}
+.maternity-player>header{height:66px;box-sizing:border-box;}
+.maternity-player>header>span{color:#f4d6a7;border-left:1px solid #896744;padding-left:18px;font-size:12px;}
+.maternity-player .maternity-layout{height:calc(100% - 66px);grid-template-columns:minmax(0,1.95fr) minmax(320px,1fr);}
+.maternity-player .maternity-scene{display:grid;grid-template-rows:minmax(0,1fr) auto;align-items:stretch;background:radial-gradient(ellipse,#543e2c,#201810 85%);border-right:1px solid #9c754b;}
+.maternity-player .maternity-scene canvas{display:block;align-self:center;justify-self:center;width:100%;height:100%;max-height:100%;object-fit:contain;aspect-ratio:1100/760;min-height:0;}
+.maternity-player .maternity-dialogue{position:relative;left:auto;right:auto;bottom:auto;display:flex;gap:13px;align-items:center;min-height:82px;margin:0 14px 14px;padding:12px 16px;background:#f7e4bd;border:1px solid #bf9156;border-radius:6px;box-shadow:0 3px 15px #0004;color:#302014;}
+.maternity-player .maternity-dialogue img{height:52px;width:48px;object-fit:cover;border:1px solid #b18a55;border-radius:4px;background:#dfc28c;flex:none;}
+.maternity-player .maternity-dialogue p{color:#302014;font-size:13px;line-height:1.6;margin:0;min-width:0;}
+.maternity-player .maternity-dialogue b{display:block;color:#7c3428;font-size:12px;line-height:1.4;margin:0 0 4px;}
+.maternity-player .maternity-dialogue span{display:block;color:#302014;}
+.maternity-player .maternity-console{display:flex;flex-direction:column;gap:10px;padding:23px;background:linear-gradient(135deg,#f5dfb5,#dfbd87);color:#302014;border-left:0;scrollbar-gutter:stable;}
+.maternity-player .maternity-console h2{color:#302014;font-size:29px;line-height:1.15;margin:5px 0;}
+.maternity-player .maternity-console p{color:#503a27;font-size:12px;line-height:1.65;margin:0 0 9px;}
+.maternity-player .family-role{font-size:9px;line-height:1.5;color:#753c29;letter-spacing:1.6px;font-weight:900;}
+.maternity-player .family-checklist{list-style:none;padding:0;margin:10px 0 6px;display:grid;gap:9px;font-size:12px;color:#45301f;}
+.maternity-player .family-checklist li{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #bda071;border-radius:4px;background:#f9eaca;}
+.maternity-player .family-checklist li::before{content:'✓';display:grid;place-items:center;width:20px;height:20px;flex:none;border-radius:50%;background:#526d3e;color:#fff2cf;font-size:11px;}
+.maternity-player .family-cancel{align-self:flex-start;margin:9px 0 4px;font-size:10px;min-height:29px!important;color:#7b352a!important;background:transparent!important;}
+.maternity-player button[data-family=next],.maternity-player button[data-family=pulse],.maternity-player button[data-family=return]{min-height:41px;margin-top:12px;color:#fff0cf;background:linear-gradient(#884632,#693123);border-color:#753726;}
+.maternity-player .family-meter{height:30px;margin:18px 0 13px;border-color:#8a653e;box-shadow:inset 0 2px 8px #0005;}
+.maternity-player .family-hit-count{gap:9px;font-size:11px;color:#563c26;}.maternity-player .family-hit-count small{font-size:11px;}
+.maternity-player .family-wait{gap:12px;flex:1;padding:28px 15px;color:#87502e;}.maternity-player .family-wait span{font-size:12px;color:#5a3c26;}
+.maternity-player .family-care-options{gap:9px;margin:15px 0 8px;}.maternity-player .family-care-options button{min-height:94px;background:#faebc9;color:#4f311d;border-color:#ab8552;padding:12px 5px;font-size:11px;gap:7px;}
+.maternity-player .family-care-options button svg{height:29px;width:29px;}.maternity-player .family-care-options button:disabled{opacity:1;background:#dce4bb;color:#3a572e;border-color:#89975c;}
+.maternity-player .family-care-options b{color:#456932;}.maternity-player .family-care-progress{height:11px;flex:none;}
+.maternity-player .family-appearances{gap:9px;margin:14px 0;}.maternity-player .family-appearances label{background:#efcf95;border-color:#b58b53;min-height:85px;}
+.maternity-player .family-appearances label:has(input:checked){background:#fff0c9;border-color:#783b2a;box-shadow:0 0 0 1px #783b2a;}
+.maternity-player .family-appearances img{height:82px;}.maternity-player .family-name{font-size:12px;gap:8px;}.maternity-player .family-name input{font-size:13px;min-height:39px;}
+.maternity-player form legend{font-size:12px;color:#422b1b;}.maternity-player form fieldset:not(.family-appearances) label{font-size:12px;gap:5px;}
+.maternity-player .family-error{color:#8c2925;font-size:11px;min-height:0;}.maternity-player .family-error:empty{display:none;}
+.maternity-player [data-return-clock]{color:#62482f;font-size:11px;margin-top:7px;}
+.family-result{border:1px solid #b68a53;padding:27px;background:linear-gradient(135deg,#f6e1ba,#ddbb84);color:#302014;width:480px;max-width:calc(100vw - 30px);}
+.family-result h2{font-size:33px;line-height:1.13;color:#302014;margin:19px 0 13px;}.family-result p{color:#513a26;font-size:13px;line-height:1.65;}
+.family-result header{color:#7a3c29;gap:10px;}.family-result header small{font-size:9px;letter-spacing:1.2px;font-weight:800;}
+.family-result-progress{padding:11px 0 20px;border-bottom:1px solid #b59567;margin-bottom:18px;}.family-result-progress b{font-size:38px;color:#733a2a;}.family-result-progress span{color:#62482e;font-size:12px;}
+
+/* Clinical file: aligned labels, complete frames and independent typography. */
+.clinical-record{padding:21px 22px 27px;border:1px solid #b4854e;border-radius:8px;background:#241b14 url('/juegos/clinic/art/clinical-record-frame-v1.webp') center/100% 100%;box-shadow:0 9px 28px #0004;color:#f5e3c5;}
+.clinical-record .cr-banner{margin-left:20%;padding:0 12px 11px;min-height:72px;}
+.clinical-record .cr-banner>div{gap:11px;}.clinical-record .cr-banner>div>svg{width:31px;height:31px;flex:none;color:#efc389;}
+.clinical-record .cr-banner h3{font:700 clamp(25px,2.6vw,33px)/1.1 'World Condensed',Arial,sans-serif;margin:0;color:#ffebc6;letter-spacing:.4px;text-shadow:0 2px 2px #21150c;}
+.clinical-record .cr-banner h3 small{display:block;font:11px/1.4 Manrope,Arial,sans-serif;color:#dfc6a1;margin-top:5px;}
+.clinical-record .cr-status{color:#e1c59e;border-color:#aa8556;background:#32291f;font:700 11px/1.35 Manrope,Arial,sans-serif;padding:7px 10px;max-width:142px;}
+.clinical-record .cr-status.known{background:#4c5d32;color:#eff4d6;border-color:#a0ac72;}
+.clinical-record .cr-tabs{display:flex;gap:9px;justify-content:center;margin:7px 0 17px 21%;}
+.clinical-record .cr-tabs button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;min-width:145px;padding:8px 15px;border:1px solid #a57a47;border-radius:5px;background:#30251a;color:#e9cca1;font:700 12px/1.3 Manrope,Arial,sans-serif;cursor:pointer;}
+.clinical-record .cr-tabs button[aria-pressed=true]{background:linear-gradient(#f0d3a0,#d4ac70);color:#322013;border-color:#f7dfb7;box-shadow:0 2px 4px #0003;}
+.clinical-record .cr-tabs button svg{display:block;width:19px;height:19px;flex:none;}.clinical-record .cr-tabs button:focus-visible{outline:2px solid #f3c786;outline-offset:3px;}
+.clinical-record .cr-layout{grid-template-columns:minmax(130px,.72fr) minmax(0,2.8fr);gap:21px;}
+.clinical-record .cr-portrait{padding:9px 7px 11px;background:transparent;box-shadow:none;border:0;}
+.clinical-record .cr-portrait>div{height:245px;border:1px solid #986a35;border-radius:3px;background:radial-gradient(ellipse,#ebcf9b,#b58751);box-shadow:0 2px 7px #42230d44;overflow:hidden;}
+.clinical-record .cr-portrait>strong{color:#2d1c0f;font:700 21px/1.2 'World Condensed',Arial,sans-serif;padding:11px 0 5px;}
+.clinical-record .cr-portrait>small{color:#4e341c;font-size:9px;line-height:1.5;}
+.clinical-record .cr-data{gap:13px;}.clinical-record .cr-identity{padding:15px;gap:14px 20px;border-color:#aa7e48;background:#251e17f5;}
+.clinical-record .cr-fact{gap:10px;}.clinical-record .cr-fact small{font-size:10px;color:#d0ba98;line-height:1.35;margin-bottom:3px;}.clinical-record .cr-fact strong{font-size:14px;line-height:1.35;color:#fff0d3;}
+.clinical-record .cr-fact>span{width:24px;height:26px;color:#e4b875;}.clinical-record .cr-fact svg{width:23px;height:23px;}
+.clinical-record .cr-blood strong{color:#ffc49f;}.clinical-record .cr-section{padding:0 14px 13px;background:#251e17f5;border-color:#a77b47;}
+.clinical-record .cr-section h4{display:flex;align-items:center;gap:8px;min-height:39px;font:700 21px/1.2 'World Condensed',Arial,sans-serif;color:#f4d9ab;border-bottom:1px solid #795736;padding:9px 0;margin:0 0 11px;}
+.clinical-record .cr-section h4 svg{width:21px;height:21px;flex:none;}.clinical-record .cr-vitals article{padding:5px 7px;gap:7px;}.clinical-record .cr-vitals article>span{font-size:10px;color:#d6bf9c;line-height:1.35;}.clinical-record .cr-vitals article>strong{font:700 20px/1.2 'World Condensed',Arial,sans-serif;color:#fff0d3;}
+.clinical-record .cr-section ul{color:#eddbbd;font-size:12px;line-height:1.65;}.clinical-record .cr-section li>small{font-size:10px;line-height:1.4;color:#c7ad87;margin-top:4px;}
+.clinical-record .cr-empty,.clinical-record .cr-updated,.clinical-record .cr-personal{font:11px/1.6 Manrope,Arial,sans-serif;color:#cfb796;margin:5px 0;}
+.clinical-record .cr-unknown{font:700 30px/1.3 'World Condensed',Arial,sans-serif;text-align:center;color:#e5c998;padding:10px;margin:0;}
+.clinical-record .cr-progress{flex-wrap:wrap;gap:9px;}.clinical-record .cr-progress>span{font-size:12px;padding:8px 11px;color:#ead4af;}
+
+/* Directory and treatment notebook keep controls compact, but readable. */
+.world-clinic-panel .clinic-heading{gap:12px;}.world-clinic-panel .clinic-heading h2{font-size:30px;line-height:1.15;color:#ffe5bc;}
+.world-clinic-panel .clinic-kicker{font-size:9px;line-height:1.4;color:#d7b586;}.world-clinic-panel .clinic-wallet{font-size:24px;color:#f6d3a0;}
+.world-clinic-panel .clinic-tabs{padding:5px;gap:5px;border-color:#88613b;border-radius:5px;}.world-clinic-panel .clinic-tabs button{font-size:11px;line-height:1.4;padding:9px 12px;}
+.world-clinic-panel .clinic-content{scrollbar-gutter:stable;max-height:62dvh;padding-right:8px;}
+.world-clinic-panel .clinic-lead{font-size:12px;line-height:1.7;color:#d2b998;}
+.world-clinic-panel :is(.clinic-nurse,.clinic-appointment,.clinic-invoice){border-color:#8d653e;border-radius:5px;padding:16px;}
+.world-clinic-panel :is(.clinic-nurse,.clinic-appointment,.clinic-invoice) h3{font:700 24px/1.2 'World Condensed',Arial,sans-serif;color:#ffe3b6;margin:4px 0 7px;}
+.world-clinic-panel :is(.clinic-nurse,.clinic-appointment,.clinic-invoice) p{color:#d4bc99;font-size:12px;line-height:1.6;margin:3px 0;}
+.world-clinic-panel .clinic-patient-list button{border-radius:4px;gap:12px;padding:13px;color:#f6dcba;}.world-clinic-panel .clinic-patient-list small{font-size:10px;color:#ccb18a;}
+.world-clinic-panel :is(.clinic-footnote,.clinic-med-description,.clinic-treatment-detail small,.clinic-library p,.clinic-library small){font-size:11px;line-height:1.65;color:#cdb38e;}
+.world-clinic-panel :is(input,select,textarea){font-size:12px;}.world-clinic-panel :is(label,.clinic-compatible-only){font-size:11px;color:#d9c19d;}
+
+@media(max-width:850px){
+ .clinical-record .cr-banner{margin-left:19%;min-height:66px;padding-inline:5px;}.clinical-record .cr-banner h3{font-size:26px;}.clinical-record .cr-banner h3 small{font-size:9px;}
+ .clinical-record .cr-layout{grid-template-columns:130px minmax(0,1fr);gap:14px;}.clinical-record .cr-identity{gap:10px 12px;padding:12px;}.clinical-record .cr-fact strong{font-size:12px;}.clinical-record .cr-fact small{font-size:9px;}
+ .clinical-record .cr-portrait>div{height:220px;}.clinical-record .cr-columns{grid-template-columns:1fr;}.clinical-record .cr-vitals article>strong{font-size:17px;}
+ .clinical-record .cr-vitals article>span{font-size:9px;}.clinical-record .cr-tabs{margin-left:15%;}.clinical-record .cr-tabs button{min-width:125px;font-size:11px;}
+}
+@media(max-height:560px) and (orientation:landscape){
+ :is(.clinic-player,.psychology-player,.maternity-player){max-height:calc(100dvh - 12px);width:calc(100vw - 14px);max-width:calc(100vw - 14px);}
+ :is(.clinic-player,.psychology-player,.maternity-player)>header{min-height:46px;height:46px;padding:7px 13px;}
+ :is(.clinic-player,.psychology-player,.maternity-player)>header :is(h1,h2){font-size:22px;margin:0;}
+ :is(.clinic-player,.psychology-player,.maternity-player)>header small{font-size:7px;}
+ .clinic-player .care-layout,.psychology-player .psychology-layout{grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr);}
+ .clinic-player .care-console,.psychology-player .psychology-console{padding:12px 14px;gap:9px;max-height:calc(100dvh - 65px);overflow:auto;}
+ .clinic-player .care-controls{min-height:130px;gap:9px;}.clinic-player .care-caption h3{font-size:22px;}.clinic-player .care-tools button{min-height:60px;}
+ .clinic-player .care-steps{padding-bottom:9px;}.clinic-player .care-steps li{font-size:9px;}.clinic-player .care-steps li b{width:22px;height:22px;}
+ .maternity-player{height:calc(100dvh - 12px);}.maternity-player .maternity-layout{height:calc(100% - 46px);grid-template-columns:minmax(0,1.7fr) minmax(290px,1fr);}
+ .maternity-player .maternity-console{padding:13px 16px;gap:7px;}.maternity-player .maternity-console h2{font-size:24px;}.maternity-player .maternity-console p{font-size:11px;line-height:1.6;}
+ .maternity-player .maternity-dialogue{min-height:58px;gap:9px;padding:8px 11px;margin:0 8px 8px;}.maternity-player .maternity-dialogue img{height:39px;width:36px;}.maternity-player .maternity-dialogue p{font-size:11px;line-height:1.5;}.maternity-player .maternity-dialogue b{font-size:10px;margin-bottom:2px;}
+ .maternity-player .family-care-options button{min-height:76px;font-size:10px;}.maternity-player .family-appearances img{height:62px;}.maternity-player .family-appearances label{min-height:65px;}
+ .maternity-player .family-checklist{font-size:11px;gap:6px;}.maternity-player .family-checklist li{padding:7px 9px;}
+ :is(.care-console,.psychology-console,.maternity-console) .care-chat-history{max-height:70px;}
+}
+@media(max-width:620px) and (orientation:portrait){
+ .clinic-player .care-layout,.psychology-player .psychology-layout,.maternity-player .maternity-layout{grid-template-columns:1fr;}
+ .maternity-player{overflow:auto;height:auto;}.maternity-player .maternity-scene{min-height:330px;}.maternity-player .maternity-layout{height:auto;}
+ .clinic-player .care-scene canvas,.psychology-player .psychology-scene canvas{max-height:34dvh;}.clinical-record{padding:16px 12px;background:#271c14;}
+ .clinical-record .cr-banner,.clinical-record .cr-tabs{margin-left:0;}.clinical-record .cr-layout{grid-template-columns:1fr;}.clinical-record .cr-portrait{display:none;}
+ .clinical-record .cr-identity{grid-template-columns:1fr 1fr;}.clinic-guide ol{grid-template-columns:1fr;}.maternity-player>header>span{display:none;}
+}
+@media(prefers-reduced-motion:reduce){:is(.clinic-player,.clinic-guide,.psychology-player,.maternity-player,.family-result) *{transition:none!important;animation:none!important;}}
+
+.clinic-player .care-identities,.psychology-player .psychology-scene>span{display:none!important}
+.maternity-player[data-phase=monitor] .maternity-scene canvas{touch-action:none;cursor:crosshair}
+.family-scan-console,.family-incubator-console,.family-breath-console{display:grid;gap:12px;margin:9px 0 0;min-width:0}
+.family-scan-readout{display:flex;align-items:center;gap:13px;padding:16px;border:1px solid #987b4b;border-radius:6px;background:linear-gradient(135deg,#28352b,#15231d);color:#e6eacb}
+.family-scan-readout svg{width:36px;height:36px;color:#bad49b;flex:none}.family-scan-readout span{font-size:9px;letter-spacing:1.3px;color:#c9d5b2}.family-scan-readout b{display:block;font-size:13px;line-height:1.45;letter-spacing:0;color:#eff0d3;margin-top:5px}
+.maternity-player [data-scan-progress],.maternity-player [data-thermal-progress]{width:100%;height:11px;accent-color:#5f8044;margin:0}
+.maternity-player .family-task-feedback{font-size:11px;line-height:1.5;color:#64452b;text-align:center;margin:1px 0 0;min-height:30px}
+.family-breath-ring{--breath:0%;position:relative;display:grid;place-items:center;justify-self:center;width:142px;height:142px;border-radius:50%;background:conic-gradient(#cf9c58 var(--breath),#bca276 0);box-shadow:0 0 0 1px #8a643b,0 4px 17px #9a794b30;isolation:isolate}
+.family-breath-ring:before{content:'';position:absolute;inset:9px;background:#f5e0b7;border:1px solid #b38a53;border-radius:50%;z-index:-1}
+.family-breath-ring[data-ready=true]{background:conic-gradient(#5f894b var(--breath),#c0c68c 0);box-shadow:0 0 0 1px #608246,0 0 0 6px #65864720}
+.family-breath-ring>span{font-size:12px;text-align:center;line-height:1.6;color:#5f4229}.family-breath-ring b{color:#332315;font-size:14px}
+.maternity-player :is([data-breath-hold],[data-thermal-hold]){min-height:43px;background:linear-gradient(#824631,#633121);color:#fff1d2;border-color:#76402d;user-select:none;touch-action:none;width:100%;font-size:12px;font-weight:800}
+.family-temperature{display:grid;justify-items:center;gap:7px;padding:16px 10px;background:linear-gradient(135deg,#26382c,#17291e);border:1px solid #65835b;border-radius:6px}.family-temperature>span{color:#b7c99e;font-size:9px;letter-spacing:1.6px}.family-temperature>strong{font:700 38px/1.2 'World Condensed',Arial,sans-serif;color:#d6efad}.family-temperature>small{font-size:10px;color:#d2dbb6}
+.family-temperature[data-stable="false"]{background:linear-gradient(135deg,#4a2c21,#302017);border-color:#c08a54}.family-temperature[data-stable="false"]>strong{color:#ffd29b}
+.family-regulator{display:grid;gap:8px;font:700 11px/1.4 Manrope,Arial,sans-serif;color:#523920}.family-regulator input{width:100%;min-width:0;accent-color:#6c8b4d;height:27px;background:transparent}
+.review-content>.clinic-player-resume{display:none!important}
+.clinic-player .care-scene canvas{touch-action:none}
+.care-gesture-pad{display:block;width:100%;height:145px;min-height:110px;border:1px solid #af8a57;border-radius:6px;background:radial-gradient(ellipse,#f8eacc,#dec08c);touch-action:none;cursor:grab;user-select:none}
+.care-gesture-pad:active{cursor:grabbing}.care-gesture-route{fill:none;stroke:#aa8353;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}.care-gesture-points circle{fill:#f9e9c5;stroke:#865a32;stroke-width:3}.care-gesture-points circle.done{fill:#65884a;stroke:#41642e}.care-gesture-cursor{fill:#f3cc83;stroke:#5e3920;stroke-width:3;filter:drop-shadow(0 2px 2px #55321350);pointer-events:none}
+.care-focus-readout{padding:16px;background:#2b392c;border:1px solid #6a8153;border-radius:5px;display:grid;gap:12px;color:#e8eccd;font-size:11px;text-align:center}.clinic-player [data-clinical-lock]{width:100%;height:10px;accent-color:#708e4c;margin:0}
+.care-hold-gauge{position:relative;height:31px;border:1px solid #84613c;border-radius:5px;background:linear-gradient(#443226,#2b2119);overflow:hidden}.care-hold-gauge>span{position:absolute;top:4px;bottom:4px;background:#8eb365;border-inline:2px solid #c4d79e}.care-hold-gauge>i{position:absolute;top:0;bottom:0;width:4px;background:#fff2c8;box-shadow:0 0 4px #0007;transform:translateX(-50%)}

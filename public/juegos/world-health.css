@@ -14,3 +14,6 @@ body #modal.health-dialog{width:min(760px,calc(100vw - 28px));max-width:none;max
 .world-health-panel .health-med-detail>.health-detail-note{grid-column:1/-1}
 .world-health-panel .health-med-slot>.health-med-art{overflow:hidden;min-width:40px;max-width:40px}
 @media(max-width:480px){.world-health-panel .health-med-detail{grid-template-columns:40px minmax(0,1fr);gap:10px}.world-health-panel .health-med-detail>.health-med-art{width:40px;min-width:40px;max-width:40px;height:44px}}
+
+.world-health-panel .health-clothing>.health-outfit-preview{display:block;object-fit:contain;object-position:center bottom;width:100%;height:126px;max-height:126px;margin:0 auto 8px;filter:drop-shadow(0 4px 4px #0005)}
+@media(max-height:540px){.world-health-panel .health-clothing>.health-outfit-preview{height:84px;max-height:84px}}

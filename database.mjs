@@ -131,7 +131,9 @@ export async function openDatabase(dataDir) {
       one: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).get(...args)),
       all: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).all(...args)),
       run: async (sql,...args)=>sqliteQuery(()=>database.prepare(sql).run(...args)),
-      transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release;sqliteTail=new Promise(resolve=>release=resolve);await previous;database.exec('BEGIN IMMEDIATE');try{const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){database.exec('ROLLBACK');throw e;}finally{release();}},
+      // BEGIN can fail while another World worker owns the writer lock. Release
+      // our queue even then, or later session reads would wait forever.
+      transaction: async fn=>{if(sqliteContext.getStore())throw new Error('No se permiten transacciones anidadas.');const previous=sqliteTail;let release,begun=false;sqliteTail=new Promise(resolve=>release=resolve);try{await previous;database.exec('BEGIN IMMEDIATE');begun=true;const value=await sqliteContext.run(true,fn);database.exec('COMMIT');return value;}catch(e){if(begun)database.exec('ROLLBACK');throw e;}finally{release();}},
       close: async ()=>database.close()
     };
   }

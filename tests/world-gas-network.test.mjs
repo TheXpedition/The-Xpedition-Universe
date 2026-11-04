@@ -1,0 +1,17 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
+import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
+test('gas station door works both ways and competing players conserve exactly ten cigarettes',async()=>{
+ const maps=structuredClone(WORLD_MAPS);buildSurvivalProps(maps);const box=maps['gasolinera-interior'].props.find(p=>p.survival?.id==='gas-cigarette-box'),door=maps.gasolinera.props.find(p=>p.portal?.zone==='gasolinera-interior');
+ const f=await liveFixture('gas-network',[{id:STAFF_ID,character:'maria-villegas',...door.portal,zone:'gasolinera'},{id:'gas-a',character:'bruno',zone:'gasolinera-interior',...box.approach},{id:'gas-b',character:'guillermo',zone:'gasolinera-interior',...box.approach}]);
+ try{const staff=await f.connect(STAFF_ID),a=await f.connect('gas-a'),b=await f.connect('gas-b');f.send(staff,{type:'enter',zone:'gasolinera-interior'});await f.until(()=>staff.messages.some(m=>m.type==='zone'&&m.zone==='gasolinera-interior'));
+  const result=await Promise.all(['gas-a','gas-b'].map(id=>f.call('/api/world/survival/action',id,'POST',{action:'take-luggage',id:'gas-cigarette-box',itemKey:'resource:cigarette',quantity:9,requestId:id})));assert.deepEqual(result.map(r=>r.status).sort(),[200,409]);const winner=result[0].status===200?'gas-a':'gas-b';
+  const stock=await f.call('/api/world/survival/luggage?id=gas-cigarette-box',winner);assert.equal(stock.luggage.items['resource:cigarette'],1);
+  const smoke=await f.call('/api/world/survival/action',winner,'POST',{action:'use',id:'cigarette',requestId:'smoke-once'});assert.equal(smoke.status,200,JSON.stringify(smoke));assert.equal(smoke.personal.items.cigarette,8);assert.equal(smoke.body.respiratory.exposure,1);
+  const repeated=await f.call('/api/world/survival/action',winner,'POST',{action:'use',id:'cigarette',requestId:'smoke-fast'});assert.equal(repeated.status,409);assert.equal((await f.call('/api/world/survival',winner)).personal.items.cigarette,8);
+  for(const p of [a,b])await f.until(()=>p.messages.some(m=>m.type==='survival-state'&&m.shared?.luggage?.['gas-cigarette-box']?.revision===1));
+  const loser=winner==='gas-a'?'gas-b':'gas-a';assert.equal((await f.call('/api/world/survival/action',loser,'POST',{action:'take-luggage',id:'gas-cigarette-box',itemKey:'resource:cigarette',quantity:1,requestId:'last-cigarette'})).status,200);const exhausted=(await f.call('/api/world/survival',loser)).shared;const emptyMaps=structuredClone(WORLD_MAPS);buildSurvivalProps(emptyMaps,exhausted);assert(!emptyMaps['gasolinera-interior'].props.some(p=>p.survival?.id==='gas-cigarette-box'),'empty loose package is removed visually');assert.equal((await f.call('/api/world/survival/action',loser,'POST',{action:'restock-luggage',id:'gas-cigarette-box',requestId:'forged-restock'})).status,403);assert.equal((await f.call('/api/world/survival/action',STAFF_ID,'POST',{action:'restock-luggage',id:'gas-cigarette-box',requestId:'staff-restock'})).status,200);assert.equal((await f.call('/api/world/survival',loser)).shared.luggage['gas-cigarette-box'].items['resource:cigarette'],10);
+
+  await new Promise(r=>setTimeout(r,1050));f.send(staff,{type:'enter',zone:'gasolinera'});await f.until(()=>staff.messages.some(m=>m.type==='zone'&&m.zone==='gasolinera'));
+ }finally{await f.close();}
+});

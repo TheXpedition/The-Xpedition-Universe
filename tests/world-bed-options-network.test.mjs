@@ -1,0 +1,19 @@
+import {seedConstructedShelters} from './helpers/world-shelter-fixtures.mjs';
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {applyWorldBeds} from '../public/juegos/world-beds.mjs';
+test('staff configures nine beds, participants cannot; nap/clean/private reservations release on explicit cancellation',async()=>{
+ const maps=structuredClone(WORLD_MAPS);applyWorldBeds(maps);const bed=maps['refugio-1'].props.find(p=>p.sleepBed),point=bed.approaches[0];
+ const f=await liveFixture('bed-options',[{id:STAFF_ID,character:'guillermo',zone:'refugio-1',...point},{id:'bed-options-b',character:'bruno',zone:'refugio-1',...point}],{setup:db=>seedConstructedShelters(db,[{id:STAFF_ID,character:'guillermo'},{id:'bed-options-b',character:'bruno'}])});
+ try{const a=await f.connect(STAFF_ID),b=await f.connect('bed-options-b');assert.equal((await f.call('/api/world/beds','bed-options-b','PUT',{zone:'refugio-1',count:9})).status,403);let r=await f.call('/api/world/beds',STAFF_ID,'PUT',{zone:'refugio-1',count:9});assert.equal(r.status,200);assert.equal(r.beds['refugio-1'],9);assert.equal((await f.call('/api/world/beds',STAFF_ID,'PUT',{zone:'refugio-1',count:10})).status,400);
+ assert.equal((await f.call('/api/world/clothing','bed-options-b','POST',{clothing:'cold'})).status,409);const health=await f.call('/api/world/health','bed-options-b');assert.equal(health.body.clothingOptions.find(x=>x.id==='cold').owned,false);
+ f.send(a,{type:'interact',objectId:bed.id,bedActivity:'nap'});await f.until(()=>a.messages.some(m=>m.type==='players'&&m.players.some(p=>p.userId===STAFF_ID&&p.sleeping)));f.send(b,{type:'interact',objectId:bed.id});await f.until(()=>b.messages.some(m=>m.type==='error'&&/ocupado/.test(m.message)));f.send(a,{type:'stand'});await f.until(()=>a.messages.findLast(m=>m.type==='players')?.players.some(p=>p.userId===STAFF_ID&&!p.sleeping));
+ for(const kind of ['clean','private']){const mark=a.messages.length;f.send(a,{type:'interact',objectId:bed.id,bedActivity:kind});await f.until(()=>a.messages.slice(mark).some(m=>m.type==='bed-activity'&&m.kind===kind));await f.until(()=>a.messages.slice(mark).some(m=>m.type==='players'&&m.players.some(p=>p.userId===STAFF_ID&&(kind==='private'?p.sleeping&&p.state==='sleep':p.activity==='clean-bed'))));f.send(a,{type:'stand'});await f.until(()=>a.messages.slice(mark).some(m=>m.type==='bed-activity-end'));}
+ const mark=b.messages.length;f.send(b,{type:'interact',objectId:bed.id});await f.until(()=>b.messages.slice(mark).some(m=>m.type==='players'&&m.players.some(p=>p.userId==='bed-options-b'&&p.sleeping)));f.send(b,{type:'stand'});
+ }finally{await f.close();}
+});
+test('remembering completes with the requested name and telescope uses an extra image without adding zones',async()=>{
+ const cemetery=WORLD_MAPS['cementerio-interior'],grave=cemetery.props.find(p=>p.memorial),summit=WORLD_MAPS['montana-cima'],scope=summit.props.find(p=>p.mountainView);
+ const f=await liveFixture('memorial-scope',[{id:STAFF_ID,character:'maria-villegas',zone:cemetery.id,...grave.approach},{id:'scope-b',character:'bruno',zone:summit.id,...scope.approach}]);
+ try{const a=await f.connect(STAFF_ID),b=await f.connect('scope-b');f.send(a,{type:'interact',objectId:grave.id});const message=await f.until(()=>a.messages.find(m=>m.type==='remembered'));assert.equal(message.message,'Recordaste con amor a '+grave.memorial.name+'.');assert(!a.messages.some(m=>m.type==='memorial-open'));f.send(b,{type:'interact',objectId:scope.id});const view=await f.until(()=>b.messages.find(m=>m.type==='mountain-view'));assert(view.image.includes('panorama-telescopio'));assert.equal((await f.call('/api/world/bootstrap',STAFF_ID)).zones.length,48);
+ }finally{await f.close();}
+});

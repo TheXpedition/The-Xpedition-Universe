@@ -13,6 +13,7 @@ export function episodeCell(s,p){
  if(a.protected?.includes(p.id)&&nominees.has(p.id))return a.used?.some(u=>u.kind==='idol'&&(u.target||u.actor)===p.id)?'IDOL':'SAFE_ADV';
  if(nominees.has(p.id))return 'LOW';
  if(p.id===s.winner)return 'WIN';
+ if(/bonju[\s-]*chef/i.test(s.source?.name||''))return rank>=0&&s.ranking[rank]?.challengeHigh?'HIGH':'SAFE';
  const high=/last[\s-]*grip/i.test(s.source?.name||'')||s.source?.kind==='last-grip'?6:3;
  return rank>=1&&rank<high?'HIGH':'SAFE';
 }

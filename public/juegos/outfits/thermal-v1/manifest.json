@@ -1,0 +1,406 @@
+{
+  "version": 1,
+  "source": "User supplied thermal outfit PNGs; code-native articulated animation",
+  "characters": [
+    {
+      "id": "andromeda",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Andromeda.png",
+      "sha256": "7535fac8e39dc20176943d291c3b676eaccd7762629b2b55612bc0b887804287",
+      "width": 395,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.8,
+        0.94,
+        0.28,
+        0.45,
+        0.61
+      ]
+    },
+    {
+      "id": "arisantana",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Ari Santana.png",
+      "sha256": "695dd20aabb867cf67066a729ccbe369433b18e1f62e88603fec87aa508ed7ad",
+      "width": 280,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.65,
+        0.81,
+        0.94,
+        0.28,
+        0.43,
+        0.59
+      ]
+    },
+    {
+      "id": "bayron",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Bayron.png",
+      "sha256": "f214113ccc1f1b70d4e729768c9eee8cc38a85bfa55368f2eea98dc81f0928fd",
+      "width": 340,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.6,
+        0.8,
+        0.94,
+        0.28,
+        0.42,
+        0.62
+      ]
+    },
+    {
+      "id": "bruno",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Bruno.png",
+      "sha256": "10c04ccf4d6d587facb0987bc3962620bf61bf14519a6b3fc01b86da51d01e3a",
+      "width": 328,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.57,
+        0.79,
+        0.94,
+        0.27,
+        0.44,
+        0.62
+      ]
+    },
+    {
+      "id": "carmine",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Carmine.png",
+      "sha256": "3818965ea360db68b9cf01f1495e0596ee64717d5677c50fc07d5bb924874355",
+      "width": 334,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.78,
+        0.94,
+        0.31,
+        0.46,
+        0.62
+      ]
+    },
+    {
+      "id": "daelly",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Daelly.png",
+      "sha256": "191893ea0be803496de0c525abbdc31e34c9895012a1313a46f94ced24708398",
+      "width": 376,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.65,
+        0.81,
+        0.94,
+        0.3,
+        0.46,
+        0.62
+      ]
+    },
+    {
+      "id": "dua-lingo",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Dua Lingo.png",
+      "sha256": "a7044342ef5816d8e84de487acf2eb5a1983b82865fea54fe1a6b8622b720746",
+      "width": 361,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.78,
+        0.94,
+        0.35,
+        0.49,
+        0.63
+      ]
+    },
+    {
+      "id": "eduard",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Eduard.png",
+      "sha256": "26a3a1a700ddbe048323e270ba32b2e6bc784f031506cbe7985bac26f1f1a12c",
+      "width": 468,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.66,
+        0.82,
+        0.94,
+        0.33,
+        0.49,
+        0.66
+      ]
+    },
+    {
+      "id": "guillermo",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Guillermo.png",
+      "sha256": "2517b62d2372d189309413fc8d5f93bcc756a4bc1d82e04173d7ca72e3fe89c1",
+      "width": 471,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.81,
+        0.94,
+        0.31,
+        0.47,
+        0.63
+      ]
+    },
+    {
+      "id": "ivy",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Ivy.png",
+      "sha256": "2a69a78a8920d8aa7210335d62158362747b49bec954e803876bfe40408c3a92",
+      "width": 325,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.64,
+        0.81,
+        0.94,
+        0.3,
+        0.46,
+        0.62
+      ]
+    },
+    {
+      "id": "joseserna",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Jose Serna.png",
+      "sha256": "95d8349af6638be6a0a0db11121fdec88ecf30fef7d2f48e06e0fc189fa55478",
+      "width": 338,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.59,
+        0.8,
+        0.94,
+        0.26,
+        0.44,
+        0.62
+      ]
+    },
+    {
+      "id": "kareli",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Kareli.png",
+      "sha256": "358c64deb6e4f2c6df60e94a74bc4f173472dfff5103c63635fcd98d59e9862a",
+      "width": 310,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.59,
+        0.79,
+        0.94,
+        0.28,
+        0.44,
+        0.59
+      ]
+    },
+    {
+      "id": "leandro",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Leandro.png",
+      "sha256": "74cd1ada336c0f67e8cb0fd2e4071c5abcd3554da78ba4c932a43751a1847ea0",
+      "width": 322,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.59,
+        0.8,
+        0.94,
+        0.27,
+        0.44,
+        0.62
+      ]
+    },
+    {
+      "id": "maria-villegas",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Maria.png",
+      "sha256": "5f8d69af052aaa445152f2398458d5a89ee8ce67af97747d58279b9f7d6de8fe",
+      "width": 302,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.61,
+        0.8,
+        0.94,
+        0.28,
+        0.45,
+        0.63
+      ]
+    },
+    {
+      "id": "marianito",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Marianito.png",
+      "sha256": "bc79c09a0646c335adca57af7e6907f44b4cd54adc628ee6b4ac8da6955e5c19",
+      "width": 329,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.81,
+        0.94,
+        0.3,
+        0.47,
+        0.64
+      ]
+    },
+    {
+      "id": "peggy",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Peggy.png",
+      "sha256": "c26129fc2c603472b31b05af52f659d426f6ab7e2b0a1943ea2b060b232d699e",
+      "width": 331,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.81,
+        0.94,
+        0.3,
+        0.47,
+        0.64
+      ]
+    },
+    {
+      "id": "roger",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Roger.png",
+      "sha256": "5ba188ffa930efab341bc70537b2c6520741916aadfb692b0b858863ea690808",
+      "width": 354,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.64,
+        0.81,
+        0.94,
+        0.29,
+        0.47,
+        0.65
+      ]
+    },
+    {
+      "id": "sallua",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Sal Lua.png",
+      "sha256": "835b79ed896eef94b5348d1849ab06710c43b4ea774524515c0ad449b779ff0a",
+      "width": 326,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.61,
+        0.8,
+        0.94,
+        0.29,
+        0.45,
+        0.61
+      ]
+    },
+    {
+      "id": "vita",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Vita.png",
+      "sha256": "4769dd473164c6cd20d522acd59ec8772a8ce530638f994563c7577618b79927",
+      "width": 317,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.63,
+        0.81,
+        0.94,
+        0.29,
+        0.46,
+        0.63
+      ]
+    },
+    {
+      "id": "vitany",
+      "source": "C:\\Users\\lopez\\OneDrive\\Imágenes\\Apocalypse II\\Abrigo\\Vitany Glambert.png",
+      "sha256": "f694a7ebe961e1b918080a98b4ed4fcafc7c1ee92ab9727e93edaea8e5acde6b",
+      "width": 318,
+      "height": 960,
+      "atlas": {
+        "width": 1920,
+        "height": 1600,
+        "frames": 40
+      },
+      "anatomy": [
+        0.65,
+        0.81,
+        0.94,
+        0.28,
+        0.46,
+        0.65
+      ]
+    }
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "version": 1,
+  "source": "AI sprite variants from user supplied Maria references; not a separated rig",
+  "layout": {
+    "columns": 4,
+    "rows": 4,
+    "width": 320,
+    "height": 420,
+    "ground": 400,
+    "standingHeight": 376
+  },
+  "frames": [
+    "contact-a",
+    "down-a",
+    "passing-a",
+    "up-a",
+    "contact-b",
+    "down-b",
+    "passing-b",
+    "up-b",
+    "idle-a",
+    "idle-b",
+    "takeoff",
+    "air",
+    "landing"
+  ],
+  "sourceBounds": {
+    "walk": [
+      {
+        "l": 121,
+        "t": 15,
+        "r": 347,
+        "b": 426
+      },
+      {
+        "l": 131,
+        "t": 19,
+        "r": 331,
+        "b": 428
+      },
+      {
+        "l": 142,
+        "t": 18,
+        "r": 309,
+        "b": 429
+      },
+      {
+        "l": 149,
+        "t": 15,
+        "r": 322,
+        "b": 426
+      },
+      {
+        "l": 124,
+        "t": 19,
+        "r": 361,
+        "b": 428
+      },
+      {
+        "l": 134,
+        "t": 19,
+        "r": 313,
+        "b": 426
+      },
+      {
+        "l": 131,
+        "t": 18,
+        "r": 301,
+        "b": 426
+      },
+      {
+        "l": 128,
+        "t": 17,
+        "r": 337,
+        "b": 424
+      }
+    ],
+    "idleJump": [
+      {
+        "l": 142,
+        "t": 92,
+        "r": 336,
+        "b": 671
+      },
+      {
+        "l": 126,
+        "t": 92,
+        "r": 318,
+        "b": 671
+      },
+      {
+        "l": 72,
+        "t": 168,
+        "r": 350,
+        "b": 671
+      },
+      {
+        "l": 51,
+        "t": 104,
+        "r": 393,
+        "b": 545
+      },
+      {
+        "l": 80,
+        "t": 173,
+        "r": 334,
+        "b": 671
+      }
+    ]
+  },
+  "outfits": {
+    "pajamas": {
+      "image": "atlas.webp",
+      "lite": "atlas-lite.webp",
+      "basis": "right",
+      "idle": "idle.webp",
+      "sleep": "sleep.webp",
+      "specialPoses": "rest-atlas.webp"
+    },
+    "heat": {
+      "image": "habitual-atlas.webp",
+      "lite": "habitual-atlas-lite.webp",
+      "basis": "left"
+    },
+    "cold": {
+      "image": "thermal-atlas.webp",
+      "lite": "thermal-atlas-lite.webp",
+      "basis": "left"
+    }
+  },
+  "notes": [
+    "Full-body sprite atlas; no complete separate-parts rig.",
+    "All ground poses registered at y=400; airborne feet are raised while physics moves the root.",
+    "Walking poses 0–7 are distance driven; jumps follow server physics; no GIF is used."
+  ]
+}

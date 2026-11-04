@@ -7,7 +7,7 @@ import {MediaGate} from './public/juegos/last-grip/media-gate.mjs';
 import {EPISODE_MEDIA} from './public/juegos/last-grip/media-config.mjs';
 import {worldCharacter} from './public/juegos/world-characters.mjs';
 export function episodeMediaFor(saved={}){return {...structuredClone(EPISODE_MEDIA),...saved,presentation:saved.presentation||structuredClone(EPISODE_MEDIA.presentation),draws:EPISODE_MEDIA.draws.map((round,i)=>({...round,...saved.draws?.[i]}))};}
-export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnvironment=()=>null,onAftermath=async()=>{},synthesizeAnnouncement,onMariaMessage,canMariaAnnounce,canParticipate=async()=>true,autoBots=false}){
+export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStart=async()=>{},getEnvironment=()=>null,onAftermath=async()=>{},synthesizeAnnouncement,onMariaMessage,canMariaAnnounce,canParticipate=async()=>true,autoBots=false}){
  let state=createEpisode({id:randomUUID(),now:now()}),queue=Promise.resolve(),closed=false,lastSave=0,lastWire=0,dirty=false,tickQueued=false;
  const subscribers=new Set();
  const announcements=createGripAnnouncements({now,synthesize:synthesizeAnnouncement,onReady:announcement=>{if(announcement.episodeId!==state.id)return;for(const c of clients.values())if(isEngaged(state,c.user.id)||subscribers.has(c.user.id)&&(attendee(state,c.user.id)||c.direct))send(c,{type:'grip-announcement',announcement});},onError:m=>{const c=[...clients.values()].find(c=>c.user.id===m.userId);if(c)send(c,{type:'error',message:'No se pudo generar la voz de este anuncio. El mensaje permanece en el chat; puedes volver a enviarlo.'});}});
@@ -32,11 +32,11 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
  }
  async function fillUsers(){const excluded=await excludedCharacters();let added=0;for(const live of clients.values())if(await enrollUser(live,{prepared:true,excluded}))added++;return {added,total:state.roster.filter(p=>!p.bot).length};}
  async function flushEffort(){for(const record of state.aftercare||[])if(!record.applied){await onAftermath(record);record.applied=true;dirty=true;}}
- function syncActors(){for(const c of clients.values()){const p=attendee(state,c.user.id);if(p){if(c.direct&&!state.roster.includes(p)&&p.characterId!==c.characterId){p.characterId=c.characterId;p.name=worldCharacter(c.characterId)?.name||c.user.name;p.changed=false;touch(state,'staff-character',c.user.id);dirty=true;}p.petId=c.petId||null;p.vitals={...c.vitals};const m=mobility(c.wellness,c.vitals);p.moveScale=m.speedFactor;p.canRun=m.canRun;}}}
+ function syncActors(){for(const c of clients.values()){const p=attendee(state,c.user.id);if(p){p.clinicPose=c.clinicProcedure?{kind:c.clinicProcedure.kind,step:c.clinicProcedure.step,stepAt:c.clinicProcedure.stepAt,role:c.clinicProcedure.role}:null;if(c.clinicProcedure){p.path=[];p.input=null;p.moving=false;}if(c.direct&&!state.roster.includes(p)&&p.characterId!==c.characterId){p.characterId=c.characterId;p.name=worldCharacter(c.characterId)?.name||c.user.name;p.changed=false;touch(state,'staff-character',c.user.id);dirty=true;}p.petId=c.petId||null;p.vitals={...c.vitals};const m=mobility(c.wellness,c.vitals);p.moveScale=m.speedFactor;p.canRun=m.canRun;}}}
  function publish(){for(const c of clients.values())if(subscribers.has(c.user.id)||isEngaged(state,c.user.id))send(c,{type:'grip-state',episode:snapshot(c)});lastWire=now();}
- async function action(c,input){await ready;return serial(async()=>{
+  async function action(c,input){await ready;return serial(async()=>{if(c.clinicProcedure&&['path','move','area','interact','change','beginRound','startRound'].includes(input?.type))throw Object.assign(Error('Termina o detén la atención de Enfermería antes de moverte.'),{status:409});
   if(!input||typeof input.type!=='string')throw Object.assign(Error('Acción del episodio inválida.'),{status:400});
-  syncActors();advance();const director=await can(c.user,'direct'),actor={id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};
+  syncActors();advance();if(input.type==='start'&&await can(c.user,'direct'))await beforeStart(c);const director=await can(c.user,'direct'),actor={id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};
   if(input.type==='join'&&!await canParticipate(c.user))throw Object.assign(Error('Solo los participantes confirmados pueden competir. Puedes entrar como espectador.'),{status:403});
   if(input.type==='join'&&c.wellness?.life?.status!=='alive')throw Object.assign(Error('Debes estar consciente para competir.'),{status:409});
   if(director&&['start','draw','final','beginRound'].includes(input.type)){for(const p of state.roster){const live=[...clients.values()].find(q=>q.user.id===p.id);if(live){if(input.type==='start')p.origin={zone:live.zone.id,x:live.p.x,y:live.p.y};p.vitals={...live.vitals};p.connected=true;}}}
@@ -49,13 +49,14 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
    const joined=await enrollUser(c,{excluded:await excludedCharacters()});if(joined)result=true;
   }
   if(director&&input.type==='fillBots'&&state.phase==='lobby')await fillUsers();
-  if(autoBots&&director&&input.type==='start'&&state.phase==='lobby'){
+  if(autoBots&&director&&!state.rosterManaged&&input.type==='start'&&state.phase==='lobby'){
    const excluded=await excludedCharacters();await fillUsers();
    applyEpisode(state,{type:'fillBots'},{actor,staff:true,now:now()});state.roster=state.roster.filter(p=>!excluded.has(p.characterId));input={...input,confirmReduced:true};dirty=true;await save();publish();
   }
   if(['start','fillBots'].includes(input.type)&&director)for(const live of clients.values())if(!attendee(state,live.user.id))applyEpisode(state,{type:'visit'},{actor:actorFor(live),now:now()});
   if(result===undefined)result=applyEpisode(state,input,{actor,staff:director,now:now(),random:()=>randomInt(0,0x1000000)/0x1000000});
-  if(director&&input.type==='fillBots'){const excluded=await excludedCharacters();state.roster=state.roster.filter(p=>!excluded.has(p.characterId));}
+  if(director&&['kick','removeBots'].includes(input.type))state.rosterManaged=true;
+  if(director&&input.type==='fillBots'){state.rosterManaged=false;const excluded=await excludedCharacters();state.roster=state.roster.filter(p=>!excluded.has(p.characterId));}
   if(input.type==='start')for(const live of clients.values())if(isEngaged(state,live.user.id))stop(live);
   if(input.type==='visit'&&isEngaged(state,c.user.id))stop(c);
   if(input.type==='finish')for(const live of clients.values())if(state.returns[live.user.id])stop(live);
@@ -67,6 +68,7 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,getEnviron
  const timer=setInterval(()=>{if(closed||tickQueued)return;tickQueued=true;void serial(async()=>{await ready;syncActors();const changed=advance();if(changed)dirty=true;await flushEffort();if(changed&&now()-lastWire>=100||state.paused&&now()-lastWire>=1000)publish();if(dirty&&now()-lastSave>=1500)await save();}).catch(()=>{}).finally(()=>{tickQueued=false;});},50);timer.unref();
  return {
   ready,phase:()=>state.phase,engaged:id=>isEngaged(state,id),
+  async completeIfWinner(){await ready;return serial(async()=>{if(state.phase!=='winner')return false;applyEpisode(state,{type:'finish',confirm:true},{actor:{id:'system'},staff:true,now:now()});dirty=true;await flushEffort();await save();publish();return true;});},
   clinicVenue(id){const p=attendee(state,id);return p&&isEngaged(state,id)&&p.area==='monitor'&&Math.hypot(p.x-CLINIC_POINT.x,p.y-CLINIC_POINT.y)<145?'last-grip:'+state.id:null;},
   async attach(c){await ready;if(!c.direct&&!['closed','lobby','finished'].includes(state.phase)&&!attendee(state,c.user.id))await action(c,{type:'visit'});syncActors();const p=attendee(state,c.user.id);if(p){p.connected=true;p.lastSeen=state.clock;p.input=null;dirty=true;}if(isEngaged(state,c.user.id))send(c,{type:'grip-state',episode:snapshot(c)});},
   disconnect(c){const p=attendee(state,c.user.id);if(p){p.connected=false;p.lastSeen=state.clock;p.input=null;dirty=true;}subscribers.delete(c.user.id);mediaGate.viewer(c.user.id,false,cinematicFor(state),eligible);},

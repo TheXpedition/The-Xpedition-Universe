@@ -1,0 +1,10 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';
+import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
+import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {interactionPoint} from '../public/juegos/world-interactions.mjs';
+test('real WS cameras show moving actors and their public speech, refuse forged feeds, and stop on departure',async()=>{
+ const map=WORLD_MAPS['comisaria-interior'],monitor=map.props.find(p=>p.surveillance),point=interactionPoint(map,monitor),base=WORLD_MAPS.base;
+ const f=await liveFixture('camera-network',[{id:STAFF_ID,character:'maria-villegas',zone:map.id,...point},{id:'camera-actor',character:'bruno',zone:'base',x:base.width*.4,y:base.height*.85}]);
+ try{const viewer=await f.connect(STAFF_ID),actor=await f.connect('camera-actor');f.send(actor,{type:'camera-select',id:'refuge-west'});await f.until(()=>actor.messages.some(m=>m.type==='error'&&/Abre/.test(m.message)));f.send(viewer,{type:'interact',objectId:monitor.id});await f.until(()=>viewer.messages.some(m=>m.type==='camera-open'));f.send(viewer,{type:'camera-select',id:'refuge-west'});await f.until(()=>viewer.messages.some(m=>m.type==='camera-frame'&&m.camera.id==='refuge-west'&&m.players.some(p=>p.userId==='camera-actor')));f.send(actor,{type:'chat',text:'Señal pública desde el refugio'});const frame=await f.until(()=>viewer.messages.find(m=>m.type==='camera-frame'&&m.speech?.some(s=>s.text==='Señal pública desde el refugio')));assert(!('life'in frame.players[0]));assert(!('body'in frame.players[0]));assert.equal(frame.players.length,1);
+ f.send(viewer,{type:'camera-select',id:'confesionario'});await f.until(()=>viewer.messages.some(m=>m.type==='error'&&/no tiene/.test(m.message)));const count=viewer.messages.filter(m=>m.type==='camera-frame').length;f.send(viewer,{type:'walk',x:point.x-450,y:point.y});await f.until(()=>viewer.messages.some(m=>m.type==='camera-closed'));await new Promise(r=>setTimeout(r,500));assert(viewer.messages.filter(m=>m.type==='camera-frame').length<count+8,'feed terminates after leaving the monitor');
+ }finally{await f.close();}
+});

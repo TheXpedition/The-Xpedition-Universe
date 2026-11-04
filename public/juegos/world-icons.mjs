@@ -1,5 +1,6 @@
 // Shared ink icons. Labels remain visible; the pictogram never carries the action alone.
 const art={
+ download:'<path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/>',
  'arrow-up':'<path d="m6 14 6-6 6 6"/>',
  'arrow-down':'<path d="m6 10 6 6 6-6"/>',
  'arrow-left':'<path d="m14 6-6 6 6 6"/>',
@@ -24,6 +25,7 @@ const art={
  arrow:'<path d="M3 12h17m-6-6 6 6-6 6"/>',
  search:'<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
  camera:'<path class="icon-fill" d="M3 7h4l2-3h6l2 3h4v14H3Z"/><path d="M3 7h4l2-3h6l2 3h4v14H3Z"/><circle cx="12" cy="13" r="4"/>',
+ check:'<path d="m5 12 4 4L19 6"/>',
  clipboard:'<path class="icon-fill" d="M5 5h14v17H5Z"/><path d="M8 5H5v17h14V5h-3M9 2h6v5H9ZM8 12h8M8 16h6"/>',
  history:'<path d="M3 8a9 9 0 1 1 0 9M3 3v6h6M12 7v6l4 2"/>',
  door:'<path class="icon-fill" d="m7 3 10 2v17l-10-2Z"/><path d="M3 21V3h14m-10 0 10 2v17l-10-2ZM13 12h1M19 8l3 3-3 3M18 11h4"/>',

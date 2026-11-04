@@ -1,0 +1,5 @@
+export const TYPING_GOAL=15;
+export const TYPING_PHRASES=[
+ 'Los más fuertes sobreviven al caos','Nada detiene a quienes siguen avanzando','La suerte cambia cuando decides resistir','En Apocalypse cada decisión tiene consecuencias','La última palabra todavía no está escrita','El campamento recuerda a quienes no se rinden','La calma también es una forma de fuerza','Detrás de cada victoria hay una nueva prueba',
+ 'Cada paso cuenta cuando el camino se vuelve difícil','La confianza se demuestra con hechos y decisiones','Quien conserva la calma encuentra una salida','La noche termina y comienza un nuevo desafío','Una buena estrategia necesita paciencia y valor','El miedo no decide hasta dónde puedes llegar','Nadie conoce el resultado antes del último intento','Aprender del error también forma parte del reto','La memoria del refugio guarda cada promesa','El esfuerzo de hoy puede cambiar el día de mañana','Mantén la mirada firme y termina lo que empezaste','La competencia continúa mientras sigas de pie'
+];

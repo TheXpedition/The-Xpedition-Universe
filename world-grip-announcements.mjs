@@ -2,6 +2,8 @@ import {EdgeTTS,Constants} from '@andresaya/edge-tts';
 import {randomUUID} from 'node:crypto';
 import {parseBuffer} from 'music-metadata';
 export const ANNOUNCER_VOICE='es-MX-DaliaNeural';
+export const SPEECH_PROFILES={maria:{voice:ANNOUNCER_VOICE,rate:'+12%',pitch:'-2Hz'},bonju:{voice:'es-ES-ElviraNeural',rate:'+14%',pitch:'-5Hz'},dua:{voice:'es-AR-ElenaNeural',rate:'+22%',pitch:'+6Hz'}};
+const speechKey=(text,profile='maria')=>profile+'\n'+text;
 const engine=new EdgeTTS({timeout:20000});
 class PreparedSpeech extends EdgeTTS {
  keepWarm(entry){clearTimeout(entry.timer);entry.timer=setTimeout(()=>{if(this.standby===entry)this.standby=null;entry.socket.close();},7000);entry.timer.unref?.();}
@@ -11,15 +13,15 @@ class PreparedSpeech extends EdgeTTS {
 }
 const preparedEngine=new PreparedSpeech({timeout:20000});
 export const prepareAnnouncementVoice=()=>{void preparedEngine.prepare();};
-export async function* streamAnnouncement(text,{signal}={}){const cached=speechCache.get(text);if(cached){yield (await cached).bytes;return;}let received=false;try{for await(const bytes of preparedEngine.synthesizeStream(text,ANNOUNCER_VOICE,{rate:'-5%',pitch:'-2Hz',volume:'+0%',timeout:20000,signal})){received=true;yield Buffer.from(bytes);}}catch(error){if(received||signal?.aborted)throw error;for await(const bytes of new EdgeTTS({timeout:20000}).synthesizeStream(text,ANNOUNCER_VOICE,{rate:'-5%',pitch:'-2Hz',volume:'+0%',timeout:20000,signal}))yield Buffer.from(bytes);}}
-export function rememberAnnouncement(text,audio){speechCache.set(text,Promise.resolve(audio));while(speechCache.size>32)speechCache.delete(speechCache.keys().next().value);}
+export async function* streamAnnouncement(text,{signal,profile='maria'}={}){const cached=speechCache.get(speechKey(text,profile));if(cached){yield (await cached).bytes;return;}let received=false;try{for await(const bytes of preparedEngine.synthesizeStream(text,(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria).voice,{...(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria),volume:'+0%',timeout:20000,signal})){received=true;yield Buffer.from(bytes);}}catch(error){if(received||signal?.aborted)throw error;for await(const bytes of new EdgeTTS({timeout:20000}).synthesizeStream(text,(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria).voice,{...(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria),volume:'+0%',timeout:20000,signal}))yield Buffer.from(bytes);}}
+export function rememberAnnouncement(text,audio,profile='maria'){speechCache.set(speechKey(text,profile),Promise.resolve(audio));while(speechCache.size>128)speechCache.delete(speechCache.keys().next().value);}
 const speechCache=new Map();
-export function synthesizeAnnouncement(text){
- if(speechCache.has(text)){const cached=speechCache.get(text);speechCache.delete(text);speechCache.set(text,cached);return cached;}
- const promise=generateSpeech(text).catch(error=>{if(speechCache.get(text)===promise)speechCache.delete(text);throw error;});speechCache.set(text,promise);while(speechCache.size>32)speechCache.delete(speechCache.keys().next().value);return promise;
+export function synthesizeAnnouncement(text,{profile='maria'}={}){const key=speechKey(text,profile);
+ if(speechCache.has(key)){const cached=speechCache.get(key);speechCache.delete(key);speechCache.set(key,cached);return cached;}
+ const promise=generateSpeech(text,profile).catch(error=>{if(speechCache.get(key)===promise)speechCache.delete(key);throw error;});speechCache.set(key,promise);while(speechCache.size>128)speechCache.delete(speechCache.keys().next().value);return promise;
 }
-async function generateSpeech(text){
- const result=await engine.generate(text,ANNOUNCER_VOICE,{rate:'-5%',pitch:'-2Hz',volume:'+0%',timeout:20000});
+async function generateSpeech(text,profile){
+ const result=await new EdgeTTS({timeout:20000}).generate(text,(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria).voice,{...(SPEECH_PROFILES[profile]||SPEECH_PROFILES.maria),volume:'+0%',timeout:20000});
  const bytes=Buffer.from(result.audio),metadata=await parseBuffer(bytes,{mimeType:'audio/mpeg'},{duration:true}),duration=Math.ceil(metadata.format.duration*1000);
  if(!bytes.length||bytes.length>1500000||!Number.isFinite(duration)||duration<100||duration>60000)throw Error('Invalid speech audio');
  return {bytes,duration};

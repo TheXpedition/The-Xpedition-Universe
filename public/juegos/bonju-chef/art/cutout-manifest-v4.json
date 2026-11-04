@@ -1,0 +1,1181 @@
+{
+  "version": 4,
+  "assets": [
+    {
+      "file": "work-v4/sallua.webp",
+      "bounds": {
+        "pixels": 42726,
+        "left": 15,
+        "top": 36,
+        "width": 251,
+        "height": 277
+      }
+    },
+    {
+      "file": "work-v4/carmine.webp",
+      "bounds": {
+        "pixels": 48834,
+        "left": 305,
+        "top": 11,
+        "width": 266,
+        "height": 302
+      }
+    },
+    {
+      "file": "work-v4/bruno.webp",
+      "bounds": {
+        "pixels": 44861,
+        "left": 605,
+        "top": 29,
+        "width": 270,
+        "height": 284
+      }
+    },
+    {
+      "file": "work-v4/daelly.webp",
+      "bounds": {
+        "pixels": 53305,
+        "left": 924,
+        "top": 34,
+        "width": 249,
+        "height": 279
+      }
+    },
+    {
+      "file": "work-v4/bayron.webp",
+      "bounds": {
+        "pixels": 41580,
+        "left": 1205,
+        "top": 32,
+        "width": 262,
+        "height": 281
+      }
+    },
+    {
+      "file": "work-v4/arisantana.webp",
+      "bounds": {
+        "pixels": 41799,
+        "left": 1512,
+        "top": 34,
+        "width": 260,
+        "height": 279
+      }
+    },
+    {
+      "file": "work-v4/marianito.webp",
+      "bounds": {
+        "pixels": 44232,
+        "left": 14,
+        "top": 332,
+        "width": 270,
+        "height": 268
+      }
+    },
+    {
+      "file": "work-v4/leandro.webp",
+      "bounds": {
+        "pixels": 40420,
+        "left": 317,
+        "top": 330,
+        "width": 269,
+        "height": 271
+      }
+    },
+    {
+      "file": "work-v4/vitany.webp",
+      "bounds": {
+        "pixels": 48346,
+        "left": 624,
+        "top": 317,
+        "width": 254,
+        "height": 284
+      }
+    },
+    {
+      "file": "work-v4/kareli.webp",
+      "bounds": {
+        "pixels": 41749,
+        "left": 914,
+        "top": 333,
+        "width": 259,
+        "height": 267
+      }
+    },
+    {
+      "file": "work-v4/vita.webp",
+      "bounds": {
+        "pixels": 37244,
+        "left": 1214,
+        "top": 337,
+        "width": 259,
+        "height": 263
+      }
+    },
+    {
+      "file": "work-v4/eduard.webp",
+      "bounds": {
+        "pixels": 47178,
+        "left": 1492,
+        "top": 340,
+        "width": 276,
+        "height": 262
+      }
+    },
+    {
+      "file": "work-v4/joseserna.webp",
+      "bounds": {
+        "pixels": 40449,
+        "left": 21,
+        "top": 618,
+        "width": 274,
+        "height": 258
+      }
+    },
+    {
+      "file": "work-v4/guillermo.webp",
+      "bounds": {
+        "pixels": 52489,
+        "left": 305,
+        "top": 609,
+        "width": 317,
+        "height": 270
+      }
+    },
+    {
+      "file": "work-v4/peggy.webp",
+      "bounds": {
+        "pixels": 45047,
+        "left": 627,
+        "top": 613,
+        "width": 258,
+        "height": 264
+      }
+    },
+    {
+      "file": "work-v4/andromeda.webp",
+      "bounds": {
+        "pixels": 46361,
+        "left": 915,
+        "top": 618,
+        "width": 277,
+        "height": 259
+      }
+    },
+    {
+      "file": "work-v4/ivy.webp",
+      "bounds": {
+        "pixels": 45044,
+        "left": 1215,
+        "top": 614,
+        "width": 263,
+        "height": 265
+      }
+    },
+    {
+      "file": "work-v4/roger.webp",
+      "bounds": {
+        "pixels": 44110,
+        "left": 1507,
+        "top": 607,
+        "width": 259,
+        "height": 272
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#0",
+      "bounds": {
+        "pixels": 12769,
+        "left": 26,
+        "top": 86,
+        "width": 149,
+        "height": 107
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#1",
+      "bounds": {
+        "pixels": 15419,
+        "left": 197,
+        "top": 69,
+        "width": 157,
+        "height": 132
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#2",
+      "bounds": {
+        "pixels": 14725,
+        "left": 378,
+        "top": 69,
+        "width": 152,
+        "height": 127
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#3",
+      "bounds": {
+        "pixels": 10843,
+        "left": 549,
+        "top": 94,
+        "width": 171,
+        "height": 106
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#4",
+      "bounds": {
+        "pixels": 13760,
+        "left": 735,
+        "top": 81,
+        "width": 160,
+        "height": 124
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#5",
+      "bounds": {
+        "pixels": 16406,
+        "left": 910,
+        "top": 81,
+        "width": 173,
+        "height": 116
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#6",
+      "bounds": {
+        "pixels": 10602,
+        "left": 1128,
+        "top": 45,
+        "width": 78,
+        "height": 163
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#7",
+      "bounds": {
+        "pixels": 13724,
+        "left": 1271,
+        "top": 81,
+        "width": 147,
+        "height": 111
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#8",
+      "bounds": {
+        "pixels": 13057,
+        "left": 14,
+        "top": 256,
+        "width": 167,
+        "height": 117
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#9",
+      "bounds": {
+        "pixels": 15498,
+        "left": 202,
+        "top": 253,
+        "width": 152,
+        "height": 125
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#10",
+      "bounds": {
+        "pixels": 14190,
+        "left": 377,
+        "top": 247,
+        "width": 154,
+        "height": 130
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#11",
+      "bounds": {
+        "pixels": 15487,
+        "left": 553,
+        "top": 251,
+        "width": 161,
+        "height": 120
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#12",
+      "bounds": {
+        "pixels": 19377,
+        "left": 734,
+        "top": 234,
+        "width": 159,
+        "height": 154
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#13",
+      "bounds": {
+        "pixels": 16149,
+        "left": 912,
+        "top": 249,
+        "width": 161,
+        "height": 130
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#14",
+      "bounds": {
+        "pixels": 13813,
+        "left": 1088,
+        "top": 257,
+        "width": 163,
+        "height": 120
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#15",
+      "bounds": {
+        "pixels": 10449,
+        "left": 1269,
+        "top": 224,
+        "width": 164,
+        "height": 158
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#16",
+      "bounds": {
+        "pixels": 12132,
+        "left": 31,
+        "top": 408,
+        "width": 129,
+        "height": 146
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#17",
+      "bounds": {
+        "pixels": 10807,
+        "left": 210,
+        "top": 416,
+        "width": 130,
+        "height": 129
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#18",
+      "bounds": {
+        "pixels": 17701,
+        "left": 374,
+        "top": 408,
+        "width": 162,
+        "height": 141
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#19",
+      "bounds": {
+        "pixels": 14548,
+        "left": 554,
+        "top": 413,
+        "width": 159,
+        "height": 137
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#20",
+      "bounds": {
+        "pixels": 14940,
+        "left": 732,
+        "top": 417,
+        "width": 165,
+        "height": 133
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#21",
+      "bounds": {
+        "pixels": 15109,
+        "left": 912,
+        "top": 412,
+        "width": 164,
+        "height": 133
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#22",
+      "bounds": {
+        "pixels": 15518,
+        "left": 1095,
+        "top": 404,
+        "width": 157,
+        "height": 157
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#23",
+      "bounds": {
+        "pixels": 15318,
+        "left": 1273,
+        "top": 407,
+        "width": 153,
+        "height": 144
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#24",
+      "bounds": {
+        "pixels": 15073,
+        "left": 18,
+        "top": 572,
+        "width": 158,
+        "height": 146
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#25",
+      "bounds": {
+        "pixels": 13418,
+        "left": 197,
+        "top": 579,
+        "width": 155,
+        "height": 135
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#26",
+      "bounds": {
+        "pixels": 11646,
+        "left": 370,
+        "top": 585,
+        "width": 171,
+        "height": 121
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#27",
+      "bounds": {
+        "pixels": 14156,
+        "left": 577,
+        "top": 569,
+        "width": 112,
+        "height": 148
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#28",
+      "bounds": {
+        "pixels": 7839,
+        "left": 783,
+        "top": 562,
+        "width": 65,
+        "height": 161
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#29",
+      "bounds": {
+        "pixels": 15281,
+        "left": 914,
+        "top": 574,
+        "width": 157,
+        "height": 148
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#30",
+      "bounds": {
+        "pixels": 12806,
+        "left": 1087,
+        "top": 590,
+        "width": 172,
+        "height": 132
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#31",
+      "bounds": {
+        "pixels": 15774,
+        "left": 1295,
+        "top": 566,
+        "width": 113,
+        "height": 155
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#32",
+      "bounds": {
+        "pixels": 16358,
+        "left": 40,
+        "top": 733,
+        "width": 114,
+        "height": 154
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#33",
+      "bounds": {
+        "pixels": 12955,
+        "left": 201,
+        "top": 763,
+        "width": 150,
+        "height": 118
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#34",
+      "bounds": {
+        "pixels": 12785,
+        "left": 375,
+        "top": 737,
+        "width": 157,
+        "height": 142
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#35",
+      "bounds": {
+        "pixels": 11061,
+        "left": 590,
+        "top": 726,
+        "width": 86,
+        "height": 161
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#36",
+      "bounds": {
+        "pixels": 12235,
+        "left": 732,
+        "top": 750,
+        "width": 163,
+        "height": 131
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#37",
+      "bounds": {
+        "pixels": 10102,
+        "left": 957,
+        "top": 727,
+        "width": 79,
+        "height": 161
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#38",
+      "bounds": {
+        "pixels": 14791,
+        "left": 1122,
+        "top": 741,
+        "width": 112,
+        "height": 143
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#39",
+      "bounds": {
+        "pixels": 12762,
+        "left": 1265,
+        "top": 770,
+        "width": 169,
+        "height": 96
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#40",
+      "bounds": {
+        "pixels": 14641,
+        "left": 17,
+        "top": 908,
+        "width": 164,
+        "height": 137
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#41",
+      "bounds": {
+        "pixels": 8676,
+        "left": 241,
+        "top": 891,
+        "width": 65,
+        "height": 161
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#42",
+      "bounds": {
+        "pixels": 9584,
+        "left": 362,
+        "top": 905,
+        "width": 151,
+        "height": 142
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#43",
+      "bounds": {
+        "pixels": 15539,
+        "left": 578,
+        "top": 897,
+        "width": 111,
+        "height": 151
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#44",
+      "bounds": {
+        "pixels": 10778,
+        "left": 718,
+        "top": 902,
+        "width": 178,
+        "height": 131
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#45",
+      "bounds": {
+        "pixels": 16834,
+        "left": 911,
+        "top": 907,
+        "width": 161,
+        "height": 144
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#46",
+      "bounds": {
+        "pixels": 14579,
+        "left": 1096,
+        "top": 913,
+        "width": 160,
+        "height": 127
+      }
+    },
+    {
+      "file": "ingredients-v4.webp#47",
+      "bounds": {
+        "pixels": 12387,
+        "left": 1272,
+        "top": 921,
+        "width": 161,
+        "height": 110
+      }
+    },
+    {
+      "file": "plates-v4/burger-excellent.webp",
+      "bounds": {
+        "pixels": 315211,
+        "left": 76,
+        "top": 31,
+        "width": 870,
+        "height": 527
+      }
+    },
+    {
+      "file": "plates-v4/burger-normal.webp",
+      "bounds": {
+        "pixels": 289969,
+        "left": 81,
+        "top": 590,
+        "width": 861,
+        "height": 480
+      }
+    },
+    {
+      "file": "plates-v4/burger-ugly.webp",
+      "bounds": {
+        "pixels": 268011,
+        "left": 77,
+        "top": 1084,
+        "width": 872,
+        "height": 439
+      }
+    },
+    {
+      "file": "plates-v4/dessert-excellent.webp",
+      "bounds": {
+        "pixels": 277202,
+        "left": 113,
+        "top": 17,
+        "width": 798,
+        "height": 541
+      }
+    },
+    {
+      "file": "plates-v4/dessert-normal.webp",
+      "bounds": {
+        "pixels": 255310,
+        "left": 113,
+        "top": 601,
+        "width": 798,
+        "height": 458
+      }
+    },
+    {
+      "file": "plates-v4/dessert-ugly.webp",
+      "bounds": {
+        "pixels": 242383,
+        "left": 120,
+        "top": 1094,
+        "width": 779,
+        "height": 430
+      }
+    },
+    {
+      "file": "plates-v4/sushi-excellent.webp",
+      "bounds": {
+        "pixels": 275318,
+        "left": 105,
+        "top": 41,
+        "width": 809,
+        "height": 475
+      }
+    },
+    {
+      "file": "plates-v4/sushi-normal.webp",
+      "bounds": {
+        "pixels": 268517,
+        "left": 112,
+        "top": 544,
+        "width": 797,
+        "height": 458
+      }
+    },
+    {
+      "file": "plates-v4/sushi-ugly.webp",
+      "bounds": {
+        "pixels": 291780,
+        "left": 86,
+        "top": 1020,
+        "width": 847,
+        "height": 463
+      }
+    },
+    {
+      "file": "plates-v4/tart-excellent.webp",
+      "bounds": {
+        "pixels": 288183,
+        "left": 87,
+        "top": 25,
+        "width": 852,
+        "height": 499
+      }
+    },
+    {
+      "file": "plates-v4/tart-normal.webp",
+      "bounds": {
+        "pixels": 297971,
+        "left": 86,
+        "top": 551,
+        "width": 855,
+        "height": 502
+      }
+    },
+    {
+      "file": "plates-v4/tart-ugly.webp",
+      "bounds": {
+        "pixels": 281823,
+        "left": 80,
+        "top": 1066,
+        "width": 863,
+        "height": 461
+      }
+    },
+    {
+      "file": "plates-v4/soup-excellent.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 129673,
+        "left": 34,
+        "top": 111,
+        "width": 465,
+        "height": 371
+      }
+    },
+    {
+      "file": "plates-v4/tacos-excellent.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 132383,
+        "left": 518,
+        "top": 121,
+        "width": 494,
+        "height": 356
+      }
+    },
+    {
+      "file": "plates-v4/soup-normal.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 130582,
+        "left": 35,
+        "top": 581,
+        "width": 463,
+        "height": 374
+      }
+    },
+    {
+      "file": "plates-v4/tacos-normal.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 133738,
+        "left": 513,
+        "top": 588,
+        "width": 498,
+        "height": 361
+      }
+    },
+    {
+      "file": "plates-v4/soup-ugly.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 131048,
+        "left": 34,
+        "top": 1040,
+        "width": 464,
+        "height": 374
+      }
+    },
+    {
+      "file": "plates-v4/tacos-ugly.webp",
+      "source": "exec-c0788511-03a6-4b7d-ba9d-c9faf725d76f.png",
+      "bounds": {
+        "pixels": 132995,
+        "left": 512,
+        "top": 1048,
+        "width": 496,
+        "height": 360
+      }
+    },
+    {
+      "file": "plates-v4/pasta-excellent.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 129870,
+        "left": 32,
+        "top": 128,
+        "width": 479,
+        "height": 357
+      }
+    },
+    {
+      "file": "plates-v4/grill-excellent.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 126847,
+        "left": 526,
+        "top": 99,
+        "width": 466,
+        "height": 387
+      }
+    },
+    {
+      "file": "plates-v4/pasta-normal.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 129867,
+        "left": 30,
+        "top": 631,
+        "width": 482,
+        "height": 341
+      }
+    },
+    {
+      "file": "plates-v4/grill-normal.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 126541,
+        "left": 525,
+        "top": 609,
+        "width": 476,
+        "height": 357
+      }
+    },
+    {
+      "file": "plates-v4/pasta-ugly.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 129877,
+        "left": 30,
+        "top": 1097,
+        "width": 477,
+        "height": 344
+      }
+    },
+    {
+      "file": "plates-v4/grill-ugly.webp",
+      "source": "exec-6048f727-a91a-445b-98ea-f41d39a0556b.png",
+      "bounds": {
+        "pixels": 129615,
+        "left": 518,
+        "top": 1098,
+        "width": 476,
+        "height": 344
+      }
+    },
+    {
+      "file": "plates-v4/ceviche-excellent.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 136357,
+        "left": 45,
+        "top": 93,
+        "width": 470,
+        "height": 399
+      }
+    },
+    {
+      "file": "plates-v4/icecream-excellent.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 137404,
+        "left": 556,
+        "top": 44,
+        "width": 432,
+        "height": 476
+      }
+    },
+    {
+      "file": "plates-v4/ceviche-normal.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 128740,
+        "left": 44,
+        "top": 606,
+        "width": 466,
+        "height": 366
+      }
+    },
+    {
+      "file": "plates-v4/icecream-normal.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 106010,
+        "left": 562,
+        "top": 569,
+        "width": 380,
+        "height": 422
+      }
+    },
+    {
+      "file": "plates-v4/ceviche-ugly.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 131217,
+        "left": 44,
+        "top": 1076,
+        "width": 466,
+        "height": 373
+      }
+    },
+    {
+      "file": "plates-v4/icecream-ugly.webp",
+      "source": "exec-fafd3ea5-8bc1-44f3-a05e-b104fd66a738.png",
+      "bounds": {
+        "pixels": 128691,
+        "left": 562,
+        "top": 1016,
+        "width": 397,
+        "height": 454
+      }
+    },
+    {
+      "file": "plates-v4/salad-excellent.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 130231,
+        "left": 11,
+        "top": 121,
+        "width": 503,
+        "height": 357
+      }
+    },
+    {
+      "file": "plates-v4/beans-excellent.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 126090,
+        "left": 516,
+        "top": 123,
+        "width": 494,
+        "height": 354
+      }
+    },
+    {
+      "file": "plates-v4/salad-normal.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 134546,
+        "left": 13,
+        "top": 589,
+        "width": 502,
+        "height": 368
+      }
+    },
+    {
+      "file": "plates-v4/beans-normal.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 127950,
+        "left": 517,
+        "top": 595,
+        "width": 493,
+        "height": 358
+      }
+    },
+    {
+      "file": "plates-v4/salad-ugly.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 126682,
+        "left": 14,
+        "top": 1095,
+        "width": 499,
+        "height": 332
+      }
+    },
+    {
+      "file": "plates-v4/beans-ugly.webp",
+      "source": "exec-9b9386bf-ebc8-4264-a465-8171c19932fd.png",
+      "bounds": {
+        "pixels": 127266,
+        "left": 517,
+        "top": 1079,
+        "width": 493,
+        "height": 357
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#0",
+      "source": "exec-fcdde43e-be88-4243-be7b-97d56c350e04.png",
+      "bounds": {
+        "pixels": 175583,
+        "left": 161,
+        "top": 12,
+        "width": 505,
+        "height": 498
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#3",
+      "source": "exec-fcdde43e-be88-4243-be7b-97d56c350e04.png",
+      "bounds": {
+        "pixels": 176094,
+        "left": 832,
+        "top": 12,
+        "width": 529,
+        "height": 496
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#6",
+      "source": "exec-fcdde43e-be88-4243-be7b-97d56c350e04.png",
+      "bounds": {
+        "pixels": 166333,
+        "left": 157,
+        "top": 522,
+        "width": 478,
+        "height": 486
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#9",
+      "source": "exec-fcdde43e-be88-4243-be7b-97d56c350e04.png",
+      "bounds": {
+        "pixels": 183776,
+        "left": 839,
+        "top": 516,
+        "width": 598,
+        "height": 491
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#1",
+      "source": "exec-50595eb1-23b5-469d-8929-4b7ce8aaa38f.png",
+      "bounds": {
+        "pixels": 168928,
+        "left": 220,
+        "top": 4,
+        "width": 488,
+        "height": 489
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#4",
+      "source": "exec-50595eb1-23b5-469d-8929-4b7ce8aaa38f.png",
+      "bounds": {
+        "pixels": 183346,
+        "left": 863,
+        "top": 5,
+        "width": 510,
+        "height": 514
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#7",
+      "source": "exec-50595eb1-23b5-469d-8929-4b7ce8aaa38f.png",
+      "bounds": {
+        "pixels": 178952,
+        "left": 198,
+        "top": 506,
+        "width": 526,
+        "height": 488
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#10",
+      "source": "exec-50595eb1-23b5-469d-8929-4b7ce8aaa38f.png",
+      "bounds": {
+        "pixels": 181219,
+        "left": 813,
+        "top": 510,
+        "width": 592,
+        "height": 487
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#2",
+      "source": "exec-35ff288c-ea1d-427b-9189-5dc5facc7963.png",
+      "bounds": {
+        "pixels": 137728,
+        "left": 232,
+        "top": 7,
+        "width": 424,
+        "height": 507
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#5",
+      "source": "exec-35ff288c-ea1d-427b-9189-5dc5facc7963.png",
+      "bounds": {
+        "pixels": 142490,
+        "left": 805,
+        "top": 2,
+        "width": 454,
+        "height": 512
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#8",
+      "source": "exec-35ff288c-ea1d-427b-9189-5dc5facc7963.png",
+      "bounds": {
+        "pixels": 137956,
+        "left": 246,
+        "top": 511,
+        "width": 436,
+        "height": 497
+      }
+    },
+    {
+      "file": "judges-reactions-v4.webp#11",
+      "source": "exec-35ff288c-ea1d-427b-9189-5dc5facc7963.png",
+      "bounds": {
+        "pixels": 138105,
+        "left": 790,
+        "top": 503,
+        "width": 518,
+        "height": 501
+      }
+    }
+  ]
+}

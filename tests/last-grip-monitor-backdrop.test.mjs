@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {paintSceneryForMedia} from '../public/juegos/last-grip/view-layout.mjs';
+test('a monitor transmission keeps the plaza painting; only fullscreen cinema suspends scenic work',()=>{assert(paintSceneryForMedia({hidden:true,dataset:{placement:'fullscreen'}}));assert(paintSceneryForMedia({hidden:false,dataset:{placement:'monitor'}}));assert.equal(paintSceneryForMedia({hidden:false,dataset:{placement:'fullscreen'}}),false);});

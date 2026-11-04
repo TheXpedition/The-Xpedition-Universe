@@ -17,3 +17,11 @@
 
 .shop-download{display:inline-flex;align-items:center;justify-content:center;min-height:38px;margin-left:7px;padding:8px 10px;color:#e5bf7b;font:700 12px "World Condensed";border:1px solid #8c653a;text-decoration:none;border-radius:3px}.shop-download:hover{background:#69432155}
 .shop-product.wallpaper .shop-equip{display:inline-flex;align-items:center;justify-content:center;width:calc(50% - 5px);min-height:38px;vertical-align:middle}.shop-product.wallpaper .shop-download{width:calc(50% - 5px);padding:7px 3px;font-size:11px;vertical-align:middle}
+
+/* Full outfits share a centered, uncropped silhouette. */
+.shop-product.pajama .shop-product-art{height:clamp(180px,24vw,290px);padding:14px;display:grid;place-items:center;overflow:hidden}.shop-product.pajama .shop-product-art img,.shop-detail-art.pajama img{width:100%;height:100%;object-fit:contain;object-position:center}.shop-detail-art.pajama{height:min(46vh,360px)}
+/* Purchase art stays inside its own row, clear of prices and actions. */
+.shop-inventory-dialog .shop-detail-art.pajama{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;width:min(260px,100%);height:min(235px,32dvh);overflow:hidden}
+.shop-inventory-dialog .shop-detail-art.pajama>img{position:static!important;inset:auto!important;display:block;width:auto!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain;transform:none!important;pointer-events:none}
+.shop-product.pajama:has([data-ref="andromeda"]) .shop-product-art,.shop-product.pajama:has([data-ref="guillermo"]) .shop-product-art{padding:4px}
+.shop-inventory-dialog .shop-detail-art.pajama:has(img[src*="/andromeda.webp"]),.shop-inventory-dialog .shop-detail-art.pajama:has(img[src*="/guillermo.webp"]){height:min(258px,35dvh)}

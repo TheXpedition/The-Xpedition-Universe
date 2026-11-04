@@ -1,6 +1,6 @@
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function bedMenuMarkup(bed,adult,page='main') {
- const id=escape(bed.id),choice=(action,label,icon,extra='')=>`<button type="button" class="bed-bubble" data-action="${action}" data-bed="${id}" ${bed.occupied?'disabled':''} ${extra}><span aria-hidden="true">${icon}</span>${label}</button>`;
+export function bedMenuMarkup(bed,adult,page='main',{clothing}={}) {
+ const id=escape(bed.id),choice=(action,label,icon,extra='')=>`<button type="button" class="bed-bubble" data-action="${action}" data-bed="${id}" ${bed.occupied||clothing==='cold'&&['bed-sleep','bed-nap'].includes(action)?'disabled':''} ${clothing==='cold'&&['bed-sleep','bed-nap'].includes(action)?'title="No puedes dormir con esta ropa"':''} ${extra}><span aria-hidden="true">${icon}</span>${label}</button>`;
  if(page==='private')return `<section class="bed-bubble-menu bed-submenu"><div class="bed-bubble-center">Momento privado<small>Solo personajes adultos · sin escenas gráficas</small></div>${choice('bed-private','Comenzar','♡')}${choice('bed-back','Volver','←')}</section>`;
  return `<section class="bed-bubble-menu" aria-label="Interacciones con la cama"><div class="bed-bubble-center">Cama individual<small>${bed.occupied?'Ocupada':'Limpieza · '+Math.round(bed.cleanliness??100)+' %'}</small></div>${choice('bed-sleep','Dormir','☾')}${choice('bed-nap','Siesta','Zz')}${choice('bed-clean','Limpiar','✧')}${adult?choice('bed-private-menu','Tocarme 😈','♡')+choice('bed-invite','Hacer Ñiqui Ñiqui 😈','♥'):''}</section>`;
 }

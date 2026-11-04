@@ -5,7 +5,7 @@ export const hasFloor=(map,x,y)=>map.floors.some(p=>pointInPolygon(x,y,p));
 const inProp=(p,x,y,pad=0)=>p.circular?((x-p.x)/(p.w/2+pad))**2+((y-p.y)/(p.h/2+pad))**2<1:x>p.x-p.w/2-pad&&x<p.x+p.w/2+pad&&y>p.y-p.h/2-pad&&y<p.y+p.h/2+pad;
 export function clearPoint(map,x,y,z=0,radius=11){const b=map.bounds;if(x<b[0]+radius||x>b[2]-radius||y<b[1]+radius||y>b[3]-radius)return false;return !map.props.some(p=>p.solid&&(p.blockJump||p.height>z+7)&&inProp(p,x,y,radius));}
 export function createWorldPlayer(zone='base',point){const map=WORLD_MAPS[zone];return {x:point?.x??map.spawn[0],y:point?.y??map.spawn[1],z:0,vz:0,facing:-1,moving:false,walk:0,jumpAt:0,falling:0,path:[],grounded:true};}
-export function jumpWorld(player,time){if(!player.grounded||player.falling)return false;player.vz=410;player.grounded=false;player.jumpAt=time;return true;}
+export function jumpWorld(player,time,{quick=false}={}){if(!player.grounded||player.falling)return false;player.vz=quick?430:410;player.jumpGravity=quick?1600:900;player.grounded=false;player.jumpAt=time;return true;}
 function support(map,p,previousZ){let ground=hasFloor(map,p.x,p.y)?0:-Infinity;for(const prop of map.props)if(prop.platform&&inProp(prop,p.x,p.y,-2)&&previousZ>=prop.height-8)ground=Math.max(ground,prop.height);return ground;}
 export function stepWorld(player,input,dt,zone){
  const map=typeof zone==='string'?WORLD_MAPS[zone]:zone;dt=Math.min(.05,Math.max(0,dt));
@@ -14,13 +14,14 @@ export function stepWorld(player,input,dt,zone){
  if(player.path.length&&!x&&!y){while(player.path.length&&Math.hypot(player.path[0].x-player.x,player.path[0].y-player.y)<9)player.path.shift();if(player.path.length){const target=player.path[0],dx=target.x-player.x,dy=target.y-player.y,d=Math.hypot(dx,dy);x=dx/d;y=dy/d;}}
  if(map.projection==='front')y*=.72;
  const length=Math.hypot(x,y);if(length>1){x/=length;y/=length;}const speed=(input.ceremony?105:input.run===true?330:205)*Math.max(.35,Math.min(1,Number(input.speedFactor)||1)),previousZ=player.z;
- if(!player.grounded){player.vz-=900*dt;player.z+=player.vz*dt;}
+ const wasGrounded=player.grounded;
+ if(!player.grounded){const gravity=player.jumpGravity||900;if(gravity===1600){player.z+=player.vz*dt-gravity*dt*dt*.5;player.vz-=gravity*dt;}else{player.vz-=gravity*dt;player.z+=player.vz*dt;}}
  const beforeX=player.x,beforeY=player.y;
  if(clearPoint(map,player.x+x*speed*dt,player.y,player.z)&&(!map.boundedFloor||hasFloor(map,player.x+x*speed*dt,player.y)))player.x+=x*speed*dt;
  if(clearPoint(map,player.x,player.y+y*speed*dt,player.z)&&(!map.boundedFloor||hasFloor(map,player.x,player.y+y*speed*dt)))player.y+=y*speed*dt;
  player.moving=Math.hypot(player.x-beforeX,player.y-beforeY)>.01;if(Math.abs(x)>.01)player.facing=x>0?1:-1;if(player.moving)player.walk+=dt*8*(speed/205);
  const ground=support(map,player,previousZ);
- if(player.vz<=0&&player.z<=ground){player.z=ground;player.vz=0;player.grounded=true;}
+ if(player.vz<=0&&player.z<=ground){player.z=ground;player.vz=0;player.grounded=true;if(!wasGrounded)player.landAt=Number(input.now)||0;}
  else if(player.grounded&&player.z>ground+1){player.grounded=false;player.vz=0;}
  if(ground===-Infinity&&player.z<=-5){player.falling=.001;player.grounded=false;player.path=[];}
  if(!player.moving&&player.path.length){const next=player.path[0];if(Math.hypot(next.x-player.x,next.y-player.y)>15)player.path=[];}

@@ -1,0 +1,506 @@
+{
+  "sallua-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9712323766938906
+  },
+  "sallua-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9729388744928872
+  },
+  "sallua-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9765171397423992
+  },
+  "carmine-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9656933745209377
+  },
+  "carmine-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9643210846799185
+  },
+  "carmine-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.969023678235485
+  },
+  "bruno-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9680929533336612
+  },
+  "bruno-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9694654312188168
+  },
+  "bruno-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9711604885788248
+  },
+  "daelly-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9735056288930796
+  },
+  "daelly-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.97599722711649
+  },
+  "daelly-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9758278294469156
+  },
+  "bayron-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9667100760168388
+  },
+  "bayron-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9674747879516463
+  },
+  "bayron-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9696461436048712
+  },
+  "arisantana-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9649153515466372
+  },
+  "arisantana-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9645157853616961
+  },
+  "arisantana-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9671664962993136
+  },
+  "marianito-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.97337482947963
+  },
+  "marianito-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9755246168982573
+  },
+  "marianito-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9767607182117992
+  },
+  "leandro-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9684261568301469
+  },
+  "leandro-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9656213592902296
+  },
+  "leandro-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9710857533920495
+  },
+  "vitany-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9730011203509381
+  },
+  "vitany-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9737072606125067
+  },
+  "vitany-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9751868871557555
+  },
+  "kareli-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.972354201602385
+  },
+  "kareli-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9742389307905741
+  },
+  "kareli-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9758116263391733
+  },
+  "vita-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9683282346589887
+  },
+  "vita-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9691288447035736
+  },
+  "vita-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.970783603296391
+  },
+  "eduard-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9751445907107121
+  },
+  "eduard-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9756229970404358
+  },
+  "eduard-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9774500053169197
+  },
+  "joseserna-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9722131278864841
+  },
+  "joseserna-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9711775166498134
+  },
+  "joseserna-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9746836370027535
+  },
+  "guillermo-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9751526710878581
+  },
+  "guillermo-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9779353311466915
+  },
+  "guillermo-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9778148590569314
+  },
+  "peggy-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.971167748335354
+  },
+  "peggy-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9730967410355416
+  },
+  "peggy-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9742162420599686
+  },
+  "andromeda-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9768665441790546
+  },
+  "andromeda-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9789720084478125
+  },
+  "andromeda-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.979125602922281
+  },
+  "ivy-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9670137317036367
+  },
+  "ivy-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9712044633081872
+  },
+  "ivy-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.970738074519421
+  },
+  "roger-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9664451099262289
+  },
+  "roger-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.965927307703518
+  },
+  "roger-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9687134502923976
+  },
+  "maria-villegas-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9707893542163205
+  },
+  "maria-villegas-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.972456334098637
+  },
+  "maria-villegas-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9739590336605262
+  },
+  "isabel-clipboard": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.956242200035657
+  },
+  "isabel-pressure": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9538656414586991
+  },
+  "isabel-prepare": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9525096135520253
+  },
+  "isabel-injection": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.95000608198516
+  },
+  "isabel-pills": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9520468093530718
+  },
+  "isabel-bandage": {
+    "width": 640,
+    "height": 768,
+    "headX": 320,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9559310262503934
+  }
+}

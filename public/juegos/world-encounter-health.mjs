@@ -9,9 +9,9 @@ export function applyEncounterHealth(first,second,{protectedEncounter=true,pregn
   if(!body.infection.type&&donor.type&&!donor.suppressed&&random()<(donor.type==='hiv-2'?.03:.12)*(protectedEncounter?.05:1))setInfection(body,donor.type);
  }
  if(pregnancyConsent) {
-  const woman=pair.find(p=>p.gender==='female'&&p.body.reproductive.enabled),man=pair.find(p=>p.gender==='male');
+  const woman=pair.find(p=>p.gender==='female'&&p.canConceive!==false&&p.body.reproductive.enabled),man=pair.find(p=>p.gender==='male');
   if(woman)woman.body.reproductive.allowPregnancyStory=true;
-  if(woman&&man&&!woman.body.reproductive.pregnant&&random()<(protectedEncounter?.005:.20)*(woman.body.reproductive.contraception?.01:1)) {
+  if(woman&&man&&!protectedEncounter&&!woman.body.reproductive.pregnant&&random()<.20*(woman.body.reproductive.contraception?.01:1)) {
    woman.body.reproductive.pregnant=true;woman.body.reproductive.tested=false;
   }
  }

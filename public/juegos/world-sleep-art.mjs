@@ -8,7 +8,7 @@ export const SLEEP_WIDTH_RATIOS=Object.freeze({
  sallua:.90,vita:1.02,vitany:.88,dani:.90,'dua-lingo':.88
 });
 export function sleepSourceBounds(id,image){
- const b=SLEEP_ART_BOUNDS[id];
+ if(image.worldSleepBounds)return image.worldSleepBounds;const b=SLEEP_ART_BOUNDS[id];
  return b&&b.canvasWidth===image.width&&b.canvasHeight===image.height?b:{x:0,y:0,width:image.width,height:image.height};
 }
 export function sleepPoseBounds(player,height,image,bed){
