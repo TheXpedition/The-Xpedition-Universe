@@ -97,3 +97,7 @@ body[data-game="puzzle"] #private-station,body[data-game="puzzle"][data-side="1"
  #monitor-ranking .rank-hero span{display:none}
  #monitor-ranking .rank-hero small{font-size:clamp(4px,2.7cqw,7px)}
 }
+
+/* Ranking updates remain readable during every reveal (no dark fade-in frame). */
+#monitor-ranking .rank-hero{animation:rank-arrive .24s ease-out both}
+@keyframes rank-arrive{from{opacity:1;transform:translateY(5px)}to{opacity:1;transform:none}}
