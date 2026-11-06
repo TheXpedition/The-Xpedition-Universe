@@ -21,7 +21,12 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
    const page=await c.newPage();
    page.on('pageerror',error=>errors.push(id+': '+error.message));
    await page.goto(f.base+'/juegos/x-protocol/',{waitUntil:'domcontentloaded'});
-   await page.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO'),undefined,{timeout:25000});
+   try{await page.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO'),undefined,{timeout:25000});}
+   catch(error){
+    const debug=await page.evaluate(()=>({href:location.href,status:document.querySelector('#connection')?.textContent,phase:document.querySelector('#phase')?.textContent,notice:document.querySelector('#notice')?.textContent,video:document.querySelector('#video')?.currentSrc}));
+    console.error('PROTOCOL_BROWSER_DIAGNOSTICS',JSON.stringify({user:id,mobile,debug,errors}));
+    throw error;
+   }
    return page;
   };
   const staff=await context(STAFF_ID),player=await context('browser-player',true);
