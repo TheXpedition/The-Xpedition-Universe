@@ -13,7 +13,7 @@ export function createWorldCompanion({publicURL,beforeWorld=async()=>{}}){
    const timer=setTimeout(()=>reject(Error('World tardó demasiado en arrancar.')),45000);
    worker.on('message',message=>{if(message?.type==='ready'){clearTimeout(timer);port=message.port;resolve(port);}});
    worker.once('error',error=>{clearTimeout(timer);pending=null;reject(error);});
-   worker.once('exit',()=>{clearTimeout(timer);worker=null;port=null;pending=null;reject(Error('World se detuvo.'));});
+   worker.once('exit',code=>{if(!closing)console.error('World companion worker exited:',code,'rssMB='+Math.round(process.memoryUsage().rss/1048576));clearTimeout(timer);worker=null;port=null;pending=null;reject(Error('World se detuvo.'));});
   });return pending;
  }
  async function handle(req,res,url){if(!url.pathname.startsWith('/world-play/'))return false;await beforeWorld();const value=await start();if(!value)throw Object.assign(Error('World está preparando su acceso.'),{status:503});await proxyWorldHTTP(req,res,{port:value,path:req.url.slice('/world-play'.length)||'/'});return true;}
