@@ -11,6 +11,7 @@ import {createProtocol,applyProtocol,tickProtocol,protocolView,engagedProtocol,p
 import {MediaGate} from './public/juegos/last-grip/media-gate.mjs';
 import {createProtocolEngineRuntime} from './protocol-engine-runtime.mjs';
 import {protocolWireInterval} from './protocol-wire-cadence.mjs';
+import {protocolDeliveryMedia} from './protocol-media-delivery.mjs';
 import {SHELTER_PARTICIPANTS} from './public/juegos/world-shelters.mjs';
 import {WORLD_CHARACTERS} from './public/juegos/world-characters.mjs';
 import {protocolResults,mapProtocolRanking,validateImportedResult} from './world-protocol-results.mjs';
@@ -33,7 +34,7 @@ export function createProtocolService({db,clients,send,can,now=Date.now,stop=()=
  async function save(s=state){await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','x-protocol',JSON.stringify(s),now());lastSave=now();}
  const liveWallet=createLiveWallet(db,{now});
  const wallet=id=>liveWallet.get(id);
- async function snapshot(c,balance){return {...protocolView(state,{selfId:c.user.id,staff:!!c.direct,maria:!!c.direct&&c.characterId==='maria-villegas',serverTime:now(),wallet:balance||await wallet(c.user.id)}),narration:narration.view(state.speech),environment:getEnvironment(),ownVitals:{...c.vitals}};}
+ async function snapshot(c,balance){const presentation=protocolView(state,{selfId:c.user.id,staff:!!c.direct,maria:!!c.direct&&c.characterId==='maria-villegas',serverTime:now(),wallet:balance||await wallet(c.user.id)});if(presentation.entryMedia)presentation.entryMedia=protocolDeliveryMedia(presentation.entryMedia);if(presentation.cinematic)presentation.cinematic=protocolDeliveryMedia(presentation.cinematic);return {...presentation,narration:narration.view(state.speech),environment:getEnvironment(),ownVitals:{...c.vitals}};}
  function flushSpeech(){const speech=pendingSpeech;pendingSpeech=null;if(!speech||speech.id!==state.speech?.id||speech.id===state.speechSent)return;state.speechSent=speech.id;try{if(speech.speaker!=='Bonju')narration.start(speech,onSpeech,{id:randomUUID(),text:speech.text,userId:state.host,created:now(),eventId:speech.id});else narration.cancelCurrent();}catch{}}
  async function publish(){const viewers=[...clients.values()].filter(c=>c.protocolActive&&subscribers.has(c.user.id)),balances=await liveWallet.getMany(viewers.map(c=>c.user.id));await Promise.all(viewers.map(async c=>send(c,{type:'protocol-state',episode:await snapshot(c,balances.get(c.user.id))})));lastWire=now();flushSpeech();}
  async function ledger(id,key,coins,label){await db.run('INSERT INTO user_progression(user_id,tickets,coins,xp) VALUES(?,0,0,0) ON CONFLICT(user_id) DO NOTHING',id);const row=await db.run('INSERT INTO economy_rewards(user_id,event_key,tickets,coins,xp,label,created) VALUES(?,?,0,?,0,?,?) ON CONFLICT(user_id,event_key) DO NOTHING',id,key,coins,label,now());if(!row.changes)return false;if(coins<0){const result=await db.run('UPDATE user_progression SET coins=coins+? WHERE user_id=? AND coins>=?',coins,id,-coins);if(!result.changes)failure(409,'No tienes suficientes monedas para esa apuesta.');}else await db.run('UPDATE user_progression SET coins=coins+? WHERE user_id=?',coins,id);liveWallet.invalidate(id);return true;}
