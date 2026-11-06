@@ -3,7 +3,13 @@ const types={'video/mp4':'.mp4','video/webm':'.webm','video/quicktime':'.mov'};
 export function validProtocolMedia(value){if(value===null)return null;if(!value||typeof value.url!=='string'||value.url.length>500||!Number.isFinite(value.duration)||value.duration<100||value.duration>1800000)throw Object.assign(Error('Selecciona un video válido de hasta treinta minutos.'),{status:400});const url=new URL(value.url,'https://world.invalid');if(!['http:','https:'].includes(url.protocol)||url.username||url.password||!(value.url.startsWith('/juegos/')||value.url.startsWith('/api/world/x-protocol/media/')||url.protocol==='https:'&&url.hostname!=='world.invalid'))throw Object.assign(Error('Utiliza una dirección de video directa o un archivo del recinto.'),{status:400});return {url:value.url,duration:Math.ceil(value.duration)};}
 export function createProtocolMedia({canDirect,dataDir=process.env.DATA_DIR||path.resolve('data')}){
  const root=path.resolve(dataDir,'protocol-media');
- return {async handle(req,res,url,user){
+ return {async available(value){
+  const url=value?.url;
+  if(typeof url!=='string'||!url.startsWith('/api/world/x-protocol/media/'))return true;
+  const match=/^\/api\/world\/x-protocol\/media\/([a-f0-9-]{36}\.(?:mp4|webm|mov))$/.exec(url);
+  if(!match)return false;
+  try{return (await fsp.stat(path.resolve(root,match[1]))).isFile();}catch{return false;}
+ },async handle(req,res,url,user){
   if(url.pathname==='/api/world/x-protocol/media'&&req.method==='POST'){
    if(!await canDirect(user))throw Object.assign(Error('Solo Dirección puede subir los videos.'),{status:403});const contentType=String(req.headers['content-type']||'').split(';')[0],ext=types[contentType];if(!ext)throw Object.assign(Error('Sube un video MP4, WebM o MOV.'),{status:400});const id=randomUUID(),filename=path.resolve(root,id+ext),temporary=filename+'.part';if(!filename.startsWith(root+path.sep))throw Error('Invalid media target');await fsp.mkdir(root,{recursive:true});const file=await fsp.open(temporary,'wx');let size=0;try{for await(const bytes of req){size+=bytes.length;if(size>256*1024*1024)throw Object.assign(Error('El video supera 256 MB.'),{status:413});await file.write(bytes);}if(size<16)throw Object.assign(Error('El video está vacío.'),{status:400});await file.close();await fsp.rename(temporary,filename);}catch(error){await file.close().catch(()=>{});await fsp.rm(temporary,{force:true});throw error;}res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'private, no-store'});res.end(JSON.stringify({url:'/api/world/x-protocol/media/'+id+ext,bytes:size}));return true;
   }
