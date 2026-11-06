@@ -8,6 +8,7 @@ import {tickProtocol} from './public/juegos/x-protocol/engine.mjs';
 
 const random=()=>randomInt(0,1000000)/1000000;
 const clamp=v=>Math.round(v*100)/100;
+const seededRandom=initial=>{let value=initial>>>0;return ()=>{value=(Math.imul(value,1664525)+1013904223)>>>0;return value/4294967296;};};
 export function createProtocolEngineRuntime({
  enabled=process.env.PROTOCOL_ENGINE_WORKER==='true',
  timeoutMs=1500,
@@ -40,18 +41,19 @@ export function createProtocolEngineRuntime({
   if(closed)throw Error('Protocol engine is closed');
   const started=performance.now();
   if(worker&&!broken){
+   const seed=Number.isInteger(opts.seed)?opts.seed>>>0:Math.floor((opts.random||random)()*4294967296)>>>0;
    try{
     const id=++serial;
     const result=await new Promise((resolve,reject)=>{
      const timer=setTimeout(()=>{pending.delete(id);reject(Error('Protocol engine worker timed out'));},timeoutMs);
      pending.set(id,{resolve:v=>{clearTimeout(timer);resolve(v);},reject:e=>{clearTimeout(timer);reject(e);}});
      metrics.maxPending=Math.max(metrics.maxPending,pending.size);
-     try{worker.postMessage({type:'tick',id,state:structuredClone(state),time,introComplete:!!opts.introComplete});}
+     try{worker.postMessage({type:'tick',id,state,time,introComplete:!!opts.introComplete,seed});}
      catch(error){pending.delete(id);clearTimeout(timer);reject(error);}
     });
     record(performance.now()-started,true);
     return result;
-   }catch(error){fail(error);}
+   }catch(error){fail(error);const value=local(state,time,{...opts,random:seededRandom(seed)});record(performance.now()-started,false);return value;}
   }
   const value=local(state,time,opts);
   record(performance.now()-started,false);
