@@ -36,3 +36,17 @@ Before switching live traffic, require:
 ## Production rollout policy
 
 Keep Stage 1 feature-flagged until all CI checks pass. Do not add `PROTOCOL_ENGINE_WORKER=true` to the existing `render.yaml` without observing actual production memory availability. A true Stage 2 service cannot be automatically deployed from GitHub code alone; it needs explicit Render service configuration and resource selection.
+
+## Performance, loading and visual presentation implemented on the branch
+
+- Passive scenes and intro use fewer unchanged server snapshots; interactive votes, skull movement and duels retain faster updates. Phase changes and authoritative decisions still broadcast immediately.
+- Countdown timers are visually interpolated without altering server-side vote deadlines, duel timing, rankings or participant performance.
+- Character sprites and Maria/ceremony scenes decode in limited parallel batches to reduce mobile freezes. Upcoming duel backdrops are prefetched. When a new scene takes longer to load, the renderer keeps the previous valid frame instead of flashing a placeholder/black gap.
+- All 18 ranking portrait assets are available. Ranking images are warmed before the results phase, with fallback to the original cast image if a thumbnail fails.
+- The physical LED monitor keeps its original scene coordinates. Ranking text, portrait and history are fitted relative to the monitor's own dimensions; compact landscape phones hide the tiny history strip but preserve the principal portrait, place and name. The full history remains part of the ceremony and can still be inspected.
+- A Chromium E2E check now tests actual desktop and landscape-mobile monitors, portrait loading, position inside the monitor, rankings, synchronized intro and STAFF controls; screenshots are uploaded as CI artifacts.
+- The built-in public intro can optionally be served from a separate Render Static Site (render-protocol-media.yaml) by setting PROTOCOL_MEDIA_CDN_ORIGIN on the World service. The application falls back to the original bundled media path if the CDN fails. Uploaded private STAFF media is never routed through the public static site.
+
+None of these improvements changes the 18-participant elimination rules, account identities, inventory ownership, advantages, coins, ranking results or stored performance statistics. Changes remain on an unmerged PR while under verification.
+
+**Resource warning:** Stage 1 is an optional rules worker on the same instance and does not isolate CPU/memory or World WebSockets. The independent Stage 2 Render service requires an additional service, secure session handoff and one authoritative database writer; it has not been implemented or launched yet.
