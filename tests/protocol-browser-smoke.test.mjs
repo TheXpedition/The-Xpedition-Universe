@@ -17,7 +17,7 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await claimFixtureCharacter(f.base,'browser-player','bruno');
   browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
   const context=async(id,mobile=false)=>{
-   const c=await browser.newContext(mobile?{viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
+   const c=await browser.newContext(mobile?{viewport:{width:844,height:390},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
    await c.addCookies([{name:'xp_world_session',value:id,url:f.base}]);
    await c.addInitScript(()=>{
     window.__worldBootstrapRequests=0;
@@ -114,7 +114,7 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
    assert(layout.copy.scrollWidth<=layout.copy.clientWidth+2,device+' ranking name must not overflow the physical monitor');
    assert.match(layout.rankText,/PUESTO\s+\d+/,'ranking must display an official numbered place');
    await mkdir('artifacts',{recursive:true});
-   await page.screenshot({path:'artifacts/protocol-monitor-'+device+'.png'});
+   await page.screenshot({path:'artifacts/protocol-monitor-'+device+'.png',animations:'disabled'});
   }
   assert.deepEqual(errors,[],'no browser runtime errors during the complete intro and STAFF result controls');
  }finally{await browser?.close();await f.close();}
