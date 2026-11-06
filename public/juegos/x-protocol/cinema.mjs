@@ -2,6 +2,7 @@ export class ProtocolCinema {
  constructor({video,note,onEnded=()=>{},onFailed=()=>{},onPlaying=()=>{},setTimer=(fn,ms)=>globalThis.setTimeout(fn,ms),clearTimer=id=>globalThis.clearTimeout(id)}){
   Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,autoplayMuted:false,disposed:false,options:{paused:true,visible:true,enabled:true}});
   video.onended=()=>{if(!this.descriptor||this.ended)return;this.ended=true;this.note.hidden=true;this.onEnded(this.key);};
+  video.onloadedmetadata=()=>this.align();
   video.onerror=()=>{if(this.descriptor)this.failure();};
   video.onwaiting=()=>{if(this.descriptor)this.message('Cargando la introducción…');};
   video.onplaying=()=>{if(!this.descriptor)return;this.failed=false;this.needsGesture=false;this.note.hidden=true;this.onPlaying(this.key);};
@@ -20,10 +21,13 @@ export class ProtocolCinema {
    this.autoplayMuted=false;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
   }
   this.video.muted=!this.options.enabled||this.autoplayMuted;this.video.volume=1;
-  if(!descriptor||this.options.paused){this.video.pause();return;}
+  if(!descriptor||this.options.paused){this.video.pause();this.align();return;}
+  this.align();
   if(this.failed){this.retry();return;}
   this.play();
  }
+ syncClock(clock){this.options.clock=clock;this.align(clock);}
+ align(clock=this.options.clock){const d=this.descriptor;if(!d||this.ended||!Number.isFinite(clock)||!Number.isFinite(d.start)||clock>=d.start+d.duration||this.video.readyState<1)return;const duration=Number.isFinite(this.video.duration)&&this.video.duration>0?this.video.duration:Number(d.duration)/1000;if(!Number.isFinite(duration)||duration<=0)return;const target=Math.min(Math.max(0,(clock-d.start)/1000),Math.max(0,duration-.08));if(Math.abs((this.video.currentTime||0)-target)<.45)return;try{this.video.currentTime=target;}catch{}}
  play(){
   if(this.disposed||!this.descriptor||this.ended||this.failed||this.pending||this.needsGesture||this.options.paused||!this.video.paused)return;
   const key=this.key;this.pending=true;
@@ -36,5 +40,5 @@ export class ProtocolCinema {
  failure(){if(this.disposed||!this.descriptor||this.ended)return;this.failed=true;this.message('Reconectando la introducción…');this.onFailed(this.key);this.retry();}
  retry(){if(this.timer||this.disposed)return;const key=this.key;this.timer=this.setTimer(()=>{this.timer=null;if(this.disposed||key!==this.key)return;if(this.options.paused){this.retry();return;}this.failed=false;this.needsGesture=false;this.retries++;const join=this.descriptor.url.includes('?')?'&':'?';this.video.src=this.descriptor.url+join+'playback-retry='+this.retries;this.video.load();this.play();},Math.min(15000,1000*2**Math.min(this.retries,4)));}
  unlock(){if(this.disposed)return;if(this.descriptor){this.needsGesture=false;if(this.autoplayMuted){this.autoplayMuted=false;this.video.muted=!this.options.enabled;this.note.hidden=true;}this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
- destroy(){this.disposed=true;this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;}
+ destroy(){this.disposed=true;this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;this.video.onloadedmetadata=null;}
 }

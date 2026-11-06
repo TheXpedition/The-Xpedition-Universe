@@ -74,3 +74,5 @@ body[data-game="puzzle"] #private-station,body[data-game="puzzle"][data-side="1"
 #pause-resume{pointer-events:auto;font-size:13px;min-height:34px;padding:7px 15px}body[data-phase="INTRO_VIDEO"] #pause{position:fixed;inset:50% auto auto 50%;transform:translate(-50%,-50%);width:min(340px,88vw);padding:20px;gap:12px;z-index:111;pointer-events:auto}body[data-phase="INTRO_VIDEO"] #pause span{display:block}
 
 #cinema-direction{position:absolute;top:12px;right:12px;z-index:2;width:32px;height:32px;min-width:32px;min-height:32px;padding:6px;background:#100b08a8;border:1px solid #b7855766}body[data-phase="INTRO_VIDEO"] #direction{z-index:113}
+
+#monitor-ranking .rank-loading{height:100%;display:grid;place-content:center;gap:12px;text-align:center;color:#fce8cc}#monitor-ranking .rank-loading small{color:#dba783;letter-spacing:.14em;font:700 clamp(7px,.8vw,14px) Protocol}#monitor-ranking .rank-loading strong{color:#ff344b;font:900 clamp(16px,2.4vw,42px) Protocol}
