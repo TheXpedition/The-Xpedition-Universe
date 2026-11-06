@@ -1,0 +1,18 @@
+# Optional public static CDN: bundled intro video only. No credentials and no
+# gameplay API. Create this as a separate Render Blueprint when desired.
+# PROTOCOL_MEDIA_CDN_ORIGIN must be configured on the World service only
+# after the static site has passed a real video playback check.
+services:
+  - type: web
+    name: the-xpedition-protocol-media
+    runtime: static
+    buildCommand: mkdir -p protocol-cdn/juegos/x-protocol/media && cp public/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4 public/juegos/x-protocol/media/intro-warmup.mp4 protocol-cdn/juegos/x-protocol/media/
+    staticPublishPath: ./protocol-cdn
+    autoDeployTrigger: checksPass
+    headers:
+      - path: /juegos/x-protocol/media/*
+        name: Cache-Control
+        value: public, max-age=604800
+      - path: /juegos/x-protocol/media/*
+        name: Access-Control-Allow-Origin
+        value: "*"

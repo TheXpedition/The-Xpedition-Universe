@@ -111,6 +111,20 @@ test('STAFF can start a full-bot ceremony from World home without opening a Worl
  }finally{await f.close();}
 });
 
+test('dedicated engine telemetry is STAFF-only and preserves the published participant statistics',async()=>{
+ const f=await fixture();
+ try{
+  await assert.rejects(f.http('performance',undefined,'viewer'),/Dirección/);
+  const data=await f.http('performance');
+  assert.equal(data.engine.workerRequested,false);
+  assert.equal(data.engine.workerActive,false);
+  assert.equal(data.engine.ticks>=0,true);
+  assert.equal(data.statsPreserved,true);
+  assert.equal(data.phase,'CLOSED');
+  assert.equal(data.cast,0);
+ }finally{await f.close();}
+});
+
 test('staff can open, fill, start and recover the same ceremony through HTTP when the socket disconnects',async()=>{
  const f=await fixture();
  try{

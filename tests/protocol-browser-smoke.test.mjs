@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright-core';
+import {mkdir} from 'node:fs/promises';
 import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
 import {claimFixtureCharacter} from './helpers/world-character-fixtures.mjs';
+import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
 test('real Chromium STAFF and participant screens play the complete intro, transition, and accept results', {timeout:120000},async()=>{
  const f=await liveFixture('protocol-browser-smoke',[
@@ -16,7 +18,7 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await claimFixtureCharacter(f.base,'browser-player','bruno');
   browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
   const context=async(id,mobile=false)=>{
-   const c=await browser.newContext(mobile?{viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
+   const c=await browser.newContext(mobile?{viewport:{width:844,height:390},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
    await c.addCookies([{name:'xp_world_session',value:id,url:f.base}]);
    await c.addInitScript(()=>{
     window.__worldBootstrapRequests=0;
@@ -46,6 +48,11 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   };
   await control('open');
   await control('fillBots');
+  const faces=await Promise.all(SHELTER_PARTICIPANTS.map(async characterId=>{
+   const result=await staff.request.get(f.base+'/juegos/x-protocol/art/portraits/'+characterId+'-face.webp');
+   return {characterId,status:result.status()};
+  }));
+  assert.deepEqual(faces.filter(a=>a.status!==200),[],'all 18 ranking portraits must load over the actual World HTTP route');
   await control('start');
 
   await staff.waitForFunction(()=>document.body.dataset.phase==='ELIMINATION_LOADING'||document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:15000});
@@ -91,6 +98,30 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await staff.locator('#dialog-confirm').click({timeout:5000});
   await staff.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
   await player.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
+  for(const [page,device] of [[staff,'desktop'],[player,'mobile']]){
+   await page.waitForFunction(()=>{
+    const picture=document.querySelector('#monitor-ranking .rank-hero>img');
+    return picture&&!picture.hidden&&picture.complete&&picture.naturalWidth>0;
+   },undefined,{timeout:20000});
+   const layout=await page.evaluate(()=>{
+    const monitor=document.querySelector('#monitor'),rank=document.querySelector('#monitor-ranking');
+    const hero=rank.querySelector('.rank-hero'),picture=hero.querySelector('img'),copy=hero.querySelector('div');
+    const box=e=>{const b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth};};
+    return {monitor:box(monitor),rank:box(rank),hero:box(hero),picture:box(picture),copy:box(copy),
+     hidden:rank.hidden,rankText:rank.textContent,assetLoaderHidden:document.querySelector('#asset-loader').hidden,
+     pictureLoaded:picture.complete&&picture.naturalWidth>0};
+   });
+   assert.equal(layout.hidden,false,device+' must see the results on the physical monitor');
+   assert.equal(layout.pictureLoaded,true,device+' ranking portrait must load');
+   assert.equal(layout.assetLoaderHidden,true,device+' must see the monitor and not an asset loading overlay');
+   assert(layout.hero.width>50&&layout.hero.height>10,device+' ranking hero must have drawable space: '+JSON.stringify(layout));
+   assert(layout.rank.left>=layout.monitor.left-2&&layout.rank.right<=layout.monitor.right+2,device+' ranking must stay inside the monitor frame');
+   assert(layout.picture.right<=layout.copy.left+3,device+' ranking photo must not cover participant name');
+   assert(layout.copy.scrollWidth<=layout.copy.clientWidth+2,device+' ranking name must not overflow the physical monitor');
+   assert.match(layout.rankText,/PUESTO\s+\d+/,'ranking must display an official numbered place');
+   await mkdir('artifacts',{recursive:true});
+   await page.screenshot({path:'artifacts/protocol-monitor-'+device+'.png',animations:'disabled'});
+  }
   assert.deepEqual(errors,[],'no browser runtime errors during the complete intro and STAFF result controls');
  }finally{await browser?.close();await f.close();}
 });
