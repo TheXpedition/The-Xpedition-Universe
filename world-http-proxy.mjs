@@ -23,5 +23,5 @@ export function proxyWorldSocket(req,socket,head,{port,path=req.url,onClose=()=>
  socket.on('error',()=>{upstream.destroy();finish();});
  upstream.on('upgrade',(response,peer,peerHead)=>{socket.write('HTTP/1.1 101 Switching Protocols\r\n'+Object.entries(response.headers).flatMap(([key,value])=>(Array.isArray(value)?value:[value]).map(v=>key+': '+v)).join('\r\n')+'\r\n\r\n');if(peerHead.length)socket.write(peerHead);if(head.length)peer.write(head);socket.pipe(peer);peer.pipe(socket);peer.on('error',()=>socket.destroy());peer.on('close',()=>{socket.destroy();finish();});socket.on('close',()=>{peer.destroy();finish();});});
  upstream.on('response',response=>{socket.end('HTTP/1.1 '+response.statusCode+' Forbidden\r\nConnection: close\r\n\r\n');response.resume();finish();});
- upstream.on('error',()=>{socket.destroy();finish();});upstream.end();
+ upstream.on('error',error=>{console.warn('World socket proxy upstream error:',error.code||'unknown','originPort='+port);socket.destroy();finish();});upstream.end();
 }
