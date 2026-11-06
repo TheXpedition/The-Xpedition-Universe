@@ -15,8 +15,8 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await claimFixtureCharacter(f.base,STAFF_ID,'maria-villegas');
   await claimFixtureCharacter(f.base,'browser-player','bruno');
   browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
-  const context=async id=>{
-   const c=await browser.newContext();
+  const context=async(id,mobile=false)=>{
+   const c=await browser.newContext(mobile?{viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
    await c.addCookies([{name:'xp_world_session',value:id,url:f.base}]);
    const page=await c.newPage();
    page.on('pageerror',error=>errors.push(id+': '+error.message));
@@ -24,7 +24,7 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
    await page.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO'),undefined,{timeout:25000});
    return page;
   };
-  const staff=await context(STAFF_ID),player=await context('browser-player');
+  const staff=await context(STAFF_ID),player=await context('browser-player',true);
   assert.equal(await staff.locator('#staff-toggle').isVisible(),true,'STAFF controls must be accessible');
 
   const control=async type=>{
