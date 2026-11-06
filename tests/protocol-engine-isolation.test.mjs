@@ -57,3 +57,19 @@ test('if dedicated protocol worker crashes, existing inline engine continues wit
   assert.match(runtime.metrics().lastWorkerError,/worker unavailable/);
  }finally{await runtime.close();}
 });
+
+test('identical random seed makes bot nomination match in the separate engine and original engine',async()=>{
+ const s=createProtocol({id:'bot-rng-parity',now:3000});
+ s.phase='WINNER_NOMINATION';s.clock=3000;s.at=3000;s.phaseAt=0;s.deadline=15000;
+ s.roster=Array.from({length:5},(_,i)=>({id:'bot-'+i,characterId:'member-'+i,name:'Bot '+i,bot:true,connected:true,seat:i,assetsReady:true}));
+ s.ranking=s.roster.map((p,i)=>({id:p.id,place:i+1}));s.winner='bot-0';s.nominees=['bot-4'];
+ const a=createProtocolEngineRuntime({enabled:true,timeoutMs:5000});
+ const b=createProtocolEngineRuntime({enabled:false});
+ try{
+  const seed=20261106;
+  const inlineSeed=()=>{let v=seed>>>0;return()=>{v=(Math.imul(v,1664525)+1013904223)>>>0;return v/4294967296;};};
+  const remote=await a.tick(s,3100,{seed}),local=await b.tick(s,3100,{random:inlineSeed()});
+  assert.deepEqual(remote,local,'STAFF nomination and bot choice must be identical with the same seed');
+  assert.equal(remote.nominees.length,2);
+ }finally{await a.close();await b.close();}
+});
