@@ -26,5 +26,6 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm install --no-save --package-lock=false playwright-core@1.58.2
+      - run: node --check public/juegos/x-protocol/client.mjs && node --check public/juegos/x-protocol/cinema.mjs
       - run: node --test --test-concurrency=2 tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs tests/protocol-lifecycle.test.mjs tests/protocol-full-ceremony.test.mjs tests/x-protocol-network.test.mjs tests/world-runtime-performance.test.mjs
       - run: node --test tests/protocol-browser-smoke.test.mjs
