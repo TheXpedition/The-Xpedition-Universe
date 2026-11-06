@@ -51,13 +51,21 @@ test('voice accepts its own isolated World room paths, while rejecting foreign r
  try{await p.unlock();p.add({...a,url});await settle();assert.equal(audio.calls.at(-1),url);assert(p.speaking);}finally{p.destroy();if(previous===undefined)delete globalThis.location;else globalThis.location=previous;}
 });
 
-test('the monitor keeps its text visible while speech prepares instead of displaying an empty title',()=>{
+test('protocol visuals preload before the intro ends and stale narration cannot outlive its screen',()=>{
  const source=roomText(readFileSync(new URL('../public/juegos/x-protocol/client.mjs',import.meta.url),'utf8'),'/world-play/servers/room-a');
- assert(source.includes("$('#monitor-caption').style.visibility='visible'"));assert(!source.includes("?'hidden':'visible'"));
+ assert(source.includes("$('#monitor-caption').style.visibility='visible'"));assert(!source.includes("?'hidden':'visible'"));assert(source.includes('void renderer.preloadEntry(state).catch(()=>{})'));assert(source.includes('visible:!!state?.cinematic||!document.hidden'));assert(source.includes('announcer.cancelEvent(old.speech.id)'));
 });
 test('native audio opens streaming speech immediately after gesture unlock without fetching or decoding the whole MP3',async()=>{
  const ctx=context(),audio=new NativeAudio();let fetched=0;const p=new AnnouncementPlayer({createContext:()=>ctx,createAudio:()=>audio,fetcher:()=>{fetched++;throw Error('must stream');}});
  try{const a=clip('Uno'),b={...clip('Dos'),sequence:2};p.add(a);assert.equal(audio.calls.length,0);await p.unlock();await settle();assert.match(audio.calls[0],/^data:audio\/wav/);assert.equal(audio.calls[1],a.url);assert.equal(fetched,0);assert.equal(ctx.sources.length,0);assert(p.speaking);p.add(a);p.add(b);assert.equal(audio.calls.length,2);audio.onended();await settle();assert.equal(audio.calls[2],b.url);assert.equal(p.caption.text,'Dos');p.setEnabled(false);assert(audio.paused);assert.equal(p.current,null);assert.equal(p.queue.length,0);}finally{p.destroy();}
+});
+test('the protocol discards stale speech instead of letting its voice run into the next screen',async()=>{
+ const ctx=context(),audio=new NativeAudio(),p=new AnnouncementPlayer({createContext:()=>ctx,createAudio:()=>audio}),a={...clip('Primero'),eventId:'episode:speech:1'},b={...clip('Después'),eventId:'episode:speech:2',sequence:2};
+ try{await p.unlock();p.add(a);await settle();p.add(b);assert.equal(p.current.eventId,a.eventId);assert.equal(p.queue.length,1);assert(p.cancelEvent(a.eventId));await settle();assert.equal(p.current.eventId,b.eventId);assert(audio.paused===false);assert.equal(audio.calls.at(-1),b.url);}finally{p.destroy();}
+});
+test('a delayed protocol voice is cancelled silently and closes listeners',async()=>{
+ const cancelled=[],errors=[],id=randomUUID();const voice=createMariaVoice({stream:async function*(_text,{signal}){await new Promise(resolve=>signal.addEventListener('abort',resolve,{once:true}));},onCancel:a=>cancelled.push(a),onError:a=>errors.push(a)});
+ try{const a=voice.enqueue({id,eventId:'episode:speech:1',text:'Tarde'});assert.equal(a.eventId,'episode:speech:1');const res=new Response();await voice.handleHttp({method:'GET',headers:{}},res,new URL(a.url,'http://localhost'));await settle();assert(voice.cancel(id));assert.equal(cancelled[0].eventId,a.eventId);assert(res.ended);await settle();assert.deepEqual(errors,[]);assert.equal(voice.live().length,0);}finally{voice.close();}
 });
 test('streaming audio falls back once to buffered playback if native MP3 streaming is unsupported',async()=>{
  const ctx=context(),audio=new NativeAudio();let fetched=0;const p=new AnnouncementPlayer({createContext:()=>ctx,createAudio:()=>audio,fetcher:async()=>{fetched++;return {ok:true,arrayBuffer:async()=>new ArrayBuffer(8)};}});
