@@ -61,6 +61,8 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await staff.locator('#save-result').click();
   await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({state:'attached',timeout:15000});
   await staff.locator('#choose-results').click();
+  const dialogDiagnostics=await staff.evaluate(()=>({phase:document.body.dataset.phase,select:document.querySelector('#results-select')?.value,dialogOpen:document.querySelector('#dialog')?.open,confirmHidden:document.querySelector('#dialog-confirm')?.hidden,notice:document.querySelector('#notice')?.textContent,title:document.querySelector('#dialog-title')?.textContent}));
+  assert.equal(dialogDiagnostics.dialogOpen,true,'STAFF result confirmation must open: '+JSON.stringify(dialogDiagnostics));
   await staff.locator('#dialog-confirm').click();
   await staff.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
   await player.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
