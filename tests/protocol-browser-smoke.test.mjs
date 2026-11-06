@@ -18,6 +18,13 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   const context=async(id,mobile=false)=>{
    const c=await browser.newContext(mobile?{viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:2}:{viewport:{width:1280,height:800}});
    await c.addCookies([{name:'xp_world_session',value:id,url:f.base}]);
+   await c.addInitScript(()=>{
+    window.__worldBootstrapRequests=0;
+    const originalFetch=window.fetch;
+    window.fetch=function(...args){if(String(args[0]).includes('/api/world/bootstrap'))window.__worldBootstrapRequests++;return originalFetch.apply(this,args);};
+    const originalWebSocket=window.WebSocket;
+    window.WebSocket=new Proxy(originalWebSocket,{construct(Target,args){const ws=new Target(...args);if(String(args[0]).includes('/api/world/live'))window.__worldTestSocket=ws;return ws;}});
+   });
    const page=await c.newPage();
    page.on('pageerror',error=>errors.push(id+': '+error.message));
    await page.goto(f.base+'/juegos/x-protocol/',{waitUntil:'domcontentloaded'});
@@ -46,6 +53,12 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await player.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:30000});
   await staff.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
   await player.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
+  const beforeReconnect=await player.evaluate(()=>({time:document.querySelector('#video').currentTime,bootstraps:window.__worldBootstrapRequests}));
+  await player.evaluate(()=>window.__worldTestSocket.close(1000,'test network interruption'));
+  await player.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO')&&window.__worldTestSocket?.readyState===WebSocket.OPEN,undefined,{timeout:22000});
+  const afterReconnect=await player.evaluate(()=>({time:document.querySelector('#video').currentTime,bootstraps:window.__worldBootstrapRequests}));
+  assert.equal(afterReconnect.bootstraps,beforeReconnect.bootstraps,'socket reconnect must not reload expensive World bootstrap');
+  assert(afterReconnect.time>=beforeReconnect.time,'the introduction must continue, not restart, after reconnect');
 
   await staff.locator('#staff-toggle').click();
   await staff.locator('#staff-actions button[data-action="pause"]').click();
