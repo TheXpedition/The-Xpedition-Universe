@@ -86,6 +86,7 @@ test('STAFF can start a full-bot ceremony from World home without opening a Worl
   const staff=f.clients.get('staff');
   f.clients.delete('staff'); // World's home menu is an HTTP page, not a live socket.
   assert.deepEqual(await f.http('start-plan',undefined,'viewer').catch(error=>({error:error.message})),{error:'Solo Dirección inicia la ceremonia.'});
+  f.clients.delete('viewer');
   let started=null;
   const post=async input=>{
    let result;
