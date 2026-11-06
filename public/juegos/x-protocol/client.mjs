@@ -126,7 +126,7 @@ function narrativeUI(){const s=state,mode=arenaMode(s);document.body.dataset.sce
 function renderVitals(){const v=state.ownVitals||{},defs=[['health','Salud'],['hunger','Hambre'],['energy','Energía'],['sleep','Sueño'],['stress','Estrés']];if(!$('#vitals').children.length)$('#vitals').innerHTML='<small>TU ESTADO</small>'+defs.map(([id,label])=>'<div class="vital" data-v="'+id+'"><span>'+label+'</span><i><b></b></i><strong></strong></div>').join('')+'<div class="impact"></div>';for(const [id]of defs){const root=$('#vitals [data-v='+id+']'),value=Math.round(v[id]??(id==='stress'?0:100));root.querySelector('b').style.width=value+'%';root.querySelector('strong').textContent=value;root.classList.toggle('critical',id==='stress'?value>75:value<25);}$('#vitals .impact').textContent='Influencia en el duelo: '+Math.round(state.ownPenalty*100)+'% · máximo 14%';}
 function renderScores(){const d=state.duel,visible=d&&['DUEL_TYPE_REVEAL','BETTING_PHASE','DUEL_GUIDE','DUEL_COUNTDOWN','DUEL_ACTIVE','DUEL_RESULT'].includes(state.phase),root=$('#scoreboard');root.hidden=!visible;if(!visible)return;const key=state.id+':'+d.type+':'+d.ids.join();if(root.dataset.key!==key){root.dataset.key=key;root.innerHTML=d.ids.map(id=>'<div class="score-card" data-id="'+esc(id)+'"><img src="'+portrait(person(id))+'" alt=""><div><small>'+esc(DUELS[d.type].name)+'</small><strong>'+esc(name(id))+'</strong><div class="meter"><b></b></div></div><b class="metric"></b></div>').join('');}for(const [i,id]of d.ids.entries()){const a=d.actors[id],card=root.children[i],value=d.type==='typing'?a.score:d.type==='puzzle'?a.progress:d.type==='lights'?a.good:d.type==='balance'?a.balance:i?100-d.force:d.force,max=d.type==='typing'?TYPING_GOAL:d.type==='lights'?6:100;card.querySelector('small').textContent=d.type==='balance'?'RONDA '+d.round+' / 3 · '+(d.roundWins[id]||0)+' VICTORIAS':DUELS[d.type].name;card.querySelector('.metric').textContent=d.type==='puzzle'?(d.actors[id].completed||0)+'/3':d.type==='typing'?value+'/'+TYPING_GOAL:d.type==='lights'?value+'/6':value.toFixed(d.type==='rope'?1:0)+'%';card.querySelector('.meter b').style.width=Math.min(100,value/max*100)+'%';}}
 
-let historyOpenedOnce=false,reconnectFailures=0,connecting=false;
+let historyOpenedOnce=false,historyHydrated=false,reconnectFailures=0,connecting=false;
 function scheduleReconnect(){
  if(disposed||retryTimer)return;
  const delay=Math.min(12000,1500*2**Math.min(reconnectFailures,3));
@@ -143,7 +143,7 @@ async function connect(){
    const d=await api('');
    shopUI.update(boot.shop);update(d.episode);
    if(['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(state.phase)&&!historyOpenedOnce){historyOpenedOnce=true;void historyUI.open();}
-   if(!historyOpenedOnce)for(const m of d.history||[])chat({...m,userId:m.sender});
+   if(!historyHydrated){for(const m of d.history||[])chat({...m,userId:m.sender});historyHydrated=true;}
    reconnectFailures=0;
   }
   if(disposed)return;
