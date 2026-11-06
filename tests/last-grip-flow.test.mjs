@@ -32,6 +32,9 @@ test('video barriers wait for every visible viewer to finish, including a stalle
 test('X Protocol media gate releases a stalled viewer after its bounded grace period',()=>{
  const gate=new MediaGate({maxWaitMs:10000}),clip={key:'intro',start:0,duration:15000},eligible=()=>true;gate.viewer('stalled',true,clip,eligible);assert.equal(gate.advance(clip,14999,100,20000),0);assert.equal(gate.advance(clip,14999,100,29999),0);assert.equal(gate.advance(clip,14999,100,30000),100);
 });
+test('X Protocol holds the intro clock until visible viewers actually start, then waits for playback to end',()=>{
+ const gate=new MediaGate({maxWaitMs:10000,startWaitMs:5000}),clip={key:'intro-live',start:0,duration:1000},eligible=()=>true;gate.viewer('a',true,clip,eligible);gate.viewer('b',true,clip,eligible);assert.equal(gate.advance(clip,0,50,100),0,'late media preparation cannot consume the opening');gate.started('a',clip.key);assert.equal(gate.advance(clip,0,50,200),0,'all visible viewers need to begin playback');gate.started('b',clip.key);assert.equal(gate.advance(clip,0,50,250),50);assert.equal(gate.advance(clip,998,50,1000),1);assert.equal(gate.advance(clip,999,50,1001),0,'the stage cannot replace a video before its ended event');gate.ended('a',clip.key);assert.equal(gate.advance(clip,999,50,1100),0);gate.ended('b',clip.key);assert.equal(gate.advance(clip,999,50,1150),50);
+});
 test('a summoned player keeps their place in the intro gate while World navigates into the ceremony',()=>{
  const gate=new MediaGate({maxWaitMs:10000}),clip={key:'intro',start:0,duration:15000},eligible=()=>true;gate.viewer('participant',true,clip,eligible);gate.disconnect('participant',{preserveExpected:true});assert(gate.pending());assert(!gate.viewers.has('participant'));
 });

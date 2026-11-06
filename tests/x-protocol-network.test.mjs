@@ -30,9 +30,8 @@ test('live start from the shared visualization asks for bots and synchronizes al
   await f.until(()=>peers.every(p=>p.messages.some(m=>m.type==='protocol-start')));
   for(const id of [STAFF_ID,'live-human','live-observer'])assert.equal((await f.call('/api/world/bootstrap',id)).protocolInvite,'/juegos/x-protocol/');
   for(const p of peers)f.send(p,{type:'protocol-subscribe'});
-  const latest=p=>p.messages.filter(m=>m.type==='protocol-state').at(-1)?.episode;await f.until(()=>peers.every(p=>latest(p)?.phase==='INTRO_VIDEO'));
-  assert.equal(latest(staff).roster.filter(p=>!p.bot).length,1);assert(!latest(staff).roster.some(p=>p.id==='live-observer'));assert.equal(latest(staff).cinematic.url,'/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4');
-  for(const p of peers)f.send(p,{type:'protocol-ready',ceremonyId:start.ceremonyId});await f.until(()=>latest(staff)?.phase==='INTRO_VIDEO');assert.equal(latest(observer).phase,'INTRO_VIDEO','a slow spectator cannot block the intro');
+  const latest=p=>p.messages.filter(m=>m.type==='protocol-state').at(-1)?.episode;await f.until(()=>peers.every(p=>latest(p)?.phase==='ELIMINATION_LOADING'));
+  assert.equal(latest(staff).roster.filter(p=>!p.bot).length,1);assert(!latest(staff).roster.some(p=>p.id==='live-observer'));for(const p of peers)f.send(p,{type:'protocol-ready',ceremonyId:start.ceremonyId});await f.until(()=>peers.every(p=>latest(p)?.phase==='INTRO_VIDEO'));assert.equal(latest(staff).cinematic.url,'/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4');assert.equal(latest(observer).phase,'INTRO_VIDEO','all viewers enter playback together after resources are prepared');
   await f.call('/api/world/x-protocol/control',STAFF_ID,'POST',{type:'cancel',ceremonyId:start.ceremonyId});await f.until(()=>peers.every(p=>p.messages.some(m=>m.type==='protocol-return')));
  }finally{await f.close();}
 });
