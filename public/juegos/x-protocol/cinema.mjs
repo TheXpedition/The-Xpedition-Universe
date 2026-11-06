@@ -1,6 +1,6 @@
 export class ProtocolCinema {
  constructor({video,note,onEnded=()=>{},onFailed=()=>{},onPlaying=()=>{},setTimer=(fn,ms)=>globalThis.setTimeout(fn,ms),clearTimer=id=>globalThis.clearTimeout(id)}){
-  Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,disposed:false,options:{paused:true,visible:true,enabled:true}});
+  Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,autoplayMuted:false,disposed:false,options:{paused:true,visible:true,enabled:true}});
   video.onended=()=>{if(!this.descriptor||this.ended)return;this.ended=true;this.note.hidden=true;this.onEnded(this.key);};
   video.onerror=()=>{if(this.descriptor)this.failure();};
   video.onwaiting=()=>{if(this.descriptor)this.message('Cargando la introducción…');};
@@ -11,15 +11,15 @@ export class ProtocolCinema {
   if(!media?.url||this.descriptor||this.prepared===media.url&&this.video.readyState>=3)return Promise.resolve();
   if(this.preparing?.url===media.url)return this.preparing.promise;
   const video=this.video;video.autoplay=false;video.pause();
-  const promise=new Promise((resolve,reject)=>{const cleanup=()=>{video.removeEventListener('canplay',done);video.removeEventListener('error',fail);};const done=()=>{cleanup();this.prepared=media.url;resolve();};const fail=()=>{cleanup();this.preparing=null;reject(Error('No se pudo cargar la introducción. Reintentando…'));};video.addEventListener('canplay',done,{once:true});video.addEventListener('error',fail,{once:true});video.preload='auto';video.src=media.url;video.load();});
-  this.preparing={url:media.url,promise};return promise;
+  let job;const promise=new Promise((resolve,reject)=>{let timer;const cleanup=()=>{this.clearTimer(timer);video.removeEventListener('canplay',done);video.removeEventListener('error',fail);};const done=()=>{cleanup();if(this.preparing===job){this.prepared=media.url;this.preparing=null;}resolve();};const fail=()=>{cleanup();if(this.preparing===job)this.preparing=null;reject(Error('No se pudo cargar la introducción. Reintentando…'));};video.addEventListener('canplay',done,{once:true});video.addEventListener('error',fail,{once:true});timer=this.setTimer(fail,10000);video.preload='auto';video.src=media.url;video.load();});
+  job={url:media.url,promise};this.preparing=job;return promise;
  }
  sync(descriptor,options={}){
   if(this.disposed)return;this.options={...this.options,...options};
   if((descriptor?.key||null)!==this.key){this.clearTimer(this.timer);this.timer=null;this.key=descriptor?.key||null;this.descriptor=descriptor;this.retries=0;this.ended=false;this.failed=false;this.needsGesture=false;this.pending=false;this.video.pause();this.note.hidden=true;
-   if(descriptor){if(this.prepared!==descriptor.url){this.video.src=descriptor.url;this.video.load();}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
+   this.autoplayMuted=false;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
   }
-  this.video.muted=!this.options.enabled;this.video.volume=1;
+  this.video.muted=!this.options.enabled||this.autoplayMuted;this.video.volume=1;
   if(!descriptor||this.options.paused||!this.options.visible){this.video.pause();return;}
   if(this.failed){this.retry();return;}
   this.play();
@@ -29,12 +29,12 @@ export class ProtocolCinema {
   const key=this.key;this.pending=true;
   let result;try{result=this.video.play();}catch(error){result=Promise.reject(error);}
   void Promise.resolve(result).catch(error=>{if(this.disposed||key!==this.key||this.options.paused||!this.options.visible)return;
-   if(error.name==='NotAllowedError'){this.needsGesture=true;this.message('Toca la pantalla para activar el sonido de la introducción.');}
+   if(error.name==='NotAllowedError'){if(this.options.enabled&&!this.autoplayMuted){this.autoplayMuted=true;this.video.muted=true;this.message('La introducción se reproducirá sin sonido. Toca para activar el audio.');}else{this.needsGesture=true;this.message('Toca la pantalla para iniciar la introducción.');}}
    else if(error.name!=='AbortError')this.failure();
-  }).finally(()=>{if(key===this.key)this.pending=false;});
+  }).finally(()=>{if(key===this.key){this.pending=false;if(this.autoplayMuted&&!this.needsGesture&&this.video.paused)this.play();}});
  }
  failure(){if(this.disposed||!this.descriptor||this.ended)return;this.failed=true;this.message('Reconectando la introducción…');this.onFailed(this.key);this.retry();}
  retry(){if(this.timer||this.disposed)return;const key=this.key;this.timer=this.setTimer(()=>{this.timer=null;if(this.disposed||key!==this.key)return;if(this.options.paused||!this.options.visible){this.retry();return;}this.failed=false;this.needsGesture=false;this.retries++;const join=this.descriptor.url.includes('?')?'&':'?';this.video.src=this.descriptor.url+join+'playback-retry='+this.retries;this.video.load();this.play();},Math.min(15000,1000*2**Math.min(this.retries,4)));}
- unlock(){if(this.disposed)return;if(this.descriptor){this.needsGesture=false;this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
+ unlock(){if(this.disposed)return;if(this.descriptor){this.needsGesture=false;if(this.autoplayMuted){this.autoplayMuted=false;this.video.muted=!this.options.enabled;this.note.hidden=true;}this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
  destroy(){this.disposed=true;this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;}
 }

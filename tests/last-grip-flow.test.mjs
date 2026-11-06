@@ -29,6 +29,12 @@ test('video barriers wait for every visible viewer to finish, including a stalle
  const gate=new MediaGate(),clip={key:'round:peggy',start:100,duration:5010},eligible=()=>true;gate.viewer('a',true,null,eligible);gate.viewer('b',true,null,eligible);gate.observe(clip,eligible);assert.equal(gate.advance(clip,5100,50),9);gate.ended('a',clip.key);assert.equal(gate.advance(clip,5109,50),0);gate.ended('b','old-clip');assert(gate.pending());gate.ended('b',clip.key);assert.equal(gate.advance(clip,5109,50),50);
  const next={...clip,key:'round:ivy',start:5600};gate.observe(next,eligible);assert(gate.pending());gate.viewer('b',false,next,eligible);gate.ended('a',next.key);assert(!gate.pending());gate.viewer('late',true,next,eligible);assert(gate.pending());gate.ended('late',next.key);assert(!gate.pending());
 });
+test('X Protocol media gate releases a stalled viewer after its bounded grace period',()=>{
+ const gate=new MediaGate({maxWaitMs:10000}),clip={key:'intro',start:0,duration:15000},eligible=()=>true;gate.viewer('stalled',true,clip,eligible);assert.equal(gate.advance(clip,14999,100,20000),0);assert.equal(gate.advance(clip,14999,100,29999),0);assert.equal(gate.advance(clip,14999,100,30000),100);
+});
+test('a summoned player keeps their place in the intro gate while World navigates into the ceremony',()=>{
+ const gate=new MediaGate({maxWaitMs:10000}),clip={key:'intro',start:0,duration:15000},eligible=()=>true;gate.viewer('participant',true,clip,eligible);gate.disconnect('participant',{preserveExpected:true});assert(gate.pending());assert(!gate.viewers.has('participant'));
+});
 test('all eighteen supplied full character videos are mapped by character in every qualifier; final has none',()=>{
  assert.equal(EPISODE_MEDIA.presentation.duration,46900);for(const draw of EPISODE_MEDIA.draws){assert.deepEqual(Object.keys(draw).sort(),[...GRIP_IDS].sort());for(const id of GRIP_IDS){assert(draw[id].duration>=5000);assert(draw[id].url.endsWith('selection-'+id+'.mp4'));}}
  const f=fixture();f.s.media=structuredClone(EPISODE_MEDIA);f.staff({type:'beginRound'});let cursor=f.s.round.drawAt;for(const reveal of f.s.round.reveals){assert.equal(reveal.start,cursor);assert.equal(reveal.end-reveal.start,reveal.video.duration+500);cursor=reveal.end;}assert.equal(f.s.round.reveals.length,6);

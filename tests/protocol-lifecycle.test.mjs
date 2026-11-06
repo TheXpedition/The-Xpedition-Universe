@@ -26,7 +26,7 @@ test('finished Last Grip results survive duplicate ceremony starts, cancellation
   service=make();await service.ready;await service.handle(staff,{type:'protocol-subscribe'});
   await action({type:'open'});const id=(await current()).id;await action({type:'open'});assert.equal((await current()).id,id);
   await action({type:'fillBots'});await action({type:'start',ceremonyId:id,expectedPhase:'LOBBY'});await action({type:'start',ceremonyId:id,expectedPhase:'LOBBY'});
-  assert.equal(starts,1);assert.equal(service.phase(),'ELIMINATION_LOADING');assert.equal((await current()).events.filter(e=>e.phase==='ELIMINATION_LOADING').length,1);
+  assert.equal(starts,1);assert.equal(service.phase(),'INTRO_VIDEO');assert.equal((await current()).events.filter(e=>e.phase==='INTRO_VIDEO').length,1);
   await assert.rejects(action({type:'cancel',ceremonyId:'previous-ceremony'}),/ceremonia anterior/);
   await assert.rejects(control({type:'cancel'},{id:'outsider'}),/Solo Dirección/);await control({type:'pause'});await control({type:'pause'});await control({type:'resume'});await control({type:'resume'});await control({type:'pause'});clients.clear();await control({type:'cancel',ceremonyId:id,expectedPhase:'RESULTS_SELECTION'});clients.set('staff',staff);const returned=await current();await action({type:'cancel',ceremonyId:id});assert.equal((await current()).phaseAt,returned.phaseAt);
   for(let i=0;i<10&&service.phase()!=='ELIMINATION_FINISHED';i++){time+=1000;await new Promise(resolve=>setTimeout(resolve,70));}

@@ -11,8 +11,8 @@ export function entryReadiness(s){
 
 // Resource jobs may finish out of order after reconnects or a new ceremony.
 export class EntryResources {
- constructor(load){this.load=load;this.job=null;this.ready=null;}
+ constructor(load,{timeoutMs=12000,setTimer=(fn,ms)=>globalThis.setTimeout(fn,ms),clearTimer=id=>globalThis.clearTimeout(id)}={}){this.load=load;this.timeoutMs=timeoutMs;this.setTimer=setTimer;this.clearTimer=clearTimer;this.job=null;this.ready=null;}
  key(s){return s.id+':'+s.roster.map(p=>p.characterId).sort().join(',')+':'+(s.entryMedia?.url||'');}
- async prepare(s){const key=this.key(s);if(this.job?.key!==key){const job={key};this.job=job;this.ready=null;job.promise=Promise.resolve().then(()=>this.load(s)).then(()=>{if(this.job===job)this.ready=key;return this.job===job;}).catch(error=>{if(this.job===job)this.job=null;throw error;});}return this.job.promise;}
+ async prepare(s){const key=this.key(s);if(this.job?.key!==key){const job={key};this.job=job;this.ready=null;let timer;const loaded=Promise.resolve().then(()=>this.load(s)).catch(()=>{});const timeout=new Promise(resolve=>{timer=this.setTimer(resolve,this.timeoutMs);});job.promise=Promise.race([loaded,timeout]).finally(()=>this.clearTimer(timer)).then(()=>{if(this.job===job)this.ready=key;return this.job===job;});}return this.job.promise;}
  isReady(s){return this.ready===this.key(s);}
 }

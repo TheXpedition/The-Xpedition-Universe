@@ -3,28 +3,27 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
 import {openDatabase} from '../database.mjs';
 import {createProtocolService} from '../world-protocol-service.mjs';
-import {createProtocol,tickProtocol} from '../public/juegos/x-protocol/engine.mjs';
-import {entryReadiness,EntryResources} from '../public/juegos/x-protocol/entry-loading.mjs';
+import {createProtocol,applyProtocol,tickProtocol,protocolView} from '../public/juegos/x-protocol/engine.mjs';
+import {EntryResources} from '../public/juegos/x-protocol/entry-loading.mjs';
 import {mapProtocolRanking} from '../world-protocol-results.mjs';
 import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
-test('loading waits for every connected viewer without cutting off slow resources; disconnected clients have navigation grace',()=>{
- const s=createProtocol({now:0});s.phase='ELIMINATION_LOADING';s.roster=[{id:'bot',bot:true}];s.visitors=[{id:'staff',connected:true,assetsReady:true},{id:'viewer',connected:true,assetsReady:false}];s.loadingViewers=['staff','viewer'];
- for(let i=1;i<=40;i++)tickProtocol(s,i*1000);
- assert.equal(s.phase,'ELIMINATION_LOADING');assert.deepEqual(entryReadiness(s).pending,['viewer']);
- s.visitors[1].assetsReady=true;tickProtocol(s,41000);assert.equal(s.phase,'INTRO_VIDEO');
- s.phase='ELIMINATION_LOADING';s.clock=0;s.phaseAt=0;s.at=0;s.visitors[1]={id:'viewer',connected:false};
- for(let i=1;i<15;i++){tickProtocol(s,i*1000);assert.equal(s.phase,'ELIMINATION_LOADING');}
- tickProtocol(s,15000);assert.equal(s.phase,'INTRO_VIDEO');
+test('staff start opens the video without waiting for user or bot assets; recovered legacy loading is bounded',()=>{
+ const s=createProtocol({now:0});s.roster=SHELTER_PARTICIPANTS.slice(0,5).map((characterId,i)=>({id:'p'+i,characterId,bot:i===0,connected:true,assetsReady:false}));s.phase='LOBBY';
+ s.media.intro={url:'/intro.mp4',duration:15000};
+ assert.equal(protocolView(s).entryMedia.url,'/intro.mp4');applyProtocol(s,{type:'start'},{staff:true});assert.equal(s.phase,'INTRO_VIDEO');
+ s.phase='ELIMINATION_LOADING';s.clock=0;s.phaseAt=0;s.at=0;s.visitors=[{id:'viewer',connected:true,assetsReady:false}];
+ for(let i=1;i<14;i++){tickProtocol(s,i*50);assert.equal(s.phase,'ELIMINATION_LOADING');}
+ tickProtocol(s,700);assert.equal(s.phase,'INTRO_VIDEO');
 });
 
-test('out-of-order resource jobs never acknowledge the wrong ceremony and retry failed loads',async()=>{
+test('out-of-order and failed resource jobs never acknowledge the wrong ceremony or delay the transition',async()=>{
  const deferred=new Map(),loader=new EntryResources(s=>new Promise((resolve,reject)=>deferred.set(s.id,{resolve,reject}))),a={id:'a',roster:[]},b={id:'b',roster:[]};
  const first=loader.prepare(a);await Promise.resolve();const next=loader.prepare(b);await Promise.resolve();
  deferred.get('a').resolve();assert.equal(await first,false);assert.equal(loader.isReady(b),false);
  deferred.get('b').resolve();assert.equal(await next,true);assert.equal(loader.isReady(b),true);assert.equal(loader.isReady(a),false);
- const c={id:'c',roster:[]},failed=loader.prepare(c);await Promise.resolve();deferred.get('c').reject(Error('offline'));await assert.rejects(failed,/offline/);
- const retry=loader.prepare(c);await Promise.resolve();deferred.get('c').resolve();assert(await retry);
+ const c={id:'c',roster:[]},failed=loader.prepare(c);await Promise.resolve();deferred.get('c').reject(Error('offline'));assert.equal(await failed,true);assert.equal(loader.isReady(c),true);
+ const timed=new EntryResources(()=>new Promise(()=>{}),{timeoutMs:5});assert.equal(await timed.prepare({id:'slow',roster:[]}),true);
 });
 
 async function fixture(n=0){const dir=await fs.mkdtemp(path.join(os.tmpdir(),'protocol-entry-')),db=await openDatabase(dir),clients=new Map(),messages=[],prepared=[];let now=1000,svc,busy=false;
@@ -41,14 +40,14 @@ test('staff starts with no humans, confirms bots, summons staff and spectators, 
   await assert.rejects(f.http('start-live',{}),/Confirma/);await assert.rejects(f.http('start-live',{fillBots:false}),/cuatro/);assert.equal(await f.current(),null);
   await assert.rejects(f.http('start-live',{fillBots:true},'viewer'),/Dirección/);
   f.setBusy(true);await assert.rejects(f.http('start-live',{fillBots:true}),/reto activo/);assert.equal(await f.current(),null);f.setBusy(false);
-  const start=await f.http('start-live',{fillBots:true}),s=await f.current();assert.equal(s.roster.length,18);assert(s.roster.every(p=>p.bot));assert.equal(s.phase,'ELIMINATION_LOADING');assert.deepEqual(new Set(f.messages.filter(m=>m.type==='protocol-start').map(m=>m.user)),new Set(['staff','viewer']));
+  const start=await f.http('start-live',{fillBots:true}),s=await f.current();assert.equal(s.roster.length,18);assert(s.roster.every(p=>p.bot));assert.equal(s.phase,'INTRO_VIDEO');assert.deepEqual(new Set(f.messages.filter(m=>m.type==='protocol-start').map(m=>m.user)),new Set(['staff','viewer']));
   assert.equal(f.prepared.length,2);assert(f.prepared[0].startsWith('Bienvenidos'));assert(f.prepared[1].includes('resultados'));
   assert.equal(f.svc.entry('viewer'),'/juegos/x-protocol/');assert.equal((await f.http('start-live',{fillBots:true})).ceremonyId,start.ceremonyId,'double clicks must not create a second ceremony');
   const staff=f.clients.get('staff'),viewer=f.clients.get('viewer');
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:s.id});assert.equal((await f.current()).visitors.find(p=>p.id==='viewer').assetsReady,false,'the World socket cannot ACK before entering the loading page');
   for(const c of [staff,viewer])await f.svc.handle(c,{type:'protocol-subscribe'});
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:'old'});assert.equal((await f.current()).visitors.find(p=>p.id==='viewer').assetsReady,false);
-  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id});await f.advance(1000);assert.equal(f.svc.phase(),'ELIMINATION_LOADING','staff readiness alone does not skip the spectator');
+  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id});await f.advance(1000);assert.equal(f.svc.phase(),'INTRO_VIDEO','asset readiness cannot hold the intro open');
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:s.id});await f.advance(1000);assert.equal(f.svc.phase(),'INTRO_VIDEO');
  }finally{await f.close();}
 });
