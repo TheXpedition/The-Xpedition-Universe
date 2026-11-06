@@ -9,6 +9,16 @@ import {createProtocolMedia} from '../world-protocol-media.mjs';
 import {mapProtocolRanking} from '../world-protocol-results.mjs';
 import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
+test('all viewers finishing the intro releases the ceremony even if server clock was held for buffering',()=>{
+ const state=createProtocol({now:0});
+ state.media.intro={url:'/intro.mp4',duration:15070};
+ state.phase='INTRO_VIDEO';state.phaseAt=0;state.clock=3000;state.at=3000;
+ tickProtocol(state,3050);
+ assert.equal(state.phase,'INTRO_VIDEO');
+ tickProtocol(state,3100,{introComplete:true});
+ assert.equal(state.phase,'CEREMONY_STAGE_VISIBLE');
+});
+
 test('staff start waits for viewer assets; recovered legacy loading has a bounded fallback',()=>{
  const s=createProtocol({now:0});s.roster=SHELTER_PARTICIPANTS.slice(0,5).map((characterId,i)=>({id:'p'+i,characterId,bot:i===0,connected:true,assetsReady:false}));s.phase='LOBBY';
  s.media.intro={url:'/intro.mp4',duration:15000};
