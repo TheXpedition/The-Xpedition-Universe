@@ -43,7 +43,7 @@ test('STAFF can launch a ceremony with bots from World home even while its World
   const startResponse=page.waitForResponse(r=>r.url().includes('/api/world/x-protocol/start-live')&&r.request().method()==='POST',{timeout:30000});
   await page.locator('.protocol-history [data-fill-bots="yes"]').click();
   const response=await startResponse;
-  assert.equal(response.status(),200,'HTTP should start the ceremony without an existing World WebSocket: '+(await response.text()).slice(0,350));
+  const status=response.status();if(status!==200){let problem='';try{problem=(await response.text()).slice(0,350);}catch{}assert.fail('HTTP start failed, status='+status+' '+problem);}assert.equal(status,200);
   await page.waitForURL(/\/juegos\/x-protocol\//,{timeout:30000});
   await page.waitForFunction(()=>document.body.dataset.phase==='ELIMINATION_LOADING'||document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:30000});
   await page.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO'),undefined,{timeout:30000});
