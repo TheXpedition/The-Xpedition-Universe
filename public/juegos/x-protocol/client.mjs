@@ -126,7 +126,67 @@ function narrativeUI(){const s=state,mode=arenaMode(s);document.body.dataset.sce
 function renderVitals(){const v=state.ownVitals||{},defs=[['health','Salud'],['hunger','Hambre'],['energy','Energía'],['sleep','Sueño'],['stress','Estrés']];if(!$('#vitals').children.length)$('#vitals').innerHTML='<small>TU ESTADO</small>'+defs.map(([id,label])=>'<div class="vital" data-v="'+id+'"><span>'+label+'</span><i><b></b></i><strong></strong></div>').join('')+'<div class="impact"></div>';for(const [id]of defs){const root=$('#vitals [data-v='+id+']'),value=Math.round(v[id]??(id==='stress'?0:100));root.querySelector('b').style.width=value+'%';root.querySelector('strong').textContent=value;root.classList.toggle('critical',id==='stress'?value>75:value<25);}$('#vitals .impact').textContent='Influencia en el duelo: '+Math.round(state.ownPenalty*100)+'% · máximo 14%';}
 function renderScores(){const d=state.duel,visible=d&&['DUEL_TYPE_REVEAL','BETTING_PHASE','DUEL_GUIDE','DUEL_COUNTDOWN','DUEL_ACTIVE','DUEL_RESULT'].includes(state.phase),root=$('#scoreboard');root.hidden=!visible;if(!visible)return;const key=state.id+':'+d.type+':'+d.ids.join();if(root.dataset.key!==key){root.dataset.key=key;root.innerHTML=d.ids.map(id=>'<div class="score-card" data-id="'+esc(id)+'"><img src="'+portrait(person(id))+'" alt=""><div><small>'+esc(DUELS[d.type].name)+'</small><strong>'+esc(name(id))+'</strong><div class="meter"><b></b></div></div><b class="metric"></b></div>').join('');}for(const [i,id]of d.ids.entries()){const a=d.actors[id],card=root.children[i],value=d.type==='typing'?a.score:d.type==='puzzle'?a.progress:d.type==='lights'?a.good:d.type==='balance'?a.balance:i?100-d.force:d.force,max=d.type==='typing'?TYPING_GOAL:d.type==='lights'?6:100;card.querySelector('small').textContent=d.type==='balance'?'RONDA '+d.round+' / 3 · '+(d.roundWins[id]||0)+' VICTORIAS':DUELS[d.type].name;card.querySelector('.metric').textContent=d.type==='puzzle'?(d.actors[id].completed||0)+'/3':d.type==='typing'?value+'/'+TYPING_GOAL:d.type==='lights'?value+'/6':value.toFixed(d.type==='rope'?1:0)+'%';card.querySelector('.meter b').style.width=Math.min(100,value/max*100)+'%';}}
 
-let historyOpenedOnce=false;
-async function connect(){try{boot=await fetch('/api/world/bootstrap').then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World.');return d;});const d=await api('');shopUI.update(boot.shop);update(d.episode);if(['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(state.phase)&&!historyOpenedOnce){historyOpenedOnce=true;void historyUI.open();}for(const m of d.history||[])chat({...m,userId:m.sender});socket=new WebSocket(location.origin.replace(/^http/,'ws')+'/api/world/live?zone='+encodeURIComponent(boot.profile.lastZone));socket.onopen=()=>{connected=true;readySent=null;$('#connection').textContent='● EN VIVO';wire({type:'protocol-subscribe'});wire({type:'protocol-viewer',visible:!document.hidden});if(clipEnded&&state?.cinematic?.key===clipEnded)wire({type:'protocol-media-ended',key:clipEnded});ensureEntryResources();};socket.onmessage=e=>{let m;try{m=JSON.parse(e.data);}catch{return;}historyUI.handle(m);shopUI.handle(m);if(m.type==='protocol-state')update(m.episode);if(m.type==='protocol-return')location.assign(m.url);if(m.type==='protocol-chat')chat(m.message);if(m.type==='protocol-announcement'){lastCommunication=m.message;announcer.preview(m.message);}if(m.type==='maria-voice')receiveVoice(m.announcement);if(m.type==='maria-voice-cancel')cancelVoice(m.announcement);if(m.type==='maria-voice-error')announcer.dismiss(m.id);for(const a of m.mariaVoice||[])receiveVoice(a);if(m.type==='error')notice(m.message);};socket.onclose=e=>{connected=false;$('#connection').textContent='RECONECTANDO';if(e.code===4002)return notice('Tu cuenta está abierta en otra pestaña de World. Usa una sola pestaña por cuenta.');if(!disposed)retryTimer=setTimeout(()=>void connect(),2500);};if(new URLSearchParams(location.search).has('staff-preview')&&state.staff)$('#direction').hidden=false;}catch(e){notice(e.message);$('#phase').textContent='Sesión no disponible';}}
+let historyOpenedOnce=false,reconnectFailures=0,connecting=false;
+function scheduleReconnect(){
+ if(disposed||retryTimer)return;
+ const delay=Math.min(12000,1500*2**Math.min(reconnectFailures,3));
+ retryTimer=setTimeout(()=>{retryTimer=0;void connect();},delay);
+}
+async function connect(){
+ if(disposed||connecting||socket?.readyState===WebSocket.CONNECTING||socket?.readyState===WebSocket.OPEN)return;
+ connecting=true;
+ try{
+  // Rejoining the same live ceremony must not reload every account, shop and
+  // roster query from remote Postgres. Restore the WebSocket first.
+  if(!boot||!state||reconnectFailures>=4){
+   boot=await fetch('/api/world/bootstrap').then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World.');return d;});
+   const d=await api('');
+   shopUI.update(boot.shop);update(d.episode);
+   if(['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(state.phase)&&!historyOpenedOnce){historyOpenedOnce=true;void historyUI.open();}
+   if(!historyOpenedOnce)for(const m of d.history||[])chat({...m,userId:m.sender});
+   reconnectFailures=0;
+  }
+  if(disposed)return;
+  const ws=new WebSocket(location.origin.replace(/^http/,'ws')+'/api/world/live?zone='+encodeURIComponent(boot.profile.lastZone));
+  socket=ws;
+  ws.onopen=()=>{
+   if(disposed||socket!==ws){ws.close();return;}
+   reconnectFailures=0;connected=true;readySent=null;$('#connection').textContent='● EN VIVO';
+   wire({type:'protocol-subscribe'});wire({type:'protocol-viewer',visible:!document.hidden});
+   if(clipEnded&&state?.cinematic?.key===clipEnded)wire({type:'protocol-media-ended',key:clipEnded});
+   ensureEntryResources();
+  };
+  ws.onmessage=e=>{
+   if(socket!==ws)return;
+   let m;try{m=JSON.parse(e.data);}catch{return;}
+   historyUI.handle(m);shopUI.handle(m);
+   if(m.type==='protocol-state')update(m.episode);
+   if(m.type==='protocol-return')location.assign(m.url);
+   if(m.type==='protocol-chat')chat(m.message);
+   if(m.type==='protocol-announcement'){lastCommunication=m.message;announcer.preview(m.message);}
+   if(m.type==='maria-voice')receiveVoice(m.announcement);
+   if(m.type==='maria-voice-cancel')cancelVoice(m.announcement);
+   if(m.type==='maria-voice-error')announcer.dismiss(m.id);
+   for(const a of m.mariaVoice||[])receiveVoice(a);
+   if(m.type==='error')notice(m.message);
+  };
+  ws.onclose=e=>{
+   if(socket!==ws||disposed)return;
+   connected=false;socket=null;
+   console.warn('X Protocol WebSocket closed',e.code,e.reason||'');
+   $('#connection').textContent='RECONECTANDO · '+e.code;
+   if(e.code===4002){notice('Tu cuenta está abierta en otra pestaña de World. Usa una sola pestaña por cuenta.');return;}
+   if(e.code===4003){notice('Tu sesión o acceso a World terminó.');return;}
+   reconnectFailures++;
+   scheduleReconnect();
+  };
+  if(new URLSearchParams(location.search).has('staff-preview')&&state.staff)$('#direction').hidden=false;
+ }catch(e){
+  if(disposed)return;
+  console.warn('X Protocol reconnect failed',e.message);
+  $('#connection').textContent='RECONECTANDO · HTTP';
+  reconnectFailures++;scheduleReconnect();
+ }finally{connecting=false;}
+}
 window.addEventListener('pagehide',()=>{disposed=true;clearTimeout(retryTimer);clearTimeout(entryRetry);for(const pending of pendingProtocolVoices.values())clearTimeout(pending.timer);pendingProtocolVoices.clear();cancelAnimationFrame(frame);cinema.destroy();preparation.destroy();polish.destroy();historyUI.destroy();shopUI.destroy();announcer.destroy();music.destroy();weatherAudio?.pause();socket?.close();});
 void renderer.load().then(()=>{if(disposed)return;if(state){void renderer.preloadDuel(state).catch(()=>{});if(['LOBBY','INTRO_VIDEO'].includes(state.phase))void entryResources.prepare(state);geometry();}loaded=true;$('#asset-loader').hidden=state?.phase!=='ELIMINATION_LOADING';ensureEntryResources();}).catch(()=>{if(disposed)return;notice('No se pudieron cargar algunas imágenes. Comprueba tu conexión.');loaded=true;$('#asset-loader').hidden=state?.phase!=='ELIMINATION_LOADING';ensureEntryResources();});void connect();frame=requestAnimationFrame(draw);
