@@ -70,6 +70,24 @@ test('staff starts with no humans, confirms bots, summons staff and spectators, 
  }finally{await f.close();}
 });
 
+test('staff can open, fill, start and recover the same ceremony through HTTP when the socket disconnects',async()=>{
+ const f=await fixture();
+ try{
+  await assert.rejects(f.http('control',{type:'open'},'viewer'),/Solo Dirección/);
+  const opened=await f.http('control',{type:'open'});
+  assert.equal(opened.episode.phase,'LOBBY');
+  assert.equal((await f.http('control',{type:'fillBots',ceremonyId:opened.episode.id})).episode.roster.length,18);
+  const started=await f.http('control',{type:'start',ceremonyId:opened.episode.id});
+  assert.equal(started.episode.phase,'ELIMINATION_LOADING');
+  const paused=await f.http('control',{type:'pause',ceremonyId:opened.episode.id});
+  assert.equal(paused.episode.paused,true);
+  const resumed=await f.http('control',{type:'resume',ceremonyId:opened.episode.id});
+  assert.equal(resumed.episode.paused,false);
+  await f.http('control',{type:'cancel',ceremonyId:opened.episode.id});
+  assert.equal((await f.current()).cancelled,true);
+ }finally{await f.close();}
+});
+
 test('declining bots preserves exactly the real connected roster even on an auto-bots server',async()=>{
  const f=await fixture(4);try{assert.equal((await f.http('start-plan')).missing,14);const start=await f.http('start-live',{fillBots:false}),s=await f.current();assert.equal(s.id,start.ceremonyId);assert.equal(s.roster.length,4);assert(s.roster.every(p=>!p.bot));assert.equal(s.allowedCharacters.length,4);assert.equal(f.messages.filter(m=>m.type==='protocol-start').length,6);
   assert.throws(()=>mapProtocolRanking({ranking:[{characterId:'peggy'},...s.roster]},s.roster),/ganador/,'a reduced cast cannot inherit a missing winner’s victory');
