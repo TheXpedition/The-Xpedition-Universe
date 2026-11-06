@@ -1,5 +1,5 @@
 {
-  "release": "world-20261106-x-protocol-live-sync-v1",
+  "release": "world-20261106-x-protocol-live-sync-v2",
   "features": [
     "purchased-characters",
     "pajamas-18",
@@ -10,6 +10,8 @@
     "batched-postgres-start",
     "smooth-local-controls",
     "live-backpressure",
-    "x-protocol-live-sync"
+    "x-protocol-live-sync",
+    "x-protocol-bounded-entry",
+    "narration-screen-sync"
   ]
 }

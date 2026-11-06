@@ -53,7 +53,7 @@ test('voice accepts its own isolated World room paths, while rejecting foreign r
 
 test('protocol visuals preload before the intro ends and stale narration cannot outlive its screen',()=>{
  const source=roomText(readFileSync(new URL('../public/juegos/x-protocol/client.mjs',import.meta.url),'utf8'),'/world-play/servers/room-a');
- assert(source.includes("$('#monitor-caption').style.visibility='visible'"));assert(!source.includes("?'hidden':'visible'"));assert(source.includes('void renderer.preloadEntry(state).catch(()=>{})'));assert(source.includes('visible:!!state?.cinematic||!document.hidden'));assert(source.includes('announcer.cancelEvent(old.speech.id)'));
+ assert(source.includes("$('#monitor-caption').style.visibility='visible'"));assert(!source.includes("?'hidden':'visible'"));assert(source.includes("void entryResources.prepare(state)"));assert(source.includes('renderer.preloadEntry(s)'));assert(source.includes('cinema.prepare(s.entryMedia||s.cinematic||s.media?.intro)'));assert(source.includes('visible:!document.hidden'));assert(source.includes('cinema.syncClock(protocolClock())'));assert(source.includes('announcer.cancelEvent(old.speech.id)'));
 });
 test('native audio opens streaming speech immediately after gesture unlock without fetching or decoding the whole MP3',async()=>{
  const ctx=context(),audio=new NativeAudio();let fetched=0;const p=new AnnouncementPlayer({createContext:()=>ctx,createAudio:()=>audio,fetcher:()=>{fetched++;throw Error('must stream');}});

@@ -41,8 +41,8 @@ test('finished Last Grip results survive duplicate ceremony starts, cancellation
   service=make();await service.ready;await service.handle(staff,{type:'protocol-subscribe'});await service.handle(staff,{type:'protocol-viewer',visible:true});await action({type:'resume'});
   const videoKey=messages.filter(m=>m.type==='protocol-state').at(-1).episode.cinematic.key;
   await service.handle(staff,{type:'protocol-media-failed',key:videoKey});
+  time+=100;await new Promise(resolve=>setTimeout(resolve,70));assert.equal(service.phase(),'INTRO_VIDEO','a media failure is not counted as a successful ended event');
   for(let i=0;i<4;i++){time+=1000;await new Promise(resolve=>setTimeout(resolve,70));}
-  assert.equal(service.phase(),'INTRO_VIDEO','a playback failure cannot skip the intro');
-  await service.handle(staff,{type:'protocol-media-ended',key:videoKey});time+=1000;await new Promise(resolve=>setTimeout(resolve,80));assert.equal(service.phase(),'CEREMONY_STAGE_VISIBLE');
+  assert.equal(service.phase(),'CEREMONY_STAGE_VISIBLE','a failed media request has a bounded fallback so the ceremony cannot freeze');
  }finally{if(service)await service.close();await db.close();assert(path.resolve(folder).startsWith(path.resolve(os.tmpdir())+path.sep));await fs.rm(folder,{recursive:true,force:true});}
 });
