@@ -4,6 +4,7 @@ import {chromium} from 'playwright-core';
 import {mkdir} from 'node:fs/promises';
 import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
 import {claimFixtureCharacter} from './helpers/world-character-fixtures.mjs';
+import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
 test('real Chromium STAFF and participant screens play the complete intro, transition, and accept results', {timeout:120000},async()=>{
  const f=await liveFixture('protocol-browser-smoke',[
@@ -47,6 +48,11 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   };
   await control('open');
   await control('fillBots');
+  const faces=await Promise.all(SHELTER_PARTICIPANTS.map(async characterId=>{
+   const result=await staff.request.get(f.base+'/juegos/x-protocol/art/portraits/'+characterId+'-face.webp');
+   return {characterId,status:result.status()};
+  }));
+  assert.deepEqual(faces.filter(a=>a.status!==200),[],'all 18 ranking portraits must load over the actual World HTTP route');
   await control('start');
 
   await staff.waitForFunction(()=>document.body.dataset.phase==='ELIMINATION_LOADING'||document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:15000});
