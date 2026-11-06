@@ -25,4 +25,4 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - run: node --test tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs
+      - run: node --test --test-concurrency=2 tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs tests/protocol-lifecycle.test.mjs tests/x-protocol-network.test.mjs tests/world-runtime-performance.test.mjs
