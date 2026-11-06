@@ -2,7 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ProtocolCinema} from '../public/juegos/x-protocol/cinema.mjs';
 import {reclaimIdleWorlds} from '../world-media-stream.mjs';
+import {MediaGate} from '../public/juegos/last-grip/media-gate.mjs';
 function fixture(){let callback=null,ended=0,failed=0,plays=0;const video={paused:true,muted:false,volume:1,src:'',load(){},pause(){this.paused=true;},removeAttribute(){this.src='';},play(){plays++;this.paused=false;return Promise.resolve();}},note={hidden:true,textContent:''};const player=new ProtocolCinema({video,note,onEnded:()=>ended++,onFailed:()=>failed++,setTimer:fn=>{callback=fn;return 1;},clearTimer:()=>{callback=null;}});return {player,video,note,retry:()=>callback?.(),get ended(){return ended;},get failed(){return failed;},get plays(){return plays;}};}
+test('a failed video is not a successful finish; a later real ended event is',()=>{
+ const gate=new MediaGate({maxWaitMs:10000});
+ const clip={key:'intro',start:0,duration:15070};
+ gate.viewer('viewer',true,clip,()=>true);
+ gate.failed('viewer','intro');
+ assert.equal(gate.current.ended.has('viewer'),true);
+ assert.equal(gate.current.completed.has('viewer'),false);
+ gate.ended('viewer','intro');
+ assert.equal(gate.current.completed.has('viewer'),true);
+});
 test('a failed intro retries from its source and cannot count as completed before the real ended event',async()=>{const f=fixture();f.player.sync({key:'intro',url:'/intro.mp4'},{paused:false});await Promise.resolve();f.video.onerror();assert.equal(f.failed,1);assert.equal(f.ended,0);assert.match(f.note.textContent,/Reconectando/);f.retry();assert.match(f.video.src,/intro.mp4\?playback-retry=1$/);assert.equal(f.ended,0);f.video.onplaying();assert.equal(f.note.hidden,true);f.video.onended();f.video.onended();assert.equal(f.ended,1);f.player.destroy();});
 test('autoplay denial retries muted without any gesture, then allows sound on gesture and survives pause',async()=>{const f=fixture();let attempts=0;f.video.play=function(){attempts++;if(!this.muted)return Promise.reject(Object.assign(Error('gesture required'),{name:'NotAllowedError'}));this.paused=false;return Promise.resolve();};f.player.sync({key:'intro',url:'/intro.mp4'},{paused:false,enabled:true});await new Promise(resolve=>setImmediate(resolve));assert(attempts>=2,'automatic muted retry must run without user interaction');assert.equal(f.player.needsGesture,false);assert.equal(f.video.muted,true);assert.equal(f.video.paused,false);assert.equal(f.ended,0);f.player.unlock();assert.equal(f.video.muted,false);f.video.onplaying();f.video.onwaiting();assert.match(f.note.textContent,/Cargando/);f.player.sync({key:'intro',url:'/intro.mp4'},{paused:true});assert.equal(f.video.paused,true);assert.equal(f.video.src,'/intro.mp4');f.video.play=function(){this.paused=false;return Promise.resolve();};f.player.sync({key:'intro',url:'/intro.mp4'},{paused:false});assert.equal(f.video.src,'/intro.mp4');assert.equal(f.ended,0);f.video.onended();assert.equal(f.ended,1);f.player.destroy();});
 test('a second ceremony with the same clip restarts from frame zero',async()=>{const f=fixture();f.player.sync({key:'first',url:'/intro.mp4'},{paused:false});await Promise.resolve();f.video.onended();f.video.currentTime=9.5;f.player.sync({key:'second',url:'/intro.mp4'},{paused:false});assert.equal(f.video.currentTime,0,'new ceremonies must not reuse the previous playback position');assert.equal(f.player.ended,false);f.player.destroy();});
