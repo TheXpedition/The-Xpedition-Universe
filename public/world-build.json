@@ -1,5 +1,5 @@
 {
-  "release": "world-20261104-runtime-recovery-v3.1",
+  "release": "world-20261106-x-protocol-live-sync-v1",
   "features": [
     "purchased-characters",
     "pajamas-18",
@@ -9,6 +9,7 @@
     "cold-static-loading",
     "batched-postgres-start",
     "smooth-local-controls",
-    "live-backpressure"
+    "live-backpressure",
+    "x-protocol-live-sync"
   ]
 }
