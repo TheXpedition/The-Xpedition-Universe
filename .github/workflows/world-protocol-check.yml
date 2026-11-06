@@ -39,3 +39,4 @@ jobs:
       - run: node --check public/juegos/x-protocol/client.mjs && node --check public/juegos/x-protocol/cinema.mjs && node --check public/juegos/world-ui.mjs && node --check world.mjs && node --check world-hub.mjs && node --check world-http-proxy.mjs && node --check world-companion.mjs
       - run: node --test --test-concurrency=2 tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs tests/protocol-lifecycle.test.mjs tests/protocol-full-ceremony.test.mjs tests/x-protocol-network.test.mjs tests/world-runtime-performance.test.mjs
       - run: node --test tests/protocol-browser-smoke.test.mjs
+      - run: node --test tests/protocol-staff-home-browser.test.mjs

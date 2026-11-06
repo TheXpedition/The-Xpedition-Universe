@@ -80,6 +80,37 @@ test('staff starts with no humans, confirms bots, summons staff and spectators, 
  }finally{await f.close();}
 });
 
+test('STAFF can start a full-bot ceremony from World home without opening a World websocket first',async()=>{
+ const f=await fixture();
+ try{
+  const staff=f.clients.get('staff');
+  f.clients.delete('staff'); // World's home menu is an HTTP page, not a live socket.
+  assert.deepEqual(await f.http('start-plan',undefined,'viewer').catch(error=>({error:error.message})),{error:'Solo Dirección inicia la ceremonia.'});
+  f.clients.delete('viewer');
+  let started=null;
+  const post=async input=>{
+   let result;
+   await f.svc.handleHttp({method:'POST'},{},new URL('http://test/api/world/x-protocol/start-live'),staff.user,{body:async()=>input,json:(_,value)=>{result=value;}});
+   return result;
+  };
+  started=await post({fillBots:true});
+  const current=await f.current();
+  assert.equal(current.phase,'ELIMINATION_LOADING');
+  assert.equal(current.roster.length,18);
+  assert.equal(current.roster.every(p=>p.bot),true);
+  assert.equal(current.host,'staff');
+  assert(current.visitors.some(p=>p.id==='staff'),'director must be in the live audience after joining');
+  assert(current.loadingViewers.includes('staff'),'director must be counted in the shared entry barrier');
+  assert.equal(f.svc.entry('staff'),'/juegos/x-protocol/','director can navigate to the ceremony page without a previous socket');
+  assert.equal((await post({fillBots:true})).ceremonyId,started.ceremonyId,'repeat click must not create another ceremony');
+  f.clients.set('staff',staff);
+  await f.svc.handle(staff,{type:'protocol-subscribe'});
+  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:started.ceremonyId});
+  await f.advance(50);
+  assert.equal(f.svc.phase(),'INTRO_VIDEO','the first real director socket must join and begin the intro');
+ }finally{await f.close();}
+});
+
 test('staff can open, fill, start and recover the same ceremony through HTTP when the socket disconnects',async()=>{
  const f=await fixture();
  try{
