@@ -62,6 +62,9 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({state:'attached',timeout:15000});
   await staff.evaluate(()=>{
    window.__modalTimeline=[];
+   document.addEventListener('click',e=>window.__modalTimeline.push({event:'click',target:e.target?.id||e.target?.tagName,phase:document.body.dataset.phase,stamp:Math.round(performance.now())}),true);
+   const previousSend=WebSocket.prototype.send;WebSocket.prototype.send=function(data){if(String(data).includes('"type":"results"'))window.__modalTimeline.push({event:'socket-results-action',phase:document.body.dataset.phase,stamp:Math.round(performance.now())});return previousSend.call(this,data);};
+   const previousFetch=window.fetch;window.fetch=function(url,options){if(String(url).includes('/control')&&String(options?.body||'').includes('"type":"results"'))window.__modalTimeline.push({event:'http-results-action',phase:document.body.dataset.phase,stamp:Math.round(performance.now())});return previousFetch.call(this,url,options);};
    const dialog=document.querySelector('#dialog');
    new MutationObserver(()=>window.__modalTimeline.push({event:'dialog-change',open:dialog.open,phase:document.body.dataset.phase,stamp:Math.round(performance.now())})).observe(dialog,{attributes:true,attributeFilter:['open']});
    new MutationObserver(()=>window.__modalTimeline.push({event:'phase-change',open:dialog.open,phase:document.body.dataset.phase,stamp:Math.round(performance.now())})).observe(document.body,{attributes:true,attributeFilter:['data-phase']});
