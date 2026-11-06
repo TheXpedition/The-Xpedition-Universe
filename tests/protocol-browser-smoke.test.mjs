@@ -54,7 +54,7 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await staff.locator('#results-controls summary').click();
   await staff.locator('#result-name').fill('Reto de prueba');
   await staff.locator('#save-result').click();
-  await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({timeout:15000});
+  await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({state:'attached',timeout:15000});
   await staff.locator('#choose-results').click();
   await staff.locator('#dialog-confirm').click();
   await staff.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
