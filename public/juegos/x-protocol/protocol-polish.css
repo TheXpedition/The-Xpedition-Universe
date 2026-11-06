@@ -91,7 +91,7 @@ body[data-game="puzzle"] #private-station,body[data-game="puzzle"][data-side="1"
 #monitor-ranking .rank-history{flex:0 0 26%;height:26%;min-height:0;width:100%;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:0 1%;align-content:stretch;font-size:clamp(4px,1.6cqw,10px);line-height:1.08;overflow:hidden}
 #monitor-ranking .rank-history span{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #monitor-ranking .rank-history b{margin-right:2px}
-@container (max-width:280px){
+@container (max-width:360px){
  #monitor-ranking .rank-hero{height:100%;grid-template-columns:minmax(0,30%) minmax(0,1fr)}
  #monitor-ranking .rank-history{display:none}
  #monitor-ranking .rank-hero span{display:none}
