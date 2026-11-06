@@ -60,10 +60,17 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await staff.locator('#result-name').fill('Reto de prueba');
   await staff.locator('#save-result').click();
   await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({state:'attached',timeout:15000});
+  await staff.evaluate(()=>{
+   window.__modalTimeline=[];
+   const dialog=document.querySelector('#dialog');
+   new MutationObserver(()=>window.__modalTimeline.push({event:'dialog-change',open:dialog.open,phase:document.body.dataset.phase,stamp:Math.round(performance.now())})).observe(dialog,{attributes:true,attributeFilter:['open']});
+   new MutationObserver(()=>window.__modalTimeline.push({event:'phase-change',open:dialog.open,phase:document.body.dataset.phase,stamp:Math.round(performance.now())})).observe(document.body,{attributes:true,attributeFilter:['data-phase']});
+  });
   await staff.locator('#choose-results').click();
-  const dialogDiagnostics=await staff.evaluate(()=>({phase:document.body.dataset.phase,select:document.querySelector('#results-select')?.value,dialogOpen:document.querySelector('#dialog')?.open,confirmHidden:document.querySelector('#dialog-confirm')?.hidden,notice:document.querySelector('#notice')?.textContent,title:document.querySelector('#dialog-title')?.textContent}));
-  assert.equal(dialogDiagnostics.dialogOpen,true,'STAFF result confirmation must open: '+JSON.stringify(dialogDiagnostics));
-  await staff.locator('#dialog-confirm').click();
+  await staff.waitForTimeout(800);
+  const dialogDiagnostics=await staff.evaluate(()=>({phase:document.body.dataset.phase,select:document.querySelector('#results-select')?.value,dialogOpen:document.querySelector('#dialog')?.open,confirmHidden:document.querySelector('#dialog-confirm')?.hidden,notice:document.querySelector('#notice')?.textContent,title:document.querySelector('#dialog-title')?.textContent,trace:window.__modalTimeline}));
+  assert.equal(dialogDiagnostics.dialogOpen,true,'STAFF result confirmation must stay open: '+JSON.stringify(dialogDiagnostics));
+  await staff.locator('#dialog-confirm').click({timeout:5000});
   await staff.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
   await player.waitForFunction(()=>document.body.dataset.phase==='RESULTS_REVEAL',undefined,{timeout:12000});
   assert.deepEqual(errors,[],'no browser runtime errors during the complete intro and STAFF result controls');
