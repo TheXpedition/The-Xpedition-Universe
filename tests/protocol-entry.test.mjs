@@ -5,6 +5,7 @@ import {openDatabase} from '../database.mjs';
 import {createProtocolService} from '../world-protocol-service.mjs';
 import {createProtocol,applyProtocol,tickProtocol,protocolView} from '../public/juegos/x-protocol/engine.mjs';
 import {EntryResources} from '../public/juegos/x-protocol/entry-loading.mjs';
+import {createProtocolMedia} from '../world-protocol-media.mjs';
 import {mapProtocolRanking} from '../world-protocol-results.mjs';
 import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
@@ -24,6 +25,23 @@ test('out-of-order and failed resource jobs never acknowledge the wrong ceremony
  deferred.get('b').resolve();assert.equal(await next,true);assert.equal(loader.isReady(b),true);assert.equal(loader.isReady(a),false);
  const c={id:'c',roster:[]},failed=loader.prepare(c);await Promise.resolve();deferred.get('c').reject(Error('offline'));assert.equal(await failed,true);assert.equal(loader.isReady(c),true);
  const timed=new EntryResources(()=>new Promise(()=>{}),{timeoutMs:5});assert.equal(await timed.prepare({id:'slow',roster:[]}),true);
+});
+
+
+test('Render ephemeral uploads are detected as missing and bundled intro remains available',async()=>{
+ const dir=await fs.mkdtemp(path.join(os.tmpdir(),'protocol-media-'));
+ try{
+  const media=createProtocolMedia({canDirect:async()=>true,dataDir:dir});
+  assert.equal(await media.available({url:'/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4'}),true);
+  const unavailable={url:'/api/world/x-protocol/media/12345678-1234-1234-1234-123456789abc.mp4'};
+  assert.equal(await media.available(unavailable),false);
+  const folder=path.join(dir,'protocol-media');
+  await fs.mkdir(folder,{recursive:true});
+  await fs.writeFile(path.join(folder,'12345678-1234-1234-1234-123456789abc.mp4'),'fake-video');
+  assert.equal(await media.available(unavailable),true);
+  await fs.rm(folder,{recursive:true,force:true});
+  assert.equal(await media.available(unavailable),false);
+ }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
 
 async function fixture(n=0){const dir=await fs.mkdtemp(path.join(os.tmpdir(),'protocol-entry-')),db=await openDatabase(dir),clients=new Map(),messages=[],prepared=[];let now=1000,svc,busy=false;
