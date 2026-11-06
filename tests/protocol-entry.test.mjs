@@ -9,6 +9,16 @@ import {createProtocolMedia} from '../world-protocol-media.mjs';
 import {mapProtocolRanking} from '../world-protocol-results.mjs';
 import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
+test('all viewers finishing the intro releases the ceremony even if server clock was held for buffering',()=>{
+ const state=createProtocol({now:0});
+ state.media.intro={url:'/intro.mp4',duration:15070};
+ state.phase='INTRO_VIDEO';state.phaseAt=0;state.clock=3000;state.at=3000;
+ tickProtocol(state,3050);
+ assert.equal(state.phase,'INTRO_VIDEO');
+ tickProtocol(state,3100,{introComplete:true});
+ assert.equal(state.phase,'CEREMONY_STAGE_VISIBLE');
+});
+
 test('staff start waits for viewer assets; recovered legacy loading has a bounded fallback',()=>{
  const s=createProtocol({now:0});s.roster=SHELTER_PARTICIPANTS.slice(0,5).map((characterId,i)=>({id:'p'+i,characterId,bot:i===0,connected:true,assetsReady:false}));s.phase='LOBBY';
  s.media.intro={url:'/intro.mp4',duration:15000};
@@ -67,6 +77,24 @@ test('staff starts with no humans, confirms bots, summons staff and spectators, 
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:'old'});assert.equal((await f.current()).visitors.find(p=>p.id==='viewer').assetsReady,false);
   await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id});await f.advance(1000);assert.equal(f.svc.phase(),'ELIMINATION_LOADING','every connected viewer must prepare before the shared intro');
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:s.id});await f.advance(50);assert.equal(f.svc.phase(),'INTRO_VIDEO');
+ }finally{await f.close();}
+});
+
+test('staff can open, fill, start and recover the same ceremony through HTTP when the socket disconnects',async()=>{
+ const f=await fixture();
+ try{
+  await assert.rejects(f.http('control',{type:'open'},'viewer'),/Solo Dirección/);
+  const opened=await f.http('control',{type:'open'});
+  assert.equal(opened.episode.phase,'LOBBY');
+  assert.equal((await f.http('control',{type:'fillBots',ceremonyId:opened.episode.id})).episode.roster.length,18);
+  const started=await f.http('control',{type:'start',ceremonyId:opened.episode.id});
+  assert.equal(started.episode.phase,'ELIMINATION_LOADING');
+  const paused=await f.http('control',{type:'pause',ceremonyId:opened.episode.id});
+  assert.equal(paused.episode.paused,true);
+  const resumed=await f.http('control',{type:'resume',ceremonyId:opened.episode.id});
+  assert.equal(resumed.episode.paused,false);
+  await f.http('control',{type:'cancel',ceremonyId:opened.episode.id});
+  assert.equal((await f.current()).cancelled,true);
  }finally{await f.close();}
 });
 

@@ -1,0 +1,28 @@
+name: World and X Protocol checks
+on:
+  push:
+    paths:
+      - 'public/juegos/x-protocol/**'
+      - 'world-protocol-service.mjs'
+      - 'world-hub.mjs'
+      - 'tests/protocol-*.test.mjs'
+      - '.github/workflows/world-protocol-check.yml'
+  pull_request:
+    paths:
+      - 'public/juegos/x-protocol/**'
+      - 'world-protocol-service.mjs'
+      - 'world-hub.mjs'
+      - 'tests/protocol-*.test.mjs'
+      - '.github/workflows/world-protocol-check.yml'
+jobs:
+  protocol-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - run: node --test --test-concurrency=2 tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs tests/protocol-lifecycle.test.mjs tests/x-protocol-network.test.mjs tests/world-runtime-performance.test.mjs

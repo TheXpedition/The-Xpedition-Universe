@@ -18,7 +18,7 @@ export class ProtocolCinema {
  sync(descriptor,options={}){
   if(this.disposed)return;this.options={...this.options,...options};
   if((descriptor?.key||null)!==this.key){this.clearTimer(this.timer);this.timer=null;this.key=descriptor?.key||null;this.descriptor=descriptor;this.retries=0;this.ended=false;this.failed=false;this.needsGesture=false;this.pending=false;this.video.pause();this.note.hidden=true;
-   this.autoplayMuted=false;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
+   this.autoplayMuted=false;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}try{this.video.currentTime=0;}catch{}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
   }
   this.video.muted=!this.options.enabled||this.autoplayMuted;this.video.volume=1;
   if(!descriptor||this.options.paused){this.video.pause();this.align();return;}
