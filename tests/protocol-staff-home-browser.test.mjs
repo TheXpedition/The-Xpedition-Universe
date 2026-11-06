@@ -26,6 +26,17 @@ test('STAFF can launch a ceremony with bots from World home even while its World
   const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
   await page.goto(f.base+'/juegos/',{waitUntil:'domcontentloaded'});
   await page.locator('#world-main[aria-busy="false"]').waitFor({timeout:45000});
+  // Bypass the unrelated once-per-visit World welcome film in this fixture:
+  // the scenario under test is STAFF already viewing the Ceremonias menu.
+  await page.evaluate(()=>{
+   const welcome=document.querySelector('dialog.world-intro');
+   if(welcome?.open)welcome.close();
+   welcome?.remove();
+   const boot=document.querySelector('#loading');if(boot)boot.hidden=true;
+   document.body.classList.remove('is-booting','is-intro-pending');
+   document.documentElement.classList.remove('world-intro-playing');
+  });
+  assert.notEqual(await page.locator('#live-status').textContent(),'EN VIVO','the starting menu must have no World socket');
   await page.locator('[data-action="ceremony"]').click();
   await page.locator('.protocol-history[open] [data-history-start]').click();
   await page.locator('.protocol-history [data-fill-bots="yes"]').waitFor({timeout:12000});
