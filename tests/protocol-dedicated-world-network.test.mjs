@@ -60,6 +60,16 @@ test('real World and real independent engine share 18-player ceremonies without 
   const row=await database.one('SELECT state FROM world_environment WHERE id=?','x-protocol');
   assert.equal(JSON.parse(row.state).id,started.ceremonyId);
   assert.equal(JSON.parse(row.state).roster.length,18);
+  // Regression: STAFF may start directly from the World home menu while
+  // their World WebSocket is offline; HTTP auth remains valid.
+  staff.socket.close(1000);
+  await wait(()=>staff.socket.readyState===WebSocket.CLOSED);
+  const next=await fixture.call('/api/world/x-protocol/start-live',STAFF_ID,'POST',{fillBots:true});
+  assert.equal(next.status,200,'HTTP-only STAFF should launch the separate engine: '+JSON.stringify(next));
+  assert.notEqual(next.ceremonyId,started.ceremonyId);
+  await wait(()=>human.messages.some(m=>m.type==='protocol-start'&&m.ceremonyId===next.ceremonyId));
+  const secondEnd=await fixture.call('/api/world/x-protocol/control',STAFF_ID,'POST',{type:'cancel',ceremonyId:next.ceremonyId});
+  assert.equal(secondEnd.status,200);
  }finally{
   await fixture?.close();
   await dedicated?.close();
