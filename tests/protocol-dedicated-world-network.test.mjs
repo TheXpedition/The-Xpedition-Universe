@@ -69,6 +69,7 @@ test('real World and real independent engine share 18-player ceremonies without 
   const row=await database.one('SELECT state FROM world_environment WHERE id=?','x-protocol');
   assert.equal(JSON.parse(row.state).id,started.ceremonyId);
   assert.equal(JSON.parse(row.state).roster.length,18);
+  await wait(async()=>{const current=await fixture.call('/api/world/x-protocol/performance',STAFF_ID);return current.phase==='ELIMINATION_FINISHED';});
   // Regression: STAFF may start directly from the World home menu while
   // their World WebSocket is offline; HTTP auth remains valid.
   staff.socket.close(1000);
