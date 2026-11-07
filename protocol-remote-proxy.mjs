@@ -161,6 +161,7 @@ export function createProtocolRemoteProxy({
    closed=true;clearTimeout(retry);
    socket?.close(1000,'World cerrado');
   },
+  notifyShopChange:ids=>{if(Array.isArray(ids))sendWire({type:'shop-change',userIds:ids.filter(id=>typeof id==='string').slice(0,25)});},
   bridgeStatus:()=>({connected:socket?.readyState===WebSocket.OPEN,phase:status.phase,revision,participants:participants().size})
  };
 }
