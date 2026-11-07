@@ -41,7 +41,7 @@ test('separate HTTP/WebSocket ceremony engine owns one 18-cast episode and prese
   gateway=http.createServer(async(req,res)=>{
    try{
     const u=new URL(req.url,'http://gateway.invalid');
-    const actor=staff.user;
+    const actor=req.headers['x-test-user']===HUMAN?human.user:staff.user;
     const body=async request=>{let raw='';for await(const part of request)raw+=part;return JSON.parse(raw||'{}');};
     if(await proxy.handleHttp(req,res,u,actor,{body,json:(response,value)=>response.end(JSON.stringify(value))}))return;
     res.writeHead(404);res.end();
@@ -75,8 +75,8 @@ test('separate HTTP/WebSocket ceremony engine owns one 18-cast episode and prese
   const advantageId='abcdeabc-0000-4000-8000-abcdef123456';
   await db.run('INSERT INTO world_shop_items(id,owner,kind,ref,state,payload,created,updated) VALUES(?,?,?,?,?,?,?,?)',advantageId,HUMAN,'advantage','extra_votes','owned','{}',now,now);
   proxy.notifyShopChange([HUMAN]);
-  await until(async()=>{const v=await fetch(url+'/api/world/x-protocol');if(!v.ok)return false;const data=await v.json();return data.episode?.roster?.length===18;});
-  await until(async()=>{const data=await (await fetch(url+'/api/world/x-protocol')).json();return data.episode?.advantage?.items?.some(item=>item.id===advantageId);},12500);
+  await until(async()=>{const v=await fetch(url+'/api/world/x-protocol',{headers:{'x-test-user':HUMAN}});if(!v.ok)return false;const data=await v.json();return data.episode?.roster?.length===18;});
+  await until(async()=>{const data=await (await fetch(url+'/api/world/x-protocol',{headers:{'x-test-user':HUMAN}})).json();return data.episode?.advantage?.items?.some(item=>item.id===advantageId);},12500);
   assert.equal((await db.one('SELECT state FROM world_shop_items WHERE id=?',advantageId)).state,'owned','reading an advantage must not consume it');
   const perf=await fetch(url+'/api/world/x-protocol/performance');
   assert.equal(perf.status,200);
