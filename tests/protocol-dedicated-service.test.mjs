@@ -76,7 +76,10 @@ test('separate HTTP/WebSocket ceremony engine owns one 18-cast episode and prese
   await db.run('INSERT INTO world_shop_items(id,owner,kind,ref,state,payload,created,updated) VALUES(?,?,?,?,?,?,?,?)',advantageId,HUMAN,'advantage','extra_votes','owned','{}',now,now);
   proxy.notifyShopChange([HUMAN]);
   await until(async()=>{const v=await fetch(url+'/api/world/x-protocol',{headers:{'x-test-user':HUMAN}});if(!v.ok)return false;const data=await v.json();return data.episode?.roster?.length===18;});
-  await until(async()=>{const data=await (await fetch(url+'/api/world/x-protocol',{headers:{'x-test-user':HUMAN}})).json();return data.episode?.advantage?.items?.some(item=>item.id===advantageId);},12500);
+  // The LOADING phase does not yet allow advantage activation; verify the
+  // canonical episode inventory records the purchase, without disclosing the
+  // private advantage to other players before its voting window.
+  await until(async()=>{const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol');return JSON.parse(row.state).secret?.advInventory?.some(item=>item.id===advantageId);},12500);
   assert.equal((await db.one('SELECT state FROM world_shop_items WHERE id=?',advantageId)).state,'owned','reading an advantage must not consume it');
   const perf=await fetch(url+'/api/world/x-protocol/performance');
   assert.equal(perf.status,200);
