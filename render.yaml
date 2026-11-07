@@ -87,6 +87,13 @@ services:
           name: the-xpedition-universe
           type: web
           envVarKey: DATABASE_URL
+      # The existing Supabase URL uses [YOUR-PASSWORD]. Share the existing
+      # private secret by reference; do not create a second database identity.
+      - key: DATABASE_PASSWORD
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_PASSWORD
       - key: PROTOCOL_ENGINE_WORKER
         value: "true"
       - fromGroup: the-xpedition-protocol-bridge
