@@ -30,7 +30,7 @@ test('real World and real independent engine share 18-player ceremonies without 
   assert.equal(started.status,200,JSON.stringify(started));
   assert.ok(started.ceremonyId);
   await wait(()=>peers.every(p=>p.messages.some(m=>m.type==='protocol-start')));
-  for(const p of peers)assert.equal(p.socket.readyState,WebSocket.OPEN,'World's socket must stay alive while the new engine runs');
+  for(const p of peers)assert.equal(p.socket.readyState,WebSocket.OPEN,'The World socket must stay alive while the new engine runs');
   const invite=await fixture.call('/api/world/bootstrap','dedicated-human');
   assert.equal(invite.protocolInvite,'/juegos/x-protocol/');
   for(const p of peers)fixture.send(p,{type:'protocol-subscribe'});
