@@ -109,7 +109,7 @@ export async function startProtocolDedicatedServer({
     if(!input||typeof input.type!=='string'||!input.type.startsWith('protocol-'))return;
     if(input.type==='protocol-action'&&input.action?.type==='start'&&!message.startValidated)return;
     try{await protocol.handle(c,input);}
-    catch(error)sendBridge(peer,{type:'deliver',userId:c.user.id,data:{type:'error',message:error.status?error.message:'La ceremonia no pudo completar la acción.'}});
+    catch(error){sendBridge(peer,{type:'deliver',userId:c.user.id,data:{type:'error',message:error.status?error.message:'La ceremonia no pudo completar la acción.'}});}
     return;
    }
    if(message.type==='sync')sendBridge(peer,{type:'status',state:status()});
