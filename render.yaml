@@ -37,6 +37,13 @@ services:
           name: the-xpedition-protocol
           type: web
           envVarKey: RENDER_EXTERNAL_HOSTNAME
+      # Auto-use the static video CDN once Render provisions it. If the CDN
+      # fails, the browser automatically falls back to World's bundled MP4.
+      - key: PROTOCOL_MEDIA_CDN_ORIGIN
+        fromService:
+          name: the-xpedition-protocol-media
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
       - fromGroup: the-xpedition-protocol-bridge
 
   # Media is served by a separate, cacheable static CDN instead of the live
