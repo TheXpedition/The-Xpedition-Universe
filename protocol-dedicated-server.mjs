@@ -61,7 +61,7 @@ export async function startProtocolDedicatedServer({
   let environment=null;
   const protocol=createProtocolService({
    db,clients,advantageRefreshMs:1500,send:(client,data)=>{
-    if(client.bridge)sendBridge(client.bridge,{type:'deliver',userId:client.user.id,data});
+    if(client.bridge){if(data.type==='protocol-start'||data.type==='protocol-return')sendBridge(client.bridge,{type:'status',state:protocol.bridgeView()});sendBridge(client.bridge,{type:'deliver',userId:client.user.id,data});}
    },can,now,shop,
    canParticipate:u=>participation.canCompete(u),
    getEnvironment:()=>environment,
