@@ -120,7 +120,12 @@ export function createProtocolRemoteProxy({
   entry:id=>!returned.has(id)&&invitees().has(id)&&!['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(status.phase)?'/juegos/x-protocol/':null,
   async attach(c){
    c.protocolActive=false;
-   try{await open();if(!attached.has(c.user.id))sendAttach(c);}catch(error){console.warn('Protocol bridge delayed:',error.message);}
+   // The dedicated Free service may be cold-starting. NEVER hold the World
+   // login/Welcome on that remote socket: attach opportunistically, then let
+   // the existing bridge reconnect and deliver the invitation when ready.
+   if(socket?.readyState===WebSocket.OPEN){if(!attached.has(c.user.id))sendAttach(c);return;}
+   void open().then(()=>{if(!closed&&find(c.user.id)===c&&!attached.has(c.user.id))sendAttach(c);})
+    .catch(error=>console.warn('Protocol bridge delayed:',error.message));
   },
   disconnect(c){c.protocolActive=false;attached.delete(c.user.id);sendWire({type:'detach',userId:c.user.id});},
   async handle(c,input){
