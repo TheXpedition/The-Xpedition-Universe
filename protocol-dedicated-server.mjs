@@ -61,7 +61,14 @@ export async function startProtocolDedicatedServer({
   let environment=null;
   const protocol=createProtocolService({
    db,clients,advantageRefreshMs:1500,send:(client,data)=>{
-    if(client.bridge){if(data.type==='protocol-start'||data.type==='protocol-return')sendBridge(client.bridge,{type:'status',state:protocol.bridgeView()});sendBridge(client.bridge,{type:'deliver',userId:client.user.id,data});}
+    if(client.bridge){
+     if(data.type==='protocol-start'||data.type==='protocol-return')sendBridge(client.bridge,{type:'status',state:protocol.bridgeView()});
+     sendBridge(client.bridge,{type:'deliver',userId:client.user.id,data});
+     // The World browser may retain a socket while switching between the
+     // protocol page and camp. Do not carry a stale subscriber into the next
+     // ceremony or suppress its next official start invitation.
+     if(data.type==='protocol-return')queueMicrotask(()=>protocol.disconnect(client));
+    }
    },can,now,shop,
    canParticipate:u=>participation.canCompete(u),
    getEnvironment:()=>environment,
