@@ -43,6 +43,15 @@ test('real World and real independent engine share 18-player ceremonies without 
   for(const p of peers)fixture.send(p,{type:'protocol-ready',ceremonyId:started.ceremonyId});
   await wait(()=>peers.every(p=>latest(p)?.phase==='INTRO_VIDEO'));
   assert.equal(latest(human).cinematic.url,'/juegos/x-protocol/media/intro-apocalypse-ii-20261107.mp4');
+  // A temporary Render-to-Render bridge outage must NOT destroy the existing
+  // browser WebSockets, reset the ceremony, or lose the player's subscription.
+  const priorUpdates=human.messages.filter(m=>m.type==='protocol-state').length;
+  const room=await dedicated.rooms.get('');
+  for(const peer of [...room.peers])peer.close(1012,'Test independent engine bridge reconnection');
+  await wait(()=>room.peers.size>=1);
+  await wait(()=>human.messages.filter(m=>m.type==='protocol-state').length>priorUpdates);
+  assert.equal(human.socket.readyState,WebSocket.OPEN);
+  assert.equal(latest(human).id,started.ceremonyId);
   const performance=await fixture.call('/api/world/x-protocol/performance',STAFF_ID);
   assert.equal(performance.status,200);
   assert.equal(performance.statsPreserved,true);
