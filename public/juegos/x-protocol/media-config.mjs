@@ -10,7 +10,7 @@ export const PROTOCOL_MEDIA_OFFICIAL_INTRO=Object.freeze({
  duration:14833
 });
 export function selectProtocolIntro(stored,officialAvailable){
- if(stored?.url&&stored.url!==PROTOCOL_MEDIA_LEGACY_INTRO.url)return stored;
+ if(stored?.url&&(stored.url!==PROTOCOL_MEDIA_LEGACY_INTRO.url||stored.duration!==PROTOCOL_MEDIA_LEGACY_INTRO.duration))return stored;
  return officialAvailable?{...PROTOCOL_MEDIA_OFFICIAL_INTRO}:{...(stored||PROTOCOL_MEDIA_LEGACY_INTRO)};
 }
 export const PROTOCOL_MEDIA_DEFAULTS={
