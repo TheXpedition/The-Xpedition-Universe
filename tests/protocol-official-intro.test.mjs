@@ -21,6 +21,7 @@ test('only switch to the new official intro after the file exists; preserve inte
  assert.deepEqual(selectProtocolIntro(null,false),PROTOCOL_MEDIA_LEGACY_INTRO);
  assert.deepEqual(selectProtocolIntro(PROTOCOL_MEDIA_LEGACY_INTRO,false),PROTOCOL_MEDIA_LEGACY_INTRO);
  assert.deepEqual(selectProtocolIntro(PROTOCOL_MEDIA_LEGACY_INTRO,true),PROTOCOL_MEDIA_OFFICIAL_INTRO);
+ assert.deepEqual(selectProtocolIntro({...PROTOCOL_MEDIA_LEGACY_INTRO,duration:120},true),{...PROTOCOL_MEDIA_LEGACY_INTRO,duration:120},'STAFF override duration must be preserved');
  assert.deepEqual(selectProtocolIntro(null,true),PROTOCOL_MEDIA_OFFICIAL_INTRO);
  const custom={url:'/api/world/x-protocol/media/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.mp4',duration:18000};
  assert.deepEqual(selectProtocolIntro(custom,true),custom);
