@@ -164,9 +164,13 @@ export async function startProtocolDedicatedServer({
    wss.handleUpgrade(req,socket,head,peer=>{
     target.peers.add(peer);
     sendBridge(peer,{type:'status',state:target.status()});
+    // Preserve WebSocket packet order across asynchronous identity/database
+    // checks: attach MUST finish before protocol-subscribe/ready/vote arrives.
+    // Otherwise reconnecting clients can silently lose their subscription.
+    let queue=Promise.resolve();
     peer.on('message',raw=>{
      let value;try{value=JSON.parse(raw.toString());}catch{return;}
-     void target.receive(peer,value).catch(error=>console.error('Protocol dedicated bridge:',String(error.message).slice(0,140)));
+     queue=queue.then(()=>target.receive(peer,value)).catch(error=>console.error('Protocol dedicated bridge:',String(error.message).slice(0,140)));
     });
     peer.on('close',()=>{target.peers.delete(peer);for(const [id,c] of [...target.members])if(c.bridge===peer)target.remove(peer,id);});
    });
