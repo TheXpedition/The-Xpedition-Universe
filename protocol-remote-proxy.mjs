@@ -45,11 +45,10 @@ export function createProtocolRemoteProxy({
   if(packet.type==='status'&&packet.state){
    const next=packet.state;
    if(typeof next.phase==='string'&&Array.isArray(next.participants)&&Array.isArray(next.invitees)){
-    const changed=revision!==next.revision||status.phase!==next.phase;
+    // Do not convert every authoritative phase/revision update into a new
+    // redirect. The original engine already emits the one-time protocol-start
+    // for each player, including after a bridge reconnection.
     status=next;revision=next.revision;
-    if(changed&&['ELIMINATION_LOADING','INTRO_VIDEO'].includes(next.phase)){
-     for(const c of connected())if(next.invitees.includes(c.user.id)&&!c.protocolActive)send(c,{type:'protocol-start',url:'/juegos/x-protocol/',ceremonyId:next.id});
-    }
    }
    return;
   }
