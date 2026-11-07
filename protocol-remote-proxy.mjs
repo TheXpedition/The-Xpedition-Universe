@@ -13,7 +13,7 @@ export function createProtocolRemoteProxy({
  db,clients,send,can=async()=>false,now=Date.now,beforeStart=async()=>{},
  getEnvironment=()=>null,onRetreat=async()=>{},onRosterChange=async()=>{},
  refreshInventory=async()=>{},onSpeech=()=>{},cancelSpeech=()=>{},
- serviceURL=process.env.PROTOCOL_SERVICE_URL||'',
+ serviceURL=process.env.PROTOCOL_SERVICE_URL||(process.env.PROTOCOL_SERVICE_HOST?'https://'+process.env.PROTOCOL_SERVICE_HOST:''),
  secret=process.env.PROTOCOL_BRIDGE_SECRET||'',
  scope=process.env.WORLD_SCOPE_ID||'',
  makeSocket=(url,options)=>new WebSocket(url,options),
@@ -109,7 +109,7 @@ export function createProtocolRemoteProxy({
    c.protocolActive=false;
    try{await open();sendAttach(c);}catch(error){console.warn('Protocol bridge delayed:',error.message);}
   },
-  disconnect(c){const was=!!c.protocolActive;c.protocolActive=false;if(was||sendWire({type:'detach',userId:c.user.id})){sendWire({type:'detach',userId:c.user.id});}},
+  disconnect(c){c.protocolActive=false;sendWire({type:'detach',userId:c.user.id});},
   async handle(c,input){
    if(!messageTypes.has(input?.type))return false;
    if(input.type==='protocol-subscribe')c.protocolActive=true;
