@@ -101,6 +101,15 @@ export function createProtocolRemoteProxy({
  // Schedule a connection immediately and keep retrying without touching the
  // player's existing World socket or reloading the intro.
  void open().catch(()=>{});
+ // World remains authoritative for health, hunger, sleep, location and
+ // environmental conditions. A low-rate compact presence snapshot keeps the
+ // separated ceremony faithful without streaming World's physics frames.
+ const presenceTimer=setInterval(()=>{
+  if(closed||socket?.readyState!==WebSocket.OPEN)return;
+  const players=connected().map(description);
+  sendWire({type:'presence',players,environment:getEnvironment()});
+ },2000);
+ presenceTimer.unref?.();
  const participants=()=>new Set(status.participants||[]);
  const invitees=()=>new Set(status.invitees||[]);
  return {
@@ -162,7 +171,7 @@ export function createProtocolRemoteProxy({
    return true;
   },
   async close(){
-   closed=true;clearTimeout(retry);
+   closed=true;clearTimeout(retry);clearInterval(presenceTimer);
    socket?.close(1000,'World cerrado');
   },
   notifyShopChange:ids=>{if(Array.isArray(ids))sendWire({type:'shop-change',userIds:ids.filter(id=>typeof id==='string').slice(0,25)});},
