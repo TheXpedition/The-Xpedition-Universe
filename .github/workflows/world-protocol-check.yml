@@ -70,3 +70,4 @@ jobs:
           path: artifacts/protocol-monitor-*.png
           if-no-files-found: ignore
       - run: node --test tests/protocol-staff-home-browser.test.mjs
+      - run: node --test tests/protocol-dedicated-browser.test.mjs
