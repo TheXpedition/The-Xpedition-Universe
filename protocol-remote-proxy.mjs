@@ -25,7 +25,7 @@ export function createProtocolRemoteProxy({
  if(base.username||base.password||base.search||base.hash)throw Error('Dirección de servicio de ceremonia inválida.');
  const endpoint=new URL('/bridge/live?scope='+encodeURIComponent(scope),base);
  endpoint.protocol=endpoint.protocol==='https:'?'wss:':'ws:';
- let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;
+ let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set();
  const sendWire=data=>{if(socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify(data));return true;};
  const connected=()=>[...clients.values()];
  const find=id=>connected().find(c=>c.user.id===id);
@@ -34,7 +34,7 @@ export function createProtocolRemoteProxy({
   x:c.p?.x||0,y:c.p?.y||0,
   vitals:c.vitals||{health:100,hunger:100,energy:100,sleep:100,stress:0}
  });
- function sendAttach(c){sendWire({type:'attach',player:description(c),environment:getEnvironment()});if(c.protocolActive)sendWire({type:'input',userId:c.user.id,data:{type:'protocol-subscribe'}});}
+ function sendAttach(c){if(!sendWire({type:'attach',player:description(c),environment:getEnvironment()}))return;attached.add(c.user.id);if(c.protocolActive)sendWire({type:'input',userId:c.user.id,data:{type:'protocol-subscribe'}});}
  function schedule(){
   if(closed||retry)return;
   retry=setTimeout(()=>{retry=null;void open().catch(()=>{});},retryDelay);
@@ -83,7 +83,7 @@ export function createProtocolRemoteProxy({
     if(settled)return;settled=true;clearTimeout(timeout);retryDelay=1000;
     // Reconnect reattaches every World client, including existing spectators
     // whose browser WebSocket remained connected during the bridge failure.
-    for(const c of connected())sendAttach(c);
+    attached.clear();for(const c of connected())sendAttach(c);
     sendWire({type:'sync'});resolve();
    };
    const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(fail(503,'No pudimos conectar el motor de la ceremonia.'));}};
@@ -107,9 +107,9 @@ export function createProtocolRemoteProxy({
   entry:id=>invitees().has(id)&&!['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(status.phase)?'/juegos/x-protocol/':null,
   async attach(c){
    c.protocolActive=false;
-   try{await open();sendAttach(c);}catch(error){console.warn('Protocol bridge delayed:',error.message);}
+   try{await open();if(!attached.has(c.user.id))sendAttach(c);}catch(error){console.warn('Protocol bridge delayed:',error.message);}
   },
-  disconnect(c){c.protocolActive=false;sendWire({type:'detach',userId:c.user.id});},
+  disconnect(c){c.protocolActive=false;attached.delete(c.user.id);sendWire({type:'detach',userId:c.user.id});},
   async handle(c,input){
    if(!messageTypes.has(input?.type))return false;
    if(input.type==='protocol-subscribe')c.protocolActive=true;
