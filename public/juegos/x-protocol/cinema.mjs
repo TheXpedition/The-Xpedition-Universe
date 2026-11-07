@@ -1,6 +1,6 @@
 export class ProtocolCinema {
  constructor({video,note,onEnded=()=>{},onFailed=()=>{},onPlaying=()=>{},setTimer=(fn,ms)=>globalThis.setTimeout(fn,ms),clearTimer=id=>globalThis.clearTimeout(id)}){
-  Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,autoplayMuted:false,disposed:false,options:{paused:true,visible:true,enabled:true}});
+  Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,autoplayMuted:false,userInteracted:false,mobileStartMuted:typeof navigator!=='undefined'&&(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||navigator.maxTouchPoints>1),disposed:false,options:{paused:true,visible:true,enabled:true}});
   video.onended=()=>{if(!this.descriptor||this.ended)return;this.ended=true;this.note.hidden=true;this.onEnded(this.key);};
   video.onloadedmetadata=()=>this.align();
   video.onerror=()=>{if(this.descriptor)this.failure();};
@@ -18,7 +18,7 @@ export class ProtocolCinema {
  sync(descriptor,options={}){
   if(this.disposed)return;this.options={...this.options,...options};
   if((descriptor?.key||null)!==this.key){this.clearTimer(this.timer);this.timer=null;this.key=descriptor?.key||null;this.descriptor=descriptor;this.retries=0;this.ended=false;this.failed=false;this.needsGesture=false;this.pending=false;this.video.pause();this.note.hidden=true;
-   this.autoplayMuted=false;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}try{this.video.currentTime=0;}catch{}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
+   this.autoplayMuted=this.mobileStartMuted&&!this.userInteracted;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}try{this.video.currentTime=0;}catch{}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
   }
   this.video.muted=!this.options.enabled||this.autoplayMuted;this.video.volume=1;
   if(!descriptor||this.options.paused){this.video.pause();this.align();return;}
@@ -39,6 +39,6 @@ export class ProtocolCinema {
  }
  failure(){if(this.disposed||!this.descriptor||this.ended)return;this.failed=true;this.message('Reconectando la introducción…');this.onFailed(this.key);this.retry();}
  retry(){if(this.timer||this.disposed)return;const key=this.key;this.timer=this.setTimer(()=>{this.timer=null;if(this.disposed||key!==this.key)return;if(this.options.paused){this.retry();return;}this.failed=false;this.needsGesture=false;this.retries++;const source=this.descriptor.fallbackUrl||this.descriptor.url;const join=source.includes('?')?'&':'?';this.video.src=source+join+'playback-retry='+this.retries;this.video.load();this.play();},Math.min(15000,1000*2**Math.min(this.retries,4)));}
- unlock(){if(this.disposed)return;if(this.descriptor){this.needsGesture=false;if(this.autoplayMuted){this.autoplayMuted=false;this.video.muted=!this.options.enabled;this.note.hidden=true;}this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
+ unlock(){if(this.disposed)return;this.userInteracted=true;if(this.descriptor){this.needsGesture=false;if(this.autoplayMuted){this.autoplayMuted=false;this.video.muted=!this.options.enabled;this.note.hidden=true;}this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
  destroy(){this.disposed=true;this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;this.video.onloadedmetadata=null;}
 }

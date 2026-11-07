@@ -30,3 +30,20 @@ services:
         value: "true"
       - key: TRUST_PROXY
         value: "true"
+
+  # Media is served by a separate, cacheable static CDN instead of the live
+  # multiplayer Node instance. Render Blueprint-managed projects can create it
+  # on sync; manually created services must be connected once in Render.
+  - type: web
+    name: the-xpedition-protocol-media
+    runtime: static
+    buildCommand: mkdir -p protocol-cdn/juegos/x-protocol/media && cp public/juegos/x-protocol/media/intro-apocalypse-ii-20261107.mp4 public/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4 public/juegos/x-protocol/media/intro-warmup.mp4 protocol-cdn/juegos/x-protocol/media/
+    staticPublishPath: ./protocol-cdn
+    autoDeployTrigger: checksPass
+    headers:
+      - path: /juegos/x-protocol/media/*
+        name: Cache-Control
+        value: public, max-age=604800
+      - path: /juegos/x-protocol/media/*
+        name: Access-Control-Allow-Origin
+        value: "*"

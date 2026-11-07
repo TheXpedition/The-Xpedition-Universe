@@ -5,7 +5,12 @@ export function createProtocolMedia({canDirect,dataDir=process.env.DATA_DIR||pat
  const root=path.resolve(dataDir,'protocol-media');
  return {async available(value){
   const url=value?.url;
-  if(typeof url!=='string'||!url.startsWith('/api/world/x-protocol/media/'))return true;
+  if(typeof url!=='string')return false;
+  // A registered public intro is available only after the MP4 really exists.
+  // Prevent an incomplete upload or pending CDN deployment from breaking every ceremony.
+  const bundled=/^\/juegos\/x-protocol\/media\/([a-z0-9][a-z0-9._-]*\.(?:mp4|webm))$/i.exec(url);
+  if(bundled){try{return (await fsp.stat(path.resolve('public/juegos/x-protocol/media',bundled[1]))).isFile();}catch{return false;}}
+  if(!url.startsWith('/api/world/x-protocol/media/'))return true;
   const match=/^\/api\/world\/x-protocol\/media\/([a-f0-9-]{36}\.(?:mp4|webm|mov))$/.exec(url);
   if(!match)return false;
   try{return (await fsp.stat(path.resolve(root,match[1]))).isFile();}catch{return false;}

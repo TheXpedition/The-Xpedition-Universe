@@ -6,7 +6,7 @@ services:
   - type: web
     name: the-xpedition-protocol-media
     runtime: static
-    buildCommand: mkdir -p protocol-cdn/juegos/x-protocol/media && cp public/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4 public/juegos/x-protocol/media/intro-warmup.mp4 protocol-cdn/juegos/x-protocol/media/
+    buildCommand: mkdir -p protocol-cdn/juegos/x-protocol/media && cp public/juegos/x-protocol/media/intro-daa3534cac20-smooth.mp4 public/juegos/x-protocol/media/intro-warmup.mp4 protocol-cdn/juegos/x-protocol/media/ && if [ -f public/juegos/x-protocol/media/intro-apocalypse-ii-20261107.mp4 ]; then cp public/juegos/x-protocol/media/intro-apocalypse-ii-20261107.mp4 protocol-cdn/juegos/x-protocol/media/; fi
     staticPublishPath: ./protocol-cdn
     autoDeployTrigger: checksPass
     headers:

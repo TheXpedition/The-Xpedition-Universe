@@ -60,6 +60,10 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
   await player.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:30000});
   await staff.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
   await player.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
+  for(const viewer of [staff,player]){
+   const videoSource=await viewer.locator('#video').evaluate(video=>video.currentSrc||video.src);
+   assert(videoSource.includes('intro-apocalypse-ii-20261107.mp4'),'the official user-uploaded intro must play on desktop and mobile: '+videoSource);
+  }
   const beforeReconnect=await player.evaluate(()=>({time:document.querySelector('#video').currentTime,bootstraps:window.__worldBootstrapRequests}));
   await player.evaluate(()=>window.__worldTestSocket.close(1000,'test network interruption'));
   await player.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO')&&window.__worldTestSocket?.readyState===WebSocket.OPEN,undefined,{timeout:22000});
