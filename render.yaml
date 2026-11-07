@@ -30,6 +30,21 @@ services:
         value: "true"
       - key: TRUST_PROXY
         value: "true"
+      # The fully isolated engine is opt-in until its independent service is
+      # healthy. Blueprint sync never silently flips the current game.
+      - key: PROTOCOL_SERVICE_HOST
+        fromService:
+          name: the-xpedition-protocol
+          type: web
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      # Auto-use the static video CDN once Render provisions it. If the CDN
+      # fails, the browser automatically falls back to World's bundled MP4.
+      - key: PROTOCOL_MEDIA_CDN_ORIGIN
+        fromService:
+          name: the-xpedition-protocol-media
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      - fromGroup: the-xpedition-protocol-bridge
 
   # Media is served by a separate, cacheable static CDN instead of the live
   # multiplayer Node instance. Render Blueprint-managed projects can create it
@@ -47,3 +62,38 @@ services:
       - path: /juegos/x-protocol/media/*
         name: Access-Control-Allow-Origin
         value: "*"
+
+  # Dedicated ceremony authority: separate Node CPU/RAM, DB connection and
+  # WebSocket bridge. Players keep World URLs, accounts and same inventory.
+  - type: web
+    name: the-xpedition-protocol
+    runtime: node
+    buildCommand: npm ci --omit=dev
+    startCommand: node protocol-dedicated-server.mjs
+    plan: free
+    numInstances: 1
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PERSISTENCE_MODE
+        value: supabase
+      - key: DATABASE_URL
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_URL
+      - key: PROTOCOL_ENGINE_WORKER
+        value: "true"
+      - fromGroup: the-xpedition-protocol-bridge
+
+# One shared, generated secret for both services. Never commit raw values.
+envVarGroups:
+  - name: the-xpedition-protocol-bridge
+    envVars:
+      - key: PROTOCOL_BRIDGE_SECRET
+        generateValue: true
