@@ -25,7 +25,7 @@ export function createProtocolRemoteProxy({
  if(base.username||base.password||base.search||base.hash)throw Error('Dirección de servicio de ceremonia inválida.');
  const endpoint=new URL('/bridge/live?scope='+encodeURIComponent(scope),base);
  endpoint.protocol=endpoint.protocol==='https:'?'wss:':'ws:';
- let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set();
+ let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set(),returned=new Set();
  const sendWire=data=>{if(socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify(data));return true;};
  const connected=()=>[...clients.values()];
  const find=id=>connected().find(c=>c.user.id===id);
@@ -48,13 +48,18 @@ export function createProtocolRemoteProxy({
     // Do not convert every authoritative phase/revision update into a new
     // redirect. The original engine already emits the one-time protocol-start
     // for each player, including after a bridge reconnection.
+    if(next.id!==status.id)returned.clear();
     status=next;revision=next.revision;
    }
    return;
   }
   if(packet.type==='deliver'){
    const c=find(packet.userId);
-   if(c&&packet.data&&typeof packet.data.type==='string')send(c,packet.data);
+   if(c&&packet.data&&typeof packet.data.type==='string'){
+    if(packet.data.type==='protocol-return')returned.add(c.user.id);
+    if(packet.data.type==='protocol-start')returned.delete(c.user.id);
+    send(c,packet.data);
+   }
    return;
   }
   if(packet.type==='retreat'){
@@ -100,10 +105,10 @@ export function createProtocolRemoteProxy({
  const invitees=()=>new Set(status.invitees||[]);
  return {
   ready:Promise.resolve(),
-  engaged:id=>!!find(id)?.protocolActive&&participants().has(id),
-  enrolled:id=>participants().has(id),
+  engaged:id=>!returned.has(id)&&!!find(id)?.protocolActive&&participants().has(id),
+  enrolled:id=>!returned.has(id)&&participants().has(id),
   phase:()=>status.phase,
-  entry:id=>invitees().has(id)&&!['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(status.phase)?'/juegos/x-protocol/':null,
+  entry:id=>!returned.has(id)&&invitees().has(id)&&!['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(status.phase)?'/juegos/x-protocol/':null,
   async attach(c){
    c.protocolActive=false;
    try{await open();if(!attached.has(c.user.id))sendAttach(c);}catch(error){console.warn('Protocol bridge delayed:',error.message);}
