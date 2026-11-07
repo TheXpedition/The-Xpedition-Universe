@@ -60,15 +60,15 @@ export async function startProtocolDedicatedServer({
   const participation=createWorldParticipation({db,now});
   let environment=null;
   const protocol=createProtocolService({
-   db,clients,send:(client,data)=>{
+   db,clients,advantageRefreshMs:1500,send:(client,data)=>{
     if(client.bridge)sendBridge(client.bridge,{type:'deliver',userId:client.user.id,data});
    },can,now,shop,
    canParticipate:u=>participation.canCompete(u),
    getEnvironment:()=>environment,
    onRetreat:async c=>signal({type:'retreat',userId:c.user.id},peer=>peer===c.bridge),
-   onRosterChange:async()=>signal({type:'roster-change'}),
+   onRosterChange:async()=>{const first=peers.values().next().value;if(first)sendBridge(first,{type:'roster-change'});},
    refreshInventory:async id=>signal({type:'inventory-refresh',userId:id}),
-   onSpeech:announcement=>signal({type:'speech',announcement}),
+   onSpeech:announcement=>{const first=peers.values().next().value;if(first)sendBridge(first,{type:'speech',announcement});},
    cancelSpeech:id=>signal({type:'speech-cancel',id}),
    // STAFF pre-start validation and player persistence have already happened
    // on the authenticated World gateway, before it forwards this action.
@@ -112,6 +112,7 @@ export async function startProtocolDedicatedServer({
     catch(error){sendBridge(peer,{type:'deliver',userId:c.user.id,data:{type:'error',message:error.status?error.message:'La ceremonia no pudo completar la acción.'}});}
     return;
    }
+   if(message.type==='shop-change'){const ids=Array.isArray(message.userIds)?message.userIds.filter(validUser).slice(0,25):[];if(ids.length)await shop.notify(ids);return;}
    if(message.type==='sync')sendBridge(peer,{type:'status',state:status()});
   }
   const timer=setInterval(()=>signal({type:'status',state:status()}),900);
