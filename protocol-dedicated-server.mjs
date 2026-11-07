@@ -98,6 +98,22 @@ export async function startProtocolDedicatedServer({
     sendBridge(peer,{type:'status',state:status()});
     return;
    }
+   if(message.type==='presence'){
+    if(message.environment&&typeof message.environment==='object')environment=message.environment;
+    if(Array.isArray(message.players))for(const info of message.players.slice(0,150)){
+     const c=members.get(info.id);
+     if(!c||c.bridge!==peer)continue;
+     if(typeof info.characterId==='string'&&info.characterId.length<80)c.characterId=info.characterId;
+     if(info.vitals&&typeof info.vitals==='object'){
+      const fields=['health','hunger','energy','sleep','stress'];
+      for(const key of fields)if(Number.isFinite(info.vitals[key]))c.vitals[key]=Math.max(0,Math.min(100,info.vitals[key]));
+     }
+     if(typeof info.zoneId==='string')c.zone.id=info.zoneId;
+     if(Number.isFinite(info.x))c.p.x=info.x;
+     if(Number.isFinite(info.y))c.p.y=info.y;
+    }
+    return;
+   }
    if(message.type==='detach'){
     if(validUser(message.userId))remove(peer,message.userId);
     return;
