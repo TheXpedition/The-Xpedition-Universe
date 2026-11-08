@@ -73,3 +73,12 @@ jobs:
           if-no-files-found: ignore
       - run: node --test tests/protocol-staff-home-browser.test.mjs
       - run: node --test tests/protocol-dedicated-browser.test.mjs
+      - name: Test real ceremony interactions, buttons and cross-device synchronization
+        run: node --test tests/protocol-interactive-browser.test.mjs
+      - name: Save actual button-interaction screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: protocol-click-visuals
+          path: artifacts/protocol-click-*.png
+          if-no-files-found: ignore
