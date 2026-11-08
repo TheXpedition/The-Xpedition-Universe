@@ -39,7 +39,10 @@ function openWorldFrame(server){
  if(activeWorldFrame)return;
  const iframe=document.createElement('iframe');iframe.className='world-server-frame';iframe.title='World · '+server.name;iframe.allow='autoplay; fullscreen';
  const warm=document.createElement('video');warm.playsInline=true;warm.preload='auto';warm.volume=1;warm.muted=false;warm.hidden=true;warm.src='/world-intro-warmup.mp4';document.body.append(warm);
- const warmed=warm.play().catch(()=>{});
+ // On desktop Edge, a hidden video's play() may remain pending forever
+ // while it buffers or the browser blocks autoplay. Warmup is best effort:
+ // the actual introduction still runs via playWorldIntro below.
+ const warmed=Promise.race([Promise.resolve().then(()=>warm.play()).catch(()=>{}),new Promise(resolve=>setTimeout(resolve,1600))]);
  const previousTitle=document.title;document.title=server.name+' · World';document.documentElement.classList.add('world-frame-open');
  const record={iframe,warm,previousTitle,closed:false,abort:new AbortController()};activeWorldFrame=record;void worldLandscapeModule.then(m=>{if(!record.closed){record.landscape=m.installLandscapeMode();void record.landscape.request();}});
  record.listener=async event=>{
