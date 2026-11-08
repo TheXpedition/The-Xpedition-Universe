@@ -6,9 +6,18 @@ import {AsyncLocalStorage} from 'node:async_hooks';
 const shared=new Set(['world_sessions','world_handoffs','world_servers','world_server_leases']);
 const extra=new Set(['economy_inventory','game_runs','simulator_preferences','arcade_runs','arcade_access','moderation_actions']);
 export const SERVER_TABLES=Object.freeze([...schema.matchAll(/CREATE TABLE IF NOT EXISTS (\w+)/g)].map(m=>m[1]).filter(name=>name.startsWith('world_')&&!shared.has(name)||extra.has(name)));
-export async function serverDatabase(base,id,{leaseOwner}={}){
+export function serverTablePrefix(id){
  if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id))throw Error('Identificador de servidor inválido.');
- const prefix='wr_'+BigInt('0x'+id.replaceAll('-','')).toString(36)+'_',names=new Map(SERVER_TABLES.map(name=>[name,(base.kind==='postgres'?'xpedition.':'')+prefix+name]));
+ return 'wr_'+BigInt('0x'+id.replaceAll('-','')).toString(36)+'_';
+}
+// Only the tables belonging to this room are dropped. Global accounts,
+// wallets, profiles, logs and every other room stay untouched.
+export async function purgeServerTables(base,id){
+ const prefix=serverTablePrefix(id),schemaPrefix=base.kind==='postgres'?'xpedition.':'';
+ for(const table of [...SERVER_TABLES].reverse())await base.run('DROP TABLE IF EXISTS '+schemaPrefix+prefix+table+(base.kind==='postgres'?' CASCADE':''));
+}
+export async function serverDatabase(base,id,{leaseOwner}={}){
+ const prefix=serverTablePrefix(id),names=new Map(SERVER_TABLES.map(name=>[name,(base.kind==='postgres'?'xpedition.':'')+prefix+name]));
  const statements=schema.split(';').map(s=>s.trim()).filter(Boolean).filter(s=>{
   const table=/^CREATE TABLE IF NOT EXISTS (\w+)/.exec(s);if(table)return names.has(table[1]);
   const index=/^CREATE (?:UNIQUE )?INDEX IF NOT EXISTS (\w+) ON (\w+)/.exec(s);
