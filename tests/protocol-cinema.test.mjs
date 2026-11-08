@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {ProtocolCinema} from '../public/juegos/x-protocol/cinema.mjs';
+import {ProtocolCinema,shouldShowProtocolCinema} from '../public/juegos/x-protocol/cinema.mjs';
 import {reclaimIdleWorlds} from '../world-media-stream.mjs';
 import {MediaGate} from '../public/juegos/last-grip/media-gate.mjs';
+test('an ended video releases its black full-screen cover while the audience gate synchronizes',()=>{assert.equal(shouldShowProtocolCinema({key:'intro'},null),true);assert.equal(shouldShowProtocolCinema({key:'intro'},'intro'),false);assert.equal(shouldShowProtocolCinema({key:'next'},'intro'),true);assert.equal(shouldShowProtocolCinema(null,'intro'),false);});
 function fixture(){let callback=null,ended=0,failed=0,plays=0;const video={paused:true,muted:false,volume:1,src:'',load(){},pause(){this.paused=true;},removeAttribute(){this.src='';},play(){plays++;this.paused=false;return Promise.resolve();}},note={hidden:true,textContent:''};const player=new ProtocolCinema({video,note,onEnded:()=>ended++,onFailed:()=>failed++,setTimer:fn=>{callback=fn;return 1;},clearTimer:()=>{callback=null;}});return {player,video,note,retry:()=>callback?.(),get ended(){return ended;},get failed(){return failed;},get plays(){return plays;}};}
 test('a failed video is not a successful finish; a later real ended event is',()=>{
  const gate=new MediaGate({maxWaitMs:10000});
