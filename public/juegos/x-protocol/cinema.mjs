@@ -1,3 +1,4 @@
+export const protocolCinemaVisible=(descriptor,endedKey)=>!!descriptor?.key&&descriptor.key!==endedKey;
 export class ProtocolCinema {
  constructor({video,note,onEnded=()=>{},onFailed=()=>{},onPlaying=()=>{},setTimer=(fn,ms)=>globalThis.setTimeout(fn,ms),clearTimer=id=>globalThis.clearTimeout(id)}){
   Object.assign(this,{video,note,onEnded,onFailed,onPlaying,setTimer,clearTimer,key:null,descriptor:null,retries:0,timer:null,pending:false,ended:false,failed:false,needsGesture:false,autoplayMuted:false,userInteracted:false,mobileStartMuted:typeof navigator!=='undefined'&&(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)||navigator.maxTouchPoints>1),disposed:false,options:{paused:true,visible:true,enabled:true}});
