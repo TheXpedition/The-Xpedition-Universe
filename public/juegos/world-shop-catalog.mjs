@@ -1,7 +1,9 @@
 import {PAJAMA_OUTFITS,PAJAMA_PRICE} from './world-pajamas.mjs';
 import {WORLD_CHARACTERS} from './world-characters.mjs';
 import {FOOD_BY_ID} from './world-foods.mjs';
-export const SHOP_PRICES=Object.freeze({character:500,pet:500,wallpaper:100,crate:3000});
+export const SHOP_PRICES=Object.freeze({character:500,pet:1000,wallpaper:100,crate:3000,advantage:5000});
+export const PREMIUM_PETS=Object.freeze(['jester','duo','bat','blue-survivor']);
+export const petShopPrice=id=>PREMIUM_PETS.includes(id)?2000:SHOP_PRICES.pet;
 export const ADVANTAGES=Object.freeze({
  extra_votes:{name:'+2 Votos',icon:'extra_votes',description:'En esta ceremonia tendrás dos votos en vez de uno. Puedes votar dos veces por la misma persona o repartirlos entre dos. No permite votar si eres inmune, nominado o te retiraste. No se acumula con otra ventaja que ya te conceda dos votos.'},
  vote_shield:{name:'−1 Voto',icon:'vote_shield',description:'Elige a una persona. Se resta uno de los votos recibidos en su contra en la votación de esta ceremonia, sin bajar de cero. No le quita su derecho a votar. Puede utilizarse antes, durante o al cerrar la votación.'},
@@ -19,6 +21,7 @@ export const ADVANTAGES=Object.freeze({
  votes_only:{name:'Todas las nominaciones por votos',icon:'votes_only',description:'Anula las nominaciones por ranking y por decisión del ganador. Los tres nominados salen de la votación. El ganador conserva su inmunidad y las protecciones de esta ceremonia siguen vigentes.'}
 });
 export const advantageDefinition=kind=>ADVANTAGES[kind==='idol_true'||kind==='idol_false'?'idol':kind];
+export const SHOP_ADVANTAGES=Object.freeze(Object.entries(ADVANTAGES).map(([kind,item])=>Object.freeze({id:kind==='idol'?'idol_true':kind,name:item.name,image:'/juegos/shop/icons/'+item.icon+'.webp',description:item.description,price:SHOP_PRICES.advantage})));
 export const iconForAdvantage=kind=>'/juegos/shop/icons/'+(advantageDefinition(kind)?.icon||'unknown')+'.webp';
 export const shopCharacterImage=c=>{const u=c.previewImage||c.originalImage||c.image||c.portrait;return u?.startsWith('./')?'/juegos/shared/ice-breaker/'+u.slice(2):u;};
 export const SHOP_CHARACTERS=WORLD_CHARACTERS.map(c=>({id:c.id,name:c.name,image:shopCharacterImage(c),price:c.id==='dua-lingo'?1000:c.id==='isabel'?50000:500,staffOnly:c.id==='maria-villegas',nurseOnly:c.id==='isabel',current:!!c.currentSeason}));

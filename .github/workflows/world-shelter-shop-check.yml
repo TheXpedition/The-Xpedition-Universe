@@ -1,0 +1,37 @@
+name: Refuge rosters and World shop checks
+on:
+  push:
+    paths:
+      - 'public/juegos/world-shelters*.mjs'
+      - 'public/juegos/world-shop*.mjs'
+      - 'world-shelter-service.mjs'
+      - 'world-shop-service.mjs'
+      - 'world.mjs'
+      - 'tests/world-shelters*.test.mjs'
+      - 'tests/world-shop*.test.mjs'
+      - '.github/workflows/world-shelter-shop-check.yml'
+  pull_request:
+    paths:
+      - 'public/juegos/world-shelters*.mjs'
+      - 'public/juegos/world-shop*.mjs'
+      - 'world-shelter-service.mjs'
+      - 'world-shop-service.mjs'
+      - 'world.mjs'
+      - 'tests/world-shelters*.test.mjs'
+      - 'tests/world-shop*.test.mjs'
+      - '.github/workflows/world-shelter-shop-check.yml'
+jobs:
+  refuge-and-store:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - name: Syntax check only refuge/shop files
+        run: node --check world-shelter-service.mjs && node --check world-shop-service.mjs && node --check public/juegos/world-shelters.mjs && node --check public/juegos/world-shelters-ui.mjs && node --check public/juegos/world-shop-catalog.mjs && node --check public/juegos/world-shop-ui.mjs
+      - name: Test roster assignment, internal permissions, UI and prices
+        run: node --test --test-concurrency=2 tests/world-shelters.test.mjs tests/world-shelters-ui.test.mjs tests/world-shelters-network.test.mjs tests/world-shop.test.mjs tests/world-shop-ui.test.mjs tests/world-shop-network.test.mjs
