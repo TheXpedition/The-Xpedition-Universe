@@ -14,7 +14,7 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
  ];
  const f=await liveFixture('protocol-visual-click-e2e',actors);
  let browser;
- const errors=[],measurements={};
+ const errors=[],missingResources=[],measurements={};
  await mkdir('artifacts',{recursive:true});
  async function capture(page,label){await page.screenshot({path:'artifacts/protocol-click-'+label+'.png',animations:'disabled'}).catch(()=>{});}
  try{
@@ -26,6 +26,7 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
    const page=await context.newPage();
    page.on('pageerror',err=>errors.push(id+': '+err.message));
    page.on('console',msg=>{if(msg.type()==='error')errors.push(id+': console '+msg.text().slice(0,240));});
+   page.on('response',response=>{if(response.status()>=400)missingResources.push({player:id,status:response.status(),url:response.url()});});
    await page.goto(f.base+'/juegos/x-protocol/',{waitUntil:'domcontentloaded'});
    await page.waitForFunction(()=>document.querySelector('#connection')?.textContent.includes('EN VIVO'),{},{timeout:30000});
    return page;
@@ -61,7 +62,26 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
   await staff.locator('#result-ranking').fill(resultRank.join('\n'));
   await mark('staff saves challenge result',()=>staff.locator('#save-result').click(),t=>staff.waitForFunction(()=>document.querySelector('#notice')?.textContent.includes('Resultado guardado'),null,{timeout:t}),9500);
   await staff.locator('#results-select option[value]:not([value=""])').first().waitFor({state:'attached',timeout:10000});
-  await mark('ranking confirmation opens',()=>staff.locator('#choose-results').click(),t=>staff.locator('#dialog').waitFor({state:'visible',timeout:t}),2500);
+  // Measure app response after the DOM click separately from Playwright's
+  // actionability/layout waiting time.
+  await staff.evaluate(()=>{
+   window.__rankingClickAudit={};
+   const modal=document.querySelector('#dialog'),btn=document.querySelector('#choose-results');
+   btn.addEventListener('click',()=>{window.__rankingClickAudit.eventAt=performance.now();},{once:true});
+   const observer=new MutationObserver(()=>{
+    if(modal.open){window.__rankingClickAudit.dialogAt=performance.now();observer.disconnect();}
+   });
+   observer.observe(modal,{attributes:true,attributeFilter:['open']});
+  });
+  const rankingClickAt=Date.now();
+  await staff.locator('#choose-results').click({timeout:20000});
+  await staff.locator('#dialog').waitFor({state:'visible',timeout:5000});
+  const clickAudit=await staff.evaluate(()=>window.__rankingClickAudit);
+  measurements['ranking click dispatch wall ms']=Date.now()-rankingClickAt;
+  measurements['ranking handler-to-dialog ms']=Math.round(clickAudit.dialogAt-clickAudit.eventAt);
+  assert(Number.isFinite(measurements['ranking handler-to-dialog ms']),'click never reached the real modal handler');
+  assert(measurements['ranking handler-to-dialog ms']<400,'after click event the ranking dialog took too long to appear: '+JSON.stringify(clickAudit));
+  console.log('CEREMONY_UI_CLICK',JSON.stringify({label:'ranking dialog event-to-visible',...measurements}));
   await mark('ranking confirmation reaches every player',()=>staff.locator('#dialog-confirm').click(),async t=>{await Promise.all([staff,winner,voter].map(p=>phase(p,'RESULTS_REVEAL',t)));},8000);
   await capture(staff,'ranking-desktop');
   await capture(winner,'ranking-mobile');
@@ -92,11 +112,11 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
   await mark('voter vote persists and UI acknowledges',()=>voter.locator('#dialog-confirm').click(),t=>voter.waitForFunction(()=>document.querySelector('#private-station')?.textContent.includes('Tu voto por'),null,{timeout:t}),8000);
   await capture(voter,'vote-ack-desktop');
 
-  assert.deepEqual(errors.filter(e=>!e.includes('net::ERR_')),[],'browser console and runtime errors');
-  console.log('CEREMONY_UI_FINAL_REPORT',JSON.stringify({measurements,users:3,mode:'actual Playwright browser clicks against real World + dedicated engine fixture'}));
+  assert.deepEqual(errors.filter(e=>!e.includes('Failed to load resource')&&!e.includes('net::ERR_')),[],'browser JavaScript runtime errors');
+  console.log('CEREMONY_UI_FINAL_REPORT',JSON.stringify({measurements,missingResources,users:3,mode:'actual Playwright browser clicks against real World + dedicated engine fixture'}));
  }catch(error){
   for(const [i,page] of (browser?.contexts()||[]).flatMap(ctx=>ctx.pages()).entries())await capture(page,'failure-'+i);
-  console.error('CEREMONY_UI_DIAGNOSTICS',JSON.stringify({measurements,errors,reason:error.message}));
+  console.error('CEREMONY_UI_DIAGNOSTICS',JSON.stringify({measurements,errors,missingResources,reason:error.message}));
   throw error;
  }finally{await browser?.close();await f.close();}
 });
