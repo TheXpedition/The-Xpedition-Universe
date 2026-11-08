@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {openDatabase} from '../database.mjs';
 import {createShelterService} from '../world-shelter-service.mjs';
-import {SHELTERS,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,shelterSupplyProp,buildShelterProps} from '../public/juegos/world-shelters.mjs';
+import {SHELTERS,SHELTER_ROSTERS,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,shelterForCharacter,shelterSupplyProp,buildShelterProps} from '../public/juegos/world-shelters.mjs';
 import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {worldPath,hasFloor,clearPoint} from '../public/juegos/world-motion.mjs';
 import {createVitalsStore} from '../world-vitals-service.mjs';import {createHealthStore} from '../world-health-service.mjs';
 const atMaterial=m=>({...shelterSupplyProp(m,WORLD_MAPS[m.zone]),zone:m.zone,alive:true});
@@ -16,14 +16,59 @@ test('pickups are personal, one per participant, atomic against double clicks, a
  await assert.rejects(f.s.collect(a,SHELTER_MATERIALS[1].id,atMaterial(m)),e=>e.status===409);
  const maps=structuredClone(WORLD_MAPS);buildShelterProps(maps,await f.s.snapshot(a));assert(!maps[m.zone].props.some(p=>p.shelterSupply===m.id));buildShelterProps(maps,await f.s.snapshot({id:'carmine'}));assert.equal(maps[m.zone].props.filter(p=>p.shelterSupply===m.id).length,1);
  }finally{await f.close();}});
-test('nine distinct members must each deliver all ten items; assignment, completed shelter, vitals, health and inventory survive reopening',async()=>{const f=await fixture();let reloaded;try{
- const staff={id:'maria-villegas'},people=SHELTER_PARTICIPANTS.slice(0,9);await assert.rejects(f.s.assign(staff,{id:people[0]},'left'),e=>e.status===403);await assert.rejects(f.s.assign(staff,{id:'dani'},'left',{authorized:true}),e=>e.status===403);
- for(const id of people)await f.s.assign(staff,{id},'left',{authorized:true});await assert.rejects(f.s.assign(staff,{id:SHELTER_PARTICIPANTS[10]},'left',{authorized:true}),e=>e.status===409);
- for(const [i,id]of people.entries()){for(const m of SHELTER_MATERIALS)await f.s.collect({id},m.id,atMaterial(m));await assert.rejects(f.s.contribute({id},'right',atDoor('right')),e=>e.status===403);const result=await f.s.contribute({id},'left',atDoor('left'));assert.equal(result.added,10);assert.equal((await f.s.contribute({id},'left',atDoor('left'))).added,0);if(i===0){const v=await f.s.snapshot({id});assert.equal(v.shelters[0].counts.nails,1);assert(!v.shelters[0].built);assert.equal(v.inventory.length,0);}}
- const user={id:people[0]},view=await f.s.snapshot(user);assert.equal(view.shelters[0].percent,100);assert(view.shelters[0].built);await f.s.assertAccess(user,'refugio-1');await assert.rejects(f.s.assertAccess(user,'dormitorio-2'),e=>e.status===403);await assert.rejects(f.s.assertAccess(staff,'refugio-1'),e=>e.status===403);
- const other={id:SHELTER_PARTICIPANTS[12]};await f.s.collect(other,SHELTER_MATERIALS[2].id,atMaterial(SHELTER_MATERIALS[2]));
- const vitals=createVitalsStore({db:f.db}),health=createHealthStore({db:f.db});await vitals.save(user.id,{health:61,hunger:37,energy:42,sleep:55,stress:29});const body=await health.loadBody(user.id);body.wetness=23;await health.saveBody(user.id,body);await f.db.run('INSERT INTO world_survival_state(id,state,updated) VALUES(?,?,?)','user:'+user.id,JSON.stringify({items:{rope:3,plank:4}}),1000);
- const savedView=await f.s.snapshot(user);await f.s.close();reloaded=createShelterService({db:f.db,now:()=>999999});await reloaded.ready;assert.deepEqual(await reloaded.snapshot(user),savedView);assert.deepEqual((await reloaded.snapshot(other)).inventory,[SHELTER_MATERIALS[2].id]);assert.equal((await vitals.load(user.id)).hunger,37);assert.equal((await vitals.load(user.id)).energy,42);assert.equal((await health.loadBody(user.id)).wetness,23);assert.deepEqual(JSON.parse((await f.db.one('SELECT state FROM world_survival_state WHERE id=?','user:'+user.id)).state).items,{rope:3,plank:4});
- }finally{await reloaded?.close();await f.close();}});
+test('fixed cast assignments keep all 18 homes without staff and preserve construction, vitals and supplies',async()=>{
+ const f=await fixture();let reloaded;try{
+  assert.equal(SHELTER_ROSTERS.left.length,9);assert.equal(SHELTER_ROSTERS.right.length,9);
+  assert.equal(new Set([...SHELTER_ROSTERS.left,...SHELTER_ROSTERS.right]).size,18);
+  for(const character of SHELTER_ROSTERS.left)assert.equal(shelterForCharacter(character),'left');
+  for(const character of SHELTER_ROSTERS.right)assert.equal(shelterForCharacter(character),'right');
+  const people=SHELTER_ROSTERS.left;
+  for(const id of people){
+   const view=await f.s.snapshot({id});assert.equal(view.home,'left');assert.equal(view.shelters[0].members.length,9);
+   assert.equal(view.shelters[1].members.length,9);
+   assert.equal(f.s.teamFor({id},id),'left');
+   for(const m of SHELTER_MATERIALS)await f.s.collect({id},m.id,atMaterial(m));
+   await assert.rejects(f.s.contribute({id},'right',atDoor('right')),e=>e.status===409||e.status===403);
+   const result=await f.s.contribute({id},'left',atDoor('left'));assert.equal(result.added,10);
+  }
+  const user={id:people[0]},view=await f.s.snapshot(user);
+  assert.equal(view.shelters[0].percent,100);assert(view.shelters[0].built);
+  await f.s.assertAccess(user,'refugio-1');
+  await assert.rejects(f.s.assertAccess(user,'dormitorio-2'),e=>e.status===403);
+  await assert.rejects(f.s.assertAccess({id:'maria-villegas'},'refugio-1'),e=>e.status===403);
+  const other={id:SHELTER_ROSTERS.right[0]};
+  await f.s.collect(other,SHELTER_MATERIALS[2].id,atMaterial(SHELTER_MATERIALS[2]));
+  const vitals=createVitalsStore({db:f.db}),health=createHealthStore({db:f.db});
+  await vitals.save(user.id,{health:61,hunger:37,energy:42,sleep:55,stress:29});
+  const body=await health.loadBody(user.id);body.wetness=23;await health.saveBody(user.id,body);
+  await f.db.run('INSERT INTO world_survival_state(id,state,updated) VALUES(?,?,?)','user:'+user.id,JSON.stringify({items:{rope:3,plank:4}}),1000);
+  const savedView=await f.s.snapshot(user);await f.s.close();
+  reloaded=createShelterService({db:f.db,now:()=>999999});await reloaded.ready;
+  assert.deepEqual(await reloaded.snapshot(user),savedView);
+  assert.deepEqual((await reloaded.snapshot(other)).inventory,[SHELTER_MATERIALS[2].id]);
+  assert.equal((await vitals.load(user.id)).hunger,37);
+  assert.equal((await health.loadBody(user.id)).wetness,23);
+  assert.deepEqual(JSON.parse((await f.db.one('SELECT state FROM world_survival_state WHERE id=?','user:'+user.id)).state).items,{rope:3,plank:4});
+ }finally{await reloaded?.close();await f.close();}
+});
 
-test('eliminated residents disappear from both shelter portraits without losing their saved contributions',async()=>{const f=await fixture();try{await f.s.assign({id:'maria-villegas'},{id:'bruno'},'left',{authorized:true});await f.s.assign({id:'maria-villegas'},{id:'peggy'},'right',{authorized:true});const material=SHELTER_MATERIALS[0];await f.s.collect({id:'bruno'},material.id,atMaterial(material));await f.s.contribute({id:'bruno'},'left',atDoor('left'));const before=await f.s.snapshot({id:'bruno'});await f.db.run('INSERT INTO world_seasons(id,name,state,updated) VALUES(?,?,?,1)','antarctica-1','Apocalypse','{}');await f.db.run('INSERT INTO world_contestants(season,user_id,status,updated) VALUES(?,?,?,1)','antarctica-1','bruno','eliminated');await f.db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,1)','x-protocol-exclusions',JSON.stringify(['peggy']));const after=await f.s.snapshot({id:'bruno'});assert.equal(after.eligible,false);assert.equal(after.shelters[0].members.length,0);assert.equal(after.shelters[1].members.length,0);assert.deepEqual(after.shelters[0].counts,before.shelters[0].counts);assert.equal((await f.s.identity({id:'peggy'})).active,false);}finally{await f.close();}});
+test('eliminated participants lose access but portraits and saved contributions remain',async()=>{
+ const f=await fixture();try{
+  const material=SHELTER_MATERIALS[0];
+  await f.s.collect({id:'bruno'},material.id,atMaterial(material));
+  await f.s.contribute({id:'bruno'},'left',atDoor('left'));
+  const before=await f.s.snapshot({id:'bruno'});
+  await f.db.run('INSERT INTO world_seasons(id,name,state,updated) VALUES(?,?,?,1)','antarctica-1','Apocalypse','{}');
+  await f.db.run('INSERT INTO world_contestants(season,user_id,status,updated) VALUES(?,?,?,1)','antarctica-1','bruno','eliminated');
+  await f.db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,1)','x-protocol-exclusions',JSON.stringify(['peggy']));
+  const after=await f.s.snapshot({id:'bruno'});
+  assert.equal(after.eligible,false);
+  assert.equal(after.home,null);
+  assert.equal(after.shelters[0].members.length,9);
+  assert.equal(after.shelters[1].members.length,9);
+  assert.equal(after.shelters[0].members.find(p=>p.characterId==='bruno').active,false);
+  assert.equal(after.shelters[1].members.find(p=>p.characterId==='peggy').active,false);
+  assert.deepEqual(after.shelters[0].counts,before.shelters[0].counts);
+  assert.equal((await f.s.identity({id:'peggy'})).active,false);
+ }finally{await f.close();}
+});
