@@ -838,7 +838,7 @@ const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,
 const casting=createCasting({db,json,fail,checkRate,body,progression,catalog,onParticipantChange:setApocalypseParticipant,isParticipant:isApocalypseParticipant});
 function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
 const showdown=createShowdownGame({db,json,fail,body,checkRate,progression,characters:JSON.parse(fs.readFileSync(path.join(publicDir,'showdown/characters.json'),'utf8')),notify,messageView,pushNotifications,serialize});
-const world=createWorldGateway({db,json,fail,getSession,body});
+const world=createWorldGateway({db,json,fail,getSession,body,onDeleteServer:id=>worldCompanion.stopRoom(id)});
 const arcade=createArcade({db,json,fail,checkRate,body,everyone,progression});
 const xMillion=createXMillion({db,json,fail,body,checkRate,access:arcade.access,notify,serialize});
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
