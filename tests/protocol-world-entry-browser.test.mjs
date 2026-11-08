@@ -112,3 +112,34 @@ test('desktop signed-in simulated Edge reaches World despite stalled chats, prof
   }));
  }finally{await context.close();await browser.close();}
 });
+
+
+test('desktop World entry is visible while own session profile stalls', {timeout:150000},async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const context=await browser.newContext({
+  viewport:{width:1692,height:900},
+  userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0'
+ });
+ const page=await context.newPage();
+ try{
+  await page.route('**/api/me',async route=>{await new Promise(()=>{});});
+  await page.route('**/api/world/access',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+   role:'staff',canPlay:true,confirmed:true,publicEnabled:true,configured:true
+  })}));
+  await page.route('**/api/world/servers',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+   staff:true,configured:true,inline:true,servers:[{id:'qa-no-real-room',name:'QA World',enabled:true,archived:false,autoBots:true}]
+  })}));
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  const started=Date.now();
+  await page.goto('https://the-xpedition-universe.onrender.com/#world',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('.world-entry').waitFor({state:'visible',timeout:18000});
+  await page.locator('[data-enter-server="qa-no-real-room"]').waitFor({state:'visible',timeout:12000});
+  assert(!await page.locator('#main').innerText().then(x=>x.includes('Preparando tu próxima aventura')));
+  console.log('PUBLIC_DESKTOP_USER_PROFILE_HANG_RECOVERED',JSON.stringify({
+    startupMs:Date.now()-started,serverEntryVisible:true,
+    profileEndpoint:'intentionally never resolves',errors
+  }));
+  assert.deepEqual(errors,[],'Desktop page script error while session request hangs');
+ }finally{await context.close();await browser.close();}
+});
