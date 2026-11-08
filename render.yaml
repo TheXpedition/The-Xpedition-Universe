@@ -94,6 +94,13 @@ services:
           name: the-xpedition-universe
           type: web
           envVarKey: DATABASE_PASSWORD
+      # Reuse the same trusted Supabase CA, if configured in World.
+      # Never disable TLS certificate validation to work around chain errors.
+      - key: DATABASE_CA
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_CA
       - key: PROTOCOL_ENGINE_WORKER
         value: "true"
       - fromGroup: the-xpedition-protocol-bridge
