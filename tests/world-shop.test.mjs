@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {randomUUID} from 'node:crypto';
-import {openDatabase} from '../database.mjs';import {createWorldShop} from '../world-shop-service.mjs';
+import {openDatabase} from '../database.mjs';import {createWorldShop} from '../world-shop-service.mjs';import {serverDatabase} from '../world-server-store.mjs';
 const request=extra=>({requestId:randomUUID(),...extra});
 test('Maria/Bonju remain reserved while Isabel/Dua reappear at their original prices and role grants survive',async()=>{const f=await fixture();try{const view=await f.shop.snapshot({id:'a'});for(const ref of ['maria-villegas','bonju']){assert(!view.catalog.characters.some(c=>c.id===ref));await assert.rejects(f.shop.buy({id:'a'},request({kind:'character',ref})),/no están a la venta/);}assert.equal(view.catalog.characters.find(c=>c.id==='isabel')?.price,500000);assert.equal(view.catalog.characters.find(c=>c.id==='dua-lingo')?.price,1000);assert.equal((await f.shop.snapshot({id:'a'})).wallet.coins,20000);const roles=createWorldShop({db:f.db,canStaff:async u=>u.id==='b',canNurse:async u=>u.id==='c'});await roles.ready;const staff=await roles.snapshot({id:'b'});assert.deepEqual(staff.inventory.filter(i=>i.kind==='character').map(i=>i.ref),['maria-villegas']);assert.equal(staff.wallet.coins,20000);const nurse=await roles.snapshot({id:'c'});assert(nurse.inventory.some(i=>i.ref==='isabel'));assert(!nurse.inventory.some(i=>i.ref==='maria-villegas'));await roles.snapshot({id:'b'});assert.equal((await roles.snapshot({id:'b'})).inventory.filter(i=>i.ref==='maria-villegas').length,1);}finally{await f.close();}});
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shop-')),db=await openDatabase(dir);await db.run('INSERT INTO world_seasons(id,name,state,updated) VALUES(?,?,?,1)','antarctica-1','Apocalypse II','{}');for(const [id,character]of [['a','bruno'],['b','peggy'],['c','ivy']]){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,1)',id,id,id,id+'@example.invalid','Dani');await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,1)',id,character);await db.run('INSERT INTO world_contestants(season,user_id,status,updated) VALUES(?,?,?,1)','antarctica-1',id,'active');await db.run('INSERT INTO user_progression(user_id,coins,tickets,xp) VALUES(?,20000,50000,0)',id);}let rng=0;const shop=createWorldShop({db,random:()=>rng});await shop.ready;return {db,shop,rng:v=>rng=v,async close(){await db.close();assert(path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(dir,{recursive:true,force:true});}};}
@@ -74,5 +74,26 @@ test('Isabel is a single atomic 500,000 coin purchase per server and remains sol
   assert.equal((await reloaded.snapshot({id:other})).catalog.characters.find(c=>c.id==='isabel').soldOut,true);
   await assert.rejects(reloaded.buy({id:other},request({kind:'character',ref:'isabel'})),e=>e.status===409);
   assert.equal((await reloaded.snapshot({id:other})).wallet.coins,600000);
+ }finally{await f.close();}
+});
+
+test('one Isabel purchase per scoped World server, not globally across World servers',async()=>{
+ const f=await fixture();
+ try{
+  const roomA=await serverDatabase(f.db,'8b036ace-0748-4f56-b83a-19718a178f11');
+  const roomB=await serverDatabase(f.db,'b1e5774f-cb7f-4dc0-8404-310df469cd89');
+  const shopA=createWorldShop({db:roomA}),shopB=createWorldShop({db:roomB});
+  await Promise.all([shopA.ready,shopB.ready]);
+  await f.db.run('UPDATE user_progression SET coins=600000 WHERE user_id IN (?,?)','a','b');
+  const boughtA=await shopA.buy({id:'a'},request({kind:'character',ref:'isabel'}));
+  assert.equal(boughtA.shop.wallet.coins,100000);
+  assert.equal((await shopA.snapshot({id:'b'})).catalog.characters.find(c=>c.id==='isabel').soldOut,true);
+  assert.equal((await shopB.snapshot({id:'b'})).catalog.characters.find(c=>c.id==='isabel').canBuy,true);
+  const boughtB=await shopB.buy({id:'b'},request({kind:'character',ref:'isabel'}));
+  assert.equal(boughtB.shop.wallet.coins,100000);
+  assert.equal((await shopB.snapshot({id:'a'})).catalog.characters.find(c=>c.id==='isabel').soldOut,true);
+  assert.equal(Number((await roomA.one('SELECT enabled FROM world_clinic_roles WHERE user_id=?','a')).enabled),1);
+  assert.equal(Number((await roomB.one('SELECT enabled FROM world_clinic_roles WHERE user_id=?','b')).enabled),1);
+  assert.equal((await roomA.one('SELECT enabled FROM world_clinic_roles WHERE user_id=?','b'))?.enabled??null,null);
  }finally{await f.close();}
 });
