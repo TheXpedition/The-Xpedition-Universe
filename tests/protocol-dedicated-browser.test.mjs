@@ -48,6 +48,7 @@ test('remote X Protocol authority: Chromium STAFF and mobile viewer complete the
   };
   const staff=await context(STAFF_ID),player=await context('browser-player',true);
   assert.equal(await staff.locator('#staff-toggle').isVisible(),true,'STAFF controls must be accessible');
+  for(const page of [staff,player])await page.route('**/juegos/x-protocol/art/poses/bruno-seated-v2.webp',async route=>{await new Promise(resolve=>setTimeout(resolve,12000));await route.continue();});
 
   const control=async type=>{
    const response=await f.call('/api/world/x-protocol/control',STAFF_ID,'POST',{type});
@@ -61,11 +62,10 @@ test('remote X Protocol authority: Chromium STAFF and mobile viewer complete the
    return {characterId,status:result.status()};
   }));
   assert.deepEqual(faces.filter(a=>a.status!==200),[],'all 18 ranking portraits must load over the actual World HTTP route');
-  await control('start');
-
-  await staff.waitForFunction(()=>document.body.dataset.phase==='ELIMINATION_LOADING'||document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:15000});
-  await staff.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:30000});
-  await player.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:30000});
+  const startAt=Date.now();await control('start');
+  await staff.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:8000});
+  await player.waitForFunction(()=>document.body.dataset.phase==='INTRO_VIDEO',undefined,{timeout:8000});
+  assert(Date.now()-startAt<8000,'the intro must start without waiting for a stalled contestant pose');
   await staff.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
   await player.waitForFunction(()=>{const v=document.querySelector('#video');return v&&v.currentTime>0.5&&!v.paused;},undefined,{timeout:25000});
   for(const viewer of [staff,player]){
@@ -78,6 +78,11 @@ test('remote X Protocol authority: Chromium STAFF and mobile viewer complete the
   const afterReconnect=await player.evaluate(()=>({time:document.querySelector('#video').currentTime,bootstraps:window.__worldBootstrapRequests}));
   assert.equal(afterReconnect.bootstraps,beforeReconnect.bootstraps,'socket reconnect must not reload expensive World bootstrap');
   assert(afterReconnect.time>=beforeReconnect.time,'the introduction must continue, not restart, after reconnect');
+  await staff.locator('#video').evaluate(video=>video.dispatchEvent(new Event('ended')));
+  await staff.waitForFunction(()=>document.querySelector('#cinema').hidden,undefined,{timeout:3000});
+  assert.equal(await staff.locator('body').getAttribute('data-phase'),'INTRO_VIDEO','one viewer may finish while the synchronized gate waits for the other viewer');
+  await player.locator('#video').evaluate(video=>video.dispatchEvent(new Event('ended')));
+  await Promise.all([staff,player].map(page=>page.waitForFunction(()=>document.body.dataset.phase==='CEREMONY_STAGE_VISIBLE',undefined,{timeout:5000})));
 
   await staff.locator('#staff-toggle').click();
   await staff.locator('#staff-actions button[data-action="pause"]').click();
