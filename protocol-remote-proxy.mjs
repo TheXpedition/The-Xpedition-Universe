@@ -96,16 +96,18 @@ export function createProtocolRemoteProxy({
    socket=ws;
    // Detect half-open Render-to-Render sockets that never emit close.
    // Restart only the bridge; never interrupt the browser's World socket.
-   let heartbeat=null,awaitingPong=false;
+   let heartbeat=null,lastMessageAt=Date.now();
    const stopHeartbeat=()=>{if(heartbeat){clearInterval(heartbeat);heartbeat=null;}};
    const startHeartbeat=()=>{
-    if(typeof ws.ping!=='function'||!Number.isFinite(heartbeatMs)||heartbeatMs<=0)return;
-    ws.on('pong',()=>{awaitingPong=false;});
+    if(!Number.isFinite(heartbeatMs)||heartbeatMs<=0)return;
+    // Virginia emits a status frame every 900 ms. Track real application
+    // messages instead of relying on WebSocket control-frame ping/pong.
+    ws.on('message',()=>{lastMessageAt=Date.now();});
     heartbeat=setInterval(()=>{
      if(ws.readyState!==WebSocket.OPEN){stopHeartbeat();return;}
-     if(awaitingPong){stopHeartbeat();ws.terminate();return;}
-     awaitingPong=true;
-     try{ws.ping();}catch{stopHeartbeat();ws.terminate();}
+     if(Date.now()-lastMessageAt<heartbeatMs*2)return;
+     console.warn('Protocol bridge stopped receiving Virginia status:',Math.round((Date.now()-lastMessageAt)/1000)+'s');
+     stopHeartbeat();ws.terminate();
     },heartbeatMs);
     heartbeat.unref?.();
    };
