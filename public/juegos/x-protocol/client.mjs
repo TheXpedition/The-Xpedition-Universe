@@ -143,7 +143,9 @@ async function connect(){
    boot=await fetch('/api/world/bootstrap').then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World.');return d;});
    const d=await api('');
    shopUI.update(boot.shop);update(d.episode);
-   if(['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(state.phase)&&!historyOpenedOnce){historyOpenedOnce=true;void historyUI.open();}
+   // History is accessible via the visible button but must never auto-open
+    // over the live controls. A blocking dialog previously swallowed clicks
+    // on Help, Direction, Chat and other actions immediately after login.
    if(!historyHydrated){for(const m of d.history||[])chat({...m,userId:m.sender});historyHydrated=true;}
    reconnectFailures=0;
   }
