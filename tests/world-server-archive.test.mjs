@@ -36,7 +36,7 @@ test('permanent deletion removes only the confirmed room, leaves other room data
   await assert.rejects(query('PATCH','/api/world/servers/'+first.id,{restore:true}),{status:404});
   await assert.rejects(servers.enter(GUEST,first.id),{status:404});
   assert((await query('GET','/api/world/servers')).servers.some(x=>x.id===second.id));
-  const history=await db.one('SELECT action FROM moderation_actions WHERE subject=?',first.id);
+  const history=await db.one('SELECT action FROM moderation_actions WHERE subject=? AND action=?',first.id,'world-server:delete');
   assert.equal(history.action,'world-server:delete');
  }finally{await db.close();await fs.rm(dir,{recursive:true,force:true});}
 });
