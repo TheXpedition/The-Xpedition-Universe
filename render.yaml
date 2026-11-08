@@ -105,6 +105,46 @@ services:
         value: "true"
       - fromGroup: the-xpedition-protocol-bridge
 
+  # Replacement engine in the same Virginia region as World.
+  # Keep the Oregon authority untouched until the Virginia service is live
+  # and no ceremony is in progress; World selects the new URL on cutover.
+  - type: web
+    name: the-xpedition-protocol-virginia
+    runtime: node
+    region: virginia
+    buildCommand: npm ci --omit=dev
+    startCommand: node protocol-dedicated-server.mjs
+    plan: free
+    numInstances: 1
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      - key: PERSISTENCE_MODE
+        value: supabase
+      - key: DATABASE_URL
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_URL
+      - key: DATABASE_PASSWORD
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_PASSWORD
+      - key: DATABASE_CA
+        fromService:
+          name: the-xpedition-universe
+          type: web
+          envVarKey: DATABASE_CA
+      - key: PROTOCOL_ENGINE_WORKER
+        value: "true"
+      - fromGroup: the-xpedition-protocol-bridge
+
 # One shared, generated secret for both services. Never commit raw values.
 envVarGroups:
   - name: the-xpedition-protocol-bridge
