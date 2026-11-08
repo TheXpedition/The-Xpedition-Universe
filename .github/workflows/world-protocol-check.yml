@@ -84,6 +84,8 @@ jobs:
         run: XP_WORLD_AUTH_BROWSER_TEST=1 node --test tests/world-auth.test.mjs
       - name: Check optional World artwork can stall without blocking the player
         run: node --test tests/world-boot.test.mjs
+      - name: Show only the two current challenges
+        run: node --test tests/world-challenges-featured.test.mjs
       - name: Verify public desktop iframe intro survives a permanently pending video play()
         run: node --test tests/protocol-world-intro-stall.test.mjs
       - run: node --test tests/protocol-browser-smoke.test.mjs
