@@ -12,6 +12,9 @@ test('advantage catalog is informational and random crate is the only purchasabl
   const cards=f.root.querySelectorAll('.shop-product.advantage');
   assert(cards.length>10);
   assert.equal(f.root.querySelector('[data-shop-action="buy-dialog"][data-kind="advantage"]'),null);
+  assert.doesNotMatch(f.root.textContent,/5\.000 tickets cada una · se guardan en tu inventario/i);
+  assert.doesNotMatch(f.root.textContent,/100 TICKETS/);
+  assert.equal([...f.root.querySelectorAll('.shop-product.advantage')].filter(card=>card.querySelector('button,[data-shop-action]')).length,0);
   assert.equal(f.root.querySelectorAll('.shop-product.advantage button').length,0);
   assert.match(f.root.textContent,/5.000 TICKETS · COMPRAR CAJA/);
   assert.match(f.root.textContent,/Solo para consultar/);
