@@ -88,6 +88,33 @@ test('remote X Protocol authority: Chromium STAFF and mobile viewer complete the
   await staff.waitForFunction(()=>document.body.dataset.phase==='RESULTS_SELECTION',undefined,{timeout:60000});
   await player.waitForFunction(()=>document.body.dataset.phase==='RESULTS_SELECTION',undefined,{timeout:15000});
   assert.equal(await staff.locator('#cinema').isVisible(),false,'video must no longer cover the ceremony stage');
+  // Exercise the actual client renderer with all eighteen seats visible in
+  // Chromium. CI frame time is not Colombian end-user latency, so report it
+  // as a baseline instead of making ungrounded real-device FPS promises.
+  for(const [page,device] of [[staff,'desktop'],[player,'mobile']]){
+   const perf=await page.evaluate(()=>new Promise(resolve=>{
+    const deltas=[];const started=performance.now();let previous=0;const longTasks=[];
+    const observer=typeof PerformanceObserver==='function'?new PerformanceObserver(list=>{
+     for(const entry of list.getEntries())longTasks.push(Math.round(entry.duration));
+    }):null;
+    try{observer?.observe({entryTypes:['longtask']});}catch{}
+    function frame(now){
+     if(previous)deltas.push(now-previous);previous=now;
+     if(now-started<2800)return requestAnimationFrame(frame);
+     observer?.disconnect();
+     const values=deltas.slice().sort((a,b)=>a-b),p95=values[Math.floor(values.length*.95)]||0;
+     resolve({frames:values.length,durationMs:Math.round(now-started),fps:Math.round(values.length*1000/(now-started)),
+      p95FrameMs:Math.round(p95*10)/10,framesOver50Ms:values.filter(n=>n>50).length,
+      longTasks:longTasks.length,maxLongTaskMs:Math.max(0,...longTasks),
+      actorsOnStage:document.querySelectorAll('#cast [data-character]').length,
+      currentPhase:document.body.dataset.phase});
+    }
+    requestAnimationFrame(frame);
+   }));
+   console.log('PROTOCOL_BROWSER_FRAME_TIMING',JSON.stringify({device,...perf}));
+   assert(perf.frames>30,device+' browser animation was effectively frozen during the visual smoke test');
+  }
+
   await staff.locator('#results-controls summary').click();
   await staff.locator('#result-name').fill('Reto de prueba');
   await staff.locator('#save-result').click();
