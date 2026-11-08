@@ -1,0 +1,35 @@
+name: The X Protocol - PUBLIC authenticated browser audit
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/protocol-production-authenticated-ui.test.mjs'
+      - '.github/workflows/protocol-public-authenticated-check.yml'
+permissions:
+  contents: read
+jobs:
+  audit-live-website:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      XP_QA_LOGIN: ${{ secrets.XP_QA_LOGIN }}
+      XP_QA_PASSWORD: ${{ secrets.XP_QA_PASSWORD }}
+      XP_QA_SERVER_ID: ${{ vars.XP_QA_SERVER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save --package-lock=false playwright-core@1.58.2
+      - name: Click the PUBLIC production World and X Protocol as real STAFF (read-only)
+        run: node --test tests/protocol-production-authenticated-ui.test.mjs
+      - name: Upload production screenshots (safe: no passwords in the captures)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-production-ceremony-screenshots
+          path: artifacts/protocol-production-authenticated/*.png
+          if-no-files-found: ignore
