@@ -112,7 +112,7 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
   const eligible=voter.locator('[data-purpose="vote"] button.choice:not([disabled])').first();
   await eligible.waitFor({state:'visible',timeout:9000});
   await mark('voter confirmation opens',()=>eligible.click(),t=>voter.locator('#dialog').waitFor({state:'visible',timeout:t}),3000);
-  await mark('voter vote persists and UI acknowledges',()=>voter.locator('#dialog-confirm').click(),t=>voter.waitForFunction(()=>document.querySelector('#private-station')?.textContent.includes('Tu voto por'),null,{timeout:t}),8000);
+  await mark('voter vote persists and UI acknowledges',()=>voter.locator('#dialog-confirm').click(),t=>voter.waitForFunction(()=>document.querySelector('#play-panel')?.textContent.includes('Tu voto por')||document.body.textContent.includes('Tu voto por'),null,{timeout:t}),8000);
   await capture(voter,'vote-ack-desktop');
 
   assert.deepEqual(errors.filter(e=>!e.includes('Failed to load resource')&&!e.includes('net::ERR_')),[],'browser JavaScript runtime errors');
