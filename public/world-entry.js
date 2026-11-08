@@ -15,8 +15,8 @@ async function renderWorldEntry(){
  async function refresh(){snapshot=await api('/world/servers'+(showArchived?'?archived=1':''));if(root.isConnected)draw();}
  try{
   const gate=await api('/world/access');if(!root.isConnected)return;
-  const staff=gate.role==='staff';status.textContent=staff?(gate.publicEnabled?'World está abierto a los perfiles Apocalypse II.':'Por ahora, World está reservado al STAFF.'):!state.user?'Inicia sesión con tu cuenta del universo.':!gate.confirmed?'Necesitas el estilo Apocalypse II en tu perfil.':!gate.publicEnabled?'El STAFF aún no ha abierto World.':'Tu estilo Apocalypse II te permite entrar.';
-  if(!state.user){const login=document.createElement('button');login.className='btn primary small';login.textContent='Iniciar sesión';login.onclick=()=>openAuth('login');$('.world-entry-actions',root).prepend(login);}
+  const staff=gate.role==='staff';status.textContent=staff?(gate.publicEnabled?'World está abierto a los perfiles Apocalypse II.':'Por ahora, World está reservado al STAFF.'):!state.user&&!gate.canPlay?'Inicia sesión con tu cuenta del universo.':!gate.confirmed?'Necesitas el estilo Apocalypse II en tu perfil.':!gate.publicEnabled?'El STAFF aún no ha abierto World.':'Tu estilo Apocalypse II te permite entrar.';
+  if(!state.user&&!gate.canPlay){const login=document.createElement('button');login.className='btn primary small';login.textContent='Iniciar sesión';login.onclick=()=>openAuth('login');$('.world-entry-actions',root).prepend(login);}
   if(staff){toggle.hidden=false;const manage=document.createElement('a');manage.className='world-entry-manage';manage.href='#moderacion/world';manage.textContent='Administrar acceso';$('.world-entry-actions',root).append(manage);}
   if(!gate.canPlay){list.innerHTML='<div class="world-server-empty"><span>APOCALYPSE II</span><h3>Acceso reservado</h3><p>'+esc(status.textContent)+'</p></div>';return;}
   await refresh();
