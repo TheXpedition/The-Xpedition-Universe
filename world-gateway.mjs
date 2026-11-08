@@ -6,11 +6,11 @@ import {createWorldServers} from './world-servers.mjs';
 export const digest=value=>createHash('sha256').update(value).digest('hex');
 export const cookieValue=(req,name)=>(req.headers.cookie||'').split(';').map(v=>v.trim()).find(v=>v.startsWith(name+'='))?.slice(name.length+1)||'';
 export function applicationURL(value){if(!value)return null;const u=new URL(value),local=u.hostname==='localhost'||u.hostname.endsWith('.localhost')||u.hostname==='127.0.0.1';if(u.username||u.password||u.protocol!=='https:'&&!(local&&u.protocol==='http:'))throw Error('La URL de World debe usar HTTPS.');return new URL(u.origin);}
-export function createWorldGateway({db,json,fail,getSession,body,worldURL=process.env.WORLD_URL,now=Date.now}){
+export function createWorldGateway({db,json,fail,getSession,body,worldURL=process.env.WORLD_URL,now=Date.now,onDeleteServer=async()=>{}}){
  const participation=createWorldParticipation({db,now});
  async function destination(){let value=worldURL;if(!value){const row=await db.one('SELECT state FROM world_environment WHERE id=?','world-service:public-url');try{value=JSON.parse(row?.state||'{}').url;}catch{}}if(!value)return null;try{applicationURL(value);const url=new URL(value);url.search='';url.hash='';url.pathname=url.pathname.replace(/\/$/,'');return url;}catch{return null;}}
  async function access(user){const row=await db.one('SELECT enabled FROM world_access WHERE resource=?','world'),publicEnabled=!!Number(row?.enabled),staff=isStaff(user?.id),role=await participation.role(user,{staff}),target=await destination();return {publicEnabled,canPlay:!!user&&(staff||publicEnabled&&role.confirmed),staffPreview:staff&&!publicEnabled,configured:!!target,inline:target?.pathname.replace(/\/$/,'')==='/world-play',...role};}
- const servers=createWorldServers({db,json,fail,body,access,now});
+ const servers=createWorldServers({db,json,fail,body,access,now,onDelete:onDeleteServer});
  async function launch(req,res){
   res.setHeader('Cache-Control','private, no-store');res.setHeader('Referrer-Policy','no-referrer');
   const user=await getSession(req);if(!user){res.writeHead(302,{Location:'/?auth=login&returnTo=%2Fjuegos%2F#world'});res.end();return;}
