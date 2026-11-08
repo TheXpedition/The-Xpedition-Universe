@@ -9,8 +9,8 @@ const markup=source.slice(start,end);
 
 test('challenge catalog presents only the two existing featured challenges',()=>{
  assert(start>0&&end>start);
- assert.match(markup,/href="\\/juegos\\/last-grip\\/"/);
- assert.match(markup,/href="\\/juegos\\/bonju-chef\\/"/);
+ assert(markup.includes('href="/juegos/last-grip/"'));
+ assert(markup.includes('href="/juegos/bonju-chef/"'));
  assert.doesNotMatch(markup,/challenge-catalog-heading|challenge-world-card|challenge-dodge-card|challenge-preview|ELIGE TU PRÓXIMO DESAFÍO/);
  assert.equal((markup.match(/class="featured-challenge(?: chef)?"/g)||[]).length,2);
  assert.doesNotMatch(markup,/new WorldScene/);
