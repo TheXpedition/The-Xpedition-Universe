@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {protocolCinemaVisible} from '../public/juegos/x-protocol/cinema.mjs';
 import assert from 'node:assert/strict';
 import {ProtocolCinema} from '../public/juegos/x-protocol/cinema.mjs';
 import {reclaimIdleWorlds} from '../world-media-stream.mjs';
@@ -20,3 +21,11 @@ test('a second ceremony with the same clip restarts from frame zero',async()=>{c
 test('the live intro keeps playing when its tab is hidden',async()=>{const f=fixture();f.player.sync({key:'live-intro',url:'/intro.mp4'},{paused:false,visible:false});await Promise.resolve();assert.equal(f.video.paused,false);assert.equal(f.plays,1);f.player.sync({key:'live-intro',url:'/intro.mp4'},{paused:false,visible:true});assert.equal(f.video.paused,false);assert.equal(f.plays,1);f.player.destroy();});
 test('memory reclamation stops only unused worlds and preserves connected players and active requests',async()=>{const records=[{id:'online',connections:2,requests:0,used:1},{id:'loading',connections:0,requests:1,used:2},{id:'booting',booting:true,connections:0,requests:0,used:0},{id:'idle',connections:0,requests:0,used:3}],stopped=[];await reclaimIdleWorlds(records,async record=>stopped.push(record.id),()=>true);assert.deepEqual(stopped,['idle']);});
 test('entry buffers the real intro without playing; release uses the prepared source once',async()=>{const f=fixture(),listeners=new Map();let loads=0;Object.assign(f.video,{autoplay:true,readyState:0,addEventListener:(type,fn)=>listeners.set(type,fn),removeEventListener:type=>listeners.delete(type),load(){loads++;}});const media={url:'/real-intro.mp4',duration:15070},ready=f.player.prepare(media);assert.equal(f.video.autoplay,false);assert.equal(f.plays,0);assert.equal(f.video.src,media.url);f.player.unlock();assert.equal(f.video.src,media.url,'a gesture must not replace the real intro with the warmup clip');listeners.get('canplay')();await ready;f.player.sync({...media,key:'live-intro'},{paused:false});await Promise.resolve();assert.equal(loads,1,'the shared start must not discard the buffered video');assert.equal(f.plays,1);assert.equal(f.video.muted,false);f.player.destroy();});
+
+test('after intro ended, cinema overlay disappears even if server has not yet advanced phase',()=>{
+ const active={key:'ceremony-1:INTRO_VIDEO',url:'https://example.test/intro.mp4'};
+ assert.equal(protocolCinemaVisible(active,null),true,'Show video during active intro');
+ assert.equal(protocolCinemaVisible(active,active.key),false,'Never retain opaque black video layer after ended');
+ assert.equal(protocolCinemaVisible(null,active.key),false,'No cinema after server advances');
+ assert.equal(protocolCinemaVisible({key:'ceremony-2:INTRO_VIDEO'},active.key),true,'New ceremony can show its new intro');
+});
