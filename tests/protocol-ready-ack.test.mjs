@@ -22,7 +22,10 @@ test('offline readiness remains pending and retries with identical correlation a
  assert.equal(ready.acknowledge({type:'protocol-ready-ack',ceremonyId:'ceremony-1',requestId:sent[0].requestId,accepted:true}),true);
  assert.equal(queued.size,0,'server ACK cancels all readiness retries');
  ready.reconnect();
- assert.equal(sent.length,2,'after ACK no extra readiness messages');
+ assert.equal(sent.length,3,'reconnected World must reconfirm readiness after motor recovers state');
+ assert.notEqual(sent[2].requestId,sent[1].requestId,'new World connection must use fresh ACK correlation');
+ assert.equal(ready.acknowledge({type:'protocol-ready-ack',ceremonyId:'ceremony-1',requestId:sent[1].requestId,accepted:true}),false,'stale ACK from old WebSocket cannot clear retry');
+ assert.equal(ready.acknowledge({type:'protocol-ready-ack',ceremonyId:'ceremony-1',requestId:sent[2].requestId,accepted:true}),true);
  ready.cancel();
 });
 
