@@ -9,15 +9,6 @@ import {serverDatabase,serverTablePrefix} from '../world-server-store.mjs';
 
 const STAFF={id:'92354719-8816-4e25-9199-0dc9a99f7da1'};
 const GUEST={id:'participant'};
-const makeService=(db,onDelete=async()=>{})=>createWorldServers({
- db,json:(res,value,status=200)=>Object.assign(res,{value,status}),
- fail:(status,message)=>{throw Object.assign(Error(message),{status});},
- body:async req=>req.input||{},
- access:async()=>({canPlay:true,configured:true,inline:true,publicEnabled:true}),
- onDelete,now:()=>1000
-});
-const call=(servers,method,url,input,user=STAFF)=>servers.handle({method,input},{},new URL(url,'https://world.invalid'),user)
- .then(()=>servers._lastResult);
 
 test('permanent deletion removes only the confirmed room, leaves other room data and account balances intact, never restores',async()=>{
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'world-delete-')),db=await openDatabase(dir),stopped=[];
