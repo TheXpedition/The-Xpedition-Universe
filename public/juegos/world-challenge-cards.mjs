@@ -1,0 +1,18 @@
+// Tarjetas informativas: no se conectan a lobbies ni conceden acceso a desafíos.
+// Los logos son imágenes originales aportadas por el creador de The Xpedition.
+export const WORLD_CHALLENGE_CARDS=Object.freeze([
+  Object.freeze({id:"apo-cars",title:"Apo-Cars",category:"CARRERAS · AUTOS · VELOCIDAD",description:"Circuito de carreras apocalípticas: velocidad, maniobras y adelantamientos.",image:"/juegos/challenge-catalog/art/apo-cars.webp"}),
+  Object.freeze({id:"gym-camila",title:"Gym Camila",category:"DEPORTE · GIMNASIO · RESISTENCIA",description:"Pruebas físicas de fuerza, entrenamiento, resistencia y desempeño atlético.",image:"/juegos/challenge-catalog/art/gym-camila.webp"}),
+  Object.freeze({id:"the-hunt",title:"The Hunt",category:"BÚSQUEDA · CAZA · EXPLORACIÓN",description:"Rastrea pistas y objetivos por el mundo antes que tus rivales.",image:"/juegos/challenge-catalog/art/the-hunt.webp"}),
+  Object.freeze({id:"the-x-feud",title:"The X Feud",category:"PREGUNTAS · EQUIPOS · RESPUESTAS",description:"Dos bandos compiten para descubrir las respuestas más populares.",image:"/juegos/challenge-catalog/art/the-x-feud.webp"}),
+  Object.freeze({id:"the-last-standing",title:"The Last Standing",category:"EQUILIBRIO · RESISTENCIA · ALTURA",description:"Permanece de pie sobre una estructura; el último en mantenerse gana.",image:"/juegos/challenge-catalog/art/the-last-standing.webp"}),
+  Object.freeze({id:"critical-flow",title:"Critical Flow",category:"AGUA · ROMPECABEZAS · LÓGICA",description:"Abre rutas y dirige el flujo de agua a través de mecanismos apocalípticos.",image:"/juegos/challenge-catalog/art/critical-flow.webp"}),
+  Object.freeze({id:"the-brain",title:"The Brain",category:"INTELIGENCIA · LÓGICA · ESTRATEGIA",description:"Resuelve desafíos mentales, enigmas y decisiones bajo presión.",image:"/juegos/challenge-catalog/art/the-brain.webp"}),
+  Object.freeze({id:"the-witching-hour",title:"The Witching Hour",category:"BRUJAS · ROLES OCULTOS · DEDUCCIÓN",description:"Descubre quién engaña a quién en un juego social de brujas y secretos.",image:"/juegos/challenge-catalog/art/the-witching-hour.webp"}),
+  Object.freeze({id:"make-that-noise",title:"Make That Noise!",category:"SONIDOS · REFLEJOS · CAOS",description:"Una prueba de sonidos, reacciones rápidas y sorpresas impredecibles.",image:"/juegos/challenge-catalog/art/make-that-noise.webp"}),
+  Object.freeze({id:"death-zone",title:"Death Zone",category:"SUPERVIVENCIA · NIEBLA ÁCIDA · PELIGRO",description:"Evita la niebla tóxica mientras sobrevives a un entorno devastado.",image:"/juegos/challenge-catalog/art/death-zone.webp"}),
+  Object.freeze({id:"tactical-sketch",title:"Tactical Sketch",category:"DIBUJO · ADIVINANZAS · MOVIMIENTO",description:"Dibuja pistas y adivina conceptos mientras el desafío sigue en movimiento.",image:"/juegos/challenge-catalog/art/tactical-sketch.webp"}),
+  Object.freeze({id:"bunker-grid",title:"Bunker Grid",category:"LABERINTO · ACERTIJOS · SUPERVIVENCIA",description:"Encuentra rutas y resuelve acertijos de habitaciones dentro del búnker.",image:"/juegos/challenge-catalog/art/bunker-grid.webp"}),
+  Object.freeze({id:"shatter-point",title:"Shatter Point",category:"PUNTERÍA · BOTELLAS · TIRACHINAS",description:"Apunta con el tirachinas y revienta objetivos de vidrio con precisión.",image:"/juegos/challenge-catalog/art/shatter-point.webp"}),
+  Object.freeze({id:"knockout",title:"Knockout",category:"FUERZA · DUELOS · PLATAFORMA",description:"Enfréntate en duelos físicos y expulsa al rival de la plataforma.",image:"/juegos/challenge-catalog/art/knockout.webp"}),
+]);
