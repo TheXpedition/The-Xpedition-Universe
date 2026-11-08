@@ -72,6 +72,8 @@ jobs:
           path: artifacts/protocol-monitor-*.png
           if-no-files-found: ignore
       - run: node --test tests/protocol-staff-home-browser.test.mjs
+      - name: Check actual public World boot and STAFF/player lobby buttons in Chromium
+        run: node --test tests/protocol-world-entry-browser.test.mjs
       - run: node --test tests/protocol-dedicated-browser.test.mjs
       - name: Test real ceremony interactions, buttons and cross-device synchronization
         run: node --test tests/protocol-interactive-browser.test.mjs
