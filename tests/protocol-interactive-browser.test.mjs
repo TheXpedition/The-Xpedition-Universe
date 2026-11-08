@@ -96,12 +96,15 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
   await voter.locator('#arena-chat-toggle').click();
   await voter.locator('#chat-input').fill('QA sync chat 18 actores');
   await mark('chat send updates both players',()=>voter.locator('#chat-form button').click(),async t=>{await Promise.all([winner,voter].map(p=>p.waitForFunction(()=>[...document.querySelectorAll('#chat-log p')].some(x=>x.textContent.includes('QA sync chat 18 actores')),null,{timeout:t})));},8500);
+  await voter.locator('#close-protocol-chat').click();
 
   // Wait through the full timed ranking instead of artificially changing
   // state. The actual winner must see and click the nomination interface.
   await Promise.all([staff,winner,voter].map(p=>phase(p,'WINNER_NOMINATION',125000)));
   await capture(winner,'nomination-mobile');
-  const first=winner.locator('[data-purpose="nominate"] button.choice:not([disabled])').first();
+  // Never nominate our separate voting user (Carmine), or the voting UI
+  // would correctly be disabled for them. Select a bot instead.
+  const first=winner.locator('[data-purpose="nominate"] button.choice:not([disabled])').last();
   await first.waitFor({state:'visible',timeout:8000});
   await mark('winner nomination confirmation opens',()=>first.click(),t=>winner.locator('#dialog').waitFor({state:'visible',timeout:t}),3000);
   await mark('winner nomination reaches all screens',()=>winner.locator('#dialog-confirm').click(),async t=>{await Promise.all([staff,winner,voter].map(p=>phase(p,'GROUP_VOTE',t)));},8500);
