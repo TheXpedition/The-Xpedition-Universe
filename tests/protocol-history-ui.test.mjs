@@ -8,7 +8,7 @@ test('public history has four working sections, no invented episode columns, and
  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
  const cast=[{id:'a',characterId:'arisantana',name:'Ari Santana',userName:'Usuario A',result:'HIGH'},{id:'b',characterId:'ivy',name:'Ivy',userName:'Usuario B',result:'ELIM'},{id:'c',characterId:'carmine',name:'Carmine',userName:'Usuario C',result:'LOW'}];
  let data={episodes:[],cast:[],final:null},ui;
- Object.assign(globalThis,{document:w.document,fetch:async()=>({ok:true,json:async()=>data})});
+ Object.assign(globalThis,{document:w.document,fetch:async()=>({ok:true,status:200,headers:{get:()=> 'application/json; charset=utf-8'},text:async()=>JSON.stringify(data)})});
  try{
   ui=createProtocolHistoryUI();await ui.open();const q=s=>w.document.querySelector(s),click=id=>q('[data-history-tab="'+id+'"]').click();
   assert.equal(q('nav').children.length,4);click('performance');assert.equal(q('.track-episode'),null);assert.match(q('.history-body').textContent,/primer episodio/);
@@ -22,7 +22,7 @@ test('public history has four working sections, no invented episode columns, and
 });
 test('staff retains the four public sections and can explicitly accept or decline missing bots',async()=>{
  const dom=new JSDOM('<!doctype html><html><head></head><body></body></html>'),w=dom.window,originals={document:globalThis.document,fetch:globalThis.fetch};w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};let staff=false,started=null;const requests=[];
- Object.assign(globalThis,{document:w.document,fetch:async(url,options={})=>{requests.push({url,options});return {ok:true,json:async()=>url.endsWith('start-plan')?{connected:4,expected:18,missing:14}:url.endsWith('start-live')?{url:'/juegos/x-protocol/',ceremonyId:'live'}:{episodes:[],cast:[],final:null}};}});const ui=createProtocolHistoryUI({canStart:()=>staff,onStarted:d=>started=d});const flush=()=>new Promise(r=>setImmediate(r)),q=s=>w.document.querySelector(s);
+ Object.assign(globalThis,{document:w.document,fetch:async(url,options={})=>{requests.push({url,options});const value=url.endsWith('start-plan')?{connected:4,expected:18,missing:14}:url.endsWith('start-live')?{url:'/juegos/x-protocol/',ceremonyId:'live'}:{episodes:[],cast:[],final:null};return {ok:true,status:200,headers:{get:()=> 'application/json; charset=utf-8'},text:async()=>JSON.stringify(value)};}});const ui=createProtocolHistoryUI({canStart:()=>staff,onStarted:d=>started=d});const flush=()=>new Promise(r=>setImmediate(r)),q=s=>w.document.querySelector(s);
  try{await ui.open();assert.equal(q('[data-history-start]'),null);staff=true;await ui.open();assert.equal(q('nav').children.length,4);assert.equal(q('[data-history-start]').textContent,'Iniciar una Ceremonia');q('[data-history-start]').click();await flush();assert.match(q('.history-start-prompt').textContent,/14 puestos faltantes/);assert.equal(requests.filter(r=>r.url.endsWith('start-live')).length,0,'planning cannot silently fill bots');q('[data-fill-bots="no"]').click();await flush();assert.equal(JSON.parse(requests.at(-1).options.body).fillBots,false);assert.equal(started.ceremonyId,'live');await ui.open();q('[data-history-start]').click();await flush();q('[data-fill-bots="yes"]').click();await flush();assert.equal(JSON.parse(requests.at(-1).options.body).fillBots,true);
  }finally{ui.destroy();Object.assign(globalThis,originals);w.close();}
 });

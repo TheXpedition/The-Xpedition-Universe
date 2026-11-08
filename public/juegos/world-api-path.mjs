@@ -2,10 +2,10 @@ const serverPath=pathname=>String(pathname||'').match(/^\/world-play\/servers\/[
 
 export function worldApiPath(path,pathname=globalThis.location?.pathname){
  const suffix=String(path||'').replace(/^\/+/, '').replace(/^api\//,'');
- return serverPath(pathname)+'/api/'+suffix;
+ return serverPath(pathname)+['','api',suffix].join('/');
 }
 
 export function worldSocketPath(path,pathname=globalThis.location?.pathname){
  const suffix=String(path||'').replace(/^\/+/, '').replace(/^api\//,'');
- return serverPath(pathname)+'/api/'+suffix;
+ return serverPath(pathname)+['','api',suffix].join('/');
 }
