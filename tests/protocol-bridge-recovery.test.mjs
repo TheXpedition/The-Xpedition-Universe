@@ -4,7 +4,7 @@ import {EventEmitter} from 'node:events';
 import {createProtocolRemoteProxy} from '../protocol-remote-proxy.mjs';
 
 test('failed remote ceremony handshake must not kill the World room worker; retry reconnects', {timeout:10000},async()=>{
- let attempts=0;
+ let attempts=0;const wakeups=[];
  class FakeSocket extends EventEmitter{
   readyState=0;
   constructor(){
@@ -28,7 +28,8 @@ test('failed remote ceremony handshake must not kill the World room worker; retr
  const proxy=createProtocolRemoteProxy({
   serviceURL:'https://ceremony.example.test',
   secret:'12345678901234567890123456789012',
-  clients:new Map(),send(){},makeSocket:()=>new FakeSocket()
+  clients:new Map(),send(){},makeSocket:()=>new FakeSocket(),wakeEngineOnFailure:true,
+  request:async url=>{wakeups.push(new URL(url).pathname);return new Response('{}',{status:200,headers:{'Content-Type':'application/json'}});}
  });
  try{
   await proxy.ready;
@@ -37,6 +38,7 @@ test('failed remote ceremony handshake must not kill the World room worker; retr
   while(!proxy.bridgeStatus().connected&&Date.now()<limit)await new Promise(resolve=>setTimeout(resolve,30));
   assert.equal(proxy.bridgeStatus().connected,true,'Bridge reconnects after a rejected handshake');
   assert(attempts>=2,'Expected another attempt to the remote engine');
+  assert.deepEqual(wakeups,['/api/health'],'Failed bridge must trigger exactly one throttled wake request');
   await proxy.close();
   await assert.rejects(proxy.handle({user:{id:'test-staff'}},{type:'protocol-subscribe'}),{status:503});
  }finally{await proxy.close();}
