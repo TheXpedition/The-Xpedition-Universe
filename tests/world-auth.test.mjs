@@ -11,6 +11,22 @@ test('separate processes share account data through a single-use handoff; logout
   for(const id of [staff,'other','outsider']){await db.run('INSERT INTO users(id,name,name_key,email,avatar,bio,created) VALUES(?,?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani','',Date.now());await db.run('INSERT INTO sessions(token,user_id,expires) VALUES(?,?,?)',hash(id),id,Date.now()+3600000);}
   await db.run('INSERT INTO world_servers(id,name,creator,enabled,settings,created,updated) VALUES(?,?,?,1,?,1,1)',room,'Auth server',staff,'{"autoBots":false}');world=await start('world-server.mjs',{DATA_DIR:data,WORLD_SERVER_HUB:'true'});main=await start('server.mjs',{DATA_DIR:data,WORLD_URL:world.base});
   const launch=await fetch(main.base+'/juegos/?server='+room,{headers:{Cookie:'xp_session='+staff},redirect:'manual'});assert.equal(launch.status,302);const location=new URL(launch.headers.get('location'));assert.equal(location.origin,world.base);assert.equal(location.pathname,'/servers/'+room+'/auth');assert(!location.search);const ticket=new URLSearchParams(location.hash.slice(1)).get('ticket');assert(ticket&&!ticket.includes(staff));
+  // THE AUTH LOADING SCREEN MUST LOAD ITS MODULE DEPENDENCIES BEFORE THE
+  // xp_world_session cookie exists. Blocking world-entry-session.mjs here
+  // leaves Edge on 'Preparando tu próxima aventura…' forever.
+  const publicPrefix=world.base+'/servers/'+room;
+  for(const asset of ['/auth','/world-config.js','/juegos/auth.mjs','/juegos/world-entry-session.mjs']){
+   const response=await fetch(publicPrefix+asset);
+   assert.equal(response.status,200,'Unauthenticated World entry MUST deliver '+asset+' before cookie exchange');
+   if(asset.endsWith('.mjs'))assert.match(response.headers.get('content-type')||'',/javascript/);
+   const text=await response.text();
+   if(asset.endsWith('world-entry-session.mjs'))assert.match(text,/beginWorldVisit/);
+  }
+  // All other game scripts and player data remain protected until exchange.
+  assert.equal((await fetch(publicPrefix+'/juegos/world-ui.mjs')).status,401);
+  assert.equal((await fetch(publicPrefix+'/api/world/bootstrap')).status,401);
+  assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',room),undefined,
+   'Public entry scripts must never start a live server worker');
   const exchange=t=>fetch(world.base+'/servers/'+room+'/api/world/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticket:t})});
   const accepted=await exchange(ticket);assert.equal(accepted.status,200);const cookie=accepted.headers.get('set-cookie').split(';')[0];assert.match(cookie,/^xp_world_session=/);assert.match(accepted.headers.get('set-cookie'),/HttpOnly; SameSite=Lax/);assert.equal((await exchange(ticket)).status,401);
   const boot=await fetch(world.base+'/servers/'+room+'/api/world/bootstrap',{headers:{Cookie:cookie}});assert.equal(boot.status,200);assert.equal((await boot.json()).user.id,staff);
