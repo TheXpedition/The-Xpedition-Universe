@@ -21,7 +21,11 @@ export class ProtocolReadyDelivery {
   if(!this.timer)this.timer=this.setTimer(()=>{this.timer=null;this.attempt();},this.retryMs);
  }
  reconnect(){
-  if(!this.ceremonyId||this.acknowledged)return;
+  if(!this.ceremonyId)return;
+  // A dedicated motor restart can recover the same ceremony from the DB but
+  // clear each participant's assetsReady flag. Reconfirm on every new World
+  // socket, even if the old socket already received a successful ACK.
+  if(this.acknowledged){this.acknowledged=false;this.requestId=this.newId();}
   if(this.timer){this.clearTimer(this.timer);this.timer=null;}
   this.attempt();
  }
