@@ -75,7 +75,7 @@ test('actual clicks, modals and phase changes stay synchronized on desktop and m
   // spectator screen through the actual browser WebSocket relay.
   await voter.locator('#arena-chat-toggle').click();
   await voter.locator('#chat-input').fill('QA sync chat 18 actores');
-  await mark('chat send updates both players',()=>voter.locator('#chat-form button[type="submit"]').click(),async t=>{await Promise.all([winner,voter].map(p=>p.waitForFunction(()=>[...document.querySelectorAll('#chat-log p')].some(x=>x.textContent.includes('QA sync chat 18 actores')),null,{timeout:t})));},8500);
+  await mark('chat send updates both players',()=>voter.locator('#chat-form button').click(),async t=>{await Promise.all([winner,voter].map(p=>p.waitForFunction(()=>[...document.querySelectorAll('#chat-log p')].some(x=>x.textContent.includes('QA sync chat 18 actores')),null,{timeout:t})));},8500);
 
   // Wait through the full timed ranking instead of artificially changing
   // state. The actual winner must see and click the nomination interface.
