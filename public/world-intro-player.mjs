@@ -23,7 +23,8 @@ export async function playWorldIntro(config,options={}){
   video.onratechange=()=>{if(!seen&&video.playbackRate!==1)video.playbackRate=1;};
   video.onwaiting=()=>{message.textContent='Cargando…';};video.onplaying=()=>{message.textContent='';start.hidden=true;dialog.classList.remove('intro-awaiting-entry');};
   video.onerror=()=>{message.textContent='No pudimos cargar la introducción. Vuelve a intentar.';entry('Reintentar');start.onclick=()=>{video.load();play();};};
-  async function ended(){if(completing)return;if(seen)return finish();completing=true;message.textContent='Guardando…';try{await request('complete',{session:session.session,position:Math.max(lastTime,video.currentTime)});finish();}catch(error){completing=false;message.textContent='No pudimos guardar que terminaste el video. Vuelve a intentar.';entry('Reintentar');start.setAttribute('aria-label','Guardar reproducción completa');start.onclick=()=>void ended();}}
+  async function ended(){if(completing)return;if(seen)return finish();completing=true;message.textContent='Entrando a World…';const saved=Promise.resolve().then(()=>request('complete',{session:session.session,position:Math.max(lastTime,video.currentTime)})).then(()=>true,()=>false);await Promise.race([saved,new Promise(resolve=>setTimeout(()=>resolve(false),1500))]);finish();}
   video.onended=()=>void ended();play();
  });
 }
+
