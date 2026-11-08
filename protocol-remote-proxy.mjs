@@ -19,6 +19,7 @@ export function createProtocolRemoteProxy({
  scope=process.env.WORLD_SCOPE_ID||'',
  makeSocket=(url,options)=>new WebSocket(url,options),
  heartbeatMs=15000,
+ wakeEngineOnFailure=process.env.NODE_ENV==='production',
  request=fetch
 }={}){
  if(!/^https?:\/\//.test(serviceURL)||secret.length<32)throw Error('El puente de The X Protocol necesita PROTOCOL_SERVICE_URL y PROTOCOL_BRIDGE_SECRET (32+ caracteres).');
@@ -29,6 +30,15 @@ export function createProtocolRemoteProxy({
  endpoint.protocol=endpoint.protocol==='https:'?'wss:':'ws:';
  let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set(),returned=new Set();
  const sendWire=data=>{if(socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify(data));return true;};
+ let lastWakeAt=0;
+ const wakeEngine=()=>{
+  // An HTTP health request wakes a sleeping Render Free engine. Do not block
+  // World login or spam the cold service on repeated WebSocket failures.
+  if(!wakeEngineOnFailure||closed||Date.now()-lastWakeAt<30000)return;
+  lastWakeAt=Date.now();
+  void request(new URL('/api/health',base),{method:'GET',signal:AbortSignal.timeout(25000)})
+   .then(response=>response.body?.cancel()).catch(()=>{});
+ };
  const connected=()=>[...clients.values()];
  const find=id=>connected().find(c=>c.user.id===id);
  const description=c=>({
@@ -86,16 +96,18 @@ export function createProtocolRemoteProxy({
    socket=ws;
    // Detect half-open Render-to-Render sockets that never emit close.
    // Restart only the bridge; never interrupt the browser's World socket.
-   let heartbeat=null,awaitingPong=false;
+   let heartbeat=null,lastMessageAt=Date.now();
    const stopHeartbeat=()=>{if(heartbeat){clearInterval(heartbeat);heartbeat=null;}};
    const startHeartbeat=()=>{
-    if(typeof ws.ping!=='function'||!Number.isFinite(heartbeatMs)||heartbeatMs<=0)return;
-    ws.on('pong',()=>{awaitingPong=false;});
+    if(!Number.isFinite(heartbeatMs)||heartbeatMs<=0)return;
+    // Virginia emits a status frame every 900 ms. Track real application
+    // messages instead of relying on WebSocket control-frame ping/pong.
+    ws.on('message',()=>{lastMessageAt=Date.now();});
     heartbeat=setInterval(()=>{
      if(ws.readyState!==WebSocket.OPEN){stopHeartbeat();return;}
-     if(awaitingPong){stopHeartbeat();ws.terminate();return;}
-     awaitingPong=true;
-     try{ws.ping();}catch{stopHeartbeat();ws.terminate();}
+     if(Date.now()-lastMessageAt<heartbeatMs*2)return;
+     console.warn('Protocol bridge stopped receiving Virginia status:',Math.round((Date.now()-lastMessageAt)/1000)+'s');
+     stopHeartbeat();ws.terminate();
     },heartbeatMs);
     heartbeat.unref?.();
    };
@@ -109,9 +121,9 @@ export function createProtocolRemoteProxy({
    };
    const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(remoteError(503,'No pudimos conectar el motor de la ceremonia.'));}};
    ws.on('open',success);
-   ws.on('error',failure);
+   ws.on('error',error=>{wakeEngine();console.warn('Protocol bridge connect error:',String(error?.code||'unknown').slice(0,40),String(error?.message||'').slice(0,180));failure(error);});
    ws.on('message',raw=>{const packet=decode(raw);void processPacket(packet).catch(error=>console.error('Protocol bridge event:',String(error.message||error).slice(0,100)));});
-   ws.on('close',(code,reason)=>{stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
+   ws.on('close',(code,reason)=>{if(code!==1000&&code!==1001)wakeEngine();stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
   }).finally(()=>{opening=null;});
   return opening;
  }
@@ -175,14 +187,36 @@ export function createProtocolRemoteProxy({
    if(req.headers.range)headers.range=req.headers.range;
    const input=req._protocolParsedInput;
    const hasBody=!['GET','HEAD'].includes(req.method);
-   let upstream;
-   try{
-    upstream=await request(new URL(url.pathname+url.search,base),{
-     method:req.method,headers,
-     ...(hasBody?{body:input!==undefined?JSON.stringify(input):req,duplex:'half'}:{}),
-     signal:AbortSignal.timeout(45000)
-    });
-   }catch{fail(503,'El motor independiente de The X Protocol no respondió.');}
+   // Render Free can return its own HTML 502 while the dedicated engine wakes.
+   // Retry only read-only requests: repeating a vote/start/control could duplicate actions.
+   let upstream=null;
+   const attempts=['GET','HEAD'].includes(req.method)?5:1;
+   for(let attempt=0;attempt<attempts;attempt++){
+    try{
+     upstream=await request(new URL(url.pathname+url.search,base),{
+      method:req.method,headers,
+      ...(hasBody?{body:input!==undefined?JSON.stringify(input):req,duplex:'half'}:{}),
+      signal:AbortSignal.timeout(45000)
+     });
+    }catch(error){
+     if(attempt===attempts-1)fail(503,'El motor independiente de The X Protocol no respondió. Intenta de nuevo.');
+    }
+    if(upstream&&![502,503,504].includes(upstream.status))break;
+    if(attempt<attempts-1){
+     await upstream?.body?.cancel().catch(()=>{});
+     upstream=null;
+     await new Promise(resolve=>setTimeout(resolve,Math.min(8000,1000*2**attempt)));
+    }
+   }
+   if(!upstream)fail(503,'El motor independiente de The X Protocol no respondió.');
+   // Never leak an upstream HTML error page into a JSON-only World API.
+   const upstreamType=String(upstream.headers.get('content-type')||'');
+   if(upstreamType.toLowerCase().includes('text/html')){
+    console.warn('Protocol remote API returned HTML:',upstream.status,url.pathname);
+    await upstream.body?.cancel().catch(()=>{});
+    json(res,{error:'El motor de Ceremonias no está disponible temporalmente. Intenta abrirlo de nuevo.'},upstream.status>=400?upstream.status:502);
+    return true;
+   }
    const responseHeaders={};
    for(const name of ['content-type','content-length','content-range','accept-ranges','cache-control'])if(upstream.headers.get(name))responseHeaders[name]=upstream.headers.get(name);
    res.writeHead(upstream.status,responseHeaders);
