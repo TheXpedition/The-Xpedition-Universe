@@ -58,9 +58,16 @@ test('desktop Edge enters inline World even if hidden intro warmup play() hangs 
   const ms=Date.now()-clicked;
   assert(ms<8500,'World intro handshake blocked by a permanently pending warmup: '+ms+'ms');
   assert.equal(await page.evaluate(()=>window.__introWasInvoked),1);
+  // A revoked desktop cookie may redirect the iframe to the public home page.
+  // Its full-screen index spinner must be replaced by an explicit login UI.
+  await page.route('**/?auth=login*',route=>route.fulfill({status:200,contentType:'text/html',body:'<!doctype html><html><body>Login redirect</body></html>'}));
+  await frame.locator('#phase').evaluate(()=>location.assign('/?auth=login&returnTo=%2Fjuegos%2F'));
+  await page.locator('iframe.world-server-frame').waitFor({state:'detached',timeout:9500});
+  await page.locator('#modal[open]').waitFor({state:'visible',timeout:5000});
+  assert.match(await page.locator('#modal').innerText(),/Entra al universo|Qué bueno verte de nuevo/i);
   assert.deepEqual(errors,[],'Desktop JavaScript errors while playing World intro');
   console.log('EDGE_PUBLIC_WORLD_INTRO_WARMUP_VERIFIED',JSON.stringify({
-   warmupPlay:'never settled',playerIntro:'invoked exactly once',frameCompletedMs:ms,errors
+   warmupPlay:'never settled',playerIntro:'invoked exactly once',frameCompletedMs:ms,expiredSessionRedirect:'login dialog shown instead of infinite spinner',errors
   }));
  }finally{await browser.close();}
 });
