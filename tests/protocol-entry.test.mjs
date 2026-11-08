@@ -4,7 +4,7 @@ import fs from 'node:fs/promises';import os from 'node:os';import path from 'nod
 import {openDatabase} from '../database.mjs';
 import {createProtocolService} from '../world-protocol-service.mjs';
 import {createProtocol,applyProtocol,tickProtocol,protocolView} from '../public/juegos/x-protocol/engine.mjs';
-import {EntryResources} from '../public/juegos/x-protocol/entry-loading.mjs';
+import {EntryResources,prepareEntryResourcesForPlayback} from '../public/juegos/x-protocol/entry-loading.mjs';
 import {createProtocolMedia} from '../world-protocol-media.mjs';
 import {mapProtocolRanking} from '../world-protocol-results.mjs';
 import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
@@ -162,4 +162,11 @@ test('World-to-ceremony navigation does not pause the loading barrier; a genuine
  const f=await fixture();try{await f.http('start-live',{fillBots:true});const host=f.clients.get('staff');f.clients.delete('staff');await f.advance(100);await f.advance(5000);assert.equal((await f.current()).paused,false,'brief page navigation is not a staff pause');await f.advance(10001);assert.equal((await f.current()).paused,true);f.clients.set('staff',host);await f.svc.handle(host,{type:'protocol-subscribe'});await f.advance(1100);assert.equal((await f.current()).paused,false,'reconnected staff automatically recovers the disconnection pause');
   await f.svc.handle(host,{type:'protocol-action',action:{type:'pause'}});await f.advance(100);assert.equal((await f.current()).paused,true,'an intentional staff pause remains intentional');
  }finally{await f.close();}
+});
+
+test('the intro waits for playable video, while stage artwork loads in parallel',async()=>{
+ let finishArtwork,artworkFinished=false;
+ const ready=prepareEntryResourcesForPlayback({artwork:()=>new Promise(resolve=>{finishArtwork=()=>{artworkFinished=true;resolve();};}),media:async()=>{},fonts:Promise.resolve()});
+ await ready;assert.equal(artworkFinished,false,'large cast images must not hold the video behind the 0/1 barrier');
+ finishArtwork();await new Promise(resolve=>setImmediate(resolve));assert.equal(artworkFinished,true);
 });
