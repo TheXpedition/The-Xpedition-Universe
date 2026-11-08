@@ -362,5 +362,8 @@ async function init(){
   }catch(error){errorView(error);}
 }
 $$('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
-// Start the public application after the deferred scripts have created its shell.
-void init();
+// The other deferred scripts register World routes, streaming UI and auth.
+// DOMContentLoaded fires only AFTER all deferred scripts, even when desktop
+// Edge serves the catalog and scripts immediately from its warm cache.
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>void init(),{once:true});
+else void init();
