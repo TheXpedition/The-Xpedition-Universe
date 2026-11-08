@@ -109,7 +109,7 @@ export function createProtocolRemoteProxy({
    };
    const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(remoteError(503,'No pudimos conectar el motor de la ceremonia.'));}};
    ws.on('open',success);
-   ws.on('error',failure);
+   ws.on('error',error=>{console.warn('Protocol bridge connect error:',String(error?.code||'unknown').slice(0,40),String(error?.message||'').slice(0,180));failure(error);});
    ws.on('message',raw=>{const packet=decode(raw);void processPacket(packet).catch(error=>console.error('Protocol bridge event:',String(error.message||error).slice(0,100)));});
    ws.on('close',(code,reason)=>{stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
   }).finally(()=>{opening=null;});
@@ -200,6 +200,7 @@ export function createProtocolRemoteProxy({
    // Never leak an upstream HTML error page into a JSON-only World API.
    const upstreamType=String(upstream.headers.get('content-type')||'');
    if(upstreamType.toLowerCase().includes('text/html')){
+    console.warn('Protocol remote API returned HTML:',upstream.status,url.pathname);
     await upstream.body?.cancel().catch(()=>{});
     json(res,{error:'El motor de Ceremonias no está disponible temporalmente. Intenta abrirlo de nuevo.'},upstream.status>=400?upstream.status:502);
     return true;
