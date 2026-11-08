@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - 'public/juegos/x-protocol/**'
+      - 'public/app.js'
+      - 'public/index.html'
+      - 'public/world-entry.js'
       - 'world-protocol-service.mjs'
       - 'protocol-engine-runtime.mjs'
       - 'protocol-engine-worker.mjs'
@@ -26,6 +29,9 @@ on:
   pull_request:
     paths:
       - 'public/juegos/x-protocol/**'
+      - 'public/app.js'
+      - 'public/index.html'
+      - 'public/world-entry.js'
       - 'world-protocol-service.mjs'
       - 'protocol-engine-runtime.mjs'
       - 'protocol-engine-worker.mjs'
@@ -61,6 +67,7 @@ jobs:
       - name: Probe real Render World, ceremony engine and media (read-only)
         run: node --test tests/protocol-production-network.test.mjs
       - run: node --check protocol-engine-runtime.mjs && node --check protocol-engine-worker.mjs && node --check protocol-dedicated-server.mjs && node --check protocol-remote-proxy.mjs && node --check protocol-wire-cadence.mjs && node --check protocol-media-delivery.mjs
+      - run: node --check public/app.js && node --check public/world-entry.js
       - run: node --check public/juegos/x-protocol/client.mjs && node --check public/juegos/x-protocol/cinema.mjs && node --check public/juegos/world-ui.mjs && node --check world.mjs && node --check world-hub.mjs && node --check world-http-proxy.mjs && node --check world-companion.mjs
       - run: node --test --test-concurrency=2 tests/protocol-bridge-recovery.test.mjs tests/world-protocol-bridge-resilience.test.mjs tests/protocol-18-live-sockets.test.mjs tests/protocol-render-cache.test.mjs tests/protocol-dedicated-service.test.mjs tests/protocol-dedicated-world-network.test.mjs tests/protocol-cinema.test.mjs tests/protocol-official-intro.test.mjs tests/protocol-entry.test.mjs tests/protocol-engine-isolation.test.mjs tests/protocol-delivery-performance.test.mjs tests/protocol-stage-assets.test.mjs tests/protocol-lifecycle.test.mjs tests/protocol-full-ceremony.test.mjs tests/x-protocol-network.test.mjs tests/world-runtime-performance.test.mjs
       - run: node --test tests/protocol-browser-smoke.test.mjs
