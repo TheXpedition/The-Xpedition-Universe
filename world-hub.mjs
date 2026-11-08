@@ -36,7 +36,7 @@ export async function startWorldHub({port=Number(process.env.PORT||3001),host=pr
  }
  function instance(server){const live=workers.get(server.id);if(live&&!live.stopping)return live.ready;const task=creating.then(()=>allocate(server));creating=task.then(()=>{},()=>{});return task.then(record=>record.ready);}
  async function route(req,{allocate=true}={}){const url=new URL(req.url,'http://localhost'),match=/^\/servers\/([0-9a-f-]{36})(\/.*)?$/.exec(url.pathname);if(!match)fail(404,'Elige un servidor desde World.');const relative=(match[2]||'/')+url.search;
-  const bootstrap=relative==='/auth'||relative.startsWith('/auth?')||relative==='/world-config.js'||relative.startsWith('/performance.')||relative.startsWith('/brand/')||relative.startsWith('/juegos/auth.')||relative.startsWith('/juegos/universe-fonts.css')||relative.startsWith('/juegos/art/fonts.css')||url.pathname.endsWith('/api/world/session');
+  const bootstrap=relative==='/auth'||relative.startsWith('/auth?')||relative==='/world-config.js'||relative.startsWith('/performance.')||relative.startsWith('/brand/')||(relative.startsWith('/juegos/auth.')||relative==='/juegos/world-entry-session.mjs')||relative.startsWith('/juegos/universe-fonts.css')||relative.startsWith('/juegos/art/fonts.css')||url.pathname.endsWith('/api/world/session');
   const asset=['GET','HEAD'].includes(req.method)&&/\.(?:mjs|js|css|json|png|webp|svg|woff2?|mp4|webm|mp3|ogg|wav)$/.test(match[2]||'');
   const room=bootstrap?await rooms.get(match[1]):asset?await authorizeAsset(req,match[1]):await rooms.enter(await auth.getSession(req),match[1]);
   const record=allocate?await instance(room):null;if(record)record.used=Date.now();return {record,room,relative,bootstrap,prefix:mount+'/servers/'+room.id};
