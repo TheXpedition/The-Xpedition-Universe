@@ -347,3 +347,5 @@ async function init(){
   }catch(error){errorView(error);}
 }
 $$('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
+// Start the public application after the deferred scripts have created its shell.
+void init();
