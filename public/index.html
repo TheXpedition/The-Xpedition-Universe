@@ -25,7 +25,7 @@
   <link rel="stylesheet" href="community-polish.css"><link rel="stylesheet" href="moderation-dashboard.css">
   <link rel="stylesheet" href="apocalypse-community.css?v=hide-mobile-badges-1">
   <link rel="stylesheet" href="monetization.css">
-  <script defer src="app.js"></script><script defer src="password-recovery.js"></script>
+  <script defer src="app.js?v=20261108-fast-world-1"></script><script defer src="password-recovery.js"></script>
   <script defer src="streaming.js"></script>
   <script defer src="seasons.js"></script>
   <script defer src="xpedition-seasons.js"></script>
@@ -64,6 +64,31 @@
   <dialog id="modal" aria-labelledby="modalTitle"><div class="modal-inner"><button class="icon-button modal-close" data-action="close-modal" aria-label="Cerrar">×</button><div id="modalContent"></div></div></dialog>
   <div id="toasts" class="toasts" aria-live="polite"></div>
   <input type="file" id="attachmentInput" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" hidden>
+  <script>
+  // Independent startup watchdog: even when a desktop browser fails to load
+  // the main script or a session request hangs, never leave an infinite spinner.
+  setTimeout(() => {
+    const main = document.getElementById('main');
+    if (!main?.firstElementChild?.classList.contains('loading-screen')) return;
+    const panel = document.createElement('section');
+    panel.className = 'error-panel';
+    const title = document.createElement('h1');
+    title.textContent = 'World tarda demasiado en cargar';
+    const detail = document.createElement('p');
+    detail.textContent = 'La página no terminó de iniciar. Puedes volver a intentarlo sin perder tu progreso.';
+    const retry = document.createElement('button');
+    retry.type = 'button';
+    retry.className = 'btn primary';
+    retry.textContent = 'VOLVER A INTENTAR WORLD';
+    retry.addEventListener('click', () => {
+      const url = new URL(location.href);
+      url.searchParams.set('xpBootRetry', String(Date.now()));
+      location.replace(url.href);
+    });
+    panel.append(title, detail, retry);
+    main.replaceChildren(panel);
+  }, 12000);
+  </script>
   <noscript>Activa JavaScript para usar The Xpedition.</noscript>
 </body>
 </html>
