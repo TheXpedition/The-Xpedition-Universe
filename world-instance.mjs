@@ -82,7 +82,7 @@ server.on('upgrade',(req,socket,head)=>{
  }
  void world.upgrade(req,socket,head).then(handled=>{if(!handled)socket.destroy();}).catch(()=>socket.destroy());
 });
-server.listen(Number(process.env.PORT||3001),process.env.HOST||'127.0.0.1',()=>{console.log('The Xpedition World · http://localhost:'+server.address().port);parentPort?.postMessage({type:'ready',port:server.address().port,serverId});});
+server.listen(Number(process.env.PORT||3001),process.env.HOST||'127.0.0.1',()=>{if(serverId)console.log('World room worker ready:',JSON.stringify({serverId,port:server.address().port}));console.log('The Xpedition World · http://localhost:'+server.address().port);parentPort?.postMessage({type:'ready',port:server.address().port,serverId});});
 setInterval(()=>{const t=Date.now();for(const [key,value]of limits)if(value.until<t)limits.delete(key);},60000).unref();
 let stopping=false;async function shutdown(){if(stopping)return;stopping=true;await world.close();dodgeball.close();server.close(async()=>{await db.close();parentPort?.postMessage({type:'stopped'});process.exit(0);});}
 for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>void shutdown());parentPort?.on('message',message=>{if(message?.type==='shutdown')void shutdown();});
