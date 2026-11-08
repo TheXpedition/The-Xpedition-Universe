@@ -341,6 +341,10 @@ async function init(){
     state.publicOnly=false;
     const [catalog,details]=await Promise.all([fetch('catalog.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar el catálogo.');return r.json();}),fetch('content-details.json').then(r=>{if(!r.ok)throw new Error('No se pudo cargar la información de las temporadas.');return r.json();})]);catalog.details=details;state.catalog=catalog;
     if(location.hostname.endsWith('.github.io')){openPublicCatalog();return;}
+    // Open World as soon as the public catalog arrives, even when this particular
+    // account's /api/me request is slow or stuck. World access is verified by
+    // the server endpoint itself, so the visible entry never grants privileges.
+    if(location.hash==='#world'||location.hash.startsWith('#world/'))route();
     try{state.config=await api('/config');}catch(error){if(error.status===404){openPublicCatalog();return;}throw error;}
     const me=await api('/me');state.user=me.user;
     // The World page must not wait for chat, profiles or news queries. On
