@@ -2,6 +2,7 @@ import vm from 'node:vm';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawn} from 'node:child_process';import {createHash} from 'node:crypto';import {WebSocket} from 'ws';
 import {openDatabase} from '../database.mjs';import {serverDatabase} from '../world-server-store.mjs';
 import {seedOwnedFixtureCharacters} from './helpers/world-owned-fixtures.mjs';
+import {worldApiPath,worldSocketPath} from '../public/juegos/world-api-path.mjs';
 const STAFF='92354719-8816-4e25-9199-0dc9a99f7da1',root=path.resolve(import.meta.dirname,'..'),hash=value=>createHash('sha256').update(value).digest('hex');
 
 test('STAFF creates isolated servers; profile-style player competes with bots; outsiders cannot enter and the site stays healthy',async()=>{
@@ -25,9 +26,10 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
    const source=await response.text(),apiSource=source.split('\n').find(line=>line.startsWith('async function api(url,'));
    assert(apiSource,'Actual browser API helper must be served');
    const browserFetch=(url,options)=>fetch(new URL(url,base),{...options,headers:{...options?.headers,Cookie:actor.cookie}});
-   const api=vm.runInNewContext('('+apiSource+')',{fetch:browserFetch,JSON,Error});
+   const pathname=new URL(actor.prefix).pathname+'/juegos/',apiPath=url=>worldApiPath(url,pathname),socketPath=url=>worldSocketPath(url,pathname);
+   const api=vm.runInNewContext('('+apiSource+')',{fetch:browserFetch,JSON,Error,worldApiPath:apiPath,location:{pathname}});
    const socketExpression=source.match(/const ws=new WebSocket\((.*?)\);state.socket/)[1];
-   const socketURL=vm.runInNewContext(socketExpression,{location:new URL(base),state:{zone:'base'},encodeURIComponent});
+   const socketURL=vm.runInNewContext(socketExpression,{location:new URL(base),state:{zone:'base'},encodeURIComponent,worldSocketPath:socketPath});
    return {api,socketURL};
   }
   const cold=await main('/api/world/servers',STAFF,'POST',{name:'Media without a simulation'}),coldPrefix=base+'/world-play/servers/'+cold.server.id;
@@ -35,7 +37,7 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
   assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined);
   for(const asset of ['/juegos/','/juegos/world-ui.mjs','/juegos/x-protocol/','/juegos/x-protocol/assets.json','/juegos/last-grip/','/juegos/bonju-chef/','/world-landscape.mjs']){
    const response=await fetch(coldPrefix+asset,{headers:{Cookie:girlA.cookie}});assert.equal(response.status,200,asset);const source=await response.text();
-   if(asset==='/juegos/world-ui.mjs')assert(source.includes('/world-play/servers/'+cold.server.id+'/api/world/live'),'static JS keeps its server-scoped socket');
+   if(asset==='/juegos/world-ui.mjs'){assert(source.includes("worldSocketPath('/world/live')"),'World builds its socket through the room-scoped route helper');assert(source.includes('worldApiPath(url)'),'World API requests retain the room-scoped route');}
    const tag=response.headers.get('etag');assert(tag);const fresh=await fetch(coldPrefix+asset,{headers:{Cookie:girlA.cookie,'If-None-Match':tag}});assert.equal(fresh.status,304,asset);
   }
   assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined,'HTML and all art load without starting a simulation or reserving an active room');
@@ -48,6 +50,7 @@ test('STAFF creates isolated servers; profile-style player competes with bots; o
   const videoHead=await fetch(coldPrefix+mediaPath,{method:'HEAD',headers:{Cookie:girlA.cookie}});assert.equal(videoHead.status,200);assert.equal(Number(videoHead.headers.get('content-length')),10015270);
   assert.equal(await db.one('SELECT owner FROM world_server_leases WHERE server_id=?',cold.server.id),undefined,'streaming the intro must not allocate or restart a game worker');
   assert.equal((await fetch(coldPrefix+mediaPath)).status,401);
+  const ceremonyHistory=await fetch(coldPrefix+'/api/world/x-protocol/history',{headers:{Cookie:girlA.cookie}});assert.equal(ceremonyHistory.status,200,'Ceremonias is served by the selected room worker');assert.match(ceremonyHistory.headers.get('content-type')||'',/application\/json/i);assert.equal(typeof await ceremonyHistory.json(),'object','the room-scoped Ceremonias endpoint returns valid JSON');
   for(const actor of [girlA,girlB,staffA,staffB])actor.browser=await browserClient(actor);
   for(const roomId of [a,b])await seedOwnedFixtureCharacters(await serverDatabase(db,roomId),[{id:'girl',character:'bruno'}]);
   for(const actor of [girlA,girlB]){const boot=await call(actor,'/api/world/bootstrap');assert.equal(boot.status,200);assert.equal(boot.intro.seen,false);assert.equal(boot.user.wallet.coins,999);assert.equal(boot.shop.wallet.coins,999);assert.equal(boot.shop.wallet.tickets,55);assert(!boot.shop.inventory.some(item=>item.ref==='maria-villegas'));assert.equal(boot.participation.role,'participant');assert.equal((await actor.browser.api('/world/preferences',{characterId:'bruno'},'PUT')).profile.characterId,'bruno');}

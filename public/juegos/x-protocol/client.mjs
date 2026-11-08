@@ -5,6 +5,7 @@ import {ProtocolCinema} from './cinema.mjs';
 import {displayProtocolClock} from './display-clock.mjs';
 import {CeremonyMusic,ceremonyTrack} from './music.mjs';
 import {createProtocolHistoryUI} from '../protocol-history-ui.mjs';
+import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 import {mountChatBubbles,isRecentChatMessage} from './chat-bubbles.mjs';
 import {duelLosers,duelWinners,DOUBLE_LOSS_TEXT,DOUBLE_SAVE_TEXT} from './outcomes.mjs';
 import {protocolAudience} from './audience.mjs';
@@ -34,7 +35,7 @@ const announcer=new AnnouncementPlayer({onChange:v=>{voiceCaption=v.speaking?v.c
 const pendingProtocolVoices=new Map();function receiveVoice(a){if(!a?.eventId||!a.eventId.includes(':speech:')){announcer.add(a);return;}if(!state?.id)return;const prefix=state.id+':speech:',serial=Number(a.eventId.startsWith(prefix)?a.eventId.slice(prefix.length):NaN),current=Number(state.speech?.id?.startsWith(prefix)?state.speech.id.slice(prefix.length):0);if(!Number.isFinite(serial)||!a.eventId.startsWith(state.id+':speech:')||serial<current)return;if(a.eventId===state.speech?.id){announcer.add(a);return;}clearTimeout(pendingProtocolVoices.get(a.id)?.timer);const timer=setTimeout(()=>{pendingProtocolVoices.delete(a.id);if(state?.speech?.id===a.eventId)announcer.add(a);},350);pendingProtocolVoices.set(a.id,{a,timer});while(pendingProtocolVoices.size>8){const [id,old]=pendingProtocolVoices.entries().next().value;clearTimeout(old.timer);pendingProtocolVoices.delete(id);}}
 function flushProtocolVoices(){for(const [id,pending]of pendingProtocolVoices){const prefix=state?.id+':speech:',serial=Number(pending.a.eventId.slice(prefix.length)),current=Number(state?.speech?.id?.startsWith(prefix)?state.speech.id.slice(prefix.length):0);if(pending.a.eventId===state?.speech?.id){clearTimeout(pending.timer);pendingProtocolVoices.delete(id);announcer.add(pending.a);}else if(!pending.a.eventId.startsWith(prefix)||current>=serial){clearTimeout(pending.timer);pendingProtocolVoices.delete(id);}}}
 function cancelVoice(a){if(!a)return;const pending=pendingProtocolVoices.get(a.id);if(pending){clearTimeout(pending.timer);pendingProtocolVoices.delete(a.id);}announcer.cancelEvent(a.eventId);}
-async function api(path,body,method='POST'){const r=await fetch('/api/world/x-protocol'+path,{method:body===undefined?'GET':method,headers:{'Content-Type':'application/json'},...(path==='/control'?{signal:AbortSignal.timeout?.(20000)}:{}),...(body===undefined?{}:{body:JSON.stringify(body)})});const d=await r.json();if(!r.ok){if(r.status===403&&d.error?.includes('refugio'))location.assign('/juegos/?view=play');throw Error(d.error||'No se pudo completar la acción.');}return d;}
+async function api(path,body,method='POST'){const url=worldApiPath('/world/x-protocol'+path),r=await fetch(url,{method:body===undefined?'GET':method,credentials:'same-origin',headers:{'Content-Type':'application/json'},...(path==='/control'?{signal:AbortSignal.timeout?.(20000)}:{}),...(body===undefined?{}:{body:JSON.stringify(body)})}),type=r.headers.get('content-type')||'',text=await r.text();if(!/\bapplication\/(?:[\w.+-]*\+)?json\b/i.test(type))throw Error('The X Protocol recibió HTTP '+r.status+' ('+(type||'sin Content-Type')+') en '+url+'. Se esperaba JSON; inicio de respuesta: '+text.slice(0,100).replace(/\s+/g,' '));let d;try{d=JSON.parse(text);}catch{throw Error('The X Protocol recibió JSON inválido en '+url+' (HTTP '+r.status+').');}if(!r.ok){if(r.status===403&&d.error?.includes('refugio'))location.assign('/juegos/?view=play');throw Error(d.error||'No se pudo completar la acción (HTTP '+r.status+').');}return d;}
 const footerNodes=Object.fromEntries(['scoreboard','cast','vitals'].map(id=>{const node=$('#'+id);return[id,{node,home:node.parentElement}];}));
 const preparation=mountDuelPreparation({tone:countdownTone}),polish=mountProtocolPolish({act,fx,notice}),shopUI=createWorldShopUI(),historyUI=createProtocolHistoryUI({canStart:()=>!!state?.staff});
 function notice(text){$('#notice').textContent=text;$('#notice').hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('#notice').hidden=true,6500);}
@@ -143,7 +144,7 @@ async function connect(){
   // Rejoining the same live ceremony must not reload every account, shop and
   // roster query from remote Postgres. Restore the WebSocket first.
   if(!boot||!state||reconnectFailures>=4){
-   boot=await fetch('/api/world/bootstrap').then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World.');return d;});
+  boot=await fetch(worldApiPath('/world/bootstrap'),{credentials:'same-origin'}).then(async r=>{const url=worldApiPath('/world/bootstrap'),type=r.headers.get('content-type')||'',text=await r.text();if(!/\bapplication\/(?:[\w.+-]*\+)?json\b/i.test(type))throw Error('World respondió HTTP '+r.status+' ('+(type||'sin Content-Type')+') en '+url+'. Se esperaba JSON; inicio de respuesta: '+text.slice(0,100).replace(/\s+/g,' '));let d;try{d=JSON.parse(text);}catch{throw Error('World respondió JSON inválido en '+url+' (HTTP '+r.status+').');}if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World (HTTP '+r.status+').');return d;});
    const d=await api('');
    shopUI.update(boot.shop);update(d.episode);
    // Keep History available through its button. Never automatically open the
@@ -152,7 +153,7 @@ async function connect(){
    reconnectFailures=0;
   }
   if(disposed)return;
-  const ws=new WebSocket(location.origin.replace(/^http/,'ws')+'/api/world/live?zone='+encodeURIComponent(boot.profile.lastZone));
+  const ws=new WebSocket(location.origin.replace(/^http/,'ws')+worldSocketPath('/world/live')+'?zone='+encodeURIComponent(boot.profile.lastZone));
   socket=ws;
   ws.onopen=()=>{
    if(disposed||socket!==ws){ws.close();return;}
