@@ -13,12 +13,12 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
   const p=await db.one('SELECT character_id FROM world_preferences WHERE user_id=?',user.id),r=p&&await db.one('SELECT user_id FROM world_character_reservations WHERE character_id=?',p.character_id),contestant=await db.one('SELECT status FROM world_contestants WHERE season=? AND user_id=?','antarctica-1',user.id);
   return {characterId:p?.character_id,active:!!p&&!(await excludedMembers()).has(p.character_id)&&r?.user_id===user.id&&SHELTER_PARTICIPANTS.includes(p.character_id)&&(!contestant||contestant.status==='active')};
  }
- function bind(s,user,id){const other=Object.keys(s.owners).find(k=>s.owners[k]===user.id&&k!==id);if(other)fail(409,'Tus materiales y tu refugio están vinculados a '+(WORLD_CHARACTERS.find(c=>c.id===other)?.name||other)+'. Vuelve a ese personaje.');if(s.owners[id]&&s.owners[id]!==user.id)fail(409,'Este personaje ya tiene un participante vinculado a la construcción.');s.owners[id]=user.id;}
+ function bind(s,user,id){if(s.owners[id]&&s.owners[id]!==user.id)fail(409,'Este personaje ya tiene un participante vinculado a la construcción.');s.owners[id]=user.id;}
  const owned=(s,user,id)=>!s.owners[id]||s.owners[id]===user.id;
  const members=(_s,id)=>SHELTER_ROSTERS[id]||[];
  function progress(s,id){const people=members(s,id),done=s.completed[id],counts=Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,done?SHELTER_SIZE:people.filter(c=>s.delivered[c]?.[m.id]).length])),total=Object.values(counts).reduce((a,b)=>a+b,0);return {counts,percent:done?100:Math.floor(total/(SHELTER_SIZE*SHELTER_MATERIALS.length)*100),built:!!done,completedAt:done?.at||null};}
  function view(s,user,person,staff=false,excluded=new Set()){
-  const id=person.characterId,bound=owned(s,user,id)&&!Object.keys(s.owners).some(k=>s.owners[k]===user.id&&k!==id),eligible=person.active&&bound,home=person.active?shelterForCharacter(id):null;
+  const id=person.characterId,bound=owned(s,user,id),eligible=person.active&&bound,home=person.active?shelterForCharacter(id):null;
   const shelters=SHELTERS.map(def=>({...def,...progress(s,def.id),required:SHELTER_SIZE,members:members(s,def.id).map(characterId=>({characterId,name:WORLD_CHARACTERS.find(c=>c.id===characterId)?.name||characterId,active:!excluded.has(characterId),occupied:!!s.owners[characterId]}))}));
   return {revision:s.revision,eligible,home,stock:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,18-SHELTER_PARTICIPANTS.filter(c=>s.collected[c]?.[m.id]).length])),available:eligible?SHELTER_MATERIALS.filter(m=>!s.collected[id]?.[m.id]).map(m=>m.id):[],inventory:bound?SHELTER_MATERIALS.filter(m=>s.collected[id]?.[m.id]&&!s.delivered[id]?.[m.id]).map(m=>m.id):[],delivered:bound?Object.keys(s.delivered[id]||{}):[],shelters,...(staff?{race:shelters[0].percent===shelters[1].percent?'Empate':shelters.find(s=>s.percent===Math.max(...shelters.map(t=>t.percent))).name+' va adelante'}:{})};
  }
