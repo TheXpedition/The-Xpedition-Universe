@@ -365,5 +365,4 @@ $$('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
 // The other deferred scripts register World routes, streaming UI and auth.
 // DOMContentLoaded fires only AFTER all deferred scripts, even when desktop
 // Edge serves the catalog and scripts immediately from its warm cache.
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>void init(),{once:true});
-else void init();
+document.addEventListener('DOMContentLoaded',()=>void init(),{once:true});
