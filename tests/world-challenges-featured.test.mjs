@@ -24,7 +24,11 @@ test('fourteen supplied artwork cards appear immediately after active cards with
  assert.deepEqual(WORLD_CHALLENGE_CARDS.map(c=>c.id),expected);
  for(const item of WORLD_CHALLENGE_CARDS){
   assert(item.title.length>=6&&item.category.length>=6&&item.description.length>=20);
-  assert.match(item.image,/^https:\/\/[^/]+\/[^\s]+\.png$/);
+  assert.equal(item.image,'/juegos/challenge-catalog/art/'+item.id+'.webp');
+  const data=fs.readFileSync(new URL('../public'+item.image,import.meta.url));
+  assert.equal(data.toString('ascii',0,4),'RIFF');
+  assert.equal(data.toString('ascii',8,12),'WEBP');
+  assert(data.length<100000,'Cards should use the lightweight original logo');
  }
  assert(markup.includes("WORLD_CHALLENGE_CARDS.map(item=>"));
  assert(markup.includes('<article class="featured-challenge challenge-informative"'));
