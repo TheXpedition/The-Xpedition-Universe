@@ -66,3 +66,49 @@ test('STAFF and participant have actual visible open, fill bots, start and join 
   console.log('STAFF_START_UI_VERIFIED',JSON.stringify({staffOptions:['open','fillBots','start'],participantOptions:['join','visit'],roster:18,started:true}));
  }finally{await browser?.close();await f.close();}
 });
+
+test('desktop signed-in simulated Edge reaches World despite stalled chats, profiles and news', {timeout:160000},async()=>{
+ const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+ const context=await browser.newContext({
+  viewport:{width:1692,height:900},
+  userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0'
+ });
+ const page=await context.newPage();
+ const pageErrors=[],resourceErrors=[];
+ page.on('pageerror',error=>pageErrors.push(error.message));
+ page.on('response',response=>{if(response.status()>=500)resourceErrors.push(response.url()+' '+response.status());});
+ try{
+  await context.addCookies([{name:'xp_session',value:'synthetic-test-only-cookie',url:'https://the-xpedition-universe.onrender.com/'}]);
+  await page.route('**/api/me',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+    user:{id:'qa-session-only',name:'World QA Desktop',avatar:'Dani',staff:true,saved:[],follows:[]}
+  })}));
+  await page.route('**/api/world/access',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+    role:'staff',canPlay:true,confirmed:true,publicEnabled:true,configured:true
+  })}));
+  await page.route('**/api/world/servers',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({
+    staff:true,configured:true,inline:true,servers:[{id:'qa-no-real-room',name:'QA World',enabled:true,archived:false,autoBots:true}]
+  })}));
+  // These are low priority for a World entry. Their requests deliberately
+  // never complete, reproducing the reported logged-in desktop spinner.
+  const stalled=[];
+  for(const endpoint of ['profiles','news','conversations']){
+   await page.route('**/api/'+endpoint,async route=>{
+    stalled.push(endpoint);
+    await new Promise(()=>{});
+   });
+  }
+  const start=Date.now();
+  await page.goto('https://the-xpedition-universe.onrender.com/#world',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('.world-entry').waitFor({state:'visible',timeout:25000});
+  await page.locator('[data-enter-server="qa-no-real-room"]').waitFor({state:'visible',timeout:12000});
+  const elapsed=Date.now()-start;
+  assert(elapsed<25000,'World still stalls when chats/news/profiles have stalled: '+elapsed+' ms');
+  const textContent=await page.locator('#main').innerText();
+  assert(!textContent.includes('Preparando tu próxima aventura'));
+  assert.equal(pageErrors.length,0,'Desktop JavaScript errors: '+pageErrors.join(' / '));
+  console.log('PUBLIC_DESKTOP_AUTHENTICATED_START_VERIFIED',JSON.stringify({
+    elapsedMs:elapsed,serverListVisible:true,loadingSpinnerAbsent:true,
+    simulatedAuthenticatedUser:true,stalledOptionalRequests:stalled,resourceErrors
+  }));
+ }finally{await context.close();await browser.close();}
+});
