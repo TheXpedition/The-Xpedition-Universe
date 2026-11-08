@@ -6,7 +6,8 @@ import {Readable} from 'node:stream';
 
 const messageTypes=new Set(['protocol-subscribe','protocol-ready','protocol-viewer','protocol-media-started','protocol-media-ended','protocol-media-failed','protocol-action','protocol-chat']);
 const fallbackState={id:null,phase:'CLOSED',revision:0,participants:[],invitees:[]};
-const fail=(status,message)=>{throw Object.assign(Error(message),{status});};
+const remoteError=(status,message)=>Object.assign(Error(message),{status});
+const fail=(status,message)=>{throw remoteError(status,message);};
 const decode=raw=>{try{return JSON.parse(raw.toString());}catch{return null;}};
 
 export function createProtocolRemoteProxy({
@@ -75,14 +76,14 @@ export function createProtocolRemoteProxy({
   if(packet.type==='speech-cancel')cancelSpeech(packet.id);
  };
  function open(){
-  if(closed)return Promise.reject(fail(503,'Motor detenido.'));
+  if(closed)return Promise.reject(remoteError(503,'Motor detenido.'));
   if(socket?.readyState===WebSocket.OPEN)return Promise.resolve();
   if(opening)return opening;
   opening=new Promise((resolve,reject)=>{
    let settled=false;
    const ws=makeSocket(endpoint.href,{headers:{'x-protocol-bridge-secret':secret},handshakeTimeout:20000,perMessageDeflate:false});
    socket=ws;
-   const timeout=setTimeout(()=>{if(!settled){settled=true;ws.terminate();reject(fail(503,'El motor independiente está iniciando.'));}},23000);
+   const timeout=setTimeout(()=>{if(!settled){settled=true;ws.terminate();reject(remoteError(503,'El motor independiente está iniciando.'));}},23000);
    const success=()=>{
     if(settled)return;settled=true;clearTimeout(timeout);retryDelay=1000;
     // Reconnect reattaches every World client, including existing spectators
@@ -90,7 +91,7 @@ export function createProtocolRemoteProxy({
     attached.clear();for(const c of connected())sendAttach(c);
     sendWire({type:'sync'});resolve();
    };
-   const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(fail(503,'No pudimos conectar el motor de la ceremonia.'));}};
+   const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(remoteError(503,'No pudimos conectar el motor de la ceremonia.'));}};
    ws.on('open',success);
    ws.on('error',failure);
    ws.on('message',raw=>{const packet=decode(raw);void processPacket(packet).catch(error=>console.error('Protocol bridge event:',String(error.message||error).slice(0,100)));});
