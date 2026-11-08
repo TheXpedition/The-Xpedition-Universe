@@ -18,6 +18,7 @@ export function createProtocolRemoteProxy({
  secret=process.env.PROTOCOL_BRIDGE_SECRET||'',
  scope=process.env.WORLD_SCOPE_ID||'',
  makeSocket=(url,options)=>new WebSocket(url,options),
+ heartbeatMs=15000,
  request=fetch
 }={}){
  if(!/^https?:\/\//.test(serviceURL)||secret.length<32)throw Error('El puente de The X Protocol necesita PROTOCOL_SERVICE_URL y PROTOCOL_BRIDGE_SECRET (32+ caracteres).');
@@ -83,9 +84,24 @@ export function createProtocolRemoteProxy({
    let settled=false;
    const ws=makeSocket(endpoint.href,{headers:{'x-protocol-bridge-secret':secret},handshakeTimeout:20000,perMessageDeflate:false});
    socket=ws;
+   // Detect half-open Render-to-Render sockets that never emit close.
+   // Restart only the bridge; never interrupt the browser's World socket.
+   let heartbeat=null,awaitingPong=false;
+   const stopHeartbeat=()=>{if(heartbeat){clearInterval(heartbeat);heartbeat=null;}};
+   const startHeartbeat=()=>{
+    if(typeof ws.ping!=='function'||!Number.isFinite(heartbeatMs)||heartbeatMs<=0)return;
+    ws.on('pong',()=>{awaitingPong=false;});
+    heartbeat=setInterval(()=>{
+     if(ws.readyState!==WebSocket.OPEN){stopHeartbeat();return;}
+     if(awaitingPong){stopHeartbeat();ws.terminate();return;}
+     awaitingPong=true;
+     try{ws.ping();}catch{stopHeartbeat();ws.terminate();}
+    },heartbeatMs);
+    heartbeat.unref?.();
+   };
    const timeout=setTimeout(()=>{if(!settled){settled=true;ws.terminate();reject(remoteError(503,'El motor independiente está iniciando.'));}},23000);
    const success=()=>{
-    if(settled)return;settled=true;clearTimeout(timeout);retryDelay=1000;
+    if(settled)return;settled=true;clearTimeout(timeout);retryDelay=1000;startHeartbeat();
     // Reconnect reattaches every World client, including existing spectators
     // whose browser WebSocket remained connected during the bridge failure.
     attached.clear();for(const c of connected())sendAttach(c);
@@ -95,7 +111,7 @@ export function createProtocolRemoteProxy({
    ws.on('open',success);
    ws.on('error',failure);
    ws.on('message',raw=>{const packet=decode(raw);void processPacket(packet).catch(error=>console.error('Protocol bridge event:',String(error.message||error).slice(0,100)));});
-   ws.on('close',()=>{if(socket===ws)socket=null;failure();schedule();});
+   ws.on('close',(code,reason)=>{stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
   }).finally(()=>{opening=null;});
   return opening;
  }
