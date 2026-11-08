@@ -51,6 +51,20 @@ function openWorldFrame(server){
   const request=(action,body)=>{const id=++sequence;return new Promise((resolve,reject)=>{pending.set(id,{resolve,reject});port.postMessage({id,action,body});});};
   try{await warmed;if(record.closed)return;const module=await worldIntroModule;await module.playWorldIntro({...event.data.config,url:'/world-intro-video.mp4',mobileUrl:'/world-intro-video-mobile.mp4'},{video:warm,signal:record.abort.signal,request:(action,body)=>action==='start'?Promise.resolve(event.data.session):request(action,body)});if(!record.closed)port.postMessage({type:'finished'});}catch(error){port.postMessage({type:'failed',error:error.message});}
  };
+ // /juegos/ redirects an expired or revoked session to the login page.
+ // In a full-screen iframe this otherwise looks exactly like an endless
+ // "Preparando tu próxima aventura" spinner on desktop Edge.
+ iframe.addEventListener('load',()=>{
+  if(record.closed)return;
+  try{
+   const child=new URL(iframe.contentWindow.location.href);
+   if(child.origin!==location.origin)return;
+   if(!['/','/index.html'].includes(child.pathname))return;
+   closeWorldFrame();
+   toast('La sesión de World necesita iniciarse de nuevo. Tus partidas siguen guardadas.',true);
+   openAuth('login');
+  }catch{/* Cross-origin handoffs must not be inspected. */}
+ });
  window.addEventListener('message',record.listener);iframe.src='/juegos/?server='+encodeURIComponent(server.id);document.body.append(iframe);
 }
 function closeWorldFrame(){const record=activeWorldFrame;if(!record)return;record.closed=true;record.landscape?.destroy();record.abort.abort();window.removeEventListener('message',record.listener);record.iframe.remove();record.warm.pause();record.warm.remove();document.documentElement.classList.remove('world-frame-open');document.title=record.previousTitle;activeWorldFrame=null;}
