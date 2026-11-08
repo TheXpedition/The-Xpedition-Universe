@@ -143,7 +143,8 @@ async function connect(){
    boot=await fetch('/api/world/bootstrap').then(async r=>{const d=await r.json();if(!r.ok)throw Error(d.error||'Entra desde tu sesión de World.');return d;});
    const d=await api('');
    shopUI.update(boot.shop);update(d.episode);
-   if(['CLOSED','LOBBY','ELIMINATION_FINISHED'].includes(state.phase)&&!historyOpenedOnce){historyOpenedOnce=true;void historyUI.open();}
+   // Keep History available through its button. Never automatically open the
+    // blocking modal over Help, Direction, Chat and other real-time controls.
    if(!historyHydrated){for(const m of d.history||[])chat({...m,userId:m.sender});historyHydrated=true;}
    reconnectFailures=0;
   }
