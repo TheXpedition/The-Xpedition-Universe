@@ -29,6 +29,30 @@ test('separate processes share account data through a single-use handoff; logout
    'Public entry scripts must never start a live server worker');
   const exchange=t=>fetch(world.base+'/servers/'+room+'/api/world/session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticket:t})});
   const accepted=await exchange(ticket);assert.equal(accepted.status,200);const cookie=accepted.headers.get('set-cookie').split(';')[0];assert.match(cookie,/^xp_world_session=/);assert.match(accepted.headers.get('set-cookie'),/HttpOnly; SameSite=Lax/);assert.equal((await exchange(ticket)).status,401);
+  if(process.env.XP_WORLD_AUTH_BROWSER_TEST==='1'){
+   // Exercise the actual multi-page login handoff in Chrome/Edge. Earlier
+   // tests POSTed the ticket manually and never loaded the browser module,
+   // so a 401 on its import went unnoticed and displayed an endless spinner.
+   const {chromium}=await import('playwright-core');
+   const browser=await chromium.launch({channel:'chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+   try{
+    const context=await browser.newContext({viewport:{width:1692,height:900}});
+    await context.addCookies([{name:'xp_session',value:staff,url:main.base}]);
+    const page=await context.newPage(),resources=[];
+    page.on('response',response=>{
+     if(/\\/juegos\\/(?:auth|world-entry-session)\\.mjs(?:$|\\?)/.test(response.url()))
+      resources.push({file:new URL(response.url()).pathname.split('/').at(-1),status:response.status(),type:response.headers()['content-type']});
+    });
+    await page.goto(main.base+'/juegos/?server='+room,{waitUntil:'domcontentloaded',timeout:35000});
+    await page.waitForFunction(serverId=>location.pathname==='/servers/'+serverId+'/juegos/',room,{timeout:40000});
+    assert.equal(await page.locator('#world-main').count(),1,'Browser must reach the real game, not the spinner page');
+    for(const file of ['auth.mjs','world-entry-session.mjs']){
+     assert(resources.some(item=>item.file===file&&item.status===200&&/javascript/.test(item.type||'')),
+       'Browser failed to load mandatory pre-auth module '+file+': '+JSON.stringify(resources));
+    }
+    console.log('WORLD_HANDOFF_REAL_BROWSER_SUCCESS',JSON.stringify({url:page.url(),modules:resources}));
+   }finally{await browser.close();}
+  }
   const boot=await fetch(world.base+'/servers/'+room+'/api/world/bootstrap',{headers:{Cookie:cookie}});assert.equal(boot.status,200);assert.equal((await boot.json()).user.id,staff);
   assert.equal((await fetch(world.base+'/servers/'+room+'/api/world/bootstrap',{headers:{Cookie:'xp_session='+staff}})).status,401);
   assert.equal((await fetch(world.base+'/servers/'+room+'/api/x-million/rooms',{headers:{Cookie:cookie}})).status,404);
