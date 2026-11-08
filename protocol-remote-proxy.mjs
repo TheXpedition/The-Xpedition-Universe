@@ -19,6 +19,7 @@ export function createProtocolRemoteProxy({
  scope=process.env.WORLD_SCOPE_ID||'',
  makeSocket=(url,options)=>new WebSocket(url,options),
  heartbeatMs=15000,
+ wakeEngineOnFailure=process.env.NODE_ENV==='production',
  request=fetch
 }={}){
  if(!/^https?:\/\//.test(serviceURL)||secret.length<32)throw Error('El puente de The X Protocol necesita PROTOCOL_SERVICE_URL y PROTOCOL_BRIDGE_SECRET (32+ caracteres).');
@@ -29,6 +30,15 @@ export function createProtocolRemoteProxy({
  endpoint.protocol=endpoint.protocol==='https:'?'wss:':'ws:';
  let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set(),returned=new Set();
  const sendWire=data=>{if(socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify(data));return true;};
+ let lastWakeAt=0;
+ const wakeEngine=()=>{
+  // An HTTP health request wakes a sleeping Render Free engine. Do not block
+  // World login or spam the cold service on repeated WebSocket failures.
+  if(!wakeEngineOnFailure||closed||Date.now()-lastWakeAt<30000)return;
+  lastWakeAt=Date.now();
+  void request(new URL('/api/health',base),{method:'GET',signal:AbortSignal.timeout(25000)})
+   .then(response=>response.body?.cancel()).catch(()=>{});
+ };
  const connected=()=>[...clients.values()];
  const find=id=>connected().find(c=>c.user.id===id);
  const description=c=>({
@@ -109,9 +119,9 @@ export function createProtocolRemoteProxy({
    };
    const failure=error=>{if(!settled){settled=true;clearTimeout(timeout);reject(remoteError(503,'No pudimos conectar el motor de la ceremonia.'));}};
    ws.on('open',success);
-   ws.on('error',error=>{console.warn('Protocol bridge connect error:',String(error?.code||'unknown').slice(0,40),String(error?.message||'').slice(0,180));failure(error);});
+   ws.on('error',error=>{wakeEngine();console.warn('Protocol bridge connect error:',String(error?.code||'unknown').slice(0,40),String(error?.message||'').slice(0,180));failure(error);});
    ws.on('message',raw=>{const packet=decode(raw);void processPacket(packet).catch(error=>console.error('Protocol bridge event:',String(error.message||error).slice(0,100)));});
-   ws.on('close',(code,reason)=>{stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
+   ws.on('close',(code,reason)=>{if(code!==1000&&code!==1001)wakeEngine();stopHeartbeat();if(socket===ws)socket=null;console.warn('Protocol bridge closed:',code,Buffer.isBuffer(reason)?reason.toString().slice(0,100):String(reason||'').slice(0,100));failure();schedule();});
   }).finally(()=>{opening=null;});
   return opening;
  }
