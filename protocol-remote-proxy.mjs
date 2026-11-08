@@ -199,7 +199,7 @@ export function createProtocolRemoteProxy({
    if(!upstream)fail(503,'El motor independiente de The X Protocol no respondió.');
    // Never leak an upstream HTML error page into a JSON-only World API.
    const upstreamType=String(upstream.headers.get('content-type')||'');
-   if(/\\btext\\/html\\b/i.test(upstreamType)){
+   if(upstreamType.toLowerCase().includes('text/html')){
     await upstream.body?.cancel().catch(()=>{});
     json(res,{error:'El motor de Ceremonias no está disponible temporalmente. Intenta abrirlo de nuevo.'},upstream.status>=400?upstream.status:502);
     return true;
