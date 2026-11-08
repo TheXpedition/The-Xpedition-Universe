@@ -1,13 +1,10 @@
-import {SHELTERS,SHELTER_SIZE,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,shelterAt} from './world-shelters.mjs';
+import {SHELTERS,SHELTER_SIZE,SHELTER_MATERIALS,shelterAt} from './world-shelters.mjs';
 import {shelterMaterialArt} from './world-shelter-icons.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function styles(){if(document.getElementById('shelter-styles'))return;const link=document.createElement('link');link.id='shelter-styles';link.rel='stylesheet';link.href='/juegos/world-shelters.css';document.head.append(link);}
 const people=s=>'<div class="shelter-residents" aria-label="Integrantes de '+esc(s.name)+'">'+Array.from({length:SHELTER_SIZE},(_,i)=>{const p=s.members[i];return p?'<img src="/juegos/cast-apocalypse/'+esc(p.characterId)+'-portrait.webp" alt="'+esc(p.name)+'" title="'+esc(p.name)+'">':'<span class="shelter-empty-resident" aria-hidden="true"></span>';}).join('')+'</div>';
-export function shelterAssignmentMarkup(player,view,direct){
- if(!direct||!SHELTER_PARTICIPANTS.includes(player.characterId)||['eliminated','spectator'].includes(player.status))return '';
- const current=view?.shelters.find(s=>s.members.some(m=>m.characterId===player.characterId));
- return '<div class="shelter-assignment" role="group" aria-label="Asignar refugio">'+SHELTERS.map(s=>'<button class="small-button" data-action="shelter-assign" data-target="'+esc(player.userId)+'" data-home="'+s.id+'" '+(current?.id===s.id?'disabled aria-pressed="true"':'')+'>Asignar a '+s.name+'</button>').join('')+'</div>';
-}
+// Refugios are determined exclusively by the selected character, never by Staff.
+export function shelterAssignmentMarkup(){return '';}
 export function mountShelterPanel(root,{view,home,canContribute=false,onContribute=async()=>{},onEnter=()=>{}}){
  styles();let current=view,pending=false,closed=false;
  function render(){if(closed)return;const s=current?.shelters.find(s=>s.id===home);if(!s){root.textContent='Consultando el refugio…';return;}const own=current.home===home&&current.eligible,held=current.inventory||[],sent=current.delivered||[];
