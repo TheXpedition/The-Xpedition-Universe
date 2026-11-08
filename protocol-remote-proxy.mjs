@@ -175,14 +175,35 @@ export function createProtocolRemoteProxy({
    if(req.headers.range)headers.range=req.headers.range;
    const input=req._protocolParsedInput;
    const hasBody=!['GET','HEAD'].includes(req.method);
-   let upstream;
-   try{
-    upstream=await request(new URL(url.pathname+url.search,base),{
-     method:req.method,headers,
-     ...(hasBody?{body:input!==undefined?JSON.stringify(input):req,duplex:'half'}:{}),
-     signal:AbortSignal.timeout(45000)
-    });
-   }catch{fail(503,'El motor independiente de The X Protocol no respondió.');}
+   // Render Free can return its own HTML 502 while the dedicated engine wakes.
+   // Retry only read-only requests: repeating a vote/start/control could duplicate actions.
+   let upstream=null;
+   const attempts=['GET','HEAD'].includes(req.method)?5:1;
+   for(let attempt=0;attempt<attempts;attempt++){
+    try{
+     upstream=await request(new URL(url.pathname+url.search,base),{
+      method:req.method,headers,
+      ...(hasBody?{body:input!==undefined?JSON.stringify(input):req,duplex:'half'}:{}),
+      signal:AbortSignal.timeout(45000)
+     });
+    }catch(error){
+     if(attempt===attempts-1)fail(503,'El motor independiente de The X Protocol no respondió. Intenta de nuevo.');
+    }
+    if(upstream&&![502,503,504].includes(upstream.status))break;
+    if(attempt<attempts-1){
+     await upstream?.body?.cancel().catch(()=>{});
+     upstream=null;
+     await new Promise(resolve=>setTimeout(resolve,Math.min(8000,1000*2**attempt)));
+    }
+   }
+   if(!upstream)fail(503,'El motor independiente de The X Protocol no respondió.');
+   // Never leak an upstream HTML error page into a JSON-only World API.
+   const upstreamType=String(upstream.headers.get('content-type')||'');
+   if(/\\btext\\/html\\b/i.test(upstreamType)){
+    await upstream.body?.cancel().catch(()=>{});
+    json(res,{error:'El motor de Ceremonias no está disponible temporalmente. Intenta abrirlo de nuevo.'},upstream.status>=400?upstream.status:502);
+    return true;
+   }
    const responseHeaders={};
    for(const name of ['content-type','content-length','content-range','accept-ranges','cache-control'])if(upstream.headers.get(name))responseHeaders[name]=upstream.headers.get(name);
    res.writeHead(upstream.status,responseHeaders);
