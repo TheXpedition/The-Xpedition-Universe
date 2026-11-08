@@ -1,4 +1,5 @@
 import {Worker} from 'node:worker_threads';
+import {randomUUID} from 'node:crypto';
 import {proxyWorldHTTP,proxyWorldSocket} from './world-http-proxy.mjs';
 
 // A failure in World cannot stop the community server. An explicitly configured
@@ -18,6 +19,17 @@ export function createWorldCompanion({publicURL,beforeWorld=async()=>{}}){
  }
  async function handle(req,res,url){if(!url.pathname.startsWith('/world-play/'))return false;await beforeWorld();const value=await start();if(!value)throw Object.assign(Error('World está preparando su acceso.'),{status:503});await proxyWorldHTTP(req,res,{port:value,path:req.url.slice('/world-play'.length)||'/'});return true;}
  function upgrade(req,socket,head){if(!req.url.startsWith('/world-play/')){socket.destroy();return;}void beforeWorld().then(start).then(value=>{if(!value)return socket.destroy();proxyWorldSocket(req,socket,head,{port:value,path:req.url.slice('/world-play'.length)});}).catch(error=>{console.warn('World companion WebSocket unavailable:',String(error.message||error).slice(0,160));socket.destroy();});}
+ async function stopRoom(id){
+  if(!enabled)return;
+  await start();
+  const active=worker,requestId=randomUUID();
+  await new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>{active.off('message',onMessage);reject(Error('No fue posible detener la sala antes de eliminarla.'));},16000);
+   function onMessage(message){if(message?.type!=='room-stopped'||message.requestId!==requestId)return;clearTimeout(timer);active.off('message',onMessage);if(message.error)reject(Error(message.error));else resolve();}
+   active.on('message',onMessage);
+   active.postMessage({type:'stop-room',id,requestId});
+  });
+ }
  async function close(){closing=true;if(!worker)return;await new Promise(resolve=>{const active=worker,timer=setTimeout(()=>{void active.terminate();resolve();},10000);active.once('exit',()=>{clearTimeout(timer);resolve();});active.postMessage({type:'shutdown'});});}
- return {start,handle,upgrade,close,enabled};
+ return {start,handle,upgrade,close,stopRoom,enabled};
 }
