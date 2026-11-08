@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {EventEmitter} from 'node:events';
 import {createProtocolRemoteProxy} from '../protocol-remote-proxy.mjs';
 
-test('silent bridge stops answering pings and reconnects without losing World subscriptions', {timeout:10000},async()=>{
+test('silent bridge stops delivering state and reconnects without losing World subscriptions', {timeout:10000},async()=>{
  let attempts=0;
  const deliveries=[];
  const client={user:{id:'test-player'},characterId:'bruno',zone:{id:'base'},p:{x:0,y:0},vitals:{}};
@@ -44,4 +44,34 @@ test('silent bridge stops answering pings and reconnects without losing World su
   assert(sockets[1].sent.some(p=>p.type==='sync'));
   assert.equal(deliveries.length,0);
  }finally{await proxy.close();}
+});
+
+test('live Virginia status frames keep the bridge connected without WebSocket ping', {timeout:10000},async()=>{
+ let attempts=0;const timers=[];
+ class StatusSocket extends EventEmitter{
+  readyState=0;
+  constructor(){
+   super();attempts++;
+   setImmediate(()=>{
+    this.readyState=1;this.emit('open');
+    const interval=setInterval(()=>this.emit('message',Buffer.from(JSON.stringify({
+     type:'status',state:{id:null,phase:'CLOSED',revision:0,participants:[],invitees:[]}
+    }))),10);
+    timers.push(interval);
+   });
+  }
+  send(){}
+  terminate(){this.readyState=3;this.emit('close',1006,Buffer.alloc(0));}
+  close(){this.readyState=3;this.emit('close',1000,Buffer.alloc(0));}
+ }
+ const proxy=createProtocolRemoteProxy({
+  serviceURL:'https://ceremony.example.test',
+  secret:'12345678901234567890123456789012',
+  clients:new Map(),send(){},heartbeatMs:35,makeSocket:()=>new StatusSocket()
+ });
+ try{
+  await new Promise(resolve=>setTimeout(resolve,190));
+  assert.equal(attempts,1,'Regular authority state means no forced reconnect');
+  assert.equal(proxy.bridgeStatus().connected,true);
+ }finally{await proxy.close();for(const interval of timers)clearInterval(interval);}
 });
