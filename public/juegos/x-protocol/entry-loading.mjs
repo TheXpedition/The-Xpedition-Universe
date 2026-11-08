@@ -16,3 +16,9 @@ export class EntryResources {
  async prepare(s){const key=this.key(s);if(this.job?.key!==key){const job={key};this.job=job;this.ready=null;let timer;const loaded=Promise.resolve().then(()=>this.load(s)).catch(()=>{});const timeout=new Promise(resolve=>{timer=this.setTimer(resolve,this.timeoutMs);});job.promise=Promise.race([loaded,timeout]).finally(()=>this.clearTimer(timer)).then(()=>{if(this.job===job)this.ready=key;return this.job===job;});}return this.job.promise;}
  isReady(s){return this.ready===this.key(s);}
 }
+
+// Load stage artwork in parallel; the intro can start as soon as its video plays.
+export function prepareEntryResourcesForPlayback({artwork,media,fonts}){
+ void Promise.resolve().then(artwork).catch(()=>{});
+ return Promise.allSettled([Promise.resolve().then(media),Promise.resolve(fonts)]);
+}
