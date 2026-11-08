@@ -75,7 +75,16 @@ test('staff starts with no humans, confirms bots, summons staff and spectators, 
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:s.id});assert.equal((await f.current()).visitors.find(p=>p.id==='viewer').assetsReady,false,'the World socket cannot ACK before entering the loading page');
   for(const c of [staff,viewer])await f.svc.handle(c,{type:'protocol-subscribe'});
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:'old'});assert.equal((await f.current()).visitors.find(p=>p.id==='viewer').assetsReady,false);
-  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id});await f.advance(1000);assert.equal(f.svc.phase(),'ELIMINATION_LOADING','every connected viewer must prepare before the shared intro');
+  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id,requestId:'request-staff-first'});
+  const acknowledgements=()=>f.messages.filter(m=>m.user==='staff'&&m.type==='protocol-ready-ack'&&m.ceremonyId===s.id);
+  assert.equal(acknowledgements().length,1,'server must confirm durable readiness to the staff browser');
+  assert.equal(acknowledgements()[0].requestId,'request-staff-first');
+  assert.equal(acknowledgements()[0].accepted,true);
+  const revision=(await f.current()).revision;
+  await f.svc.handle(staff,{type:'protocol-ready',ceremonyId:s.id,requestId:'request-staff-first'});
+  assert.equal(acknowledgements().length,2,'server must resend an ACK when client retries after a lost response');
+  assert.equal((await f.current()).revision,revision,'duplicate readiness cannot mutate ceremony again');
+  await f.advance(1000);assert.equal(f.svc.phase(),'ELIMINATION_LOADING','every connected viewer must prepare before the shared intro');
   await f.svc.handle(viewer,{type:'protocol-ready',ceremonyId:s.id});await f.advance(50);assert.equal(f.svc.phase(),'INTRO_VIDEO');
  }finally{await f.close();}
 });

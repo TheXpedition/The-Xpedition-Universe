@@ -133,7 +133,7 @@ export function createProtocolRemoteProxy({
    if(!messageTypes.has(input?.type))return false;
    if(input.type==='protocol-subscribe')c.protocolActive=true;
    if(input.type==='protocol-action'&&input.action?.type==='start')await beforeStart(c);
-   await open();sendWire({type:'input',userId:c.user.id,data:input,startValidated:input.type==='protocol-action'&&input.action?.type==='start'});
+   await open();if(!sendWire({type:'input',userId:c.user.id,data:input,startValidated:input.type==='protocol-action'&&input.action?.type==='start'}))throw remoteError(503,'El puente de la ceremonia se desconectó antes de entregar la acción.');
    return true;
   },
   async handleHttp(req,res,url,user,{body,json}){

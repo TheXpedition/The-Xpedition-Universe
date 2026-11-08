@@ -40,8 +40,15 @@ test('real World and real independent engine share 18-player ceremonies without 
   assert.equal(latest(staff).roster.filter(p=>!p.bot).length,1);
   assert.equal(latest(staff).staff,true);
   assert.equal(latest(observer).roster.length,18);
-  for(const p of peers)fixture.send(p,{type:'protocol-ready',ceremonyId:started.ceremonyId});
+  for(const [index,p] of peers.entries())fixture.send(p,{type:'protocol-ready',ceremonyId:started.ceremonyId,requestId:'ready-'+index});
+  await wait(()=>peers.every((p,index)=>p.messages.some(m=>m.type==='protocol-ready-ack'&&m.ceremonyId===started.ceremonyId&&m.requestId==='ready-'+index&&m.accepted===true)));
   await wait(()=>peers.every(p=>latest(p)?.phase==='INTRO_VIDEO'));
+  // Repeated readiness after losing a server ACK must be idempotent and
+  // still reach the browser through Virginia's dedicated bridge.
+  const staffAckCount=staff.messages.filter(m=>m.type==='protocol-ready-ack').length;
+  fixture.send(staff,{type:'protocol-ready',ceremonyId:started.ceremonyId,requestId:'ready-0'});
+  await wait(()=>staff.messages.filter(m=>m.type==='protocol-ready-ack').length>staffAckCount);
+  assert.equal(latest(staff).id,started.ceremonyId);
   assert.equal(latest(human).cinematic.url,'/juegos/x-protocol/media/intro-apocalypse-ii-20261107.mp4');
   // A temporary Render-to-Render bridge outage must NOT destroy the existing
   // browser WebSockets, reset the ceremony, or lose the player's subscription.
