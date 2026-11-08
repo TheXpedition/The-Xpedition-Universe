@@ -84,8 +84,12 @@ jobs:
         run: XP_WORLD_AUTH_BROWSER_TEST=1 node --test tests/world-auth.test.mjs
       - name: Check optional World artwork can stall without blocking the player
         run: node --test tests/world-boot.test.mjs
-      - name: Show only the two current challenges
+      - name: Check two live challenges and fourteen informational challenge cards
         run: node --test tests/world-challenges-featured.test.mjs
+      - name: Check permanent server deletion and room-data isolation
+        run: node --test tests/world-server-archive.test.mjs
+      - name: Check the room browser and room lifecycle code syntax
+        run: node --check public/world-entry.js && node --check world-servers.mjs && node --check world-server-store.mjs && node --check world-gateway.mjs && node --check world-companion.mjs && node --check world-hub.mjs
       - name: Verify public desktop iframe intro survives a permanently pending video play()
         run: node --test tests/protocol-world-intro-stall.test.mjs
       - run: node --test tests/protocol-browser-smoke.test.mjs
