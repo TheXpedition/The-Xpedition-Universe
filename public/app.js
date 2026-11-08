@@ -343,7 +343,18 @@ async function init(){
     if(location.hostname.endsWith('.github.io')){openPublicCatalog();return;}
     try{state.config=await api('/config');}catch(error){if(error.status===404){openPublicCatalog();return;}throw error;}
     const me=await api('/me');state.user=me.user;
-    await Promise.all([refreshProfiles(),refreshNews(),state.user?refreshConversations():Promise.resolve()]);setConnection(true);route();loadFirebase();if(state.user)startStream();
+    // The World page must not wait for chat, profiles or news queries. On
+    // busy or slow accounts those optional queries can stall indefinitely.
+    setConnection(true);route();loadFirebase();if(state.user)startStream();
+    const initialRoute=state.route;
+    void Promise.allSettled([
+      refreshProfiles().then(()=>{if(state.route==='comunidad')renderCommunity();else if(state.route==='perfil')route();}),
+      refreshNews().then(()=>{if(state.route==='noticias')renderNews();}),
+      state.user?refreshConversations():Promise.resolve()
+    ]).then(outcomes=>{
+      for(const outcome of outcomes)if(outcome.status==='rejected')console.warn('Optional community data unavailable:',outcome.reason?.message||'Request failed');
+      if(initialRoute==='world'&&state.route==='world')console.info('World entry remains available independently of community data.');
+    });
   }catch(error){errorView(error);}
 }
 $$('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon));
