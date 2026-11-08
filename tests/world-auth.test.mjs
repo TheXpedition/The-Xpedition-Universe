@@ -40,8 +40,9 @@ test('separate processes share account data through a single-use handoff; logout
     await context.addCookies([{name:'xp_session',value:staff,url:main.base}]);
     const page=await context.newPage(),resources=[];
     page.on('response',response=>{
-     if(/\\/juegos\\/(?:auth|world-entry-session)\\.mjs(?:$|\\?)/.test(response.url()))
-      resources.push({file:new URL(response.url()).pathname.split('/').at(-1),status:response.status(),type:response.headers()['content-type']});
+     const file=new URL(response.url()).pathname.split('/').at(-1);
+     if(['auth.mjs','world-entry-session.mjs'].includes(file))
+      resources.push({file,status:response.status(),type:response.headers()['content-type']});
     });
     await page.goto(main.base+'/juegos/?server='+room,{waitUntil:'domcontentloaded',timeout:35000});
     await page.waitForFunction(serverId=>location.pathname==='/servers/'+serverId+'/juegos/',room,{timeout:40000});
