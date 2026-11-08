@@ -26,10 +26,6 @@ jobs:
       - run: npm install --no-save --package-lock=false playwright-core@1.58.2
       - name: Click the PUBLIC production World and X Protocol as real STAFF (read-only)
         run: node --test tests/protocol-production-authenticated-ui.test.mjs
-      - name: Upload production screenshots (safe: no passwords in the captures)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: public-production-ceremony-screenshots
-          path: artifacts/protocol-production-authenticated/*.png
-          if-no-files-found: ignore
+      # Production screenshots may show real participant details. Keep them
+      # only inside the ephemeral private runner; never publish artifacts
+      # to the public repository.
