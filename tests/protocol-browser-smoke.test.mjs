@@ -107,14 +107,18 @@ test('real Chromium STAFF and participant screens play the complete intro, trans
     const picture=document.querySelector('#monitor-ranking .rank-hero>img');
     return picture&&!picture.hidden&&picture.complete&&picture.naturalWidth>0;
    },undefined,{timeout:20000});
-   const layout=await page.evaluate(()=>{
+   // The rank scene may rebuild its DOM while waiting for images. Sample only
+   // a complete frame, rather than dereferencing a transiently removed node.
+   const layoutHandle=await page.waitForFunction(()=>{
     const monitor=document.querySelector('#monitor'),rank=document.querySelector('#monitor-ranking');
-    const hero=rank.querySelector('.rank-hero'),picture=hero.querySelector('img'),copy=hero.querySelector('div');
+    const hero=rank?.querySelector('.rank-hero'),picture=hero?.querySelector('img'),copy=hero?.querySelector('div'),loader=document.querySelector('#asset-loader');
+    if(!monitor||!rank||!hero||!picture||!copy||!loader||rank.hidden||!picture.complete||!picture.naturalWidth)return false;
     const box=e=>{const b=e.getBoundingClientRect();return {left:b.left,right:b.right,top:b.top,bottom:b.bottom,width:b.width,height:b.height,scrollWidth:e.scrollWidth,clientWidth:e.clientWidth};};
     return {monitor:box(monitor),rank:box(rank),hero:box(hero),picture:box(picture),copy:box(copy),
-     hidden:rank.hidden,rankText:rank.textContent,assetLoaderHidden:document.querySelector('#asset-loader').hidden,
+     hidden:rank.hidden,rankText:rank.textContent,assetLoaderHidden:loader.hidden,
      pictureLoaded:picture.complete&&picture.naturalWidth>0};
-   });
+   },undefined,{timeout:15000});
+   const layout=await layoutHandle.jsonValue();
    assert.equal(layout.hidden,false,device+' must see the results on the physical monitor');
    assert.equal(layout.pictureLoaded,true,device+' ranking portrait must load');
    assert.equal(layout.assetLoaderHidden,true,device+' must see the monitor and not an asset loading overlay');

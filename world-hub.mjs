@@ -24,9 +24,11 @@ export async function startWorldHub({port=Number(process.env.PORT||3001),host=pr
   let record=workers.get(server.id);if(record?.stopping){await record.stopping;record=workers.get(server.id);}if(record){record.used=Date.now();return record;}
   if(closed)fail(503,'World se está reiniciando.');
   if(workers.size>=limit){const idle=[...workers.values()].filter(r=>r.connections===0&&!r.requests&&!r.booting).sort((a,b)=>a.used-b.used)[0];if(idle)await stop(idle);else fail(503,'Los servidores están ocupados en este momento. Vuelve a intentar en unos minutos.');}
-  const underPressure=()=>process.constrainedMemory()>0&&process.availableMemory()<128*1024*1024;
+  // Keep an emergency reserve, but do not block a small World instance when
+   // free Render still has 64-128 MiB available (observed 5% entry stall).
+   const underPressure=()=>process.constrainedMemory()>0&&process.availableMemory()<64*1024*1024;
   if(underPressure())await reclaimIdleWorlds(workers.values(),stop,underPressure);
-  if(underPressure())fail(503,'World está ocupado en este momento. Vuelve a intentar en unos minutos.');
+  if(underPressure()){console.warn('World memory admission rejected:',JSON.stringify({availableMiB:Math.floor(process.availableMemory()/1048576),rssMiB:Math.floor(process.memoryUsage().rss/1048576),rooms:workers.size}));fail(503,'World está ocupado en este momento. Vuelve a intentar en unos minutos.');}
   const leaseOwner=randomUUID(),deadline=Date.now()+50000;let acquired=false;
   while(!acquired){const at=Date.now(),row=await db.run('INSERT INTO world_server_leases(server_id,owner,expires) VALUES(?,?,?) ON CONFLICT(server_id) DO UPDATE SET owner=excluded.owner,expires=excluded.expires WHERE world_server_leases.expires<? OR world_server_leases.owner=?',server.id,leaseOwner,at+45000,at,leaseOwner);acquired=!!row.changes;if(!acquired){if(Date.now()>deadline)fail(503,'El servidor se está recuperando. Vuelve a entrar en unos segundos.');await new Promise(resolve=>setTimeout(resolve,600));}}
   let worker;try{worker=new Worker(new URL('./world-instance.mjs',import.meta.url),{env:{...process.env,WORLD_DATABASE_READY:'true',WORLD_SCOPE_ID:server.id,WORLD_LEASE_OWNER:leaseOwner,WORLD_PUBLIC_PREFIX:mount+'/servers/'+server.id,HOST:'127.0.0.1',PORT:'0',WORLD_REVIEW_ENTRY_KEY:'',WORLD_REVIEW_STAFF_ID:process.env.NODE_ENV==='test'&&process.env.HOST==='127.0.0.1'&&!process.env.DATABASE_URL?process.env.WORLD_REVIEW_STAFF_ID||'':''},resourceLimits:{maxOldGenerationSizeMb:128,stackSizeMb:4}});}catch(error){await release({id:server.id,leaseOwner});throw error;}

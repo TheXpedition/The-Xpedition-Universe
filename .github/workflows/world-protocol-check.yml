@@ -86,6 +86,8 @@ jobs:
         run: node --test tests/world-boot.test.mjs
       - name: Check two live challenges and fourteen informational challenge cards
         run: node --test tests/world-challenges-featured.test.mjs
+      - name: Check World entry memory recovery and deleted protocol rooms
+        run: node --test tests/world-entry-recovery.test.mjs
       - name: Check permanent server deletion and room-data isolation
         run: node --test tests/world-server-archive.test.mjs
       - name: Check the room browser and room lifecycle code syntax

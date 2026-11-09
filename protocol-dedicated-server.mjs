@@ -44,6 +44,7 @@ export async function startProtocolDedicatedServer({
  const validUser=id=>typeof id==='string'&&id.length>0&&id.length<=128&&!/[^a-zA-Z0-9_-]/.test(id);
  const sendBridge=(bridge,value)=>{if(bridge.readyState===WebSocket.OPEN&&bridge.bufferedAmount<1048576)bridge.send(JSON.stringify(value));};
  async function createRoom(scope){
+  if(scope){const row=await base.one('SELECT id,settings FROM world_servers WHERE id=?',scope);if(!row||JSON.parse(row.settings||'{}').deletingAt)fail(410,'Esta sala de World ya fue eliminada.');}
   const db=scope?await serverDatabase(base,scope):base;
   const peers=new Set(),clients=new Map(),members=new Map();
   const can=async(user,capability)=>{
@@ -79,7 +80,13 @@ export async function startProtocolDedicatedServer({
    cancelSpeech:id=>signal({type:'speech-cancel',id}),
    // STAFF pre-start validation and player persistence have already happened
    // on the authenticated World gateway, before it forwards this action.
-   beforeStart:async()=>{}
+   beforeStart:async()=>{},
+   onFatalError:async()=>{
+    const task=rooms.get(scope);if(!task)return;
+    rooms.delete(scope);
+    const target=await task;
+    await target.close({persist:false});
+   }
   });
   await protocol.ready;
   const status=()=>protocol.bridgeView();
@@ -140,7 +147,7 @@ export async function startProtocolDedicatedServer({
   }
   const timer=setInterval(()=>signal({type:'status',state:status()}),900);
   timer.unref();
-  return {db,peers,clients,members,protocol,shop,receive,remove,status,async close(){clearInterval(timer);for(const p of peers)p.close(1001,'Reinicio del motor');await protocol.close();}};
+  return {db,peers,clients,members,protocol,shop,receive,remove,status,async close({persist=true}={}){clearInterval(timer);for(const p of peers)p.close(1001,'Reinicio del motor');await protocol.close({persist});}};
  }
  function room(scope){
   if(!validScope(scope))fail(400,'Servidor de World inválido.');
