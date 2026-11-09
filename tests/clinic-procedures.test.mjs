@@ -4,8 +4,34 @@ async function fixture({supplyState=null}={}){const dir=await fs.mkdtemp(path.jo
  const fail=(status,message)=>{throw Object.assign(Error(message),{status});},service=createWorldClinic({db,now:()=>at,body:async r=>r.input,json:(r,v)=>r.value=v,fail,clientFor:u=>clients.get(u.id),canDirect:async u=>u.id==='staff',getClinicalState:async()=>({body:{conditions:[{id:'scratch',severity:45}]},vitals:{health:70,energy:60}}),applyCare:async(n,p,i)=>{calls.push(i);return i.action==='examine'?{}:{result:'effective'};},send:(c,m)=>events.push({id:c.user.id,...m}),supplyState,onActivity:(c,s)=>{if(c){c.careBusy=!!s;c.clinicProcedure=s?{id:s.id}:null;}}});
  async function call(path,id='nurse',input,method=input?'POST':'GET'){const res={};try{await service.handle({method,input},res,new URL('http://test/api/world/clinic'+path),{id});return {status:200,...res.value};}catch(e){if(!e.status)throw e;return {status:e.status,error:e.message};}}
  const requested=await call('/request','patient',{nurseId:'nurse'}),appointmentId=requested.appointment.id;await call('/respond','nurse',{appointmentId,accept:true});
- return {db,clients,call,calls,events,appointmentId,set time(v){at=v;},get time(){return at;},async close(){await service.close();await db.close();}};
+ return {db,clients,call,calls,events,appointmentId,disconnect:service.disconnect,set time(v){at=v;},get time(){return at;},async close(){await service.close();await db.close();}};
 }
+test('a missed preparation remains recoverable by its patient after a socket reconnect',async()=>{
+ const f=await fixture();
+ try{
+  const start=await f.call('/procedure/start','nurse',{appointmentId:f.appointmentId,kind:'pressure'});
+  assert.equal(start.status,200,start.error);
+  const procedureId=start.procedure.id,patient=f.clients.get('patient');
+  f.clients.delete('patient');
+  await f.disconnect('patient',{preserveConsent:true});
+  assert.equal((await f.call('','nurse')).procedure.status,'consent');
+  assert.equal((await f.call('/pending','stranger')).procedure,null);
+  assert.equal((await f.call('/procedure/respond','patient',{procedureId,accept:true})).status,409);
+  f.clients.set('patient',patient);
+  const recovered=(await f.call('/pending','patient')).procedure;
+  assert.equal(recovered.id,procedureId);
+  assert.equal(recovered.canConsent,true);
+  assert.equal((await f.call('/procedure/respond','patient',{procedureId,accept:true})).procedure.status,'active');
+  assert.equal((await f.call('/pending','patient')).procedure,null);
+  await f.call('/finish','nurse',{appointmentId:f.appointmentId});
+  const invitation=await f.call('/invite','nurse',{patientId:'patient'});
+  assert.equal(invitation.status,200,invitation.error);
+  assert.deepEqual((await f.call('/pending','patient')).appointments.map(a=>a.id),[invitation.appointment.id]);
+  assert.deepEqual((await f.call('/pending','stranger')).appointments,[]);
+  assert.equal((await f.call('/respond','patient',{appointmentId:invitation.appointment.id,accept:true})).status,200);
+  assert.deepEqual((await f.call('/pending','patient')).appointments,[]);
+ }finally{await f.close();}
+});
 async function begin(f,input={kind:'exam'}){let r=await f.call('/procedure/start','nurse',{appointmentId:f.appointmentId,...input});assert.equal(r.status,200,r.error);const consent=r.procedure;assert.equal(consent.status,'consent');r=await f.call('/procedure/respond','patient',{procedureId:consent.id,accept:true});assert.equal(r.status,200,r.error);return r.procedure;}
 async function perform(f,s){let r=await f.call('/procedure/action','nurse',{procedureId:s.id,step:0,choice:CLINIC_PROCEDURES[s.kind].tool});assert.equal(r.status,200,r.error);s=r.procedure;for(let i=0;i<3;i++){const target=procedureTarget(s,s.stepAt+i*TARGET_CYCLE);f.time=s.stepAt+(i+target.center)*TARGET_CYCLE;r=await f.call('/procedure/action','nurse',{procedureId:s.id,step:1});assert.equal(r.status,200,r.error);s=r.procedure;}assert.equal(s.step,2);f.time=s.stepAt+OBSERVE_MS+1;return f.call('/procedure/action','nurse',{procedureId:s.id,step:2});}
 test('nurse and patient consent, precise steps and observation apply once and keep the 100 coin appointment payment unchanged',async()=>{const f=await fixture();try{let s=await begin(f);assert.equal(f.calls.length,0);assert(f.clients.get('patient').careBusy);assert.equal((await f.call('/procedure/action','stranger',{procedureId:s.id,step:0,choice:'notebook'})).status,403);assert.equal((await f.call('/procedure/action','patient',{procedureId:s.id,step:0,choice:'notebook'})).status,409);assert.equal((await f.call('/procedure/action','nurse',{procedureId:s.id,step:2})).status,409);assert.equal((await f.call('/procedure/action','nurse',{procedureId:s.id,step:0,choice:'pills'})).status,409);const done=await perform(f,s);assert.equal(done.procedure.status,'completed');assert.equal(f.calls.length,1);assert.equal(f.calls[0].action,'examine');assert.equal(f.clients.get('nurse').careBusy,false);assert.equal((await f.call('/patient?userId=patient','patient')).status,200);assert.equal((await f.call('/patient?userId=patient','stranger')).status,403);const duplicate=await f.call('/procedure/action','nurse',{procedureId:s.id,step:2});assert.equal(duplicate.procedure.status,'completed');assert.equal(f.calls.length,1);assert.equal((await f.db.one('SELECT coins FROM user_progression WHERE user_id=?','patient')).coins,400);assert.equal((await f.db.one('SELECT coins FROM user_progression WHERE user_id=?','nurse')).coins,600);assert(f.events.some(m=>m.id==='patient'&&m.type==='clinic-procedure'&&m.procedure.status==='completed'));}finally{await f.close();}});

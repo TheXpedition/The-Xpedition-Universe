@@ -1,6 +1,30 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import {JSDOM} from 'jsdom';
 import {mountClinicPanel,mountClinicNotice} from '../public/juegos/world-clinic-ui.mjs';import {mountHealthPanel} from '../public/juegos/world-health-ui.mjs';import {MEDICINES,createWellness,wellnessSnapshot} from '../public/juegos/world-wellness.mjs';
+import {watchClinicNotifications} from '../public/juegos/clinic-notifications.mjs';
 const tick=()=>new Promise(r=>setImmediate(r));const fixture=()=>{const dom=new JSDOM('<dialog open><main></main></dialog>',{pretendToBeVisual:true});return {dom,root:dom.window.document.querySelector('main')};};
+test('pending recovery opens an invitation once and ignores a snapshot made before acceptance',async()=>{
+ const {dom}=fixture(),win=dom.window,shown=[];
+ win.HTMLDialogElement.prototype.showModal=function(){this.open=true;};
+ win.HTMLDialogElement.prototype.close=function(){this.open=false;};
+ const notice=mountClinicNotice(win.document.body,{modal:true});
+ let resolve;
+ const alerts=watchClinicNotifications({win,notice,fetchPending:()=>new Promise(r=>resolve=r),onProcedure:value=>shown.push(value.id),onPsychology:()=>{}});
+ const appointment={id:'a',status:'invited',nurseName:'Isabel'};
+ const pending={appointments:[appointment],invoices:[],procedure:{id:'prep',canConsent:true,status:'consent'}};
+ try{
+  alerts.refresh();resolve(pending);await tick();
+  assert.equal(notice.element.open,true);
+  const button=notice.element.querySelector('button');
+  alerts.handle({type:'clinic-invitation',appointment});
+  alerts.refresh();resolve(pending);await tick();
+  assert.equal(notice.element.querySelector('button'),button);
+  assert.deepEqual(shown,['prep']);
+  alerts.refresh();alerts.handle({type:'clinic-appointment',appointment:{...appointment,status:'accepted'}});
+  resolve(pending);await tick();
+  assert.equal(notice.element.open,false);
+  assert.equal(win.document.querySelector('dialog').open,true);
+ }finally{alerts.destroy();notice.destroy();win.close();}
+});
 test('a participant sees a nurse directory and can request a visit but cannot take medical stock',async()=>{
  const {dom,root}=fixture(),calls=[];let panel=mountClinicPanel(root,{data:{selfId:'a',wallet:{coins:200},nurses:[{userId:'n',name:'Nurse <b>',available:true}]},onRequest:async input=>{calls.push(input);return {};}});assert.equal(root.querySelector('b')?.textContent,'100 monedas');assert.equal(root.querySelector('script'),null);root.querySelector('[data-clinic-action=request]').click();await tick();assert.deepEqual(calls,[{nurseId:'n'}]);assert.equal(root.querySelector('[data-clinic-tab=patients]'),null);panel.destroy();
  panel=mountHealthPanel(root,{mode:'hospital',data:{body:wellnessSnapshot(createWellness()),supplies:Object.fromEntries(MEDICINES.map(m=>[m.id,20]))},onTake:async()=>{throw Error('must not be called');}});assert.equal(root.querySelectorAll('[data-medicine]').length,0);assert(root.querySelector('[data-health-action=clinic]'));assert.equal(root.querySelector('[data-health-tab=hospital]'),null);panel.destroy();dom.window.close();

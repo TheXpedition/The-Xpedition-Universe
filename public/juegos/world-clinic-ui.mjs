@@ -39,10 +39,24 @@ export function mountClinicPanel(root,{mode='directory',data={},onRequest,onAcce
  const changed=e=>{if(e.target.name==='compatibleOnly'){preserve();onlyCompatible=e.target.checked;selectedMedicine='';drafts.delete('medicine');render();return;}if(e.target.name==='medicineId'){selectedMedicine=e.target.value;drafts.set('medicine',selectedMedicine);const detail=root.querySelector('.clinic-treatment-detail');if(detail)detail.innerHTML=treatmentDetail(MEDICINE_BY_ID[selectedMedicine]);}};
  root.addEventListener('click',clicked);root.addEventListener('submit',submitted);root.addEventListener('change',changed);render();return {openRecord(value){state.record=value;tab='record';recordTab='summary';render();},update(next={}){if(destroyed)return;merge(next);const fingerprint=JSON.stringify(state);if(fingerprint===signature)return;signature=fingerprint;render();},destroy(){destroyed=true;root.removeEventListener('click',clicked);root.removeEventListener('submit',submitted);root.removeEventListener('change',changed);root.classList.remove('world-clinic-panel');}};
 }
-export function mountClinicNotice(parent,{onRespond,onInvoiceRespond}={}){ensureClinicTheme(parent);
- const root=parent.ownerDocument.createElement('aside');root.className='clinic-invitation';root.hidden=true;root.setAttribute('role','status');root.setAttribute('aria-live','polite');parent.append(root);let queue=[],current=null,pending=false,destroyed=false;
+export function mountClinicNotice(parent,{onRespond,onInvoiceRespond,modal=false}={}){ensureClinicTheme(parent);
+ const root=parent.ownerDocument.createElement(modal?'dialog':'aside');root.className='clinic-invitation';root.hidden=true;root.setAttribute('role',modal?'alertdialog':'status');root.setAttribute('aria-label','Aviso de Enfermería');root.setAttribute('aria-live','polite');parent.append(root);let queue=[],current=null,pending=false,destroyed=false;
+ const noticeId=value=>(value?.invoice||value?.appointment)?.id;
+ function updateQueue(next){queue=next;if(noticeId(current)===noticeId(queue[0]))return;render();if(modal){if(current&&!root.open)root.showModal();else if(!current&&root.open)root.close();}}
  function render(){current=queue[0]||null;root.hidden=!current;if(!current){root.replaceChildren();return;}const value=current.type==='invoice'?current.invoice:current.appointment,billing=current.type==='invoice';root.innerHTML='<span class="clinic-notice-icon">'+worldIcon('clipboard')+'</span><div><p class="clinic-kicker">'+(billing?'CONFIRMAR COBRO':'CITA MÉDICA')+'</p><strong>'+esc(billing||value.status==='invited'?value.nurseName:value.patientName)+'</strong><p>'+(billing?'Solicita '+value.amount+' monedas. '+esc(value.reason):value.status==='invited'?'Te invita a una cita médica. Aceptar transfiere 100 monedas a Enfermería.':'Te está pidiendo una cita médica. Coste: 100 monedas, pagadas al aceptar.')+'</p><div class="clinic-notice-actions"><button data-clinic-answer="accept" '+(pending?'disabled':'')+'>'+(billing?'Confirmar':'Aceptar')+'</button><button data-clinic-answer="decline" '+(pending?'disabled':'')+'>Rechazar</button></div></div>';}
- function show(value){if(destroyed||!['appointment','invoice'].includes(value?.type))return;const id=(value.invoice||value.appointment)?.id;if(!id||queue.some(q=>(q.invoice||q.appointment)?.id===id))return;queue.push(value);render();}
- function close(id){queue=queue.filter(q=>(q.invoice||q.appointment)?.id!==id);render();}
- const clicked=async e=>{const b=e.target.closest('[data-clinic-answer]');if(!b||pending||!current)return;const request=current,value=request.invoice||request.appointment,accept=b.dataset.clinicAnswer==='accept';pending=true;render();try{await (request.type==='invoice'?onInvoiceRespond:onRespond)?.(request.type==='invoice'?{invoiceId:value.id,accept}:{appointmentId:value.id,accept});if(!destroyed)close(value.id);}catch(error){if(!destroyed){root.querySelector('p:last-of-type').textContent=error.message;}}finally{pending=false;if(!destroyed){root.querySelectorAll('button').forEach(b=>b.disabled=false);}}};root.addEventListener('click',clicked);return {show,close,element:root,destroy(){destroyed=true;queue=[];root.removeEventListener('click',clicked);root.remove();}};
+ function show(value){if(destroyed||!['appointment','invoice'].includes(value?.type))return;const id=noticeId(value);if(!id||queue.some(q=>noticeId(q)===id))return;updateQueue([...queue,value]);}
+ function close(id){updateQueue(queue.filter(q=>noticeId(q)!==id));}
+ function sync(values){
+  if(destroyed)return;
+  const remaining=new Map(values.map(value=>[noticeId(value),value]));
+  const next=[];
+  for(const item of queue){
+   const id=noticeId(item);
+   if(remaining.has(id)){next.push(remaining.get(id));remaining.delete(id);}
+  }
+  updateQueue([...next,...remaining.values()]);
+ }
+ const clicked=async e=>{const b=e.target.closest('[data-clinic-answer]');if(!b||pending||!current)return;const request=current,value=request.invoice||request.appointment,accept=b.dataset.clinicAnswer==='accept';pending=true;root.querySelectorAll('button').forEach(button=>button.disabled=true);try{await (request.type==='invoice'?onInvoiceRespond:onRespond)?.(request.type==='invoice'?{invoiceId:value.id,accept}:{appointmentId:value.id,accept});if(!destroyed)close(value.id);}catch(error){if(!destroyed&&noticeId(current)===value.id)root.querySelector('p:last-of-type').textContent=error.message;}finally{pending=false;if(!destroyed)root.querySelectorAll('button').forEach(button=>button.disabled=false);}};
+ root.addEventListener('click',clicked);root.addEventListener('cancel',e=>e.preventDefault());root.addEventListener('keydown',e=>e.stopPropagation());
+ return {show,close,sync,element:root,destroy(){destroyed=true;queue=[];root.removeEventListener('click',clicked);root.remove();}};
 }
