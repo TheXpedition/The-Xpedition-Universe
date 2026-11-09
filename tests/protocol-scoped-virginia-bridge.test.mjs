@@ -15,6 +15,10 @@ test('Virginia initializes and accepts the scoped World server used by ceremony 
  let db,server,ws;
  try{
   db=await openDatabase(folder);
+  // A scoped ceremony may only be started for an existing World room.
+  const owner='123e4567-e89b-12d3-a456-426614174000';
+  await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',owner,'Owner','owner','owner@example.invalid','Dani',1);
+  await db.run('INSERT INTO world_servers(id,name,creator,enabled,settings,created,updated) VALUES(?,?,?,1,?,?,?)',scope,'Scoped Virginia test',owner,JSON.stringify({autoBots:true}),Date.now(),Date.now());
   server=await startProtocolDedicatedServer({port:0,host:'127.0.0.1',database:db,secret});
   const root='http://127.0.0.1:'+server.port;
   const response=await fetch(root+'/bridge/status',{headers:{'x-protocol-bridge-secret':secret,'x-protocol-scope':scope},signal:AbortSignal.timeout(45000)});
