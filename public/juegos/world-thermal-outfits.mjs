@@ -3,7 +3,7 @@ import {reservedWardrobe} from './world-wardrobe.mjs';
 export const THERMAL_OUTFITS=Object.freeze(Object.fromEntries([
  ['andromeda','Andromeda'],['arisantana','Ari Santana'],['bayron','Bayron'],['bruno','Bruno'],
  ['carmine','Carmine'],['daelly','Daelly'],['dua-lingo','Dua Lingo'],['eduard','Eduard'],
- ['guillermo','Guillermo'],['ivy','Ivy'],['joseserna','Jose Serna'],['kareli','Kareli'],
+ ['guillermo','Guillermo'],['ivy','Ivy'],['alice','Alice'],['joseserna','Jose Serna'],['kareli','Kareli'],
  ['leandro','Leandro'],['maria-villegas','Maria'],['marianito','Marianito'],['peggy','Peggy'],
  ['roger','Roger'],['sallua','Sal Lua'],['vita','Vita'],['vitany','Vitany Glambert']
 ].map(([id,source])=>[id,Object.freeze({id,source,image:'/juegos/outfits/thermal-v1/'+id+'.webp',atlas:'/juegos/outfits/thermal-v1/'+id+'-atlas.webp',lite:'/juegos/outfits/thermal-v1/'+id+'-lite.webp'})])));
