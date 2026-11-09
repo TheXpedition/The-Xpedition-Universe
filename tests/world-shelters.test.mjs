@@ -72,3 +72,27 @@ test('eliminated participants lose access but portraits and saved contributions 
   assert.equal((await f.s.identity({id:'peggy'})).active,false);
  }finally{await f.close();}
 });
+test('housing overrides survive reload and prior deliveries remain in their original shelters',async()=>{
+ const f=await fixture();let reloaded;
+ try{
+  const resident={id:'bruno'},oldMaterial=SHELTER_MATERIALS[0],newMaterial=SHELTER_MATERIALS[1];
+  await f.s.collect(resident,oldMaterial.id,atMaterial(oldMaterial));
+  await f.s.contribute(resident,'left',atDoor('left'));
+  // Older records used a timestamp rather than storing the delivery destination.
+  const row=await f.db.one('SELECT state FROM world_environment WHERE id=?','shelters');
+  const saved=JSON.parse(row.state);saved.delivered.bruno[oldMaterial.id]=1000;
+  await f.db.run('UPDATE world_environment SET state=? WHERE id=?',JSON.stringify(saved),'shelters');
+  await f.s.assign({characterId:'peggy',home:null});
+  await f.s.assign({characterId:'bruno',home:'right'});
+  await f.s.collect(resident,newMaterial.id,atMaterial(newMaterial));
+  await f.s.contribute(resident,'right',atDoor('right'));
+  reloaded=createShelterService({db:f.db});await reloaded.ready;
+  const view=await reloaded.snapshot(resident);
+  assert.equal(view.home,'right');
+  assert.equal(reloaded.teamFor(resident,'bruno'),'right');
+  assert.equal(view.shelters[0].counts[oldMaterial.id],1);
+  assert.equal(view.shelters[1].counts[oldMaterial.id],0);
+  assert.equal(view.shelters[1].counts[newMaterial.id],1);
+  assert.equal((await reloaded.snapshot({id:'peggy'})).home,null);
+ }finally{await reloaded?.close();await f.close();}
+});

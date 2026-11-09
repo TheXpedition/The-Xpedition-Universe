@@ -1,4 +1,4 @@
-import {SHELTERS,SHELTER_SIZE,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,SHELTER_ROSTERS,shelterForCharacter,shelterForZone,shelterSupplyProp} from './public/juegos/world-shelters.mjs';
+import {SHELTERS,SHELTER_SIZE,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,shelterForCharacter,shelterForZone,shelterSupplyProp} from './public/juegos/world-shelters.mjs';
 import {portalDistance} from './public/juegos/front-world.mjs';
 import {WORLD_MAPS} from './public/juegos/world-maps.mjs';
 import {WORLD_CHARACTERS} from './public/juegos/world-characters.mjs';
@@ -15,12 +15,20 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  }
  function bind(s,user,id){if(s.owners[id]&&s.owners[id]!==user.id)fail(409,'Este personaje ya tiene un participante vinculado a la construcción.');s.owners[id]=user.id;}
  const owned=(s,user,id)=>!s.owners[id]||s.owners[id]===user.id;
- const members=(_s,id)=>SHELTER_ROSTERS[id]||[];
- function progress(s,id){const people=members(s,id),done=s.completed[id],counts=Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,done?SHELTER_SIZE:people.filter(c=>s.delivered[c]?.[m.id]).length])),total=Object.values(counts).reduce((a,b)=>a+b,0);return {counts,percent:done?100:Math.floor(total/(SHELTER_SIZE*SHELTER_MATERIALS.length)*100),built:!!done,completedAt:done?.at||null};}
+ const homeFor=(s,id)=>Object.hasOwn(s.housingOverrides||{},id)?s.housingOverrides[id]:shelterForCharacter(id);
+ const members=(s,home)=>SHELTER_PARTICIPANTS.filter(id=>homeFor(s,id)===home);
+ const characterName=id=>WORLD_CHARACTERS.find(c=>c.id===id)?.name||id;
+ function deliveries(s,home,material){
+  return SHELTER_PARTICIPANTS.filter(id=>{
+   const delivery=s.delivered[id]?.[material];
+   return delivery&&(typeof delivery==='number'?shelterForCharacter(id):delivery.home)===home;
+  });
+ }
+ function progress(s,id){const done=s.completed[id],counts=Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,done?SHELTER_SIZE:Math.min(SHELTER_SIZE,deliveries(s,id,m.id).length)])),total=Object.values(counts).reduce((a,b)=>a+b,0);return {counts,percent:done?100:Math.floor(total/(SHELTER_SIZE*SHELTER_MATERIALS.length)*100),built:!!done,completedAt:done?.at||null};}
  function view(s,user,person,staff=false,excluded=new Set()){
-  const id=person.characterId,bound=owned(s,user,id),eligible=person.active&&bound,home=person.active?shelterForCharacter(id):null;
-  const shelters=SHELTERS.map(def=>({...def,...progress(s,def.id),required:SHELTER_SIZE,members:members(s,def.id).map(characterId=>({characterId,name:WORLD_CHARACTERS.find(c=>c.id===characterId)?.name||characterId,active:!excluded.has(characterId),occupied:!!s.owners[characterId]}))}));
-  return {revision:s.revision,eligible,home,stock:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,18-SHELTER_PARTICIPANTS.filter(c=>s.collected[c]?.[m.id]).length])),available:eligible?SHELTER_MATERIALS.filter(m=>!s.collected[id]?.[m.id]).map(m=>m.id):[],inventory:bound?SHELTER_MATERIALS.filter(m=>s.collected[id]?.[m.id]&&!s.delivered[id]?.[m.id]).map(m=>m.id):[],delivered:bound?Object.keys(s.delivered[id]||{}):[],shelters,...(staff?{race:shelters[0].percent===shelters[1].percent?'Empate':shelters.find(s=>s.percent===Math.max(...shelters.map(t=>t.percent))).name+' va adelante'}:{})};
+  const id=person.characterId,bound=owned(s,user,id),home=person.active?homeFor(s,id):null,eligible=person.active&&bound&&!!home;
+  const shelters=SHELTERS.map(def=>({...def,...progress(s,def.id),required:SHELTER_SIZE,members:members(s,def.id).map(characterId=>({characterId,name:characterName(characterId),active:!excluded.has(characterId),occupied:!!s.owners[characterId]}))}));
+  return {revision:s.revision,eligible,home,stock:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,18-SHELTER_PARTICIPANTS.filter(c=>s.collected[c]?.[m.id]).length])),available:eligible?SHELTER_MATERIALS.filter(m=>!s.collected[id]?.[m.id]).map(m=>m.id):[],inventory:bound?SHELTER_MATERIALS.filter(m=>s.collected[id]?.[m.id]&&!s.delivered[id]?.[m.id]).map(m=>m.id):[],delivered:bound?Object.keys(s.delivered[id]||{}):[],shelters,...(staff?{housing:SHELTER_PARTICIPANTS.map(characterId=>({characterId,name:characterName(characterId),home:homeFor(s,characterId)})),race:shelters[0].percent===shelters[1].percent?'Empate':shelters.find(s=>s.percent===Math.max(...shelters.map(t=>t.percent))).name+' va adelante'}:{})};
  }
  const mutate=fn=>{const task=tail.then(async()=>{await ready;let next;const result=await db.transaction(async()=>{next=decode(await db.one('SELECT state FROM world_environment WHERE id=?'+(db.kind==='postgres'?' FOR UPDATE':''),'shelters'));const result=await fn(next);next.revision++;await db.run('UPDATE world_environment SET state=?,updated=? WHERE id=?',JSON.stringify(next),now(),'shelters');return result;});state=next;return result;});tail=task.catch(()=>{});return task;};
  async function notify(){await onChange();}
@@ -28,11 +36,24 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  async function participant(user,context={}){const person=await identity(user);if(!person.active)fail(403,'Solo los 18 participantes activos pueden recoger materiales o construir refugios.');if(context.alive===false)fail(409,'Debes estar consciente para construir.');return person;}
  return {ready,identity,
   async snapshot(user,{staff=false}={}){await ready;await tail;state=decode(await db.one('SELECT state FROM world_environment WHERE id=?','shelters'));return view(state,user,await identity(user),staff,await excludedMembers());},
-  teamFor(_user,id){return shelterForCharacter(id);},
-  canEnter(user,id,zone){const home=shelterForZone(zone);return !home||shelterForCharacter(id)===home.id&&!!state.completed[home.id];},
-  async assertAccess(user,zone){await ready;if(!shelterForZone(zone))return;const person=await identity(user);if(!person.active||!this.canEnter(user,person.characterId,zone))fail(403,!!state.completed[shelterForZone(zone).id]?'Este personaje pertenece al otro refugio.':'Primero deben construir este refugio.');},
-  async collect(user,materialId,context={}){const material=SHELTER_MATERIALS.find(m=>m.id===materialId);if(!material)fail(404,'Material inexistente.');const point=shelterSupplyProp(material,WORLD_MAPS[material.zone]);if(context.zone!==material.zone||!Number.isFinite(context.x)||!Number.isFinite(context.y)||Math.hypot(context.x-point.x,context.y-point.y)>125)fail(409,'Acércate al material para recogerlo.');const result=await mutate(async s=>{const person=await participant(user,context),id=person.characterId;bind(s,user,id);if(s.collected[id]?.[materialId])fail(409,'Ya recogiste tu unidad de este material.');s.collected[id]||={};s.collected[id][materialId]=now();return {message:'Recogiste '+material.name.toLocaleLowerCase('es')+'. Una unidad para tu aporte al refugio.'};});await notify();return result;},
-  async contribute(user,home,context={}){const def=validHome(home),portal=WORLD_MAPS[def.outside].props.find(p=>p.portal?.zone===def.inside)?.portal;if(context.zone!==def.outside||!portal||!Number.isFinite(context.x)||!Number.isFinite(context.y)||portalDistance(context,portal)>125)fail(409,'Acércate a la entrada de '+def.name+' para aportar.');const result=await mutate(async s=>{const person=await participant(user,context),id=person.characterId;bind(s,user,id);if(shelterForCharacter(id)!==home)fail(403,'Este personaje solo puede construir su refugio correspondiente.');if(s.completed[home])return {message:'El refugio ya está construido.',added:0};s.delivered[id]||={};let added=0;for(const m of SHELTER_MATERIALS)if(s.collected[id]?.[m.id]&&!s.delivered[id][m.id]){s.delivered[id][m.id]=now();added++;}const p=progress(s,home);if(SHELTER_MATERIALS.every(m=>p.counts[m.id]===SHELTER_SIZE))s.completed[home]={at:now(),contributors:members(s,home)};return {added,message:s.completed[home]?'¡'+def.name+' construido! Sus integrantes ya pueden entrar.':added?'Aportaste '+added+' material'+(added===1?'':'es')+' a '+def.name+'.':'Busca los materiales que aún te faltan. Cada integrante aporta uno de cada tipo.'};});await notify();return result;},
+  teamFor(_user,id){return homeFor(state,id);},
+  canEnter(user,id,zone){const home=shelterForZone(zone);return !home||homeFor(state,id)===home.id&&!!state.completed[home.id];},
+  async assertAccess(user,zone){await ready;if(!shelterForZone(zone))return;const person=await identity(user);if(!person.active||!this.canEnter(user,person.characterId,zone))fail(403,!!state.completed[shelterForZone(zone).id]?'Este personaje no tiene acceso a este refugio.':'Primero deben construir este refugio.');},
+  async assign({characterId,home}={}){
+   if(!SHELTER_PARTICIPANTS.includes(characterId))fail(400,'Selecciona un participante.');
+   const destination=home===null?null:validHome(home);
+   const result=await mutate(s=>{
+    const previous=homeFor(s,characterId);
+    if(home!==previous&&destination&&members(s,home).length>=SHELTER_SIZE)fail(409,destination.name+' no tiene plazas libres.');
+    s.housingOverrides||={};
+    s.housingOverrides[characterId]=home;
+    return {message:characterName(characterId)+(destination?' ahora pertenece a '+destination.name: ' quedó sin refugio')+'.'};
+   });
+   await notify();
+   return result;
+  },
+  async collect(user,materialId,context={}){const material=SHELTER_MATERIALS.find(m=>m.id===materialId);if(!material)fail(404,'Material inexistente.');const point=shelterSupplyProp(material,WORLD_MAPS[material.zone]);if(context.zone!==material.zone||!Number.isFinite(context.x)||!Number.isFinite(context.y)||Math.hypot(context.x-point.x,context.y-point.y)>125)fail(409,'Acércate al material para recogerlo.');const result=await mutate(async s=>{const person=await participant(user,context),id=person.characterId;if(!homeFor(s,id))fail(409,'Necesitas un refugio asignado para recoger materiales.');bind(s,user,id);if(s.collected[id]?.[materialId])fail(409,'Ya recogiste tu unidad de este material.');s.collected[id]||={};s.collected[id][materialId]=now();return {message:'Recogiste '+material.name.toLocaleLowerCase('es')+'. Una unidad para tu aporte al refugio.'};});await notify();return result;},
+  async contribute(user,home,context={}){const def=validHome(home),portal=WORLD_MAPS[def.outside].props.find(p=>p.portal?.zone===def.inside)?.portal;if(context.zone!==def.outside||!portal||!Number.isFinite(context.x)||!Number.isFinite(context.y)||portalDistance(context,portal)>125)fail(409,'Acércate a la entrada de '+def.name+' para aportar.');const result=await mutate(async s=>{const person=await participant(user,context),id=person.characterId;bind(s,user,id);if(homeFor(s,id)!==home)fail(403,'Este personaje solo puede construir su refugio correspondiente.');if(s.completed[home])return {message:'El refugio ya está construido.',added:0};s.delivered[id]||={};let added=0;for(const m of SHELTER_MATERIALS)if(s.collected[id]?.[m.id]&&!s.delivered[id][m.id]&&deliveries(s,home,m.id).length<SHELTER_SIZE){s.delivered[id][m.id]={at:now(),home};added++;}const p=progress(s,home);if(SHELTER_MATERIALS.every(m=>p.counts[m.id]===SHELTER_SIZE))s.completed[home]={at:now(),contributors:[...new Set(SHELTER_MATERIALS.flatMap(m=>deliveries(s,home,m.id)))]};return {added,message:s.completed[home]?'¡'+def.name+' construido! Sus integrantes ya pueden entrar.':added?'Aportaste '+added+' material'+(added===1?'':'es')+' a '+def.name+'.':'Busca los materiales que aún te faltan. Cada integrante aporta uno de cada tipo.'};});await notify();return result;},
   async close(){await ready;await tail;}
  };
 }
