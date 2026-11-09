@@ -1,9 +1,9 @@
 export const CLINIC_CONTROLS=Object.freeze({
  exam:{mode:'focus',title:'Explora al paciente',help:'Mueve el instrumento sobre el punto de la escena y mantén la lectura estable.',scene:true},
  pressure:{mode:'hold',title:'Estabiliza la lectura',help:'Mantén para preparar el control y suelta dentro de la zona verde.'},
- bandage:{mode:'trace',title:'Ajusta la venda',help:'Arrastra siguiendo todo el recorrido, con un movimiento continuo.'},
- injection:{mode:'trace',title:'Controla la aplicación',help:'Desliza suavemente por el recorrido. Evita hacerlo de golpe.'},
- pills:{mode:'trace',title:'Prepara la entrega',help:'Lleva cada elemento de la bandeja hasta su punto de entrega.'},
+ bandage:{mode:'trace',title:'Ajusta la venda',help:'Mantén pulsado INICIO y sigue los puntos hasta FIN. Suelta cuando la barra se llene.'},
+ injection:{mode:'trace',title:'Controla la aplicación',help:'Mantén pulsado INICIO y sigue la línea hasta FIN. Suelta cuando la barra se llene.'},
+ pills:{mode:'trace',title:'Prepara la entrega',help:'Arrastra el elemento resaltado por la línea hasta ENTREGA. Suelta cuando la barra se llene y continúa con el siguiente.'},
  test:{mode:'focus',title:'Procesa el kit',help:'Mantén el control sobre cada punto del kit hasta completar la lectura.'},
  support:{mode:'hold',title:'Acompaña al paciente',help:'Mantén y suelta dentro de la zona marcada para seguir un ritmo tranquilo.'}
 });
