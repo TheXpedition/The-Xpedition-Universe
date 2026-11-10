@@ -16,7 +16,7 @@ import {mountDuelPreparation} from './duel-preparation.mjs';
 import {mountWorldIcons,worldIcon} from '../world-icons.mjs';
 import {eliminatedLabel,duelWinnerLabel} from './labels.mjs';
 import {mountProtocolPolish} from './polish-ui.mjs';
-import {createWorldShopUI} from '../world-shop-ui.mjs';
+import {createWorldShopUI} from '../world-shop-ui.mjs?v=apocalypse-shop-26';
 import {ProtocolRenderer} from './renderer-v2.mjs';
 import {arenaMode} from './scene-layout.mjs';
 import {DUELS,PHASES,PHASE_SPEECH} from './engine.mjs';

@@ -1,7 +1,7 @@
 import {PAJAMA_OUTFITS,PAJAMA_PRICE} from './world-pajamas.mjs';
 import {WORLD_CHARACTERS} from './world-characters.mjs';
 import {FOOD_BY_ID} from './world-foods.mjs';
-export const SHOP_PRICES=Object.freeze({character:500,pet:1000,wallpaper:100,crate:5000});
+export const SHOP_PRICES=Object.freeze({character:500,pet:1000,wallpaper:300,crate:5000});
 export const PREMIUM_PETS=Object.freeze(['jester','duo','bat','blue-survivor']);
 export const petShopPrice=id=>PREMIUM_PETS.includes(id)?2000:SHOP_PRICES.pet;
 export const ADVANTAGES=Object.freeze({
@@ -26,6 +26,6 @@ export const iconForAdvantage=kind=>'/juegos/shop/icons/'+(advantageDefinition(k
 export const shopCharacterImage=c=>{const u=c.previewImage||c.originalImage||c.image||c.portrait;return u?.startsWith('./')?'/juegos/shared/ice-breaker/'+u.slice(2):u;};
 const featuredCast=['alice','gabrielsab'];
 const featuredOrder=id=>(featuredCast.indexOf(id)+1||featuredCast.length+1);
-export const SHOP_CHARACTERS=WORLD_CHARACTERS.toSorted((a,b)=>featuredOrder(a.id)-featuredOrder(b.id)).map(c=>({id:c.id,name:c.name,image:shopCharacterImage(c),price:c.id==='dua-lingo'?1000:c.id==='isabel'?500000:500,staffOnly:c.id==='maria-villegas',nurseOnly:c.id==='isabel',current:!!c.currentSeason}));
+export const SHOP_CHARACTERS=WORLD_CHARACTERS.toSorted((a,b)=>featuredOrder(a.id)-featuredOrder(b.id)).map(c=>({id:c.id,name:c.name,image:shopCharacterImage(c),...(featuredCast.includes(c.id)?{thumbnail:'/juegos/shop/characters-clean/'+c.id+'-apocalypse.webp'}:{}),price:c.id==='dua-lingo'?1000:c.id==='isabel'?500000:500,staffOnly:c.id==='maria-villegas',nurseOnly:c.id==='isabel',current:!!c.currentSeason}));
 export const SHOP_PAJAMAS=Object.values(PAJAMA_OUTFITS).map(p=>({id:p.id,name:'Pijama · '+(WORLD_CHARACTERS.find(c=>c.id===p.id)?.name||p.source),image:p.image,...(featuredCast.includes(p.id)?{thumbnail:'/juegos/shop/pajamas/'+p.id+'.webp'}:{}),price:PAJAMA_PRICE}));
 export const SHOP_FOODS=['apple','banana','corn','soup','omelette','grilled-fish','chicken-rice','pasta','lasagna','camp-stew'].map(id=>{const f=FOOD_BY_ID[id];return {id,name:f.name,hunger:f.hunger,energy:f.energy,health:f.health,price:Math.max(1000,Math.min(2000,Math.round(1000+(f.hunger-5)/17*1000))),food:f};});
