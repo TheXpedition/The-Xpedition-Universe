@@ -8,6 +8,40 @@ import {createVitalsStore} from '../world-vitals-service.mjs';import {createHeal
 const atMaterial=m=>({...shelterSupplyProp(m,WORLD_MAPS[m.zone]),zone:m.zone,alive:true});
 const atDoor=home=>{const s=SHELTERS.find(s=>s.id===home);return {...WORLD_MAPS[s.outside].props.find(p=>p.portal?.zone===s.inside).portal,zone:s.outside,alive:true};};
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shelters-')),db=await openDatabase(dir),ids=[...SHELTER_PARTICIPANTS,'maria-villegas','isabel','dani','dua-lingo'];for(const id of ids){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani',1000);await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,?)',id,id,1000);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',id,id,1000);}const s=createShelterService({db,now:()=>1000});await s.ready;return {dir,db,s,async close(){await s.close();await db.close();const absolute=path.resolve(dir);assert(absolute.startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(absolute,{recursive:true,force:true});}};}
+test('the replacement cast recovers legacy deliveries once and preserves both original shelters',async()=>{
+ const f=await fixture();let restored,restarted;
+ try{
+  const [first,duplicate,moved,notDelivered]=SHELTER_MATERIALS;
+  const read=async()=>JSON.parse((await f.db.one('SELECT state FROM world_environment WHERE id=?','shelters')).state);
+  const old=await read();
+  old.owners={peggy:'former-peggy',joseserna:'former-jose',alice:'alice'};
+  old.collected={peggy:{[first.id]:100,[duplicate.id]:100,[notDelivered.id]:140},joseserna:{[moved.id]:100},gabrielsab:{[duplicate.id]:200},alice:{[moved.id]:300}};
+  old.delivered={peggy:{[first.id]:110,[duplicate.id]:120},joseserna:{[moved.id]:{at:130,home:'right'}},gabrielsab:{[duplicate.id]:{at:220,home:'right'}},alice:{[moved.id]:{at:320,home:'left'}}};
+  await f.db.run('UPDATE world_environment SET state=?,updated=? WHERE id=?',JSON.stringify(old),140,'shelters');
+  restored=createShelterService({db:f.db,now:()=>1000});
+  await restored.ready;
+  const g=await restored.snapshot({id:'gabrielsab'}),a=await restored.snapshot({id:'alice'});
+  assert.deepEqual(g.delivered.sort(),[first.id,duplicate.id].sort());
+  assert.deepEqual(a.delivered,[moved.id]);
+  assert(g.available.includes(notDelivered.id));
+  assert.equal(g.shelters[1].counts[first.id],1);
+  assert.equal(g.shelters[1].counts[duplicate.id],1);
+  assert.equal(g.shelters[1].counts[moved.id],1);
+  assert.equal(g.shelters[0].counts[moved.id],1);
+  assert.equal(g.stock[first.id],17);
+  assert.equal(g.stock[notDelivered.id],18);
+  await assert.rejects(restored.collect({id:'gabrielsab'},first.id,atMaterial(first)),/Ya recogiste/);
+  const saved=await read();
+  assert.deepEqual(saved.owners,old.owners);
+  assert.deepEqual(saved.delivered.peggy,old.delivered.peggy);
+  assert.deepEqual(saved.delivered.joseserna,old.delivered.joseserna);
+  assert.equal(saved.delivered.gabrielsab[first.id].creditedFrom,'peggy');
+  assert.equal(saved.delivered.alice[moved.id].restoredCredit.creditedFrom,'joseserna');
+  restarted=createShelterService({db:f.db,now:()=>2000});
+  await restarted.ready;
+  assert.deepEqual(await read(),saved);
+ }finally{await restarted?.close();await restored?.close();await f.close();}
+});
 test('exactly ten unique materials occupy the requested ten zones, on reachable floor',()=>{assert.equal(SHELTER_MATERIALS.length,10);assert.equal(new Set(SHELTER_MATERIALS.map(m=>m.zone)).size,10);for(const m of SHELTER_MATERIALS){const map=WORLD_MAPS[m.zone],p=shelterSupplyProp(m,map);assert(hasFloor(map,p.x,p.y));assert(clearPoint(map,p.x,p.y));assert(worldPath(map,{x:map.spawn[0],y:map.spawn[1]},p).length,m.zone);}});
 test('pickups are personal, one per participant, atomic against double clicks, and excluded roles cannot forge them',async()=>{const f=await fixture();try{
  const a={id:'bruno'},b={id:'alice'},m=SHELTER_MATERIALS[0];assert.equal((await f.s.snapshot(a)).shelters[0].built,false);assert.equal((await f.s.snapshot(a)).available.length,10);

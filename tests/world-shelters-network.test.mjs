@@ -13,11 +13,11 @@ test('Direction can teleport staff into either unfinished shelter without unlock
  }finally{await f.close();}
 });
 test('completed refuge permits its member to use the chest, rejects the other group and rejects switching to unowned characters without stripping valid membership',async()=>{
- const maps=structuredClone(WORLD_MAPS);buildSurvivalProps(maps);const chest=maps['refugio-1'].props.find(p=>p.survival?.id==='chest-left'),actors=[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:1700},{id:'resident',character:'bruno',zone:'refugio-1',...chest.approach},{id:'other-resident',character:'peggy',zone:'base',x:1000,y:1700}],f=await liveFixture('shelter-completed',actors,{setup:db=>seedConstructedShelters(db,[{id:'resident',character:'bruno'},{id:'other-resident',character:'peggy',home:'right'}])});
+ const maps=structuredClone(WORLD_MAPS);buildSurvivalProps(maps);const chest=maps['refugio-1'].props.find(p=>p.survival?.id==='chest-left'),actors=[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:1700},{id:'resident',character:'bruno',zone:'refugio-1',...chest.approach},{id:'other-resident',character:'alice',zone:'base',x:1000,y:1700}],f=await liveFixture('shelter-completed',actors,{setup:db=>seedConstructedShelters(db,[{id:'resident',character:'bruno'},{id:'other-resident',character:'alice',home:'right'}])});
  try{const staff=await f.connect(STAFF_ID),a=await f.connect('resident');await f.connect('other-resident');const residentChest=await f.call('/api/world/survival/storage?teamId=left','resident');assert.equal(residentChest.status,200,JSON.stringify(residentChest));assert.equal((await f.call('/api/world/survival/storage?teamId=left','other-resident')).status,403);assert.equal((await f.call('/api/world/survival/storage?teamId=left',STAFF_ID)).status,403);const r=await f.call('/api/world/preferences','resident','PUT',{characterId:'dani'});assert.equal(r.status,403,'Switching to an unowned character must remain forbidden');assert.equal((await f.call('/api/world/survival/storage?teamId=left','resident')).status,200,'The original purchased character must retain their own chest');assert(!staff.messages.some(m=>m.type==='error'));}finally{await f.close();}
 });
 test('real World enforces personal supplies, fixed character assignment, contribution proximity and locked interior/chest; saved material survives process closure',async()=>{
- const f=await liveFixture('shelter-network',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'builder-a',character:'bruno',zone:material.zone,x:point.x,y:point.y},{id:'builder-b',character:'peggy',zone:material.zone,x:point.x+60,y:point.y}]);let stopped=false;
+ const f=await liveFixture('shelter-network',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'builder-a',character:'bruno',zone:material.zone,x:point.x,y:point.y},{id:'builder-b',character:'alice',zone:material.zone,x:point.x+60,y:point.y}]);let stopped=false;
  try{const staff=await f.connect(STAFF_ID),a=await f.connect('builder-a'),b=await f.connect('builder-b'),view=p=>p.messages.filter(m=>m.shelters).at(-1)?.shelters,latest=p=>p.messages.filter(m=>m.type==='welcome'||m.type==='zone').at(-1);
   assert.equal(view(a).shelters[0].built,false);assert.equal(view(a).stock.nails,18);assert.equal(view(staff).available.length,0);assert(view(staff).race);assert.equal(view(a).race,undefined);
   assert.equal((await f.call('/api/world/shelters/assign','builder-a','POST',{characterId:'bruno',home:'left'})).status,403);
@@ -40,7 +40,7 @@ test('Direction can move a participant out of their old shelter or leave them wi
  try{
   const resident=await f.connect('moving-resident');
   const change=(characterId,home)=>f.call('/api/world/shelters/assign',STAFF_ID,'POST',{characterId,home});
-  assert.equal((await change('peggy',null)).status,200,'free a place in Refugio 2');
+  assert.equal((await change('alice',null)).status,200,'free a place in Refugio 2');
   const moved=await change('bruno','right');
   assert.equal(moved.status,200,moved.error);
   assert.equal(moved.shelters.housing.find(p=>p.characterId==='bruno').home,'right');
