@@ -7,7 +7,7 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
 import { PGlite } from '@electric-sql/pglite';
 import { schema, postgresSQL } from '../database.mjs';
-import { serverDatabase } from '../world-server-store.mjs';
+import { lockRoomStatus, readRoomProtocol, serverDatabase } from '../world-server-store.mjs';
 import { createWorld } from '../world.mjs';
 import { createProgression } from '../progression.mjs';
 import { createArcade } from '../arcade.mjs';
@@ -41,7 +41,14 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)', staff, 'SQL test', 'sqltest', 'sql@example.invalid', 'Dani', Date.now());
   await db.run('INSERT INTO world_servers(id,name,creator,enabled,settings,created,updated) VALUES(?,?,?,1,?,?,?)', id, 'Postgres test', staff, '{}', Date.now(), Date.now());
   await db.run('INSERT INTO world_server_leases(server_id,owner,expires) VALUES(?,?,?)', id, lease, Date.now() + 3600000);
+  assert.equal(await readRoomProtocol(db, id), null);
   const scoped = await serverDatabase(db, id, { leaseOwner: lease });
+  await scoped.transaction(async () => {
+   assert.equal((await lockRoomStatus(scoped, id)).enabled, 1);
+   await scoped.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)', 'x-protocol', '{"phase":"INTRO_VIDEO"}', Date.now());
+   assert.equal((await readRoomProtocol(db, id)).phase, 'INTRO_VIDEO');
+   await scoped.run('DELETE FROM world_environment WHERE id=?', 'x-protocol');
+  });
   await scoped.run('INSERT INTO world_access(resource,enabled,updated_by,updated) VALUES(?,1,?,?)', 'world', staff, Date.now());
   const fail = (status, message) => { throw Object.assign(Error(message), { status }); };
   let output;

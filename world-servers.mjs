@@ -1,11 +1,18 @@
 import {randomUUID} from 'node:crypto';
 import {isStaff} from './account-roles.mjs';
 import {hasApocalypseStyle} from './world-profile-access.mjs';
-import {purgeServerTables} from './world-server-store.mjs';
+import {lockRoomStatus,purgeServerTables,readRoomProtocol} from './world-server-store.mjs';
+import {LIVE_PHASES} from './public/juegos/x-protocol/engine.mjs';
 
 export function createWorldServers({db,json,fail,body,access,now=Date.now,onDelete=async()=>{}}){
  const view=row=>({id:row.id,name:row.name,enabled:!!Number(row.enabled),archived:!!JSON.parse(row.settings).archivedAt,autoBots:JSON.parse(row.settings).autoBots!==false,created:Number(row.created),updated:Number(row.updated)});
  const valid=id=>/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id);
+ async function assertNoCeremony(id){
+  let protocol;
+  try{protocol=await readRoomProtocol(db,id);}
+  catch{fail(503,'No se pudo comprobar el estado de la ceremonia.');}
+  if(protocol&&LIVE_PHASES.has(protocol.phase))fail(409,'Termina o cancela la ceremonia antes de cerrar o eliminar esta sala.');
+ }
  async function get(id,{archived=false}={}){if(!valid(id))fail(404,'Este servidor no existe.');const row=await db.one('SELECT * FROM world_servers WHERE id=?',id);if(!row||JSON.parse(row.settings).deletingAt||!archived&&JSON.parse(row.settings).archivedAt)fail(404,'Este servidor no está disponible.');return view(row);}
  async function enter(user,id){
   if(!user)fail(401,'Entra con tu cuenta para elegir un servidor.');
@@ -31,9 +38,10 @@ export function createWorldServers({db,json,fail,body,access,now=Date.now,onDele
    if(input.confirm!==true)fail(409,'Confirma la eliminación definitiva de este servidor.');
    let original;
    await db.transaction(async()=>{
-    const row=await db.one('SELECT enabled,settings FROM world_servers WHERE id=?',server.id);
+    const row=await lockRoomStatus(db,server.id);
     if(!row)fail(404,'Este servidor ya no existe.');
     const settings=JSON.parse(row.settings);if(settings.deletingAt)fail(409,'Este servidor ya se está eliminando.');
+    await assertNoCeremony(server.id);
     original={enabled:Number(row.enabled),settings:row.settings};
     await db.run('UPDATE world_servers SET enabled=0,settings=?,updated=? WHERE id=?',JSON.stringify({...settings,deletingAt:now()}),now(),server.id);
    });
@@ -54,7 +62,11 @@ export function createWorldServers({db,json,fail,body,access,now=Date.now,onDele
    }
    json(res,{deleted:true,id:server.id});return true;
   }
-  if(req.method==='PATCH'&&match[1]){const input=await body(req),server=await get(match[1],{archived:input.restore===true});if(input.restore===true)fail(410,'Los servidores eliminados no se pueden restaurar.');if(typeof input.enabled!=='boolean')fail(400,'Indica si deseas abrir o cerrar este servidor.');await db.transaction(async()=>{await db.run('UPDATE world_servers SET enabled=?,updated=? WHERE id=?',input.enabled?1:0,now(),server.id);await audit(user,input.enabled?'open':'close',server.id,{});});json(res,{server:await get(server.id)});return true;}
+  if(req.method==='PATCH'&&match[1]){const input=await body(req),server=await get(match[1],{archived:input.restore===true});if(input.restore===true)fail(410,'Los servidores eliminados no se pueden restaurar.');if(typeof input.enabled!=='boolean')fail(400,'Indica si deseas abrir o cerrar este servidor.');await db.transaction(async()=>{
+   const current=await lockRoomStatus(db,server.id);
+   if(!current||JSON.parse(current.settings).deletingAt)fail(409,'Esta sala ya no está disponible.');
+   if(!input.enabled)await assertNoCeremony(server.id);
+   await db.run('UPDATE world_servers SET enabled=?,updated=? WHERE id=?',input.enabled?1:0,now(),server.id);await audit(user,input.enabled?'open':'close',server.id,{});});json(res,{server:await get(server.id)});return true;}
   fail(405,'Acción de servidor no disponible.');
  }
  async function audit(user,action,id,details){await db.run('INSERT INTO moderation_actions(id,moderator,action,subject,details,created) VALUES(?,?,?,?,?,?)',randomUUID(),user.id,'world-server:'+action,id,JSON.stringify(details),now());}

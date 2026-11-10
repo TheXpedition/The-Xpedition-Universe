@@ -10,6 +10,23 @@ export function serverTablePrefix(id){
  if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(id))throw Error('Identificador de servidor inválido.');
  return 'wr_'+BigInt('0x'+id.replaceAll('-','')).toString(36)+'_';
 }
+
+// Read existing state without creating tables for a room that never started.
+export async function readRoomProtocol(base,id){
+ const name=serverTablePrefix(id)+'world_environment';
+ const table=base.kind==='postgres'?'xpedition.'+name:name;
+ const exists=base.kind==='postgres'
+  ?(await base.one('SELECT to_regclass(?) AS relation',table))?.relation
+  :await base.one("SELECT name FROM sqlite_master WHERE type='table' AND name=?",name);
+ if(!exists)return null;
+ const row=await base.one('SELECT state FROM '+table+' WHERE id=?','x-protocol');
+ return row?JSON.parse(row.state):null;
+}
+
+// Use inside the same transaction that writes the initial ceremony state.
+export async function lockRoomStatus(db,id){
+ return db.one('SELECT enabled,settings FROM world_servers WHERE id=?'+(db.kind==='postgres'?' FOR UPDATE':''),id);
+}
 // Only the tables belonging to this room are dropped. Global accounts,
 // wallets, profiles, logs and every other room stay untouched.
 export async function purgeServerTables(base,id){

@@ -31,7 +31,7 @@ const readBody=async req=>{
 export async function startProtocolDedicatedServer({
  port=Number(process.env.PORT||3002),host=process.env.HOST||'127.0.0.1',
  secret=process.env.PROTOCOL_BRIDGE_SECRET||'',
- database=null,now=Date.now,
+ database=null,now=Date.now,rng,
  engineWorker=process.env.PROTOCOL_ENGINE_WORKER
 }={}){
  if(secret.length<32)throw Error('PROTOCOL_BRIDGE_SECRET requiere al menos 32 caracteres, configurados en Render sin publicarlos.');
@@ -70,7 +70,7 @@ export async function startProtocolDedicatedServer({
      // ceremony or suppress its next official start invitation.
      if(data.type==='protocol-return')queueMicrotask(()=>protocol.disconnect(client));
     }
-   },can,now,shop,
+   },can,now,rng,shop,
    canParticipate:u=>participation.canCompete(u),
    getEnvironment:()=>environment,
    onRetreat:async c=>signal({type:'retreat',userId:c.user.id},peer=>peer===c.bridge),

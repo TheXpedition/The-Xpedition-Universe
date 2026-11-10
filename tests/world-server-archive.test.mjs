@@ -25,6 +25,12 @@ test('permanent deletion removes only the confirmed room, leaves other room data
   await scopedB.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','saved','{"from":"B"}',1);
   await assert.rejects(query('DELETE','/api/world/servers/'+first.id,{confirm:true},GUEST),{status:403});
   await assert.rejects(query('DELETE','/api/world/servers/'+first.id,{}),{status:409});
+  await scopedA.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','x-protocol',JSON.stringify({phase:'GROUP_VOTE',paused:true}),1);
+  await assert.rejects(query('PATCH','/api/world/servers/'+first.id,{enabled:false}),{status:409});
+  await assert.rejects(query('DELETE','/api/world/servers/'+first.id,{confirm:true}),{status:409});
+  assert.equal((await servers.get(first.id)).enabled,true);
+  assert.deepEqual(stopped,[]);
+  await scopedA.run('UPDATE world_environment SET state=? WHERE id=?',JSON.stringify({phase:'ELIMINATION_FINISHED'}),'x-protocol');
   const deleted=await query('DELETE','/api/world/servers/'+first.id,{confirm:true});
   assert.equal(deleted.deleted,true);assert.deepEqual(stopped,[first.id]);
   assert.equal(await db.one('SELECT id FROM world_servers WHERE id=?',first.id),undefined);

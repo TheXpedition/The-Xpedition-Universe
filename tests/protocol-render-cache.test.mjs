@@ -2,6 +2,22 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {ProtocolRenderer} from '../public/juegos/x-protocol/renderer-v2.mjs';
 
+test('transient artwork failure can recover in the same ceremony',async()=>{
+ const oldImage=globalThis.Image,oldMatchMedia=globalThis.matchMedia,oldNow=Date.now;
+ let attempts=0,time=1000;
+ globalThis.matchMedia=()=>({matches:true});Date.now=()=>time;
+ globalThis.Image=class {async decode(){if(++attempts===1)throw Error('temporary 503');}};
+ const renderer=new ProtocolRenderer({getContext(){return {};}},null);
+ try{
+  assert.equal(await renderer.image('stage.webp'),null);
+  assert.equal(await renderer.image('stage.webp'),null);
+  assert.equal(attempts,1);
+  time+=2001;
+  assert(await renderer.image('stage.webp'));
+  assert.equal(attempts,2);
+ }finally{renderer.destroy();globalThis.Image=oldImage;globalThis.matchMedia=oldMatchMedia;Date.now=oldNow;}
+});
+
 test('ceremony keeps the same seats and anchors without repainting 18 actors on every animation frame',()=>{
  const oldDocument=globalThis.document,oldMatchMedia=globalThis.matchMedia;
  let drawnPoses=0,composited=0,created=0,labels=0;

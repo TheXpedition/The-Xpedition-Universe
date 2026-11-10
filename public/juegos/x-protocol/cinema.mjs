@@ -13,14 +13,28 @@ export class ProtocolCinema {
  prepare(media){
   if(!media?.url||this.descriptor||this.prepared===media.url&&this.video.readyState>=3)return Promise.resolve();
   if(this.preparing?.url===media.url)return this.preparing.promise;
+  this.preparing?.cancel();
   const video=this.video;video.autoplay=false;video.pause();
-  let job;const promise=new Promise((resolve,reject)=>{let timer,localFallback=false;const cleanup=()=>{this.clearTimer(timer);video.removeEventListener('canplay',done);video.removeEventListener('error',fail);};const done=()=>{cleanup();if(this.preparing===job){this.prepared=media.url;this.preparing=null;}resolve();};const fail=()=>{if(media.fallbackUrl&&!localFallback){localFallback=true;video.src=media.fallbackUrl;video.load();this.clearTimer(timer);timer=this.setTimer(fail,10000);return;}cleanup();if(this.preparing===job)this.preparing=null;reject(Error('No se pudo cargar la introducción. Reintentando…'));};video.addEventListener('canplay',done);video.addEventListener('error',fail);timer=this.setTimer(fail,10000);video.preload='auto';video.src=media.url;video.load();});
-  job={url:media.url,promise};this.preparing=job;return promise;
+  const job={url:media.url};this.preparing=job;
+  job.promise=new Promise((resolve,reject)=>{
+   let timer,localFallback=false;
+   const cleanup=()=>{this.clearTimer(timer);video.removeEventListener('canplay',done);video.removeEventListener('error',fail);};
+   job.cancel=()=>{cleanup();if(this.preparing===job)this.preparing=null;resolve();};
+   const done=()=>{cleanup();if(this.preparing===job){this.prepared=media.url;this.preparing=null;}resolve();};
+   const fail=()=>{
+    if(this.preparing!==job)return;
+    if(media.fallbackUrl&&!localFallback){localFallback=true;video.src=media.fallbackUrl;video.load();this.clearTimer(timer);timer=this.setTimer(fail,10000);return;}
+    cleanup();this.preparing=null;reject(Error('No se pudo cargar la introducción. Reintentando…'));
+   };
+   video.addEventListener('canplay',done);video.addEventListener('error',fail);
+   timer=this.setTimer(fail,10000);video.preload='auto';video.src=media.url;video.load();
+  });
+  return job.promise;
  }
  sync(descriptor,options={}){
   if(this.disposed)return;this.options={...this.options,...options};
   if((descriptor?.key||null)!==this.key){this.clearTimer(this.timer);this.timer=null;this.key=descriptor?.key||null;this.descriptor=descriptor;this.retries=0;this.ended=false;this.failed=false;this.needsGesture=false;this.pending=false;this.video.pause();this.note.hidden=true;
-   this.autoplayMuted=this.mobileStartMuted&&!this.userInteracted;if(descriptor){if(this.prepared!==descriptor.url&&this.preparing?.url!==descriptor.url){this.video.src=descriptor.url;this.video.load();}try{this.video.currentTime=0;}catch{}}else{this.prepared=null;this.preparing=null;this.video.removeAttribute('src');this.video.load();}
+   this.autoplayMuted=this.mobileStartMuted&&!this.userInteracted;if(descriptor){const reuse=this.prepared===descriptor.url||this.preparing?.url===descriptor.url;this.preparing?.cancel();if(!reuse){this.video.src=descriptor.url;this.video.load();}try{this.video.currentTime=0;}catch{}}else{this.preparing?.cancel();this.prepared=null;this.video.removeAttribute('src');this.video.load();}
   }
   this.video.muted=!this.options.enabled||this.autoplayMuted;this.video.volume=1;
   if(!descriptor||this.options.paused){this.video.pause();this.align();return;}
@@ -42,5 +56,5 @@ export class ProtocolCinema {
  failure(){if(this.disposed||!this.descriptor||this.ended)return;this.failed=true;this.message('Reconectando la introducción…');this.onFailed(this.key);this.retry();}
  retry(){if(this.timer||this.disposed)return;const key=this.key;this.timer=this.setTimer(()=>{this.timer=null;if(this.disposed||key!==this.key)return;if(this.options.paused){this.retry();return;}this.failed=false;this.needsGesture=false;this.retries++;const source=this.descriptor.fallbackUrl||this.descriptor.url;const join=source.includes('?')?'&':'?';this.video.src=source+join+'playback-retry='+this.retries;this.video.load();this.play();},Math.min(15000,1000*2**Math.min(this.retries,4)));}
  unlock(){if(this.disposed)return;this.userInteracted=true;if(this.descriptor){this.needsGesture=false;if(this.autoplayMuted){this.autoplayMuted=false;this.video.muted=!this.options.enabled;this.note.hidden=true;}this.play();return;}if(this.preparing||this.prepared||this.warmed)return;this.warmed=true;this.video.src='/juegos/x-protocol/media/intro-warmup.mp4';void Promise.resolve(this.video.play()).then(()=>{if(!this.descriptor)this.video.pause();}).catch(()=>{this.warmed=false;});}
- destroy(){this.disposed=true;this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;this.video.onloadedmetadata=null;}
+ destroy(){this.disposed=true;this.preparing?.cancel();this.clearTimer(this.timer);this.video.pause();this.video.onended=null;this.video.onerror=null;this.video.onwaiting=null;this.video.onplaying=null;this.video.onloadedmetadata=null;}
 }
