@@ -59,3 +59,31 @@ test('ceremony keeps the same seats and anchors without repainting 18 actors on 
   if(oldMatchMedia===undefined)delete globalThis.matchMedia;else globalThis.matchMedia=oldMatchMedia;
  }
 });
+
+test('background lighting is composited once per image, phase and size',()=>{
+ const oldDocument=globalThis.document,oldMatchMedia=globalThis.matchMedia;
+ const rendered=[];
+ const target={filter:'none',drawImage(image){rendered.push([image,this.filter]);}};
+ const layer={width:0,height:0,getContext(){return target;}};
+ globalThis.matchMedia=()=>({matches:false});
+ globalThis.document={createElement(){return layer;}};
+ try{
+  const renderer=new ProtocolRenderer({getContext(){return {};}},null);
+  const stage={},duel={};
+  assert.equal(renderer.background(stage,'dusk'),stage);
+  assert.equal(renderer.background(stage,'day'),layer);
+  assert.equal(renderer.background(stage,'day'),layer);
+  assert.deepEqual(rendered,[[stage,'brightness(1.12) saturate(.85)']]);
+
+  renderer.background(stage,'night');
+  renderer.background(duel,'night');
+  renderer.H=800;
+  renderer.background(duel,'night');
+  assert.equal(layer.height,800);
+  const night='brightness(.78) saturate(.8)';
+  assert.deepEqual(rendered.slice(1),[[stage,night],[duel,night],[duel,night]]);
+ }finally{
+  if(oldDocument===undefined)delete globalThis.document;else globalThis.document=oldDocument;
+  if(oldMatchMedia===undefined)delete globalThis.matchMedia;else globalThis.matchMedia=oldMatchMedia;
+ }
+});

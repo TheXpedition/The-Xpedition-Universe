@@ -10,6 +10,7 @@ import {SHELTER_PARTICIPANTS} from '../public/juegos/world-shelters.mjs';
 
 test('browser audit from Staff start through real video, ranking, votes, duel and return', {timeout:360000},async()=>{
  const output=process.env.PROTOCOL_AUDIT_OUTPUT||'artifacts/protocol-audit';
+ const rankingOnly=process.env.PROTOCOL_AUDIT_RANKING_ONLY==='true';
  await mkdir(output,{recursive:true});
  const events={},errors=[],httpFailures=[],notes={};
  const actors=[
@@ -53,7 +54,16 @@ test('browser audit from Staff start through real video, ranking, votes, duel an
     trace.push({type:'ws-open',at:Date.now()});
     ws.on('close',()=>trace.push({type:'ws-close',at:Date.now()}));
     ws.on('framereceived',({payload})=>{
-     try{const m=JSON.parse(payload);if(m.type==='protocol-state'&&trace.findLast(e=>e.type==='state')?.phase!==m.episode.phase)trace.push({type:'state',phase:m.episode.phase,revision:m.episode.revision,at:Date.now()});else if(['protocol-ready-ack','protocol-return'].includes(m.type))trace.push({type:m.type,at:Date.now()});}catch{}
+     try{
+      const m=JSON.parse(payload);
+      if(m.type==='protocol-state'){
+       const {phase,revision,serverTime,revealed}=m.episode;
+       if(trace.findLast(e=>e.type==='state')?.phase!==phase)trace.push({type:'state',phase,revision,at:Date.now()});
+       if(phase==='RESULTS_REVEAL'&&trace.findLast(e=>e.type==='rank-wire')?.count!==revealed.length){
+        trace.push({type:'rank-wire',count:revealed.length,serverTime,at:Date.now()});
+       }
+      }else if(['protocol-ready-ack','protocol-return'].includes(m.type))trace.push({type:m.type,at:Date.now()});
+     }catch{}
     });
     ws.on('framesent',({payload})=>{try{const m=JSON.parse(payload);if(['protocol-subscribe','protocol-ready','protocol-media-started','protocol-media-ended','protocol-action'].includes(m.type))trace.push({type:m.type,action:m.action?.type,at:Date.now()});}catch{}});
    });
@@ -78,8 +88,10 @@ test('browser audit from Staff start through real video, ranking, votes, duel an
   await staffClick('fillBots',()=>staff.locator('#staff-actions [data-action=fillBots]').click());
   await staff.waitForFunction(()=>document.querySelector('#staff-summary')?.textContent.includes('18/18'),null,{timeout:15000,polling:100});
   await staff.locator('#staff-actions [data-action=start]').click();
+  const startAt=Date.now();
   await staffClick('start',()=>staff.locator('#dialog-confirm').click());
   await Promise.all(pages.map(p=>phase(p,'INTRO_VIDEO',45000)));
+  notes.startToIntroMs=Date.now()-startAt;
   await Promise.all(pages.map(p=>p.waitForFunction(()=>document.querySelector('#video').currentTime>.5,null,{timeout:16000})));
   notes.introSources=await Promise.all(pages.map(p=>p.locator('#video').evaluate(v=>new URL(v.currentSrc).pathname)));
   notes.introPlayback=await Promise.all(pages.map(p=>p.locator('#video').evaluate(v=>({position:v.currentTime,duration:v.duration}))));
@@ -98,11 +110,43 @@ test('browser audit from Staff start through real video, ranking, votes, duel an
   await staff.locator('#result-ranking').fill(['bruno',...SHELTER_PARTICIPANTS.filter(c=>c!=='bruno')].join('\n'));
   await staff.locator('#save-result').click();
   await staff.locator('#results-select option:not([value=""])').first().waitFor({state:'attached'});
+  await Promise.all(pages.map(page=>page.evaluate(()=>{
+   const monitor=document.querySelector('#monitor-ranking');
+   const loader=document.querySelector('#asset-loader');
+   const entries=window.auditRanks=[];
+   function observeRank(){
+    const number=Number(monitor.querySelector('.rank-hero b')?.textContent.match(/\d+/)?.[0]);
+    if(!number||monitor.hidden)return;
+    const image=monitor.querySelector('.rank-hero img');
+    if(entries.at(-1)?.number!==number)entries.push({number,name:monitor.querySelector('.rank-hero strong')?.textContent,at:Date.now(),portrait:false});
+    const row=entries.at(-1);
+    if(image?.naturalWidth&&!row.portrait){row.portrait=true;row.portraitAfterMs=Date.now()-row.at;}
+    if(!loader.hidden)row.loaderVisible=true;
+   }
+   new MutationObserver(observeRank).observe(monitor,{subtree:true,childList:true,attributes:true,attributeFilter:['hidden']});
+   monitor.addEventListener('load',observeRank,true);
+  })));
   await staff.locator('#choose-results').click();await staffClick('results',()=>staff.locator('#dialog-confirm').click());
+  await viewer.bringToFront();
   await Promise.all(pages.map(p=>phase(p,'RESULTS_REVEAL')));
-  await viewer.waitForFunction(()=>{const img=document.querySelector('#monitor-ranking img');return img?.naturalWidth>0&&!document.querySelector('#monitor-ranking').hidden;});
-  await capture(viewer,'03-ranking-espectador');
-  console.log('AUDIT_BROWSER_VIDEO_AND_RANKING_OK');
+  for(const number of [1,9,18]){
+   await viewer.waitForFunction(rank=>window.auditRanks.some(row=>row.number===rank&&row.portrait),number,{timeout:40000,polling:100});
+   await capture(viewer,'ranking-puesto-'+String(number).padStart(2,'0'));
+  }
+  await Promise.all(pages.map(page=>page.waitForFunction(()=>window.auditRanks.length>=18&&window.auditRanks.at(-1).portrait,null,{timeout:10000,polling:100})));
+  notes.rankings=Object.fromEntries(await Promise.all(pages.map(async(page,index)=>[actors[index].role,await page.evaluate(()=>window.auditRanks)])));
+  const expected=Array.from({length:18},(_,i)=>i+1);
+  for(const [role,entries] of Object.entries(notes.rankings)){
+   assert.deepEqual(entries.map(row=>row.number),expected,role+' must see every place once and in order');
+   assert(entries.every(row=>row.name&&row.portrait&&!row.loaderVisible),role+' must see the names and portraits without a loading overlay');
+   assert(entries.every((row,i)=>!i||row.at-entries[i-1].at<=4800),role+' must keep advancing without freezing');
+  }
+  assert.deepEqual(errors,[]);
+  console.log('AUDIT_BROWSER_VIDEO_AND_RANKING_OK',JSON.stringify({
+   startToIntroMs:notes.startToIntroMs,
+   roles:Object.entries(notes.rankings).map(([role,entries])=>({role,count:entries.length,maxGapMs:Math.max(...entries.slice(1).map((row,i)=>row.at-entries[i].at))}))
+  }));
+  if(rankingOnly)return;
   speed(14);
   await phase(winner,'WINNER_NOMINATION');speed(1);
   const nominate=winner.locator('[data-purpose=nominate] button.choice:not([disabled])').filter({hasNotText:/carmine/i}).last();
@@ -141,7 +185,7 @@ test('browser audit from Staff start through real video, ranking, votes, duel an
   if(pages.length)await capture(pages.at(-1),'failure').catch(()=>{});
   throw error;
  }finally{
-  await writeFile(output+'/trace.json',JSON.stringify({environment:'local, separate World and protocol services, accelerated game clock after the ranking screenshot',events,errors,httpFailures,notes},null,2));
+  await writeFile(output+'/trace.json',JSON.stringify({environment:'local, separate World and protocol services, real time through the ranking',events,errors,httpFailures,notes},null,2));
   await browser?.close();await f?.close();await engine?.close();await db?.close();
  }
 });
