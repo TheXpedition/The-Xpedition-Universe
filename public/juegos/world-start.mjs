@@ -9,7 +9,7 @@ export async function startWorld(){
  try{
   const bootstrap=progress.track('account',(async()=>{const r=await fetch('/api/world/bootstrap',{credentials:'same-origin',cache:'no-store'}),data=await r.json();if(!r.ok){if(data.diagnostic)console.error('World bootstrap:',data.diagnostic.code,data.diagnostic.message);throw Object.assign(Error(data.error||'No se pudo entrar a World.'),{status:r.status});}return data;})());
   const work=[
-   progress.track('art',optionalBootResource(async()=>{const data=await bootstrap;const equipped=data.shop?.equipped.wallpaper,chosen=data.shop?.catalog.wallpapers.find(w=>w.id===equipped);return showBootWallpaper(gate,chosen?.image||'/assets/branding/apocalypse/portada-reparto.webp?v=30f0948cae6a',{isCurrent:()=>turn===generation});},{name:'wallpaper',timeoutMs:5000})),
+   progress.track('art',optionalBootResource(async()=>{const data=await bootstrap;const equipped=data.shop?.equipped.wallpaper,chosen=data.shop?.catalog.wallpapers.find(w=>w.id===equipped);return showBootWallpaper(gate,chosen?.image||'/assets/branding/apocalypse/portada-reparto.webp?v=f743d7e3387e',{isCurrent:()=>turn===generation});},{name:'wallpaper',timeoutMs:5000})),
    progress.track('logo',optionalBootResource(()=>loadBootImage('/assets/branding/apocalypse/apocalypse-ii-logo.webp'),{name:'logo',timeoutMs:5000})),
    progress.track('fonts',optionalBootResource(()=>document.fonts?.ready||Promise.resolve(),{name:'fonts',timeoutMs:4000})),
    progress.track('module',import('./world-ui.mjs'))
