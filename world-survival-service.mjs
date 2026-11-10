@@ -6,6 +6,7 @@ import {newGatherRound,resolveGatherNode} from './public/juegos/world-gather-lay
 import {fishingCatch} from './public/juegos/world-fishing.mjs';
 import {PRAYER_REASONS,PRAYER_COOLDOWN} from './public/juegos/world-prayer.mjs';
 import {RESOURCES,RESOURCE_BY_ID,RESOURCE_CAPACITY,CHEST_CAPACITY,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,EVENT_BY_ID,SURVIVAL_STATIONS} from './public/juegos/world-survival-catalog.mjs';
+import {SHELTERS} from './public/juegos/world-shelters.mjs';
 import {FOOD_BY_ID,FOOD_CATALOG} from './public/juegos/world-foods.mjs';
 const decode=(s,f)=>{try{return JSON.parse(s);}catch{return f;}},sum=o=>Object.values(o||{}).reduce((n,v)=>n+Number(v||0),0),normal=s=>String(s||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
 const initialShared=now=>({projects:Object.fromEntries(PROJECTS.map(p=>[p.id,{ready:p.id==='generator',paid:{}}])),chests:{left:{},right:{}},upgrades:{},gardens:{left:[],right:[]},nodes:{},fires:[],event:null,history:[],auto:true,nextAt:now+25*60000,sequence:0,gatherAuto:false,gatherInterval:30,gatherNextAt:now+30*60000,gatherRound:0,provisioned:{},generatorFuel:now+30*60000});
@@ -52,7 +53,15 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
    }else if(input.action==='gather'){
     const definition=GATHER_NODES.find(v=>v.id===input.id),node=definition&&resolveGatherNode(definition,s);if(!node)fail(400,'Punto de recursos inválido.');needsNear(ctx,node.id,'gather');let cache=s.nodes[node.id];if(!cache||![2,3].includes(cache.layout))cache=s.nodes[node.id]={layout:2,remaining:1,resetsAt:node.renewable?now()+30*60000:null};if(cache.remaining<1)fail(409,'Ya se recogió este recurso. El lugar está agotado.');for(const[id,q]of Object.entries(node.loot))change(p,id,q);cache.remaining=0;message='Recogiste '+Object.entries(node.loot).map(([id,q])=>q+' × '+RESOURCE_BY_ID[id].name).join(', ')+'.';sharedChanged=true;
    }else if(input.action==='craft'){
-    const recipe=RECIPES.find(r=>r.id===input.id);if(!recipe)fail(400,'Receta inválida.');if(recipe.bench)needsNear(ctx,null,'bench');if(recipe.tool&&!usableGear(p,recipe.tool))fail(409,'Necesitas '+RESOURCE_BY_ID[recipe.tool].name+'; se reutiliza y no se consume.');if(recipe.upgrade&&(!team||s.upgrades[team]))fail(409,'Necesitas un equipo y un baúl pendiente de ampliar.');pay(p,recipe.cost);if(recipe.upgrade){s.upgrades[team]=true;sharedChanged=true;}else for(const[id,q]of Object.entries(recipe.result))change(p,id,q);if(recipe.tool)wearUse(p,recipe.tool);message=recipe.name+' completado.';
+    const recipe=RECIPES.find(r=>r.id===input.id);if(!recipe)fail(400,'Receta inválida.');
+    if(recipe.id==='coat'){
+     const shelter=SHELTERS.find(s=>s.id===team),station=SURVIVAL_STATIONS.find(s=>s.kind==='bench'&&s.zone===shelter?.inside);
+     if(!station||ctx.zone!==station.zone)fail(409,'Confecciona el abrigo térmico en la mesa de tu refugio construido.');
+     await authorizeStorage(user,team,ctx);
+     needsNear(ctx,station.id,'bench');
+     await db.run('INSERT INTO moderation_actions(id,moderator,action,subject,details,created) VALUES(?,?,?,?,?,?)',randomUUID(),user.id,'world:coat-crafted',user.id,JSON.stringify({station:station.id,shelter:team,characterId:ctx.characterId,materials:recipe.cost}),now());
+    }else if(recipe.bench)needsNear(ctx,null,'bench');
+    if(recipe.tool&&!usableGear(p,recipe.tool))fail(409,'Necesitas '+RESOURCE_BY_ID[recipe.tool].name+'; se reutiliza y no se consume.');if(recipe.upgrade&&(!team||s.upgrades[team]))fail(409,'Necesitas un equipo y un baúl pendiente de ampliar.');pay(p,recipe.cost);if(recipe.upgrade){s.upgrades[team]=true;sharedChanged=true;}else for(const[id,q]of Object.entries(recipe.result))change(p,id,q);if(recipe.tool)wearUse(p,recipe.tool);message=recipe.name+' completado.';
    }else if(input.action==='repair'){
     const project=PROJECTS.find(r=>r.id===input.id);if(!project)fail(400,'Proyecto inválido.');needsNear(ctx,project.id,'project');const state=s.projects[project.id];if(state.ready)fail(409,'Este equipo ya funciona.');const remaining=(project.cost[input.resource]||0)-(state.paid[input.resource]||0);if(remaining<1)fail(409,'Este material ya está completo.');const amount=Math.min(n,remaining);change(p,input.resource,-amount);state.paid[input.resource]=(state.paid[input.resource]||0)+amount;state.ready=Object.entries(project.cost).every(([id,q])=>(state.paid[id]||0)>=q);if(state.ready){state.completedAt=now();if(project.id==='generator')s.generatorFuel=now()+30*60000;if(s.event&&EVENT_BY_ID[s.event.type]?.project===project.id)finishEvent(s,'Reparación completada');}sharedChanged=true;message=state.ready?project.name+' completado. '+project.reward:'Aportaste '+amount+' × '+RESOURCE_BY_ID[input.resource].name+'.';
    }else if(input.action==='test-radio'){
@@ -83,7 +92,7 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
    }else if(input.action==='salvage-food'){
     if(body.foodWarmth<480)fail(409,'Los alimentos todavía no están deteriorados por el calor.');const food=FOOD_BY_ID[input.id];if(!food||!['meal','protein','dairy'].includes(food.category))fail(409,'Selecciona un alimento deteriorado.');await foodChange(user.id,food.id,-1);change(p,'spoiled-food',1);message='Separaste restos para preparar abono.';
    }else if(input.action==='grant'){
-    if(!ctx.staff)fail(403,'Solo Dirección entrega recursos.');if(!Object.hasOwn(RESOURCE_BY_ID,input.id))fail(400,'Recurso inválido.');change(p,input.id,n);message='Recurso añadido a tu mochila de revisión.';
+    if(!ctx.staff)fail(403,'Solo Dirección entrega recursos.');if(input.id==='coat')fail(409,'El abrigo térmico se fabrica en la mesa del refugio.');if(!Object.hasOwn(RESOURCE_BY_ID,input.id))fail(400,'Recurso inválido.');change(p,input.id,n);message='Recurso añadido a tu mochila de revisión.';
    }else fail(400,'Acción de supervivencia inválida.');
    if(body)syncClothing(p,body);if(input.requestId)p.receipts=[...p.receipts,input.requestId].slice(-40);await save('user:'+user.id,p);if(sharedChanged)await save('shared',s);if(body&&ctx.saveBody)await ctx.saveBody(body,vitals);return {data:{...await view(user,p,s,team,frame),...(input.action==='take-luggage'?{luggage:{id:input.id,name:LUGGAGE_BY_ID[input.id].name,...luggageStock(s,input.id)}}:{}),message},shared:sharedChanged?s:null,body,vitals};
   });if(result.shared)await publish(result.shared);return result;

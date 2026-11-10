@@ -24,6 +24,8 @@ export const advantageDefinition=kind=>ADVANTAGES[kind==='idol_true'||kind==='id
 export const SHOP_ADVANTAGES=Object.freeze(Object.entries(ADVANTAGES).map(([kind,item])=>Object.freeze({id:kind==='idol'?'idol_true':kind,name:item.name,image:'/juegos/shop/icons/'+item.icon+'.webp',description:item.description})));
 export const iconForAdvantage=kind=>'/juegos/shop/icons/'+(advantageDefinition(kind)?.icon||'unknown')+'.webp';
 export const shopCharacterImage=c=>{const u=c.previewImage||c.originalImage||c.image||c.portrait;return u?.startsWith('./')?'/juegos/shared/ice-breaker/'+u.slice(2):u;};
-export const SHOP_CHARACTERS=WORLD_CHARACTERS.map(c=>({id:c.id,name:c.name,image:shopCharacterImage(c),price:c.id==='dua-lingo'?1000:c.id==='isabel'?500000:500,staffOnly:c.id==='maria-villegas',nurseOnly:c.id==='isabel',current:!!c.currentSeason}));
-export const SHOP_PAJAMAS=Object.values(PAJAMA_OUTFITS).map(p=>({id:p.id,name:'Pijama · '+(WORLD_CHARACTERS.find(c=>c.id===p.id)?.name||p.source),image:p.image,price:PAJAMA_PRICE}));
+const featuredCast=['alice','gabrielsab'];
+const featuredOrder=id=>(featuredCast.indexOf(id)+1||featuredCast.length+1);
+export const SHOP_CHARACTERS=WORLD_CHARACTERS.toSorted((a,b)=>featuredOrder(a.id)-featuredOrder(b.id)).map(c=>({id:c.id,name:c.name,image:shopCharacterImage(c),price:c.id==='dua-lingo'?1000:c.id==='isabel'?500000:500,staffOnly:c.id==='maria-villegas',nurseOnly:c.id==='isabel',current:!!c.currentSeason}));
+export const SHOP_PAJAMAS=Object.values(PAJAMA_OUTFITS).map(p=>({id:p.id,name:'Pijama · '+(WORLD_CHARACTERS.find(c=>c.id===p.id)?.name||p.source),image:p.image,...(featuredCast.includes(p.id)?{thumbnail:'/juegos/shop/pajamas/'+p.id+'.webp'}:{}),price:PAJAMA_PRICE}));
 export const SHOP_FOODS=['apple','banana','corn','soup','omelette','grilled-fish','chicken-rice','pasta','lasagna','camp-stew'].map(id=>{const f=FOOD_BY_ID[id];return {id,name:f.name,hunger:f.hunger,energy:f.energy,health:f.health,price:Math.max(1000,Math.min(2000,Math.round(1000+(f.hunger-5)/17*1000))),food:f};});

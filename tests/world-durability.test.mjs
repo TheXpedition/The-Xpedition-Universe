@@ -9,11 +9,26 @@ test('coats require an owned usable unit; weather and use wear gear only during 
 });
 test('crafting, wear, storage, trade and mending conserve individual item condition without free repairs',async t=>{
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'xp-condition-')),db=await openDatabase(dir);t.after(async()=>{await db.close();await fs.rm(dir,{recursive:true,force:true});});
- const store=createSurvivalStore({db}),a={id:'condition-a'},b={id:'condition-b'},ctx={staff:true,team:'Equipo 1',near:()=>true,body:createWellness(),vitals:createVitals()};
+ let shelterBuilt=false;
+ const store=createSurvivalStore({db,authorizeStorage:async(_user,team)=>{assert.equal(team,'left');if(!shelterBuilt)throw Error('Primero deben construir este refugio.');}}),a={id:'condition-a'},b={id:'condition-b'},ctx={staff:true,team:'Equipo 1',characterId:'bruno',zone:'refugio-1',near:()=>true,body:createWellness(),vitals:createVitals()};
  for(const u of [a,b])await db.run('INSERT INTO users(id,name,name_key,email,avatar,bio,created) VALUES(?,?,?,?,?,?,?)',u.id,u.id,u.id,u.id+'@example.invalid','Dani','',Date.now());
  const act=input=>store.act(a,input,ctx);assert.equal((await store.snapshot(a)).personal.items.coat,undefined);
  for(const [id,quantity]of Object.entries({cloth:8,rope:2}))await act({action:'grant',id,quantity});
- await act({action:'craft',id:'coat'});await act({action:'use',id:'coat'});assert.equal(ctx.body.clothing,'cold');
+ const coat={action:'craft',id:'coat',requestId:'coat-craft-test'};
+ await assert.rejects(store.act(a,coat,{...ctx,zone:'base'}),/mesa de tu refugio/);
+ await assert.rejects(store.act(a,coat,{...ctx,zone:'dormitorio-2'}),/mesa de tu refugio/);
+ await assert.rejects(act(coat),/Primero deben construir/);
+ shelterBuilt=true;
+ await assert.rejects(store.act(a,coat,{...ctx,near:(id,kind)=>{assert.equal(id,'bench-base');assert.equal(kind,'bench');return false;}}),/Acércate/);
+ await assert.rejects(act({action:'grant',id:'coat'}),/se fabrica/);
+ const rejected=(await store.snapshot(a)).personal.items;
+ assert.equal(rejected.cloth,8);assert.equal(rejected.rope,2);assert.equal(rejected.coat,undefined);
+ assert.equal((await db.all('SELECT id FROM moderation_actions')).length,0);
+ await act(coat);
+ await assert.rejects(act(coat),/ya fue procesada/);
+ const [receipt]=await db.all("SELECT details FROM moderation_actions WHERE action='world:coat-crafted'");
+ assert.deepEqual(JSON.parse(receipt.details),{station:'bench-base',shelter:'left',characterId:'bruno',materials:{cloth:4,rope:1}});
+ await act({action:'use',id:'coat'});assert.equal(ctx.body.clothing,'cold');
  await store.wear(a,ctx.body,{seconds:60,moving:true,outside:1});let state=(await store.snapshot(a)).personal;const condition=state.condition.coat[0];assert(condition<100);
  await act({action:'deposit',teamId:'left',itemKey:'resource:coat',quantity:1});assert.equal(ctx.body.clothing,'heat');await act({action:'withdraw',teamId:'left',itemKey:'resource:coat',quantity:1});assert.equal((await store.snapshot(a)).personal.condition.coat[0],condition);
  await store.transfer(a,b,'coat',1);assert.equal((await store.snapshot(b)).personal.condition.coat[0],condition);await store.transfer(b,a,'coat',1);assert.equal((await store.snapshot(a)).personal.condition.coat[0],condition);

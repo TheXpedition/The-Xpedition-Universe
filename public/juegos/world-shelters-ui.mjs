@@ -1,8 +1,9 @@
 import {SHELTERS,SHELTER_SIZE,SHELTER_MATERIALS,shelterAt} from './world-shelters.mjs';
+import {worldCharacter} from './world-characters.mjs';
 import {shelterMaterialArt} from './world-shelter-icons.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function styles(){if(document.getElementById('shelter-styles'))return;const link=document.createElement('link');link.id='shelter-styles';link.rel='stylesheet';link.href='/juegos/world-shelters.css';document.head.append(link);}
-const people=s=>'<div class="shelter-residents" aria-label="Integrantes de '+esc(s.name)+'">'+Array.from({length:SHELTER_SIZE},(_,i)=>{const p=s.members[i];return p?'<img src="/juegos/cast-apocalypse/'+esc(p.characterId)+'-portrait.webp" alt="'+esc(p.name)+'" title="'+esc(p.name)+'">':'<span class="shelter-empty-resident" aria-hidden="true"></span>';}).join('')+'</div>';
+const people=s=>'<div class="shelter-residents" aria-label="Integrantes de '+esc(s.name)+'">'+Array.from({length:SHELTER_SIZE},(_,i)=>{const p=s.members[i];return p?'<img src="'+esc(worldCharacter(p.characterId)?.portrait||'/juegos/cast-apocalypse/'+p.characterId+'-portrait.webp')+'" alt="'+esc(p.name)+'" title="'+esc(p.name)+'">':'<span class="shelter-empty-resident" aria-hidden="true"></span>';}).join('')+'</div>';
 // Refugios are determined exclusively by the selected character, never by Staff.
 export function shelterAssignmentMarkup(){return '';}
 export function mountShelterPanel(root,{view,home,canContribute=false,onContribute=async()=>{},onEnter=()=>{}}){
