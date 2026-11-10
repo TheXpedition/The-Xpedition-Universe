@@ -65,3 +65,16 @@ test('empty plates score zero, incoherent improvisation produces varied failed d
  const q=s.roster[1];q.bot=false;const empty=s.stations[q.id];empty.stage='prep';s.phaseAt=0;s.clock=400000;s.at=400000;tickChef(s,400100,{random:rng});assert.equal(empty.result.quality,'empty');assert.equal(empty.result.note,0);assert.equal(empty.result.total,0);
  const close=episode(7);close.phase='winner';close.phaseAt=close.clock;close.at=0;for(let time=500;time<=20000;time+=500)tickChef(close,time);assert.equal(close.phase,'farewell');const farewellAt=close.clock;for(let time=20500;time<35000;time+=500){tickChef(close,time);assert.equal(close.phase,'farewell');}tickChef(close,35000);assert.equal(close.clock-farewellAt,15000);assert.equal(close.phase,'finished');
 });
+
+test('filling a saved kitchen lobby adds Alice and Gabriel in the old bot slots',()=>{
+ const s=createChef({id:'cast-update',now:0});
+ chefAction(s,{type:'open'},staff);
+ chefAction(s,{type:'fillBots'},staff);
+ const aliases={alice:'peggy',gabrielsab:'joseserna'};
+ const retained=s.roster.filter(p=>!aliases[p.characterId]);
+ for(const p of s.roster)if(aliases[p.characterId])p.characterId=aliases[p.characterId];
+ chefAction(s,{type:'fillBots'},staff);
+ assert.equal(s.roster.length,18);
+ assert.deepEqual(s.roster.slice(0,16),retained);
+ assert.deepEqual(s.roster.slice(16).map(p=>p.characterId).sort(),['alice','gabrielsab']);
+});

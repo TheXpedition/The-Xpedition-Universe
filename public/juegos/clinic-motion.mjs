@@ -8,7 +8,7 @@ export function paintClinicalName(c,name,{x,top,maxWidth=210,fontSize=22}={}){
 }
 export function clinicActorAsset(characterId,care={}){const nurse=care.role==='nurse';if(care.kind==='psychology')return characterId==='isabel'?'/juegos/clinic/art/isabel-psychology-v1.webp':CLINIC_PATIENT_IDS.includes(characterId)?'/juegos/clinic/art/'+characterId+'-ready-v1.webp':null;if(nurse?characterId!=='isabel':!CLINIC_PATIENT_IDS.includes(characterId))return null;const pose=nurse?(care.step===0?(care.kind==='injection'?'prepare':'clipboard'):CLINIC_PROCEDURES[care.kind]?.pose||'clipboard'):care.kind==='pills'&&care.step>0?'drink':'ready';return '/juegos/clinic/art/'+characterId+'-'+pose+'-v1.webp';}
 export function paintClinicChair(c,image,{x,floor,height}){if(!image)return false;const h=height*.8,w=h*image.width/image.height;c.drawImage(image,x+height*.1-w/2,floor+2-h,w,h);return true;}
-// Registration is shared by all 63 extracted sprites. The head is centered and
+// Registration is shared by the extracted sprites. The head is centered and
 // the feet contact the same floor; animation never scales characters arbitrarily.
 export function paintClinicActor(c,image,{x,floor,height,nurse=false,time=0,reduced=false,performing=false}){
  if(!image)return false;const scale=height/710,W=nurse?640:900,H=768,left=x-W/2*scale,top=floor-744*scale,breath=reduced?0:Math.sin(time*1.7)*.0018,move=reduced?0:Math.sin(time*(performing?4.2:1.2))*(performing?.018:.004);

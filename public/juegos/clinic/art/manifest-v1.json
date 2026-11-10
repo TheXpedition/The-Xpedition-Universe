@@ -502,5 +502,53 @@
     "floorY": 744,
     "visibleHeight": 710,
     "solidFraction": 0.9559310262503934
+  },
+  "alice-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9636970567619524
+  },
+  "alice-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9665553241743652
+  },
+  "alice-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9684964748790259
+  },
+  "gabrielsab-ready": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9729619956644737
+  },
+  "gabrielsab-drink": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9730220673635308
+  },
+  "gabrielsab-relieved": {
+    "width": 900,
+    "height": 768,
+    "headX": 450,
+    "floorY": 744,
+    "visibleHeight": 710,
+    "solidFraction": 0.9741298996773593
   }
 }

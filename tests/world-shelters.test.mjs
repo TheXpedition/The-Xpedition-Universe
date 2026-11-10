@@ -10,7 +10,7 @@ const atDoor=home=>{const s=SHELTERS.find(s=>s.id===home);return {...WORLD_MAPS[
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shelters-')),db=await openDatabase(dir),ids=[...SHELTER_PARTICIPANTS,'maria-villegas','isabel','dani','dua-lingo'];for(const id of ids){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani',1000);await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,?)',id,id,1000);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',id,id,1000);}const s=createShelterService({db,now:()=>1000});await s.ready;return {dir,db,s,async close(){await s.close();await db.close();const absolute=path.resolve(dir);assert(absolute.startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(absolute,{recursive:true,force:true});}};}
 test('exactly ten unique materials occupy the requested ten zones, on reachable floor',()=>{assert.equal(SHELTER_MATERIALS.length,10);assert.equal(new Set(SHELTER_MATERIALS.map(m=>m.zone)).size,10);for(const m of SHELTER_MATERIALS){const map=WORLD_MAPS[m.zone],p=shelterSupplyProp(m,map);assert(hasFloor(map,p.x,p.y));assert(clearPoint(map,p.x,p.y));assert(worldPath(map,{x:map.spawn[0],y:map.spawn[1]},p).length,m.zone);}});
 test('pickups are personal, one per participant, atomic against double clicks, and excluded roles cannot forge them',async()=>{const f=await fixture();try{
- const a={id:'bruno'},b={id:'peggy'},m=SHELTER_MATERIALS[0];assert.equal((await f.s.snapshot(a)).shelters[0].built,false);assert.equal((await f.s.snapshot(a)).available.length,10);
+ const a={id:'bruno'},b={id:'alice'},m=SHELTER_MATERIALS[0];assert.equal((await f.s.snapshot(a)).shelters[0].built,false);assert.equal((await f.s.snapshot(a)).available.length,10);
  const attempts=await Promise.allSettled([f.s.collect(a,m.id,atMaterial(m)),f.s.collect(a,m.id,atMaterial(m))]);assert.equal(attempts.filter(p=>p.status==='fulfilled').length,1);assert(!((await f.s.snapshot(a)).available.includes(m.id)));assert((await f.s.snapshot(b)).available.includes(m.id));await f.s.collect(b,m.id,atMaterial(m));
  for(const id of ['maria-villegas','isabel','dani','dua-lingo']){assert.equal((await f.s.snapshot({id})).available.length,0);await assert.rejects(f.s.collect({id},m.id,atMaterial(m)),e=>e.status===403);}
  await assert.rejects(f.s.collect(a,SHELTER_MATERIALS[1].id,atMaterial(m)),e=>e.status===409);
@@ -60,16 +60,16 @@ test('eliminated participants lose access but portraits and saved contributions 
   const before=await f.s.snapshot({id:'bruno'});
   await f.db.run('INSERT INTO world_seasons(id,name,state,updated) VALUES(?,?,?,1)','antarctica-1','Apocalypse','{}');
   await f.db.run('INSERT INTO world_contestants(season,user_id,status,updated) VALUES(?,?,?,1)','antarctica-1','bruno','eliminated');
-  await f.db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,1)','x-protocol-exclusions',JSON.stringify(['peggy']));
+  await f.db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,1)','x-protocol-exclusions',JSON.stringify(['alice']));
   const after=await f.s.snapshot({id:'bruno'});
   assert.equal(after.eligible,false);
   assert.equal(after.home,null);
   assert.equal(after.shelters[0].members.length,9);
   assert.equal(after.shelters[1].members.length,9);
   assert.equal(after.shelters[0].members.find(p=>p.characterId==='bruno').active,false);
-  assert.equal(after.shelters[1].members.find(p=>p.characterId==='peggy').active,false);
+  assert.equal(after.shelters[1].members.find(p=>p.characterId==='alice').active,false);
   assert.deepEqual(after.shelters[0].counts,before.shelters[0].counts);
-  assert.equal((await f.s.identity({id:'peggy'})).active,false);
+  assert.equal((await f.s.identity({id:'alice'})).active,false);
  }finally{await f.close();}
 });
 test('housing overrides survive reload and prior deliveries remain in their original shelters',async()=>{
@@ -82,7 +82,7 @@ test('housing overrides survive reload and prior deliveries remain in their orig
   const row=await f.db.one('SELECT state FROM world_environment WHERE id=?','shelters');
   const saved=JSON.parse(row.state);saved.delivered.bruno[oldMaterial.id]=1000;
   await f.db.run('UPDATE world_environment SET state=? WHERE id=?',JSON.stringify(saved),'shelters');
-  await f.s.assign({characterId:'peggy',home:null});
+  await f.s.assign({characterId:'alice',home:null});
   await f.s.assign({characterId:'bruno',home:'right'});
   await f.s.collect(resident,newMaterial.id,atMaterial(newMaterial));
   await f.s.contribute(resident,'right',atDoor('right'));
@@ -93,6 +93,6 @@ test('housing overrides survive reload and prior deliveries remain in their orig
   assert.equal(view.shelters[0].counts[oldMaterial.id],1);
   assert.equal(view.shelters[1].counts[oldMaterial.id],0);
   assert.equal(view.shelters[1].counts[newMaterial.id],1);
-  assert.equal((await reloaded.snapshot({id:'peggy'})).home,null);
+  assert.equal((await reloaded.snapshot({id:'alice'})).home,null);
  }finally{await reloaded?.close();await f.close();}
 });

@@ -233,6 +233,18 @@
         "width": 130,
         "height": 416
       }
+    },
+    "alice": {
+      "image": "/juegos/last-grip/art/alice-hang.png",
+      "width": 107,
+      "height": 470,
+      "gripY": 69
+    },
+    "gabrielsab": {
+      "image": "/juegos/last-grip/art/gabrielsab-hang.png",
+      "width": 121,
+      "height": 470,
+      "gripY": 83
     }
   },
   "backgrounds": [

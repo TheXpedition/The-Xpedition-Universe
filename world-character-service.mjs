@@ -15,7 +15,7 @@ export function createWorldCharacters({db,catalog,now=Date.now,fail=(status,mess
   return {selectedId:own?.character_id||null,needsSelection:!own||!characters[own.character_id]||!!characters[own.character_id]?.locked||preferredId!==undefined&&preferredId!==own.character_id,characters};
  }
  async function claim(user,id,context={},save=async()=>{}){
-  if(!valid(id))fail(400,'Personaje inválido.');if(Array.isArray(context.owned)&&!context.owned.includes(id))fail(403,'Compra este personaje en la tienda antes de seleccionarlo.');const policy=characterPolicy(id,context);if(policy.locked)fail(403,policy.reason+'.');
+  if(!valid(id))fail(400,'Personaje inválido.');const policy=characterPolicy(id,context);if(policy.locked)fail(403,policy.reason+'.');if(Array.isArray(context.owned)&&!context.owned.includes(id))fail(403,'Compra este personaje en la tienda antes de seleccionarlo.');
   if(context.audience){await save(id);return snapshot(user,context,id);}
   await serial(async()=>{
    if(db.kind==='postgres')await db.one('SELECT id FROM users WHERE id=? FOR UPDATE',user.id);

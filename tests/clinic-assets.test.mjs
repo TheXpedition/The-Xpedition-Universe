@@ -6,13 +6,13 @@ import {CLINIC_POSES,clinicReadings} from '../public/juegos/clinic-procedures.mj
 import {CLINICAL_CAST} from '../public/juegos/clinic-identities.mjs';
 import {clinicalActorSource,clinicActorAsset} from '../public/juegos/clinic-motion.mjs';
 const root=new URL('../public/juegos/clinic/art/',import.meta.url);
-const patients=['sallua','carmine','bruno','daelly','bayron','arisantana','marianito','leandro','vitany','kareli','vita','eduard','joseserna','guillermo','peggy','andromeda','ivy','roger','maria-villegas'];
+const patients=['sallua','carmine','bruno','daelly','bayron','arisantana','marianito','leandro','vitany','kareli','vita','eduard','joseserna','guillermo','peggy','andromeda','ivy','roger','maria-villegas','alice','gabrielsab'];
 test('consultations resolve an existing original illustration for every character without a dedicated nursing pose',async()=>{
  const publicRoot=new URL('../public/',import.meta.url);
  for(const character of CLINICAL_CAST){const dedicated=clinicActorAsset(character.id,{kind:'psychology'}),source=dedicated||clinicalActorSource(character.id);await assert.doesNotReject(fs.access(new URL('.'+source,publicRoot)),character.name+' has no consultation illustration');}
  for(const id of ['dani','dua-lingo'])assert(!clinicalActorSource(id).includes('-ready-v1.webp'));
 });
-test('all 63 character poses have transparent margins, opaque interiors and complete registered silhouettes',async()=>{
+test('all 69 character poses have transparent margins, opaque interiors and complete registered silhouettes',async()=>{
  const manifest=JSON.parse(await fs.readFile(new URL('manifest-v1.json',root),'utf8'));
  const keys=[...patients.flatMap(id=>['ready','drink','relieved'].map(p=>id+'-'+p)),...CLINIC_POSES.map(p=>'isabel-'+p)];assert.equal(Object.keys(manifest).length,keys.length);
  for(const name of keys){const entry=manifest[name],file=new URL(name+'-v1.webp',root),{data,info}=await sharp(await fs.readFile(file)).ensureAlpha().raw().toBuffer({resolveWithObject:true});assert.equal(info.width,entry.width,name);assert.equal(info.height,768,name);let solid=0,visible=0,l=info.width,r=0,t=info.height,b=0;

@@ -39,8 +39,8 @@ test('the avatar bank selects the equipped outfit atlas and preserves normal art
  try{const bank=new AvatarBank(false);bank.get('maria-villegas','cold');await bank.pump();await new Promise(r=>setImmediate(r));assert.equal(bank.get('maria-villegas','cold').url,THERMAL_OUTFITS['maria-villegas'].atlas);bank.get('maria-villegas','heat');await bank.pump();await new Promise(r=>setImmediate(r));assert.match(bank.get('maria-villegas','heat').url,/sprites\/maria-villegas\.webp/);assert(bank.cache.has('maria-villegas~thermal'));assert(bank.cache.has('maria-villegas'));const lite=new AvatarBank(true);lite.get('bruno','cold');await lite.pump();await new Promise(r=>setImmediate(r));assert.equal(lite.get('bruno','cold').url,THERMAL_OUTFITS.bruno.lite);}finally{globalThis.Image=Previous;}
 });
 
-test('all twenty supplied thermal looks have nonempty unclipped animations, including arms and legs rather than a flat image translation',async()=>{
- assert.equal(Object.keys(THERMAL_OUTFITS).length,20);
+test('all twenty-two supplied thermal looks have nonempty unclipped animations, including arms and legs rather than a flat image translation',async()=>{
+ assert.equal(Object.keys(THERMAL_OUTFITS).length,22);
  for(const item of Object.values(THERMAL_OUTFITS)){
   const file=fileURLToPath(new URL('../public'+item.atlas,import.meta.url)),{data,info}=await sharp(file).ensureAlpha().raw().toBuffer({resolveWithObject:true});assert.equal(info.width,1920,item.id);assert.equal(info.height,1600,item.id);
   const frame=n=>{const pixels=Buffer.alloc(240*320*4),ox=n%8*240,oy=Math.floor(n/8)*320;for(let y=0;y<320;y++)data.copy(pixels,y*240*4,((oy+y)*1920+ox)*4,((oy+y)*1920+ox+240)*4);return pixels;};

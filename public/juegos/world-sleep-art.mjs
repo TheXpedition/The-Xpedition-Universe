@@ -4,7 +4,7 @@ import {SLEEP_ART_BOUNDS} from './world-sleep-framing.mjs';
 export const SLEEP_WIDTH_RATIOS=Object.freeze({
  'maria-villegas':.88,andromeda:.91,arisantana:.93,bayron:.93,bruno:.94,
  carmine:.91,daelly:.86,eduard:.94,guillermo:.97,isabel:.90,ivy:.87,
- joseserna:.93,kareli:.88,leandro:.96,marianito:1.02,peggy:.90,roger:.98,
+ alice:.87,gabrielsab:.92,joseserna:.93,kareli:.88,leandro:.96,marianito:1.02,peggy:.90,roger:.98,
  sallua:.90,vita:1.02,vitany:.88,dani:.90,'dua-lingo':.88
 });
 export function sleepSourceBounds(id,image){

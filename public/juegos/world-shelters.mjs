@@ -3,7 +3,7 @@ import {hasFloor,clearPoint} from './world-motion.mjs';
 export const SHELTER_SIZE=9;
 export const SHELTER_ROSTERS=Object.freeze({
  left:Object.freeze(['roger','andromeda','daelly','bruno','carmine','guillermo','ivy','marianito','vita']),
- right:Object.freeze(['arisantana','bayron','eduard','joseserna','kareli','leandro','peggy','sallua','vitany'])
+ right:Object.freeze(['arisantana','bayron','eduard','gabrielsab','kareli','leandro','alice','sallua','vitany'])
 });
 export const SHELTER_PARTICIPANTS=Object.freeze([...SHELTER_ROSTERS.left,...SHELTER_ROSTERS.right]);
 export const shelterForCharacter=characterId=>SHELTER_ROSTERS.left.includes(characterId)?'left':SHELTER_ROSTERS.right.includes(characterId)?'right':null;

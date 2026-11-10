@@ -1,7 +1,7 @@
 import {reservedWardrobe} from './world-wardrobe.mjs';
 // Supplied thermal outfits. They use the same 8 x 5 animation layout as the world cast.
 export const THERMAL_OUTFITS=Object.freeze(Object.fromEntries([
- ['andromeda','Andromeda'],['arisantana','Ari Santana'],['bayron','Bayron'],['bruno','Bruno'],
+ ['alice','Alice'],['gabrielsab','Gabriel'],['andromeda','Andromeda'],['arisantana','Ari Santana'],['bayron','Bayron'],['bruno','Bruno'],
  ['carmine','Carmine'],['daelly','Daelly'],['dua-lingo','Dua Lingo'],['eduard','Eduard'],
  ['guillermo','Guillermo'],['ivy','Ivy'],['joseserna','Jose Serna'],['kareli','Kareli'],
  ['leandro','Leandro'],['maria-villegas','Maria'],['marianito','Marianito'],['peggy','Peggy'],

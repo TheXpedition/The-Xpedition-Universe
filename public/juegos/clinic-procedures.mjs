@@ -9,7 +9,7 @@ export const CLINIC_PROCEDURES=Object.freeze({
  support:{name:'Cuidados y recuperación',icon:'support',pose:'clipboard',material:'Equipo de cuidados',steps:['Preparar el cuidado','Acompañar al paciente','Observar la respuesta'],tool:'support'}
 });
 export const CLINIC_POSES=['clipboard','pressure','prepare','injection','pills','bandage'];
-export const CLINIC_PATIENT_IDS=Object.freeze(['sallua','carmine','bruno','daelly','bayron','arisantana','marianito','leandro','vitany','kareli','vita','eduard','joseserna','guillermo','peggy','andromeda','ivy','roger','maria-villegas']);
+export const CLINIC_PATIENT_IDS=Object.freeze(['sallua','carmine','bruno','daelly','bayron','arisantana','marianito','leandro','vitany','kareli','vita','eduard','joseserna','guillermo','peggy','andromeda','ivy','roger','maria-villegas','alice','gabrielsab']);
 export const PROCEDURE_TTL=90000,OBSERVE_MS=2400,TARGET_CYCLE=2400;
 export const procedureActive=s=>!!s&&['consent','active'].includes(s.status);
 export function procedureKind(medicine){if(!medicine)return 'exam';if(medicine.id==='pregnancy-test')return 'test';if(medicine.id==='blood-pressure-monitor')return 'pressure';if(medicine.id==='emergency-injection')return 'injection';if(['antiseptic','dressing','support-wrap','plaster','skin-gel','cool-pack','disinfectant-alcohol'].includes(medicine.id))return 'bandage';if(['therapy','support','hygiene','procedure','prevention','reproductive'].includes(medicine.kind)||['rest-kit','recovery-meal','thermal-blanket','dry-kit','water','warm-drink','rehydration'].includes(medicine.id))return 'support';return 'pills';}

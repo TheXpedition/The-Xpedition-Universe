@@ -826,5 +826,41 @@
     },
     "solidFraction": 0.9880984303129061,
     "edgeTouch": false
+  },
+  "alice-pregnant": {
+    "width": 600,
+    "height": 1000,
+    "bounds": {
+      "l": 149,
+      "t": 24,
+      "r": 451,
+      "b": 976
+    },
+    "sourceBounds": {
+      "l": 257,
+      "t": 11,
+      "r": 738,
+      "b": 1525
+    },
+    "solidFraction": 0.9798556301435273,
+    "edgeTouch": false
+  },
+  "alice-reclined": {
+    "width": 1100,
+    "height": 700,
+    "bounds": {
+      "l": 24,
+      "t": 28,
+      "r": 1076,
+      "b": 671
+    },
+    "sourceBounds": {
+      "l": 53,
+      "t": 73,
+      "r": 1506,
+      "b": 961
+    },
+    "solidFraction": 0.9893938014759674,
+    "edgeTouch": false
   }
 }

@@ -1176,6 +1176,26 @@
         "width": 518,
         "height": 501
       }
+    },
+    {
+      "file": "work-v4/alice.webp",
+      "bounds": {
+        "pixels": 110522,
+        "left": 106,
+        "top": 2,
+        "width": 300,
+        "height": 509
+      }
+    },
+    {
+      "file": "work-v4/gabrielsab.webp",
+      "bounds": {
+        "pixels": 109311,
+        "left": 89,
+        "top": 2,
+        "width": 333,
+        "height": 509
+      }
     }
   ]
 }
