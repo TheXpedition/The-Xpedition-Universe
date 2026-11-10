@@ -6,7 +6,7 @@ import {mountClinicGuide,mountPsychologyPlayer} from './clinic-experience-ui.mjs
 import {applySanitationProps,sanitationMenu} from './world-sanitation.mjs';
 import {createProtocolHistoryUI} from './protocol-history-ui.mjs';
 import {mountWorldRosterStrip} from './world-roster-strip.mjs';
-import {createWorldShopUI} from './world-shop-ui.mjs?v=exclusive-pets-1';
+import {createWorldShopUI} from './world-shop-ui.mjs?v=pet-dialog-1';
 import {mountShelterHUD,mountShelterPanel,shelterAssignmentMarkup} from './world-shelters-ui.mjs';
 import {buildShelterProps,SHELTERS,shelterForZone,shelterPortalContext} from './world-shelters.mjs';
 import {mountMariaVoice} from './world-maria-voice-ui.mjs';

@@ -8,7 +8,7 @@ const coins=n=>Number(n||0).toLocaleString('es-CO');
 export function createWorldShopUI({initial=null,onChange=()=>{},onSelectCharacter=async()=>{},onEquipPajama=async()=>{},getAvailability=()=>({}),onShop=()=>{},onFoodChange=()=>{}}={}){
  let state=initial,root=null,mode='shop',category='characters',collection='characters',filter='',busy=false,detail=null,dialogMode='inventory',giftTarget=null,revealing=false;
  let foodData=null,foodPanel=null;const seen=new Set(),queue=[],operations=new Map();
- if(!document.querySelector('#world-shop-style')){const l=document.createElement('link');l.id='world-shop-style';l.rel='stylesheet';l.href='/juegos/world-shop.css';document.head.append(l);}
+ if(!document.querySelector('#world-shop-style')){const l=document.createElement('link');l.id='world-shop-style';l.rel='stylesheet';l.href='/juegos/world-shop.css?v=pet-dialog-1';document.head.append(l);}
  if(!document.querySelector('link[href="/juegos/world-food.css"]')){const foodStyle=document.createElement('link');foodStyle.rel='stylesheet';foodStyle.href='/juegos/world-food.css';document.head.append(foodStyle);}const dialog=document.createElement('dialog');dialog.className='shop-inventory-dialog';dialog.setAttribute('aria-label','Tu inventario de Apocalypse');document.body.append(dialog);
  const reveal=document.createElement('dialog');reveal.className='shop-reveal-dialog';reveal.setAttribute('aria-label','Recompensa de Apocalypse');document.body.append(reveal);
  const toast=document.createElement('div');toast.className='shop-toast';toast.hidden=true;toast.setAttribute('role','status');document.body.append(toast);let toastTimer;
