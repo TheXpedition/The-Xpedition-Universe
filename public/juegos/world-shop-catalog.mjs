@@ -1,9 +1,9 @@
 import {PAJAMA_OUTFITS,PAJAMA_PRICE} from './world-pajamas.mjs';
 import {WORLD_CHARACTERS} from './world-characters.mjs';
 import {FOOD_BY_ID} from './world-foods.mjs';
-export const SHOP_PRICES=Object.freeze({character:500,pet:1000,wallpaper:300,crate:5000});
+export const SHOP_PRICES=Object.freeze({character:500,pet:1000,exclusivePet:5000,wallpaper:300,crate:5000});
 export const PREMIUM_PETS=Object.freeze(['jester','duo','bat','blue-survivor']);
-export const petShopPrice=id=>PREMIUM_PETS.includes(id)?2000:SHOP_PRICES.pet;
+export const petShopPrice=(id,exclusive=false)=>exclusive?SHOP_PRICES.exclusivePet:(PREMIUM_PETS.includes(id)?2:1)*SHOP_PRICES.pet;
 export const ADVANTAGES=Object.freeze({
  extra_votes:{name:'+2 Votos',icon:'extra_votes',description:'En esta ceremonia tendrás dos votos en vez de uno. Puedes votar dos veces por la misma persona o repartirlos entre dos. No permite votar si eres inmune, nominado o te retiraste. No se acumula con otra ventaja que ya te conceda dos votos.'},
  vote_shield:{name:'−1 Voto',icon:'vote_shield',description:'Elige a una persona. Se resta uno de los votos recibidos en su contra en la votación de esta ceremonia, sin bajar de cero. No le quita su derecho a votar. Puede utilizarse antes, durante o al cerrar la votación.'},
