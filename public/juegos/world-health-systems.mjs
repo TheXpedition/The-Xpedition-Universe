@@ -21,6 +21,7 @@ export const EXTRA_CONDITIONS=[
  ['depressive-symptoms','Síntomas depresivos','malestar persistente','mental',0,['counselling','mood-support']],
  ['anxiety','Ansiedad persistente','estrés sostenido','mental',0,['counselling','anxiety-support']]
 ];
+export const HYGIENE_CONDITIONS=new Set(EXTRA_CONDITIONS.filter(([, , ,group])=>group==='hygiene').map(([id])=>id));
 export const EXTRA_MEDICINES=[
  ['risperidone','Risperidona · comprimidos','Antipsicótico de prescripción representado en la simulación. Requiere valoración y seguimiento; no cura instantáneamente ni define la conducta del personaje.',24,0,['schizophrenia']],
  ['cbt-session','Sesión de terapia cognitivo conductual','Intervención psicológica con seguimiento. La mejora es gradual en tiempo de juego, sin instrucciones clínicas reales.',24,0,['depressive-symptoms','anxiety','schizophrenia','postnatal-depression','generalized-anxiety']],
@@ -78,7 +79,7 @@ export function advanceHealthSystems(body,vitals,{seconds,environment,zone,movin
  if(body.exposure.injury>650)add(body,'fracture');
  if(vitals.hunger<=0){vitals.health=bounded(vitals.health-dt/60*.7);if(body.elapsed-body.life.vomitAt>120){body.life.vomitAt=body.elapsed;body.life.vomitUntil=now+4000;vitals.energy=bounded(vitals.energy-2);}}
  if(body.life.status==='fainted'||sleeping){vitals.sleep=bounded(vitals.sleep+dt*(napping?.25:.5)*(body.life.status==='fainted'?1:sleepClothingFactor(body))*(.65+Math.max(0,Math.min(100,bedCleanliness))*.0035));vitals.energy=bounded(vitals.energy+dt*(napping?.12:.25));vitals.stress=bounded(vitals.stress-dt*.1);if(body.life.status==='fainted'&&vitals.sleep>=15)body.life.status='alive';}else if(vitals.sleep<=0){body.life.status='fainted';body.life.at=now;}
- if(vitals.health<=0){const worst=[...body.conditions].sort((a,b)=>b.severity-a.severity)[0];body.life={...body.life,status:'dead',cause:worst?.id||'starvation',at:now,corpse:true,zone:zone||'',x:0,y:0};}
+ if(vitals.health<=0){const worst=body.conditions.filter(c=>!HYGIENE_CONDITIONS.has(c.id)).sort((a,b)=>b.severity-a.severity)[0];body.life={...body.life,status:'dead',cause:worst?.id||'starvation',at:now,corpse:true,zone:zone||'',x:0,y:0};}
  return {body,vitals};
 }
 export function mobility(body,vitals){if(body.life.status!=='alive')return {speedFactor:0,canRun:false};const exhaustion=Math.min(vitals.energy,vitals.sleep),base=exhaustion<10?.45:exhaustion<25?.6:exhaustion<50?.82:1;return {speedFactor:base*(body.conditions.some(c=>['sprain','fracture'].includes(c.id))?.85:1)*(body.conditions.some(c=>['copd','opportunistic-pneumonia','aids'].includes(c.id)&&c.severity>=40)?.75:1),canRun:vitals.energy>60&&vitals.sleep>25};}

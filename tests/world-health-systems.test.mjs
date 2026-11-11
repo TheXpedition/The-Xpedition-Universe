@@ -31,3 +31,18 @@ test('exhaustion blocks running, fainting recovers autonomously and health zero 
 test('sleep retains its bed reference and standing removes it',()=>{
  const asleep=normalizeWorldPlayer({state:'sleep',seatId:'bed',seatSlot:0});assert.equal(asleep.seatId,'bed');assert.equal(normalizeWorldPlayer({...asleep,state:'idle'}).seatId,null);
 });
+
+test('poor hygiene raises stress and damages health without causing death',()=>{
+ const body=createWellness({hygiene:{body:0},conditions:[{id:'poor-hygiene',severity:100}]});
+ const step=(wellness,vitals)=>stepWellness(wellness,vitals,{seconds:5,environment,zone:'refugio-1',now:1000});
+ const dirty=step(body,createVitals({health:25,stress:0}));
+ assert(dirty.vitals.health<25);
+ assert(dirty.vitals.stress>0);
+ let critical=step(body,createVitals({health:1.001}));
+ for(let i=0;i<25;i++)critical=step(critical.body,critical.vitals);
+ assert.equal(critical.vitals.health,1);
+ assert.equal(critical.body.life.status,'alive');
+ const dead=step(body,createVitals({health:0,hunger:0}));
+ assert.equal(dead.body.life.status,'dead');
+ assert.equal(dead.body.life.cause,'starvation');
+});

@@ -166,7 +166,7 @@ export function buildApocalypseMaps(){
  seating('refugio-1','refuge-bench','bench',[[.245,.635,1],[.282,.635,1]]);
  seating('confesionario','confessional-chair','chair',[[.515,.565,1]]);
  seating('comida','canteen-bench','bench',[[.175,.722,1],[.237,.722,1],[.306,.722,1]]);
- for(const [id,x,y,facing]of [['left',.105,.59,1],['middle',.46,.60,1],['right',.96,.59,-1]]){const bed=seating('hospital-interior','hospital-bed-'+id,'bench',[[x,y,facing]]);bed.medicalBed=true;bed.description='Descansar en la camilla recupera salud y ayuda al tratamiento.';}
+ for(const [id,x,y,facing]of [['left',.105,.59,1],['middle',.46,.60,1],['right',.96,.59,-1]]){const bed=seating('hospital-interior','hospital-bed-'+id,'bench',[[x,y,facing]]);bed.medicalBed=true;bed.restWidth=maps['hospital-interior'].width*.12;if(id==='right')bed.restX=maps['hospital-interior'].width*.947;bed.restBottom=bed.y*.62+12;bed.description='Descansar en la camilla recupera salud y ayuda al tratamiento.';}
 
  const council=maps.eliminacion;council.presenter={...coord('eliminacion',.5,.585),z:0,height:council.avatarHeight*1.35*1.04};
  for(const [side,x,facing]of [['left',.23,1],['right',.77,-1]]){const seats=Array.from({length:8},(_,i)=>({...coord('eliminacion',x+(side==='left'?-1:1)*(i%4)*.043,.63-Math.floor(i/4)*.085),facing}));obj('eliminacion','seating-'+side,'grandstand',x,.64,{w:council.width*.23,h:council.height*.2,seats,seatFacing:facing,approaches:seats.map(s=>({x:s.x,y:council.height*.795})),description:'Gradas orientadas al escenario central.'});}

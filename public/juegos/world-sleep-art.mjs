@@ -12,13 +12,13 @@ export function sleepSourceBounds(id,image){
  return b&&b.canvasWidth===image.width&&b.canvasHeight===image.height?b:{x:0,y:0,width:image.width,height:image.height};
 }
 export function sleepPoseBounds(player,height,image,bed){
- const bedWidth=bed?.artWidth||height*1.12;
+ const bedWidth=bed?.restWidth||bed?.artWidth||height*1.12;
  const source=sleepSourceBounds(player.characterId,image);
  const rotated=source.rotated||{x:0,y:0,width:source.width,height:source.height};
  const width=Math.min(height*(SLEEP_WIDTH_RATIOS[player.characterId]||.90),bedWidth*.88),scale=width/rotated.width,h=scale*rotated.height;
  const flip=bed?.flipX===true;
- const x=(bed?.x??player.x)-width/2;
- const bottom=bed?bed.y*.62-bedWidth*.145:player.y*.62+height*.06;
+ const x=(bed?.restX??bed?.x??player.x)-width/2;
+ const bottom=bed?.restBottom??(bed?bed.y*.62-bedWidth*.145:player.y*.62+height*.06);
  const offset=player.activity==='private-rest'?Math.max(-1,Math.min(1,Number(player.privateBedOffset)||0)):0;
  const shiftX=offset*bedWidth*.028,shiftY=offset*bedWidth*.06;
  return {x:x+shiftX,y:bottom-h+shiftY,width,height:h,bottom:bottom+shiftY,flip,source,rotated,scale};

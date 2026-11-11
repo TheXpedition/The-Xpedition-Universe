@@ -61,6 +61,33 @@ function walls(c,map){
  line(c,[[left,edge-wh+10],[map.width*.5,edge-wh+38],[right,edge-wh+10]],'#493d47',25);line(c,[[left,edge],[right,edge]],'#4a3c43',12);
  for(const x of [map.width*.4,map.width*.6]){line(c,[[x,edge-wh+20],[x,edge-wh+90]],C.ink,4);polygon(c,[[x-26,edge-wh+90],[x+26,edge-wh+90],[x+39,edge-wh+128],[x-39,edge-wh+128]],'#d5a961',C.ink,3);oval(c,x,edge-wh+127,16,6,'#ffe7a0');}
 }
+let memorialStone;
+function paintMemorialStone(c,p){
+ if(!memorialStone){
+  const source=sceneImage('cementerio-interior','/assets/maps/apocalypse/cementerio-interior.webp');
+  if(!source)return;
+  const stone=document.createElement('canvas');
+  stone.width=149;stone.height=109;
+  const ctx=stone.getContext('2d');
+  ctx.save();
+  closed(ctx,[[4,105],[4,86],[18,73],[22,26],[35,13],[56,5],[83,4],[105,12],[121,29],[124,68],[135,74],[145,83],[145,101],[135,107]]);
+  ctx.clip();
+  ctx.drawImage(source,731,542,149,109,0,0,149,109);
+  ctx.restore();
+  memorialStone=stone;
+ }
+ const w=p.artWidth,h=w*memorialStone.height/memorialStone.width,y=p.y*Y-h;
+ c.drawImage(memorialStone,p.x-w/2,y,w,h);
+ c.save();
+ c.textAlign='center';
+ c.font='600 18px "World Condensed",sans-serif';
+ c.fillStyle='#edddc5';
+ c.strokeStyle='#15120f';
+ c.lineWidth=4;
+ c.strokeText(p.memorial.name,p.x,y+h*.49,w*.58);
+ c.fillText(p.memorial.name,p.x,y+h*.49,w*.58);
+ c.restore();
+}
 export class CartoonWorldArt{
  backdrop(c,w,h,time,map,cameraX=0,night=false){
   if(map.illustration){c.fillStyle=map.sky==='apocalypse'?'#1a140f':'#090d16';c.fillRect(0,0,w,h);return;}
@@ -79,7 +106,7 @@ export class CartoonWorldArt{
   c.restore();if(['interior','studio'].includes(map.sky))walls(c,map);
  }
  bounds(p,im){if(p.survival)return survivalBounds(p);if(p.sleepBed){const w=p.artWidth||460;return {x:p.x,y:p.y*Y,w,h:w/3};}if(p.seats&&!p.sanitation){const ys=p.seats.map(s=>s.y*Y),xs=p.seats.map(s=>s.x);return {x:(Math.max(...xs)+Math.min(...xs))/2,y:Math.max(...ys)+10,w:Math.max(...xs)-Math.min(...xs)+150,h:Math.max(...ys)-Math.min(...ys)+170};}if(p.painted)return {x:p.x,y:p.y*Y+p.h*.5*Y,w:p.w,h:p.h*Y+70};const id=cartoonPropAsset(p);im||=image(id);if(!im)return null;let w=p.artWidth||p.w;if(p.type==='pine')w=p.height*.63;else if(['pole','torch','flag','lamp','tower','camera','telescope'].includes(p.type)&&!p.artWidth)w=p.height*im.width/im.height;else if(p.type==='cabin'&&!p.artWidth)w=p.w*1.5;else if(p.id==='stage'&&!p.artWidth)w=720;else if(p.type==='sign')w=100;const h=w*im.height/im.width;return{x:p.x,y:p.y*Y+p.h*Y*.25,w,h};}
- draw(c,p,time,{labels=true,shared,reducedMotion=false}={}){if(p.survival)return drawSurvivalProp(c,p,time,{labels,shared,reducedMotion});
+ draw(c,p,time,{labels=true,shared,reducedMotion=false}={}){if(p.memorial&&!p.painted){paintMemorialStone(c,p);return true;}if(p.survival)return drawSurvivalProp(c,p,time,{labels,shared,reducedMotion});
   if(p.painted){
    if(p.lightPoint){const x=p.lightPoint.x,y=p.lightPoint.y*Y;c.save();if(p.unlit){c.fillStyle='#382a1b';c.beginPath();c.ellipse(x,y,11,17,0,0,TAU);c.fill();}else{const glow=c.createRadialGradient(x,y,3,x,y,85);glow.addColorStop(0,'#ffbd5445');glow.addColorStop(1,'#ffbd5400');c.fillStyle=glow;c.fillRect(x-85,y-85,170,170);}c.restore();}
    if(p.label&&labels&&!p.portal?.auto){const [x,worldY]=p.labelPoint||[p.x,p.y],y=worldY*Y;c.save();c.font='700 19px "World Condensed",sans-serif';c.textAlign='center';const w=c.measureText(p.label).width+32;c.fillStyle='#261a10ee';c.strokeStyle='#bb874b';c.lineWidth=2;c.beginPath();c.roundRect(x-w/2,y-30,w,38,7);c.fill();c.stroke();c.fillStyle='#f8ebcf';c.fillText(p.label,x,y-4);c.restore();}return true;

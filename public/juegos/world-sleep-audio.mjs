@@ -20,7 +20,7 @@ export class WorldSleepAudio{
   for(const {p,d}of nearest){
    const gender=worldCharacter(p.characterId)?.gender;
    if(!['male','female'].includes(gender))continue;
-   const file=gender==='male'?'sleep-snore-male-loop.wav':'sleep-breath-female-loop.wav';
+   const file=p.characterId==='isabel'||gender==='male'?'sleep-snore-male-loop.wav':'sleep-breath-female-loop.wav';
    const key=p.userId+':'+p.characterId+':'+zone;active.add(key);
    const gain=(p.userId===selfId?.30:.20)*Math.max(0,1-d/1000)/Math.sqrt(nearest.length);
    const current=this.voices.get(key);
