@@ -1,3 +1,5 @@
 #world-landscape-gate{position:fixed;inset:0;z-index:2147483000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;background:radial-gradient(ellipse at 50% 40%,#392114,#0d0907 70%);color:#f7dbad;text-align:center;font-family:'World Condensed','Arial Narrow',sans-serif;padding:30px;touch-action:none}
 #world-landscape-gate svg{width:82px;height:82px;color:#e5ab64}#world-landscape-gate strong{font-size:28px;letter-spacing:2px}#world-landscape-gate p{font-size:17px;color:#c0a687;margin:0}#world-landscape-gate[hidden]{display:none!important}
-.world-needs-landscape{overflow:hidden!important}
+#world-landscape-gate button{min-height:44px;padding:8px 16px;border:1px solid #b47b46;border-radius:5px;background:#2a1b11;color:#ffe4b7;font:inherit;font-size:16px;cursor:pointer}
+@media (orientation:portrait){.world-needs-landscape{overflow:hidden!important}}
+@media (orientation:landscape){#world-landscape-gate{display:none!important}}
