@@ -3,6 +3,7 @@
 // The browser never sees the private bridge key or the dedicated service URL.
 import {WebSocket} from 'ws';
 import {Readable} from 'node:stream';
+import {createProtocolHistory} from './world-protocol-history.mjs';
 
 const messageTypes=new Set(['protocol-subscribe','protocol-ready','protocol-viewer','protocol-media-started','protocol-media-ended','protocol-media-failed','protocol-action','protocol-chat']);
 const fallbackState={id:null,phase:'CLOSED',revision:0,participants:[],invitees:[]};
@@ -28,6 +29,7 @@ export function createProtocolRemoteProxy({
  if(base.username||base.password||base.search||base.hash)throw Error('Dirección de servicio de ceremonia inválida.');
  const endpoint=new URL('/bridge/live?scope='+encodeURIComponent(scope),base);
  endpoint.protocol=endpoint.protocol==='https:'?'wss:':'ws:';
+ const history=createProtocolHistory({db});
  let socket=null,opening=null,closed=false,retry=null,revision=-1,status={...fallbackState},retryDelay=1000;const attached=new Set(),returned=new Set();
  const sendWire=data=>{if(socket?.readyState!==WebSocket.OPEN)return false;socket.send(JSON.stringify(data));return true;};
  let lastWakeAt=0;
@@ -167,6 +169,12 @@ export function createProtocolRemoteProxy({
   async handleHttp(req,res,url,user,{body,json}){
    if(!url.pathname.startsWith('/api/world/x-protocol'))return false;
    if(!user)fail(401,'Entra desde tu cuenta de World.');
+   // The engine writes completed episodes to the same room database.
+   // Viewing them needs neither a running engine nor a bridge connection.
+   if(req.method==='GET'&&url.pathname==='/api/world/x-protocol/history'){
+    json(res,await history.list());
+    return true;
+   }
    if(req.method==='POST'&&(
       url.pathname==='/api/world/x-protocol/start-live'||url.pathname==='/api/world/x-protocol/control'
    )){

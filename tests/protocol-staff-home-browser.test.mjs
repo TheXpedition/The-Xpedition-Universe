@@ -52,6 +52,8 @@ test('STAFF can launch a ceremony with bots from World home even while its World
   assert.equal(result.episode.roster.length,18);
   assert.equal(result.episode.enrolled,true,'STAFF must be enrolled after redirecting from menu');
   assert.equal(result.episode.staff,true);
+  await page.waitForFunction(()=>document.querySelector('#video')?.currentTime>.5,null,{timeout:20000});
+  await page.waitForFunction(()=>['MONITOR_BOOT','MARIA_INTRO','RESULTS_SELECTION'].includes(document.body.dataset.phase),null,{timeout:40000});
   assert.equal(pageErrors.length,0,'no JavaScript errors in the real menu-to-live ceremony flow: '+pageErrors.join(', '));
  }finally{await browser?.close();await f.close();}
 });
