@@ -3,7 +3,7 @@ import {openDatabase} from '../database.mjs';import {createWorldShop} from '../w
 const request=extra=>({requestId:randomUUID(),...extra});
 test('Maria/Bonju remain reserved while Isabel/Dua reappear at their original prices and role grants survive',async()=>{const f=await fixture();try{const view=await f.shop.snapshot({id:'a'});for(const ref of ['maria-villegas','bonju']){assert(!view.catalog.characters.some(c=>c.id===ref));await assert.rejects(f.shop.buy({id:'a'},request({kind:'character',ref})),/no están a la venta/);}assert.equal(view.catalog.characters.find(c=>c.id==='isabel')?.price,500000);assert.equal(view.catalog.characters.find(c=>c.id==='dua-lingo')?.price,1000);assert.equal((await f.shop.snapshot({id:'a'})).wallet.coins,20000);const roles=createWorldShop({db:f.db,canStaff:async u=>u.id==='b',canNurse:async u=>u.id==='c'});await roles.ready;const staff=await roles.snapshot({id:'b'});assert.deepEqual(staff.inventory.filter(i=>i.kind==='character').map(i=>i.ref),['maria-villegas']);assert.equal(staff.wallet.coins,20000);const nurse=await roles.snapshot({id:'c'});assert(nurse.inventory.some(i=>i.ref==='isabel'));assert(!nurse.inventory.some(i=>i.ref==='maria-villegas'));await roles.snapshot({id:'b'});assert.equal((await roles.snapshot({id:'b'})).inventory.filter(i=>i.ref==='maria-villegas').length,1);}finally{await f.close();}});
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shop-')),db=await openDatabase(dir);await db.run('INSERT INTO world_seasons(id,name,state,updated) VALUES(?,?,?,1)','antarctica-1','Apocalypse II','{}');for(const [id,character]of [['a','bruno'],['b','alice'],['c','ivy']]){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,1)',id,id,id,id+'@example.invalid','Dani');await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,1)',id,character);await db.run('INSERT INTO world_contestants(season,user_id,status,updated) VALUES(?,?,?,1)','antarctica-1',id,'active');await db.run('INSERT INTO user_progression(user_id,coins,tickets,xp) VALUES(?,20000,50000,0)',id);}let rng=0;const shop=createWorldShop({db,random:()=>rng});await shop.ready;return {db,shop,rng:v=>rng=v,async close(){await db.close();assert(path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(dir,{recursive:true,force:true});}};}
-test('native catalog includes every supplied pet and wallpaper; purchases persist and duplicate requests debit once',async()=>{const f=await fixture();try{const initial=await f.shop.snapshot({id:'a'});assert.equal(initial.catalog.pets.length,42);assert.equal(initial.catalog.wallpapers.length,30);assert(initial.catalog.wallpapers.every(w=>w.price===300));assert(initial.catalog.foods.every(p=>p.price>=1000&&p.price<=2000));const input=request({kind:'pet',ref:initial.catalog.pets.find(p=>!p.exclusive).id});const [one,two]=await Promise.all([f.shop.buy({id:'a'},input),f.shop.buy({id:'a'},input)]);assert.equal(one.item.id,two.item.id);assert.equal(two.shop.wallet.coins,19000);await assert.rejects(f.shop.buy({id:'a'},request({kind:'pet',ref:input.ref})),/Ya tienes/);await f.shop.equip({id:'a'},request({kind:'pet',ref:input.ref}));assert.equal((await f.shop.equipment({id:'a'})).pet,input.ref);await assert.rejects(f.shop.equip({id:'b'},request({kind:'pet',ref:input.ref})));const reloaded=createWorldShop({db:f.db});await reloaded.ready;assert.equal((await reloaded.snapshot({id:'a'})).equipped.pet,input.ref);}finally{await f.close();}});
+test('native catalog includes every supplied pet and wallpaper; purchases persist and duplicate requests debit once',async()=>{const f=await fixture();try{const initial=await f.shop.snapshot({id:'a'});assert.equal(initial.catalog.pets.length,46);assert.equal(initial.catalog.wallpapers.length,30);assert(initial.catalog.wallpapers.every(w=>w.price===300));assert(initial.catalog.foods.every(p=>p.price>=1000&&p.price<=2000));const input=request({kind:'pet',ref:initial.catalog.pets.find(p=>!p.exclusive).id});const [one,two]=await Promise.all([f.shop.buy({id:'a'},input),f.shop.buy({id:'a'},input)]);assert.equal(one.item.id,two.item.id);assert.equal(two.shop.wallet.coins,19000);await assert.rejects(f.shop.buy({id:'a'},request({kind:'pet',ref:input.ref})),/Ya tienes/);await f.shop.equip({id:'a'},request({kind:'pet',ref:input.ref}));assert.equal((await f.shop.equipment({id:'a'})).pet,input.ref);await assert.rejects(f.shop.equip({id:'b'},request({kind:'pet',ref:input.ref})));const reloaded=createWorldShop({db:f.db});await reloaded.ready;assert.equal((await reloaded.snapshot({id:'a'})).equipped.pet,input.ref);}finally{await f.close();}});
 test('sealed crates debit tickets, open only once, exclude rare first rewards, and allow rare rewards after purchase one',async()=>{const f=await fixture();try{f.rng(.99999);const first=await f.shop.buy({id:'a'},request({kind:'crate'}));assert.equal(first.shop.wallet.tickets,45000);assert(!('purchaseNo' in first.item));const opened=await f.shop.open({id:'a'},request({itemId:first.item.id}));assert.equal(opened.item.kind,'character');const count=opened.shop.inventory.length;await f.shop.open({id:'a'},request({itemId:first.item.id}));assert.equal((await f.shop.snapshot({id:'a'})).inventory.length,count);const second=await f.shop.buy({id:'a'},request({kind:'crate'}));const rare=await f.shop.open({id:'a'},request({itemId:second.item.id}));assert.equal(rare.item.kind,'food_bundle');}finally{await f.close();}});
 test('gifts transfer ownership atomically, clear equipment, survive reconnect and can be gifted onward',async()=>{const f=await fixture();try{const catalog=(await f.shop.snapshot({id:'a'})).catalog;const bought=await f.shop.buy({id:'a'},request({kind:'pet',ref:catalog.pets.find(p=>!p.exclusive).id}));await f.shop.equip({id:'a'},request({kind:'pet',ref:bought.item.ref}));const input=request({itemId:bought.item.id,target:'b'});await f.shop.gift({id:'a'},input);await f.shop.gift({id:'a'},input);assert.equal((await f.shop.equipment({id:'a'})).pet,null);assert(!(await f.shop.snapshot({id:'a'})).inventory.some(i=>i.id===bought.item.id));const receiver=await f.shop.snapshot({id:'b'});assert(receiver.inventory.some(i=>i.id===bought.item.id));assert(receiver.notices.some(n=>n.kind==='gift'&&n.from==='Bruno'));await assert.rejects(f.shop.gift({id:'a'},request({itemId:bought.item.id,target:'c'})));await f.shop.gift({id:'b'},request({itemId:bought.item.id,target:'c'}));assert((await f.shop.snapshot({id:'c'})).inventory.some(i=>i.id===bought.item.id));assert(!(await f.shop.snapshot({id:'b'})).inventory.some(i=>i.id===bought.item.id));}finally{await f.close();}});
 test('fake and real idols have identical public identities; insufficient balance and full food inventory roll back',async()=>{const f=await fixture();try{await f.shop.snapshot({id:'a'});for(const ref of ['idol_false','idol_true'])await f.db.run("INSERT INTO world_shop_items(id,owner,kind,ref,state,payload,created,updated) VALUES(?,?,'advantage',?,'owned','{}',1,1)",ref,'a',ref);const items=(await f.shop.snapshot({id:'a'})).inventory.filter(i=>i.kind==='advantage').map(({id,...i})=>i);assert.deepEqual(items[0],items[1]);await f.db.run('UPDATE user_progression SET coins=0 WHERE user_id=?','a');await assert.rejects(f.shop.buy({id:'a'},request({kind:'pet',ref:'pig'})),/suficientes/);assert.equal((await f.shop.snapshot({id:'a'})).wallet.coins,0);await f.db.run('UPDATE user_progression SET coins=20000 WHERE user_id=?','a');await f.db.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,48,1)','a','apple');await assert.rejects(f.shop.buy({id:'a'},request({kind:'food',ref:'apple'})),/espacio/);assert.equal((await f.shop.snapshot({id:'a'})).wallet.coins,20000);}finally{await f.close();}});
@@ -103,8 +103,9 @@ test('exclusive pets sell once per room and a profile can buy only one, includin
  const f=await fixture();try{
   const other=createWorldShop({db:f.db});await other.ready;
   const initial=(await f.shop.snapshot({id:'a'})).catalog.pets;
-  assert(initial.slice(0,8).every(p=>p.exclusive&&p.canBuy&&p.price===5000));
-  assert(initial.slice(8).every(p=>!p.exclusive));
+  assert.deepEqual(initial.slice(0,4).map(p=>p.id),['sentry-toad','shadow-rabbit','pink-rabbit','cowardly-dog']);
+  assert(initial.slice(0,12).every(p=>p.exclusive&&p.canBuy&&p.price===5000));
+  assert(initial.slice(12).every(p=>!p.exclusive));
   const [first,second,third,fourth]=initial;
   const order=request({kind:'pet',ref:first.id});
   const attempts=await Promise.allSettled([f.shop.buy({id:'a'},order),other.buy({id:'b'},order)]);
@@ -136,5 +137,38 @@ test('exclusive pets sell once per room and a profile can buy only one, includin
   const buyAgain=await newRoom.buy({id:winner},request({kind:'pet',ref:first.id}));
   assert.equal(buyAgain.item.ref,first.id);
   assert.equal(buyAgain.shop.wallet.coins,10000);
+ }finally{await f.close();}
+});
+
+test('only authorized María purchases bypass exclusive pet stock and the one-per-account limit',async()=>{
+ const f=await fixture();
+ try{
+  const shop=createWorldShop({db:f.db,canStaff:async user=>user.id==='a'});
+  const buy=(id,ref)=>shop.buy({id},request({kind:'pet',ref}));
+  const pet=(snapshot,ref)=>snapshot.catalog.pets.find(p=>p.id===ref);
+  // Staff playing an ordinary character still use the regular exclusive stock.
+  await buy('a','spear-hamster');
+  await assert.rejects(buy('a','sentry-toad'),/ya compró/);
+  await f.db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?','maria-villegas','a');
+
+  const first=await buy('a','sentry-toad');
+  assert.equal(first.shop.wallet.coins,10000);
+  assert.equal(pet(await shop.snapshot({id:'b'}),'sentry-toad').canBuy,true);
+  await buy('b','sentry-toad');
+  assert.equal(pet(await shop.snapshot({id:'c'}),'sentry-toad').soldOut,true);
+  await assert.rejects(buy('c','sentry-toad'),/agotada/);
+  await assert.rejects(buy('b','pink-rabbit'),/ya compró/);
+  await assert.rejects(buy('a','sentry-toad'),/Ya tienes/);
+
+  await buy('c','shadow-rabbit');
+  assert.equal(pet(await shop.snapshot({id:'a'}),'shadow-rabbit').canBuy,true);
+  const second=await buy('a','shadow-rabbit');
+  assert.equal(second.shop.wallet.coins,5000);
+  const equipped=await shop.equip({id:'a'},request({kind:'pet',ref:'shadow-rabbit'}));
+  assert.equal(equipped.shop.equipped.pet,'shadow-rabbit');
+
+  // A stale or forged preference is insufficient without the staff role.
+  await f.db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?','maria-villegas','b');
+  await assert.rejects(buy('b','cowardly-dog'),/ya compró/);
  }finally{await f.close();}
 });
