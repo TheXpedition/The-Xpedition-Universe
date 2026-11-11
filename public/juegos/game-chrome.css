@@ -42,3 +42,169 @@ button.game-close-button svg{width:17px!important;height:17px!important}
  .shelter-race .shelter-race-row{font-size:10px!important;line-height:1.1!important;padding:0!important;gap:3px!important;margin-top:5px!important}.shelter-race .shelter-race-row span,.shelter-race .shelter-race-row b{font-size:10px!important;line-height:1.1!important}.shelter-race small{display:block;font-size:8px!important;line-height:1.1!important;margin-top:4px!important}
  @media(max-width:740px){body.is-playing .world-top .wood-logo{display:none!important}body.is-playing .expedition-pass{flex-basis:100px!important}body.is-playing .live-status{display:none!important}}
 }
+/* World touch controls sit above the two bottom docks. */
+body.is-playing #touch-controls:has(#world-joystick){
+ --touch-inset:12px;
+ --touch-dock:80px;
+ position:fixed!important;
+ top:auto;
+ bottom:calc(var(--touch-dock) + env(safe-area-inset-bottom))!important;
+ left:max(var(--touch-inset),env(safe-area-inset-left))!important;
+ right:max(var(--touch-inset),env(safe-area-inset-right))!important;
+ width:auto;
+ height:auto;
+ align-items:end;
+ justify-content:space-between;
+ pointer-events:none;
+ z-index:35;
+}
+@media (any-pointer:coarse){
+ body.is-playing #touch-controls:has(#world-joystick){display:flex!important}
+ body.is-playing .controls-hint{display:none}
+}
+#world-joystick{
+ position:relative;
+ display:grid;
+ place-items:center;
+ width:clamp(86px,18dvh,146px);
+ aspect-ratio:1;
+ border:1px solid #d29b5b;
+ border-radius:50%;
+ background:radial-gradient(circle,#443023be,#19120dd9);
+ box-shadow:inset 0 0 0 3px #e8ad641a,0 3px 8px #0007;
+ touch-action:none;
+ pointer-events:auto;
+ user-select:none;
+ -webkit-user-select:none;
+ -webkit-touch-callout:none;
+}
+#world-joystick::before,#world-joystick::after{
+ content:'';
+ position:absolute;
+ inset:8%;
+ background:#d7aa73;
+ clip-path:polygon(50% 0,57% 10%,43% 10%,50% 0,50% 100%,43% 90%,57% 90%,50% 100%);
+ pointer-events:none;
+}
+#world-joystick::after{transform:rotate(90deg)}
+#world-joystick .joystick-knob{
+ z-index:1;
+ width:43%;
+ aspect-ratio:1;
+ border:1px solid #edba7e;
+ border-radius:50%;
+ background:linear-gradient(#c69157,#8c552f);
+ box-shadow:0 2px 6px #0008;
+ pointer-events:none;
+}
+body.is-playing #touch-controls:has(#world-joystick) .touch-actions{display:flex;align-items:end;gap:9px}
+body.is-playing #touch-controls:has(#world-joystick) .touch-actions button{
+ display:grid;
+ place-items:center;
+ width:clamp(46px,9dvh,68px);
+ height:auto;
+ min-width:0;
+ min-height:0;
+ max-width:none;
+ aspect-ratio:1;
+ padding:0;
+ border:1px solid #c68c51;
+ border-radius:50%;
+ background:linear-gradient(#51331eeb,#1e140ef5);
+ color:#ffe0a9;
+ box-shadow:inset 0 0 0 2px #ffcf8a26,0 3px 6px #0007;
+ touch-action:none;
+ user-select:none;
+ -webkit-touch-callout:none;
+ pointer-events:auto;
+}
+body.is-playing #touch-controls:has(#world-joystick) .touch-actions button:is(:active,[aria-pressed=true]){
+ background:#905126;
+ border-color:#ffcf87;
+}
+#touch-controls:has(#world-joystick) .touch-actions [data-icon]{display:grid;place-items:center;width:55%;height:55%}
+#touch-controls:has(#world-joystick) .touch-actions svg{display:block;width:100%;height:100%}
+@media (orientation:landscape) and (any-pointer:coarse){
+ body.is-playing:has(#world-joystick) .wood-nav{
+  left:max(8px,env(safe-area-inset-left))!important;
+  right:auto!important;
+  bottom:max(6px,env(safe-area-inset-bottom))!important;
+  width:max-content;
+  max-width:58vw;
+  transform:none!important;
+ }
+ body.is-playing:has(#world-joystick) .play-bottom{
+  left:auto!important;
+  right:max(8px,env(safe-area-inset-right))!important;
+  top:auto!important;
+  bottom:max(6px,env(safe-area-inset-bottom))!important;
+ }
+}
+@media (orientation:landscape) and (max-height:600px) and (any-pointer:coarse){
+ body.is-playing #touch-controls:has(#world-joystick){--touch-dock:54px}
+ body.is-playing:has(#world-joystick) .wood-nav{height:auto}
+ body.is-playing:has(#world-joystick) .wood-nav button{min-width:0;flex-basis:clamp(30px,5.7vw,43px);width:clamp(30px,5.7vw,43px)}
+ body.is-playing:has(#world-joystick) .play-bottom .small-button{width:39px;min-width:39px;height:39px;min-height:39px}
+}
+@media (orientation:portrait) and (max-width:700px){
+ body.is-playing #touch-controls:has(#world-joystick){--touch-dock:119px}
+}
+@media (orientation:landscape) and (any-pointer:coarse){
+ body.is-playing:has(#world-joystick) .zone-bar{
+  left:50%;right:auto;top:40px;bottom:auto;transform:translateX(-50%);
+  min-width:0;max-width:min(35vw,240px);padding:4px 12px;
+  border-image-width:5px;gap:6px;
+ }
+ body.is-playing:has(#world-joystick) .zone-bar h2{
+  margin:0;font-size:clamp(13px,2vw,21px);line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ }
+ body.is-playing:has(#world-joystick) .zone-bar>div{min-width:0}
+ body.is-playing:has(#world-joystick) #zone-kicker{display:none}
+ body.is-playing:has(#world-joystick) #online-count{margin:0;font-size:9px;white-space:nowrap}
+}
+@media (orientation:landscape) and (max-height:600px) and (any-pointer:coarse){
+ body.is-playing:has(#world-joystick) .world-top{
+  display:flex!important;align-items:center;
+  padding-left:max(7px,env(safe-area-inset-left))!important;
+  padding-right:max(7px,env(safe-area-inset-right))!important;
+ }
+ body.is-playing:has(#world-joystick) #world-roster-strip{
+  left:max(112px,calc(env(safe-area-inset-left) + 102px));
+  right:max(100px,calc(env(safe-area-inset-right) + 90px));
+  height:26px;
+ }
+ body.is-playing:has(#world-joystick) .roster-strip-person{
+  width:20px;height:23px;flex-basis:20px;
+ }
+ body.is-playing:has(#world-joystick) .world-minimap{
+  top:6px;right:max(8px,env(safe-area-inset-right));
+  width:84px!important;height:58px!important;padding:3px;
+ }
+ body.is-playing:has(#world-joystick) .world-environment-hud{
+  left:max(7px,env(safe-area-inset-left));right:auto!important;max-width:106px!important;
+ }
+ body.is-playing:has(#world-joystick) .world-environment-hud button{gap:3px;padding:2px!important}
+ body.is-playing:has(#world-joystick) .world-environment-hud svg{width:16px;height:16px}
+ body.is-playing:has(#world-joystick) .world-environment-hud strong{font-size:11px}
+ body.is-playing:has(#world-joystick) .world-environment-hud small{font-size:8px}
+ body.is-playing:has(#world-joystick) .world-event-chip{
+  left:max(7px,env(safe-area-inset-left))!important;top:78px!important;
+  width:auto;max-width:125px!important;padding:4px 6px!important;
+ }
+ body.is-playing:has(#world-joystick) .shelter-race{
+  top:104px!important;right:max(8px,env(safe-area-inset-right))!important;
+  width:104px!important;padding:5px!important;
+ }
+}
+
+@media (orientation:landscape) and (any-pointer:coarse){
+ body.is-playing #portal .context-key{display:none}
+ body.is-playing #portal .context-icon{display:grid;order:-1}
+}
+@media (orientation:landscape) and (max-height:600px) and (any-pointer:coarse){
+ body.is-playing:has(#world-joystick) .world-event-chip strong{
+  font-size:10px;letter-spacing:.45px;line-height:1.2;
+ }
+ body.is-playing:has(#world-joystick) #world-roster-strip{width:max-content;max-width:calc(100% - 212px)}
+}
