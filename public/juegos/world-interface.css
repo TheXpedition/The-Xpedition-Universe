@@ -40,3 +40,6 @@ dialog{background:var(--panel);border:1px solid var(--line);border-radius:20px;c
 
 #staff-toggle,.is-playing #staff-toggle{position:static;inset:auto;display:flex;flex-direction:row;width:auto;align-items:center;gap:7px;padding:8px 11px;box-shadow:none}#staff-toggle svg{width:17px;height:17px}
 @media(max-width:480px){.world-top .wood-logo,.is-playing .world-top .wood-logo{width:34px}.world-top .universe-wordmark{display:none}.world-top #staff-toggle strong{display:none}.world-top #staff-toggle{width:31px;height:31px;padding:6px}.world-top .top-tools{gap:6px}.world-top .expedition-pass{max-width:145px}.world-top .expedition-pass strong{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+
+.player-care-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:12px}
+.player-care-actions button{min-height:44px;border-radius:999px;padding:8px 14px}

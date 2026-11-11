@@ -23,7 +23,7 @@ import {createWorldSurveillance} from './world-surveillance-service.mjs';
 import {createWorldMemorials} from './world-memorial-service.mjs';
 import {createWorldIntimacy} from './world-intimacy-service.mjs';
 import {applyEncounterHealth} from './public/juegos/world-encounter-health.mjs';
-import {setInfection} from './public/juegos/world-infectious-health.mjs';
+import {infectionState,setInfection} from './public/juegos/world-infectious-health.mjs';
 import {PRAYER_REASONS,PRAYER_DURATION} from './public/juegos/world-prayer.mjs';
 import {stopActorMotion,standActor} from './world-actor-motion.mjs';
 import {createWorldCharacters} from './world-character-service.mjs';
@@ -367,6 +367,35 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
    try{await new Promise(resolve=>setTimeout(resolve,PRAYER_DURATION));if(c.activityToken!==token||!clients.has(c.ws)||c.zone.id!==zone||c.wellness.life.status!=='alive')fail(409,'Interrumpiste la oración; no se aplicó ningún cambio.');const result=await survival.act(user,{action:'pray',reason:input.reason,requestId:randomUUID()},await survivalContext(user));c.wellness=result.body;c.vitals=result.vitals;c.gear=result.data.personal;sendWellness(c);sendVitals(c);json(res,{...result.data,body:wellnessSnapshot(c.wellness),vitals:vitalView(c.vitals)});}finally{if(c.activityToken===token){c.activityToken=null;c.activity=null;c.careBusy=false;presence(c);}}return true;
   }
   if(p==='/api/world/survival/action'&&req.method==='POST'){const input=await body(req),c=clientFor(user);if(!c||c.wellness.life.status!=='alive'||c.eating||c.careBusy||c.tradeBusy||c.seat)fail(409,'Termina la acción actual y acércate al recurso.');const ctx=await survivalContext(user,input?.teamId);c.careBusy=true;c.input={x:0,y:0};c.p.path=[];c.p.moving=false;try{const result=await survival.act(user,input,ctx);c.wellness=result.body;c.vitals=result.vitals;c.gear=result.data.personal;c.hasPerishable=perishable((await foodStore.snapshot(user.id)).inventory.items);sendWellness(c);sendVitals(c);await observeLife(c);send(c,{type:'survival-personal',data:result.data});json(res,{...result.data,body:wellnessSnapshot(c.wellness),vitals:vitalView(c.vitals)});}finally{c.careBusy=false;}return true;}
+  if(p==='/api/world/staff/player-care'&&req.method==='POST'){
+   if(!await can(user,'direct')&&!await can(user,'moderate'))fail(403,'Solo Staff puede ajustar la salud de un personaje.');
+   const input=await body(req),action=input?.action;
+   if(typeof input?.target!=='string'||!['clear-states','restore-needs','restore-health'].includes(action))fail(400,'Selecciona un personaje y una acción válida.');
+   const staff=clientFor(user),target=clientFor({id:input.target});
+   const inWorld=c=>c&&clients.has(c.ws)&&!protocol.engaged(c.user.id)&&!grip.engaged(c.user.id)&&!chef.engaged(c.user.id);
+   const verifyTarget=()=>{
+    if(!inWorld(staff)||!inWorld(target)||staff.zone.id!==target.zone.id)fail(409,'El personaje debe estar conectado en tu misma zona de World.');
+    if(target.wellness.life.status==='dead')fail(409,'Usa la opción de revivir para un personaje fallecido.');
+   };
+   verifyTarget();
+   await patientChange(target.user,async({body,vitals})=>{
+    verifyTarget();
+    if(action==='clear-states'){
+     body.conditions=[];
+     body.exposure=createWellness().exposure;
+     body.wetness=0;
+     body.infection=infectionState();
+     body.clinical.injuries=[];
+     body.clinical.casts={};
+     body.clinical.mentalPressure=0;
+     body.life.vomitUntil=0;
+    }
+    if(action==='restore-needs')Object.assign(vitals,{hunger:100,energy:100,sleep:100,stress:0});
+    if(action==='restore-health')vitals.health=100;
+    return {body,vitals};
+   });
+   json(res,{ok:true});return true;
+  }
   if(p==='/api/world/health/profile'&&req.method==='POST'){const input=await body(req);if(typeof input?.procedureConsent!=='boolean')fail(400,'Confirma o rechaza el procedimiento.');json(res,await patientChange(user,async({body,vitals})=>{if(!body.reproductive.enabled)fail(409,'Este cuidado no corresponde al personaje.');body.reproductive.procedureConsent=input.procedureConsent;return {body,vitals};}));return true;}
   if(p==='/api/world/clinic-traits'&&req.method==='GET'){if(!await can(user,'direct'))fail(403,'Solo Dirección puede consultar antecedentes.');const target=url.searchParams.get('userId');if(!target||!await db.one('SELECT id FROM users WHERE id=?',target))fail(400,'Selecciona una cuenta.');const value=clientFor({id:target})?.wellness||await healthStore.loadBody(target);json(res,{traits:value.clinical.traits,pregnant:value.reproductive.pregnant,infectionType:value.infection.type});return true;}if(p==='/api/world/clinic-traits'&&req.method==='PUT'){if(!await can(user,'direct'))fail(403,'Solo Dirección puede registrar antecedentes del personaje.');const input=await body(req);if(typeof input?.target!=='string'||!await db.one('SELECT id FROM users WHERE id=?',input.target))fail(400,'Selecciona una cuenta.');json(res,await patientChange({id:input.target},async({body,vitals})=>{if(input.hivType!==undefined){if(!['hiv-1','hiv-2'].includes(input.hivType))fail(400,'Selecciona VIH-1 o VIH-2.');if(body.infection.type&&body.infection.type!==input.hivType)fail(409,'Este personaje ya tiene otro antecedente infeccioso registrado.');setInfection(body,input.hivType);}if(input.autism!==undefined)body.clinical.traits.autism=input.autism===true;if(input.downSyndrome!==undefined)body.clinical.traits.downSyndrome=input.downSyndrome===true;if(input.pregnant!==undefined){if(input.pregnant===true&&!pregnancyEligible(clientFor({id:input.target})?.characterId||''))fail(409,'Este personaje no tiene un perfil reproductivo aplicable.');body.reproductive.pregnant=input.pregnant===true;body.reproductive.tested=false;}return {body,vitals};}));return true;}
   if(p==='/api/world/intimacy/nearby'&&req.method==='GET'){const c=clientFor(user);if(!c)fail(409,'Entra al mundo primero.');json(res,{people:intimacy.candidates(c,url.searchParams.get('bedId')),hasProtection:c.wellness.medicines.condom>0});return true;}
