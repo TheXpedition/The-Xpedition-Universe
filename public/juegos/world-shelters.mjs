@@ -15,7 +15,7 @@ export const shelterForZone=zone=>SHELTERS.find(s=>s.inside===zone);
 export const shelterAt=zone=>SHELTERS.find(s=>s.outside===zone);
 export const SHELTER_MATERIALS=Object.freeze([
  {id:'nails',name:'Clavos',resource:'scrap',zone:'gasolinera-interior',place:'Tienda de la gasolinera',x:.65,detail:'Un lote de clavos para fijar la estructura.'},
- {id:'planks',name:'Tablones',resource:'plank',zone:'muelle-ruinas',place:'Muelle de las ruinas',x:.54,detail:'Tablones secos para el suelo y las paredes.'},
+ {id:'planks',name:'Tablones',resource:'plank',zone:'muelle-ruinas',place:'Muelle de las ruinas',x:.73,detail:'En el camino de piedra, frente a la lancha encallada.'},
  {id:'foundation',name:'Piedras de cimiento',resource:'stone',zone:'poza-cascada',place:'Poza de la cascada',x:.66,detail:'Piedras para estabilizar la base.'},
  {id:'brackets',name:'Herrajes',resource:'toolkit',zone:'cocina',place:'Cocina',x:.59,detail:'Escuadras y bisagras para uniones y puertas.'},
  {id:'roofing',name:'Láminas de techo',resource:'scrap',zone:'avion-interior',place:'Interior del avión',x:.62,detail:'Láminas recuperadas para cubrir el refugio.'},
@@ -28,11 +28,12 @@ export const SHELTER_MATERIALS=Object.freeze([
 
 // Place supplies on the existing walkable floor, reachable from that room's spawn.
 export function shelterSupplyProp(material,map){
+ const planks=material.id==='planks',halfWidth=planks?66:43;
  const wanted=material.x*map.width,ys=[.5,.35,.65,.2,.8].map(f=>(map.walkBand[0]+(map.walkBand[1]-map.walkBand[0])*f)*map.height);
  let point;
  for(const dx of [0,-50,50,-100,100,-180,180]){for(const y of ys){const x=wanted+dx;if(hasFloor(map,x,y)&&clearPoint(map,x,y)){point={x,y};break;}}if(point)break;}
  if(!point)throw Error('No hay suelo para el material de construcción: '+material.id);
- return {id:'shelter-supply-'+material.id,type:'shelter-supply',shelterSupply:material.id,shelterMaterialName:material.name,...point,w:76,h:0,solid:false,approach:{...point},contextAnchor:{x:point.x,y:point.y-35},hitRect:[point.x-43,point.y-145,point.x+43,point.y+15]};
+ return {id:'shelter-supply-'+material.id,type:'shelter-supply',shelterSupply:material.id,shelterMaterialName:material.name,...point,w:76,h:0,solid:false,approach:{...point},contextAnchor:{x:point.x,y:point.y-35},hitRect:[point.x-halfWidth,point.y-145,point.x+halfWidth,point.y+15]};
 }
 export function buildShelterProps(maps,view){
  for(const map of Object.values(maps)){map.props=map.props.filter(p=>!p.shelterSupply);map.interactionRevision=(map.interactionRevision||0)+1;}

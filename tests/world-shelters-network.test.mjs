@@ -57,3 +57,24 @@ test('Direction can move a participant out of their old shelter or leave them wi
   assert(view.shelters.every(s=>s.built&&s.percent===100));
  }finally{await f.close();}
 });
+
+test('the relocated dock planks are independently available to both shelter teams',async()=>{
+ const material=SHELTER_MATERIALS.find(m=>m.id==='planks'),zone=material.zone;
+ const point=shelterSupplyProp(material,WORLD_MAPS[zone]);
+ const f=await liveFixture('relocated-planks',[
+  {id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},
+  {id:'planks-left',character:'bruno',zone,x:point.x,y:point.y},
+  {id:'planks-right',character:'alice',zone,x:point.x+45,y:point.y}
+ ]);
+ try{
+  const a=await f.connect('planks-left'),b=await f.connect('planks-right');
+  const view=p=>p.messages.filter(m=>m.shelters).at(-1)?.shelters;
+  assert(view(a).available.includes('planks')&&view(b).available.includes('planks'));
+  f.send(a,{type:'interact',objectId:point.id});
+  await f.until(()=>view(a)?.inventory.includes('planks'));
+  assert(!view(a).available.includes('planks'));
+  assert(view(b).available.includes('planks'));
+  f.send(b,{type:'interact',objectId:point.id});
+  await f.until(()=>view(b)?.inventory.includes('planks'));
+ }finally{await f.close();}
+});

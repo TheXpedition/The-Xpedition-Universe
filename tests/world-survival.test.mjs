@@ -1,3 +1,8 @@
+import {openDatabase} from '../database.mjs';
+import {createHealthStore} from '../world-health-service.mjs';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {createRequire} from 'node:module';
@@ -123,4 +128,27 @@ test('the actual Canvas night darkens the sky more than the readable floor witho
  const day=c.getImageData(0,0,200,100).data;paintEnvironment(c,200,100,{environment:weather('clear',22),map:{id:'base',width:200,height:100},camera:{project:(x,y)=>({x,y})}});const night=c.getImageData(0,0,200,100).data;
  const luminance=data=>{let sum=0;for(let i=0;i<data.length;i+=4)sum+=.2126*data[i]+.7152*data[i+1]+.0722*data[i+2];return sum/(data.length/4);};
  assert(luminance(night)>luminance(day)*.3,'night retains readable midtones');assert(luminance(night)<luminance(day)*.65,'night is visibly darker than daytime');const sample=y=>{const i=(y*200+100)*4;return night[i]*.2126+night[i+1]*.7152+night[i+2]*.0722;};assert(sample(10)<sample(90),'the sky is darker than the walking floor');const floor=(90*200+100)*4;assert(night[floor+2]/night[floor]<1.1,'the floor is not saturated blue');
+});
+
+test('moving the calendar to day four preserves elapsed time, the time of day and other saved state',async()=>{
+ const dir=await mkdtemp(join(tmpdir(),'world-calendar-')),db=await openDatabase(dir);
+ try{
+  let at=start;
+  const store=createHealthStore({db,now:()=>at});
+  const value=createEnvironment({anchorAt:at-60000,anchorMinutes:66*1440+280,weather:'auto'},at);
+  const before=environmentSnapshot(value,at),other=JSON.stringify({collected:{bruno:{planks:at}}});
+  await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','world',JSON.stringify(value),at-60000);
+  await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','shelter-test',other,at-60000);
+  const first=await store.rebaseCalendar({day:4,rate:12,existedBefore:at});
+  assert.equal(first.day,4);
+  assert.equal(first.rate,12);
+  for(const key of ['time','totalMinutes','weather','phase'])assert.equal(first[key],before[key]);
+  at+=7200000;
+  assert.equal(await store.rebaseCalendar({day:4,rate:12,existedBefore:at}),null);
+  const after=environmentSnapshot(await store.environment(),at);
+  assert.equal(after.day,5);
+  assert.equal(after.time,before.time);
+  assert.equal(after.totalMinutes,before.totalMinutes+1440);
+  assert.equal((await db.one('SELECT state FROM world_environment WHERE id=?','shelter-test')).state,other);
+ }finally{await db.close();await rm(dir,{recursive:true,force:true});}
 });
