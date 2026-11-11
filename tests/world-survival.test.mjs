@@ -111,7 +111,8 @@ test('forest ambience changes from daytime birds to lower nighttime calls and cl
 
 test('weather effects stay outside and reduced-motion mode disables lightning',()=>{
  const operations=[],noop=()=>{},context=new Proxy({save:noop,restore:noop,fillRect(){operations.push(['fill',this.globalCompositeOperation,this.globalAlpha]);},stroke(){operations.push(['stroke',this.globalCompositeOperation]);},createRadialGradient:()=>({addColorStop:noop})},{get:(o,k)=>k in o?o[k]:noop,set:(o,k,v)=>(o[k]=v,true)}),base={width:400,height:200,id:'base'},camera={project:(x,y)=>({x,y})},environment={...weather('storm'),weatherSince:start};
- paintEnvironment(context,400,200,{environment,map:base,camera,time:start+2500});assert(operations.some(op=>op[1]==='screen'));assert(operations.filter(op=>op[0]==='stroke').length>100);
+ paintEnvironment(context,400,200,{environment,map:base,camera,time:start+2500});assert(operations.some(op=>op[1]==='screen'));assert.equal(operations.filter(op=>op[0]==='stroke').length,98,'97 rain streaks plus lightning');
+ operations.length=0;paintEnvironment(context,400,200,{environment,map:base,camera,time:start+2500,balanced:true});assert.equal(operations.filter(op=>op[0]==='stroke').length,69,'balanced profile limits storm particles');
  operations.length=0;paintEnvironment(context,400,200,{environment,map:base,camera,time:start+2500,reducedMotion:true});assert(!operations.some(op=>op[1]==='screen'));
  operations.length=0;paintEnvironment(context,400,200,{environment,map:{...base,id:'cocina'},camera,time:start+2500});assert.equal(operations.length,0,'a protected interior gets neither rain nor a fullscreen flash');
 });

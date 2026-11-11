@@ -62,7 +62,7 @@ export class WorldScene{
   c.restore();
   if(!['interior','studio','cave','apocalypse'].includes(map.sky)){c.fillStyle='#f2fbff';c.globalAlpha=.4;for(let i=0;i<(this.quality.lite?7:22);i++){const x=(i*117+time/90)%w,y=(i*73+time/65)%(h+20);c.fillRect(x,y,i%3?2:4,2);}c.globalAlpha=1;}
   if(night){c.globalAlpha=.025+(ceremony?.phase==='intro'?Math.max(0,Math.min(1,(introTime(ceremony,time)-32)/6))*.13:.1);c.fillStyle='#06162e';c.fillRect(0,0,w,h);c.globalAlpha=1;c.fillStyle='#08121c';c.fillRect(0,0,w,30);c.fillRect(0,h-30,w,30);c.fillStyle='#d8eaf1';c.font='700 14px "World Condensed",sans-serif';c.textAlign='left';c.fillText(shot.label||'EL CONSEJO',35,21);if(ceremony?.paused){c.textAlign='right';c.fillStyle='#ffdb7b';c.fillText('CEREMONIA EN PAUSA',w-35,21);}}
-  paintEnvironment(c,w,h,{environment:this.environment,map,camera:this.camera,time,lite:this.quality.lite,reducedMotion:this.quality.reducedMotion});
+  paintEnvironment(c,w,h,{environment:this.environment,map,camera:this.camera,time,lite:this.quality.lite,balanced:this.quality.tier==='balanced',reducedMotion:this.quality.reducedMotion});
   paintSurvival(c,w,h,{shared:this.survival,map,camera:this.camera,players:this.players,time,environment:this.environment,lite:this.quality.lite});
   if(map.provisionalArtwork){c.save();c.font='600 11px system-ui';c.textAlign='left';c.fillStyle='#16110cbb';c.fillRect(14,h-38,285,24);c.fillStyle='#e7c498';c.fillText('CABINA · ILUSTRACIÓN PROVISIONAL',24,h-22);c.restore();}
   if(!overview)for(const [id,b]of this.bubbles){

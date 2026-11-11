@@ -6,6 +6,8 @@ const art={
  'arrow-left':'<path d="m14 6-6 6 6 6"/>',
  'arrow-right':'<path d="m10 6 6 6-6 6"/>',
  jump:'<path d="M4 21h16M8 17l4-5 4 5M12 12V3m-4 4 4-4 4 4"/>',
+ 'world-sprint':'<circle cx="17.7" cy="4.7" r="2.5" fill="currentColor" stroke="none"/><path stroke-width="2.7" d="m6 7 5-2 4 4 2 3 4-2m-6-1-4 6 4 3-4 4m0-7-3 3-4 3"/>',
+ 'world-leap':'<path stroke-width="2.8" d="m4 12 8-8 8 8M4 20l8-8 8 8"/>',
  run:'<circle cx="15" cy="4" r="2"/><path d="m12 8 4 3 4-1M5 10l5-3 3 2-3 6-4 1-3 5m7-6 5 2 1 4M2 6h5M1 13h4"/>',
  home:'<path class="icon-fill" d="m3 11 9-8 9 8v10H3Z"/><path d="m2 11 10-9 10 9M5 10v11h14V10M10 21v-7h5v7M7 7V3h3"/>',
  explore:'<path class="icon-fill" d="m12 2 9 10-9 10L3 12Z"/><path d="m12 2 9 10-9 10L3 12ZM16 8l-3 7-5 1 3-7Z"/><path d="M12 4v2M18 12h2M12 18v2M4 12h2"/>',
