@@ -149,20 +149,6 @@ body.is-playing #touch-controls:has(#world-joystick) .touch-actions button:is(:a
 @media (orientation:portrait) and (max-width:700px){
  body.is-playing #touch-controls:has(#world-joystick){--touch-dock:119px}
 }
-@media (orientation:landscape) and (any-pointer:coarse){
- body.is-playing:has(#world-joystick) .zone-bar{
-  left:50%;right:auto;top:40px;bottom:auto;transform:translateX(-50%);
-  min-width:0;max-width:min(35vw,240px);padding:4px 12px;
-  border-image-width:5px;gap:6px;
- }
- body.is-playing:has(#world-joystick) .zone-bar h2{
-  margin:0;font-size:clamp(13px,2vw,21px);line-height:1.15;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
- }
- body.is-playing:has(#world-joystick) .zone-bar>div{min-width:0}
- body.is-playing:has(#world-joystick) #zone-kicker{display:none}
- body.is-playing:has(#world-joystick) #online-count{margin:0;font-size:9px;white-space:nowrap}
-}
 @media (orientation:landscape) and (max-height:600px) and (any-pointer:coarse){
  body.is-playing:has(#world-joystick) .world-top{
   display:flex!important;align-items:center;
@@ -207,4 +193,39 @@ body.is-playing #touch-controls:has(#world-joystick) .touch-actions button:is(:a
   font-size:10px;letter-spacing:.45px;line-height:1.2;
  }
  body.is-playing:has(#world-joystick) #world-roster-strip{width:max-content;max-width:calc(100% - 212px)}
+}
+
+body:not(.is-playing)> #world-zone-banner{display:none}
+body.is-playing> #world-zone-banner{
+ position:fixed;
+ z-index:45;
+ top:max(calc(var(--top,94px) + 57px),155px);
+ left:50%;
+ right:auto;
+ bottom:auto;
+ transform:translateX(-50%);
+ pointer-events:none;
+ width:max-content;
+ min-width:0;
+ max-width:min(48vw,340px);
+ padding:7px 17px;
+ text-align:center;
+}
+body.is-playing> #world-zone-banner h2{margin:0;line-height:1.15;overflow-wrap:anywhere}
+body.is-playing> #world-zone-banner #online-count{margin:0}
+@media (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body.is-playing> #world-zone-banner{
+  top:80px;
+  max-width:44vw;
+  padding:4px 10px;
+  border-image-width:5px;
+ }
+ body.is-playing> #world-zone-banner #zone-kicker{display:none}
+ body.is-playing> #world-zone-banner h2{font-size:clamp(13px,2.4vw,17px)}
+ body.is-playing> #world-zone-banner #online-count{font-size:8px;line-height:1.1}
+}
+@media (orientation:portrait) and (max-width:700px){
+ body.is-playing> #world-zone-banner{top:calc(var(--top,94px) + 42px);padding:4px 9px;max-width:60vw}
+ body.is-playing> #world-zone-banner #zone-kicker{display:none}
+ body.is-playing> #world-zone-banner h2{font-size:15px}
 }

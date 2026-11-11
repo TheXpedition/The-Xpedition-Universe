@@ -1,6 +1,15 @@
 export const FRONT_Y=.62,ART_SCALE=1.5;
 export function frontPoint(map,x,y){return {x:x*map.width,y:y*map.height};}
-export function frontCameraTarget(map,w,h,actor,shot){const wide=map.id==='eliminacion'&&w/h>1.25&&!shot?.close,zoom=(wide?Math.min(w/map.width,h/map.illustration.height):h/map.illustration.height)*(shot?.close?1.18:1),hx=w/(2*zoom),x=map.width>hx*2?Math.max(hx,Math.min(map.width-hx,shot?.x??actor?.x??map.spawn[0])):map.width/2;return {x,y:map.illustration.height-h/(2*zoom),zoom};}
+export function frontCameraTarget(map,w,h,actor,shot){
+ const width=map.illustration.width,height=map.illustration.height;
+ const fitHeight=h/height,fitWidth=w/width;
+ const directedWide=map.id==='eliminacion'&&w/h>1.25&&!shot?.close;
+ const zoom=shot?(directedWide?Math.min(fitWidth,fitHeight):fitHeight)*(shot.close?1.18:1):Math.max(fitWidth,fitHeight);
+ const halfWidth=w/(2*zoom);
+ const center=shot?.x??actor?.x??map.spawn[0];
+ const x=width>halfWidth*2?Math.max(halfWidth,Math.min(width-halfWidth,center)):width/2;
+ return {x,y:height-h/(2*zoom),zoom};
+}
 export function createFrontScene({id,asset,name,description,walk=[.746,.946],spawn=[.28,.85],artScale=ART_SCALE,...extra}){
  const width=asset.width*artScale,height=asset.height*artScale/FRONT_Y,top=height*walk[0],bottom=height*walk[1];
  return {id,name,short:name.toUpperCase(),description,width,height,bounds:[12,top-1,width-12,bottom+1],spawn:[width*spawn[0],height*spawn[1]],spawns:{},ground:'ash',sky:'apocalypse',projection:'front',boundedFloor:true,avatarHeight:186,walkBand:walk,illustration:{...asset,width,height:height*FRONT_Y},floors:[[[14,top],[width-14,top],[width-14,bottom],[14,bottom]]],paths:[],props:[],...extra};
