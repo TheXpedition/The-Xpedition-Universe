@@ -139,12 +139,12 @@ test('moving the calendar to day four preserves elapsed time, the time of day an
   const before=environmentSnapshot(value,at),other=JSON.stringify({collected:{bruno:{planks:at}}});
   await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','world',JSON.stringify(value),at-60000);
   await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','shelter-test',other,at-60000);
-  const first=await store.rebaseCalendar({day:4,rate:12,existedBefore:at});
+  const first=await store.rebaseCalendar({day:4,rate:12});
   assert.equal(first.day,4);
   assert.equal(first.rate,12);
   for(const key of ['time','totalMinutes','weather','phase'])assert.equal(first[key],before[key]);
   at+=7200000;
-  assert.equal(await store.rebaseCalendar({day:4,rate:12,existedBefore:at}),null);
+  assert.equal(await store.rebaseCalendar({day:4,rate:12}),null);
   const after=environmentSnapshot(await store.environment(),at);
   assert.equal(after.day,5);
   assert.equal(after.time,before.time);

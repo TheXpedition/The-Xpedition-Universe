@@ -21,15 +21,10 @@ if(serverId&&!serverRow)throw Error('El servidor de World no existe.');
 const serverConfig=serverRow?{id:serverRow.id,name:serverRow.name,...JSON.parse(serverRow.settings)}:null;
 const db=serverId?await serverDatabase(base,serverId,{leaseOwner:process.env.WORLD_LEASE_OWNER}):base;
 if(serverId)await db.run('INSERT INTO world_access(resource,enabled,updated_by,updated) VALUES(?,1,?,?) ON CONFLICT(resource) DO NOTHING','world',serverRow.creator,Date.now());
-// Apply the November calendar change only to the sole existing public World.
-if(process.env.NODE_ENV==='production'&&process.env.RENDER_EXTERNAL_URL){
- const existedBefore=Date.parse('2026-11-11T18:40:00Z');
- const rooms=(await base.all('SELECT id,settings FROM world_servers WHERE enabled=1 AND created<=?',existedBefore))
-  .filter(room=>{const settings=JSON.parse(room.settings);return !settings.archivedAt&&!settings.deletingAt;});
- if(rooms.length<=1&&serverId===(rooms[0]?.id||'')){
-  const snapshot=await createHealthStore({db}).rebaseCalendar({day:4,rate:12,existedBefore});
-  if(snapshot)console.info('World calendar adjusted:',serverId||'default','day='+snapshot.day,'time='+snapshot.time,'realMinutesPerDay='+1440/snapshot.rate);
- }
+// Rebase only the existing production room confirmed in Render.
+if(process.env.RENDER_EXTERNAL_URL&&serverId==='0d03410e-b6bc-4a91-a01f-5cd2ec8e872a'){
+ const snapshot=await createHealthStore({db}).rebaseCalendar({day:4,rate:12});
+ if(snapshot)console.info('World calendar adjusted:',serverId,'day='+snapshot.day,'time='+snapshot.time,'realMinutesPerDay='+1440/snapshot.rate);
 }
 await loadAccountVerifications(db);
 if(!serverId&&process.env.NODE_ENV==='production'&&process.env.RENDER_EXTERNAL_URL){const published=applicationURL(process.env.RENDER_EXTERNAL_URL);await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','world-service:public-url',JSON.stringify({url:published.href,service:'world'}),Date.now());}

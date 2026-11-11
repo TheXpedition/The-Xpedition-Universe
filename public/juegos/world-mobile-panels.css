@@ -421,3 +421,240 @@
  body[data-view=home]:not(.is-playing) #menu .home-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
  body[data-view=home] #menu .home-stats button{grid-column:1/-1;justify-self:start}
 }
+/* Explore keeps the wordmark and the player card in distinct columns. */
+body.has-vitals.is-playing:has(#world-joystick) .world-top{
+ display:grid!important;
+ column-gap:clamp(8px,1.2vw,18px)!important;
+ align-items:center;
+}
+body.has-vitals.is-playing .world-top>a.stream-brand{
+ box-sizing:border-box;
+ justify-self:start;
+ max-width:100%!important;
+ color:#fff;
+}
+body.has-vitals.is-playing .world-top>.expedition-pass{
+ display:flex;
+ align-items:center;
+ box-sizing:border-box;
+ min-width:0!important;
+ background:#17100b url('/juegos/ui/ash-grain.svg');
+ border:1px solid transparent;
+ border-image:url('/juegos/ui/ember-frame.svg') 16 / 10px / 0 stretch;
+ border-radius:0;
+ box-shadow:none;
+}
+body.has-vitals.is-playing .world-top>.expedition-pass .portrait{
+ box-sizing:border-box;
+ flex-shrink:0;
+ border:1px solid #cd8e4e;
+ border-radius:4px;
+}
+body.has-vitals.is-playing .world-top>.expedition-pass>div{min-width:0;overflow:visible}
+body.has-vitals.is-playing .world-top>.expedition-pass strong{
+ color:#fff1d3;
+ line-height:1.15!important;
+}
+body.has-vitals.is-playing .world-top>.expedition-pass .wallet-balances{
+ display:flex;
+ flex-wrap:nowrap;
+ gap:0 4px;
+ color:#f4c27e;
+ line-height:1.15!important;
+ margin-top:2px;
+}
+body.has-vitals.is-playing .world-top>.expedition-pass [data-balance]{
+ line-height:1.15!important;
+ margin:0!important;
+}
+@media (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body.has-vitals.is-playing{--explore-top:50px}
+ body.has-vitals.is-playing .world-top{
+  grid-template-columns:minmax(0,clamp(108px,16vw,158px)) minmax(184px,clamp(184px,26vw,246px)) minmax(0,1fr) auto;
+  height:var(--explore-top)!important;
+  min-height:var(--explore-top)!important;
+  max-height:var(--explore-top)!important;
+  padding-block:4px!important;
+ }
+ body.has-vitals.is-playing .world-top>a.stream-brand{
+  font-size:clamp(17px,2.65vw,25px)!important;
+ }
+ body.has-vitals.is-playing .world-top>.expedition-pass{
+  height:42px!important;
+  padding:4px 9px!important;
+  gap:6px!important;
+ }
+ body.has-vitals.is-playing .world-top>.expedition-pass .portrait{
+  width:28px!important;height:30px!important;min-width:28px!important;flex-basis:28px!important;
+ }
+ body.has-vitals.is-playing .world-top>.expedition-pass strong{
+  font:700 14px/1.15 'World Condensed',sans-serif!important;
+  letter-spacing:.45px;
+ }
+ body.has-vitals.is-playing .world-top>.expedition-pass .wallet-balances{font-size:10px!important}
+ body.has-vitals.is-playing .world-top>.expedition-pass [data-balance=tickets]::after{content:' ·'}
+ body.has-vitals.is-playing .stage-wrap{
+  top:var(--explore-top)!important;
+  height:calc(100dvh - var(--explore-top))!important;
+  max-height:calc(100dvh - var(--explore-top));
+ }
+ body.has-vitals.is-playing #world-roster-strip,
+ body.has-vitals.is-playing .world-environment-hud{top:calc(var(--explore-top) + 4px)!important}
+ body.has-vitals.is-playing .world-event-chip{top:calc(var(--explore-top) + 38px)!important}
+ body.has-vitals.is-playing .shelter-race{top:calc(var(--explore-top) + 64px)!important}
+ body.has-vitals.is-playing>#world-zone-banner{top:calc(var(--explore-top) + 40px)}
+}
+@media (orientation:landscape) and (max-height:600px) and (max-width:685px){
+ body.has-vitals.is-playing{--explore-top:73px}
+ body.has-vitals.is-playing .world-top{
+  grid-template-columns:minmax(106px,auto) minmax(184px,222px) minmax(0,1fr) auto;
+  grid-template-areas:'brand passport . tools' 'vitals vitals vitals vitals';
+  grid-template-rows:40px 22px;
+  row-gap:3px;
+ }
+ body.has-vitals.is-playing .world-top>.expedition-pass{height:37px!important}
+ body.has-vitals.is-playing .world-top>.world-vitals{height:22px!important;padding:1px 4px!important}
+ body.has-vitals.is-playing .world-top .world-vital{height:18px!important;padding-block:0!important}
+ body.has-vitals.is-playing .world-top .vital-caption{display:flex;flex-direction:row;align-items:center;gap:4px}
+}
+body[data-view=home] .home-links{
+ display:grid;
+ justify-items:stretch;
+ gap:5px;
+ margin-left:auto;
+}
+body[data-view=home] .home-links>label{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px;
+ color:#f2ce9e;
+ font-size:12px;
+}
+body[data-view=home] .home-links>label select{
+ width:auto;
+ min-width:108px;
+ padding:4px 7px;
+ color:#ffe5bb;
+ border:1px solid #b47745;
+ background:#271a12;
+ font-size:inherit;
+}
+body[data-view=home] #menu .home-links>button{margin:0}
+@media (max-width:760px), (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body[data-view=home] .home-links{gap:3px}
+ body[data-view=home] .home-links>label{font-size:11px}
+ body[data-view=home] .home-links>label select{min-width:88px;min-height:25px}
+ body[data-view=home] #menu .home-links>button{min-height:28px}
+}
+@media (orientation:portrait) and (max-width:760px){
+ body[data-view=home] .home-links{grid-column:1/-1;justify-self:stretch;margin-left:0}
+ body[data-view=home] #menu .home-links>button{grid-column:auto;justify-self:stretch}
+}
+.games-footer>label:has(#quality){display:none}
+@media (max-width:760px), (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body:not(.is-playing) .expedition-heading>button[data-action="return-play"]{display:none}
+ body:not(.is-playing) #world-main>.expedition-heading{margin:4px 3px 7px;padding:0}
+ body:not(.is-playing) .expedition-heading :is(.eyebrow,#view-subtitle){display:none}
+ body:not(.is-playing) .expedition-heading h1{font-size:20px;line-height:1.12;margin:0}
+ #chat-form input#chat,#modal input#dm-text{font-size:16px!important;line-height:1.25}
+ body[data-view=map] #menu .atlas-heading{padding:5px 8px;gap:3px 8px}
+ body[data-view=map] #menu .atlas-heading strong{font-size:17px}
+ body[data-view=map] #menu .atlas-controls{padding:4px 7px;gap:4px}
+ body[data-view=map] #menu .atlas-controls button{min-height:34px;padding:4px 7px}
+ body[data-view=map] #menu .atlas-viewport{height:clamp(138px,42dvh,285px);min-height:0}
+ body[data-view=map] #menu .zone-detail{padding:7px 9px}
+ body[data-view=map] #menu .zone-detail>h2{font-size:20px;line-height:1.12;margin:3px 0 5px}
+ body[data-view=map] #menu .zone-detail p{font-size:12px;line-height:1.3;margin:4px 0 6px}
+ body[data-view=map] #menu .atlas-destination{margin:5px 0}
+ body[data-view=map] #menu .atlas-destination select{font-size:16px;max-width:100%;min-width:0}
+ body[data-view=map] #menu .atlas-connections{margin-top:6px;padding-top:5px;gap:4px}
+ body[data-view=shop] #world-main #menu.world-shop{padding:8px}
+ body[data-view=shop] #menu .shop-heading{flex-direction:row;align-items:center;flex-wrap:wrap;gap:5px;padding-bottom:6px}
+ body[data-view=shop] #menu .shop-heading h2{font-size:21px;line-height:1.1;margin:0}
+ body[data-view=shop] #menu .shop-heading p{margin:0}
+ body[data-view=shop] #menu .shop-wallet{width:auto;gap:6px;font-size:11px}
+ body[data-view=shop] #menu .shop-sections{padding:5px 0 7px;gap:4px}
+ body[data-view=shop] #menu .shop-sections button{padding:5px 8px;min-height:34px;font-size:11px;flex:none}
+ body[data-view=shop] #menu .shop-shelf-heading{gap:7px;margin:1px 0 6px;align-items:center}
+ body[data-view=shop] #menu .shop-shelf-heading h3{font-size:17px;line-height:1.1;margin:0}
+ body[data-view=shop] #menu .shop-search{min-width:0;gap:3px}
+ body[data-view=shop] #menu .shop-search input{width:min(31vw,175px);min-width:0;font-size:16px;padding:4px 6px}
+ body[data-view=shop] #menu .shop-products{grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:7px}
+ body[data-view=shop] #menu .shop-product .shop-product-art{height:clamp(88px,28dvh,155px);padding:4px}
+ body[data-view=shop] #menu .shop-product-copy{padding:6px}
+ body[data-view=shop] #menu .shop-product-copy h3{font-size:15px;line-height:1.14;margin:3px 0 4px}
+ body[data-view=shop] #menu .shop-product-copy small{font-size:8px;line-height:1.2}
+ body[data-view=shop] #menu .shop-product .shop-buy{min-height:34px;font-size:11px;padding:4px 6px}
+ body[data-view=shop] #menu .shop-supply-hero{min-height:0;padding:7px;gap:10px}
+ body[data-view=shop] #menu .shop-crate-stage{min-height:112px}
+}
+@media (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body[data-view=map] #menu .apocalypse-map{
+  grid-template-columns:minmax(0,1fr) minmax(155px,28%);
+ }
+ body[data-view=map] #menu .zone-detail{
+  max-height:calc(100dvh - var(--top) - 100px);
+  overflow-y:auto;
+  border-top:0;
+  border-left:1px solid #805333;
+ }
+}
+@media (max-width:760px), (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body[data-view=map] #menu .atlas-regional{padding:6px}
+ body[data-view=map] #menu .atlas-sector-tabs{
+  flex-wrap:nowrap;overflow-x:auto;gap:4px;margin-bottom:5px;padding-bottom:2px;
+ }
+ body[data-view=map] #menu .atlas-sector-tabs button{min-height:34px;padding:4px 7px;flex:none}
+ body[data-view=map] #menu .atlas-sector-banner{
+  min-height:0;margin-bottom:5px;padding:6px 8px;align-items:center;gap:5px;
+ }
+ body[data-view=map] #menu .atlas-sector-banner h3{font-size:19px;line-height:1.1;margin:2px 0}
+ body[data-view=map] #menu .atlas-route-strip{gap:4px;padding:4px 0 6px}
+ body[data-view=map] #menu .atlas-route-strip button{padding:4px 7px;font-size:11px;min-height:34px}
+ body[data-view=map] #menu .atlas-location-grid{gap:5px}
+ body[data-view=map] #menu .atlas-location>img{height:clamp(46px,16dvh,102px)}
+ body[data-view=map] #menu .atlas-location-caption{padding:4px 5px}
+ body[data-view=map] #menu .atlas-location-caption strong{font-size:13px;line-height:1.13}
+}
+@media (max-width:760px), (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body[data-view=map] #world-main>.expedition-heading,
+ body[data-view=shop] #world-main>.expedition-heading{display:none}
+ body[data-view=shop] #menu .shop-heading .shop-eyebrow,
+ body[data-view=shop] #menu .shop-wallet>:not(button){display:none}
+ body[data-view=shop] #menu .shop-wallet button{min-height:32px;padding:4px 6px;font-size:11px}
+ body[data-view=shop] #menu .shop-wallet button .world-icon{width:17px;height:17px}
+ body[data-view=shop] #menu .shop-heading h2{font-size:19px}
+ body.is-playing #nearby-chat:not([hidden]){
+  position:fixed;
+  z-index:43;
+  left:max(8px,env(safe-area-inset-left));
+  right:auto;
+  bottom:max(57px,calc(env(safe-area-inset-bottom) + 54px))!important;
+  width:min(315px,calc(100vw - 16px))!important;
+  max-height:calc(100dvh - var(--explore-top, 94px) - 67px)!important;
+  pointer-events:auto;
+ }
+}
+@media (orientation:landscape) and (max-height:600px) and (max-width:1100px){
+ body.has-vitals:not(.is-playing){--top:48px}
+ body.has-vitals:not(.is-playing) .world-top{height:48px!important;min-height:48px!important}
+ body.has-vitals:not(.is-playing) .world-top>.expedition-pass{height:40px!important}
+ body[data-view=map] #menu .atlas-heading>:last-child{margin-left:0}
+}
+@media (orientation:landscape) and (max-height:360px){
+ body[data-view=home] #menu .hero-side{gap:4px;padding:5px 7px}
+ body[data-view=home] #menu .hero-actions{gap:3px}
+ body[data-view=home]:not(.is-playing) #menu .hero-actions :is(.yellow-button,.small-button){min-height:29px;padding-block:3px}
+ body[data-view=home] #menu .hero-passport{padding-bottom:4px}
+ body[data-view=home] #menu .hero-passport .portrait{height:26px;width:25px}
+}
+@media (orientation:landscape) and (max-height:420px) and (max-width:1100px){
+ body[data-view=map] #menu .atlas-viewport{height:clamp(94px,35dvh,146px)}
+ body[data-view=map] #menu .atlas-controls{padding-block:3px}
+ body[data-view=map] #menu .atlas-controls .atlas-back-regions{font-size:11px;white-space:normal}
+ body[data-view=shop] #menu .shop-heading p,
+ body[data-view=shop] #menu .shop-shelf-heading p{display:none}
+ body[data-view=shop] #menu .shop-search input{min-height:34px}
+ body[data-view=shop] #menu .shop-product .shop-product-art{height:clamp(68px,23dvh,95px)}
+}

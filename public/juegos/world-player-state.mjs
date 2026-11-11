@@ -3,10 +3,12 @@ export function interpolateWorldPlayer(player, now){
  if(!previous||!Number.isFinite(previous.x))return player;
  const progress=Math.max(0,Math.min(1,(now-previous.at)/100));
  if(progress===1)return player;
+ const z=previous.z+(player.z-previous.z)*progress;
  return {...player,
   x:previous.x+(player.x-previous.x)*progress,
   y:previous.y+(player.y-previous.y)*progress,
-  z:previous.z+(player.z-previous.z)*progress,
+  z,
+  ...(player.characterId==='maria-villegas'&&z>.5?{grounded:false}:{}),
   walk:previous.walk+(player.walk-previous.walk)*progress
  };
 }

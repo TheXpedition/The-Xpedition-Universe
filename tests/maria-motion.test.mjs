@@ -2,6 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 import {CharacterMotion,MotionDemo} from '../public/juegos/character-motion.mjs';
 import {MariaMotion} from '../public/juegos/maria-motion.mjs';
 import {WorldLocalMotion} from '../public/juegos/world-local-motion.mjs';
+import {interpolateWorldPlayer} from '../public/juegos/world-player-state.mjs';
 import {AvatarBank} from '../public/juegos/world-scene.mjs';
 import {createWorldPlayer,stepWorld,jumpWorld} from '../public/juegos/world-motion.mjs';
 import {createWellness} from '../public/juegos/world-wellness.mjs';import {createVitals} from '../public/juegos/world-vitals.mjs';import {applyCharacterHealthProfile,advanceHealthSystems} from '../public/juegos/world-health-systems.mjs';
@@ -56,6 +57,28 @@ test('delayed 10 Hz snapshots do not reverse walking, restart stopped legs or re
   if(pose.stage==='landing'&&previousStage!=='landing')landings++;previousStage=pose.stage;lastX=shown.x;
  }
  assert.equal(landings,1);assert(maxError<75,'prediction must stay near the authoritative position: '+maxError);
+});
+test('Maria acknowledges a delayed jump without dropping in midair or replaying the landing',()=>{
+ for(const clothing of ['heat','pajamas','cold']){
+  const p={...actor(),clothing},local=new WorldLocalMotion(),visual=new CharacterMotion();
+  local.setInput({x:0,y:0});local.sample(p,0,1000,map);
+  assert(local.jump(1000,p));
+  const trace=[];
+  for(let i=1;i<=50;i++){
+   const stamp=i*16,clock=1000+stamp;
+   if(i===12)Object.assign(p,{jumpAt:1120,z:8,vz:390,grounded:false,jumpGravity:1600,previous:{at:stamp}});
+   if(i===41)Object.assign(p,{z:0,vz:0,grounded:true,previous:{at:stamp}});
+   const shown=local.sample(p,stamp,clock,map);
+   const pose=visual.sample(shown,clock/1000);
+   trace.push({z:shown.z,stage:pose.stage});
+   if(i===38)assert(!local.jump(clock,p),'server cooldown prevents an extra local jump');
+  }
+  assert(trace[11].z>=trace[10].z&&trace[11].z>40,'acknowledgement does not snap the jump down');
+  assert.equal(trace.filter(({stage},i)=>stage==='landing'&&trace[i-1]?.stage!=='landing').length,1);
+  const landingPacket={...p,z:0,grounded:true,previous:{x:p.x,y:p.y,z:20,walk:0,at:700}};
+  assert.equal(interpolateWorldPlayer(landingPacket,750).grounded,false);
+  assert.equal(interpolateWorldPlayer(landingPacket,800).grounded,true);
+ }
 });
 test('demonstration repeats right, stop, left, stop, one physical jump and can be disabled without retaining input',()=>{
  const demo=new MotionDemo();assert.equal(demo.step(.02),null);demo.setActive(true);let right=0,left=0,still=0,jumps=0;for(let n=0;n<680;n++){const value=demo.step(.02);if(value.x>0)right++;else if(value.x<0)left++;else still++;if(value.jump)jumps++;}assert(right>100&&left>100&&still>100);assert.equal(jumps,2);demo.setActive(false);assert.equal(demo.step(.05),null);
