@@ -51,7 +51,12 @@ test('GET history reads recorded episodes while the remote engine returns 502',a
  try{
   const response=await fetch(h.url+'/api/world/x-protocol/history');
   assert.equal(response.status,200);
-  assert.deepEqual(await response.json(),{season:'Apocalypse II',episodes:[episode],cast:[contestant],final:null});
+  const history=await response.json();
+  assert.equal(history.season,'Apocalypse II');
+  assert.equal(history.episodes[0].trackOnly,true);
+  assert.deepEqual(history.episodes[1],{...episode,episode:2});
+  assert.deepEqual(history.cast.find(p=>p.characterId==='alice'),contestant);
+  assert.equal(history.final,null);
   assert.equal(upstreamCalls,0);
  }finally{await h.close();}
 });

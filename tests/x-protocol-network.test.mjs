@@ -11,7 +11,8 @@ test('staff fills connected human users before bots and summons participants fro
   f.send(staff,{type:'protocol-action',action:{type:'fillBots'}});await f.until(()=>latest()?.roster.length===18);assert.equal(latest().roster.filter(p=>!p.bot).length,2);
   f.send(staff,{type:'protocol-action',action:{type:'start'}});await f.until(()=>a.messages.some(m=>m.type==='protocol-start')&&b.messages.some(m=>m.type==='protocol-start'));
   assert(visitor.messages.some(m=>m.type==='protocol-start'),'connected spectators enter the same loading screen');assert.equal((await f.call('/api/world/bootstrap','connected-a')).protocolInvite,'/juegos/x-protocol/');
-  assert.deepEqual((await f.call('/api/world/x-protocol/history','connected-a')).episodes,[]);
+  const {episodes}=await f.call('/api/world/x-protocol/history','connected-a');
+  assert.deepEqual(episodes.map(e=>[e.episode,e.trackOnly]),[[1,true]]);
   const reconnected=await f.connect('connected-b',{claim:false});await f.until(()=>reconnected.messages.some(m=>m.type==='protocol-start'));
   f.send(staff,{type:'protocol-action',action:{type:'cancel'}});await f.until(()=>staff.messages.some(m=>m.type==='protocol-return'));assert.equal((await f.call('/api/world/bootstrap','connected-a')).protocolInvite,null);
  }finally{await f.close();}

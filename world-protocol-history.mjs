@@ -2,6 +2,22 @@ import {WORLD_CHARACTERS} from './public/juegos/world-characters.mjs';
 import {activeLosers,duelLosers,duelWinners} from './public/juegos/x-protocol/outcomes.mjs';
 const parse=s=>{try{return JSON.parse(s);}catch{return null;}};
 const character=id=>WORLD_CHARACTERS.find(p=>p.id===id);
+
+// This result predates the live archive. Reserve episode 1 without rewriting saved rows.
+const FIRST_EPISODE_ID = 'apocalypse-ii-ceremony-1';
+const FIRST_RESULTS = [
+ ['alice','SAFE'], ['andromeda','SAFE'], ['arisantana','HIGH'], ['bayron','HIGH'],
+ ['kareli','WIN'], ['bruno','SAFE'], ['daelly','SAFE'], ['eduard','SAFE'],
+ ['vitany','SAFE'], ['gabrielsab','LOW'], ['guillermo','HIGH'], ['ivy','SAFE'],
+ ['leandro','LOW'], ['marianito','SAFE'], ['roger','HIGH'], ['sallua','SAFE'],
+ ['vita','LOW'], ['carmine','HIGH'], ['peggy','OUT'], ['joseserna','OUT']
+];
+function firstEpisode(){
+ return {id:FIRST_EPISODE_ID,episode:1,challenge:'Ceremonia 1',trackOnly:true,
+  cast:FIRST_RESULTS.map(([characterId,result])=>({
+   id:characterId,characterId,name:characterId==='vitany'?'Vitany':character(characterId).name,result
+  }))};
+}
 const exitCodes={quit:'QUIT',resigned:'QUIT',disqualified:'DISQ',disq:'DISQ',injured:'OUT',out:'OUT',dead:'DEAD'};
 export function episodeCell(s,p){
  const a=s.advantages||{},nominees=new Set([...Object.keys(s.nominationReasons||{}),...(s.skulls.order||[]),...(s.nominees||[])]),rank=s.ranking.findIndex(r=>r.id===p.id);
@@ -30,8 +46,8 @@ export function publicProtocolEpisode(s,{episode=1,completedAt=0,users=new Map()
 }
 export function createProtocolHistory({db,now=Date.now}){
  const complete=s=>!s.cancelled&&!!s.duel&&(s.effects?.elimination||['DUEL_DRAW_CLOSING','ELIMINATION_VIDEO','EPISODE_END_CARD','RETURN_TO_WORLD','ELIMINATION_FINISHED'].includes(s.phase));
- async function rows(){return (await db.all("SELECT state FROM world_environment WHERE id LIKE ? ORDER BY updated ASC",'x-protocol:public:%')).map(r=>parse(r.state)).filter(Boolean).sort((a,b)=>a.episode-b.episode);}
- return {async record(s){if(!complete(s))return false;const key='x-protocol:public:'+s.id,old=parse((await db.one('SELECT state FROM world_environment WHERE id=?',key))?.state),all=old?[]:await rows(),users=new Map((s.roster.length?await db.all('SELECT id,name FROM users WHERE id IN ('+s.roster.map(()=>'?').join(',')+')',...s.roster.map(p=>p.id)):[]).map(p=>[p.id,p])),next=publicProtocolEpisode(s,{episode:old?.episode||Math.max(0,...all.map(e=>e.episode))+1,completedAt:old?.completedAt||now(),users});if(old&&JSON.stringify(old)===JSON.stringify(next))return false;await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',key,JSON.stringify(next),now());return true;},
-  async list(){const episodes=await rows(),cast=new Map();for(const e of episodes)for(const p of e.cast)cast.set(p.characterId,p);const season=parse((await db.one('SELECT state FROM world_seasons WHERE id=?','antarctica-1'))?.state)||{},active=await db.all('SELECT user_id FROM world_contestants WHERE season=? AND status=?','antarctica-1','active'),winner=[...cast.values()].find(p=>p.id===season.winner),final=winner?{winner:winner.characterId,runners:active.length<=3?[...cast.values()].filter(p=>p.id!==season.winner&&active.some(a=>a.user_id===p.id)).map(p=>p.characterId):[]}:null;return {season:'Apocalypse II',episodes,cast:[...cast.values()],final};}
+ async function rows(){return (await db.all("SELECT state FROM world_environment WHERE id LIKE ? ORDER BY updated ASC",'x-protocol:public:%')).map(r=>parse(r.state)).filter(e=>e&&e.id!==FIRST_EPISODE_ID).sort((a,b)=>a.episode-b.episode);}
+ return {async record(s){if(s.id===FIRST_EPISODE_ID||!complete(s))return false;const key='x-protocol:public:'+s.id,old=parse((await db.one('SELECT state FROM world_environment WHERE id=?',key))?.state),all=old?[]:await rows(),users=new Map((s.roster.length?await db.all('SELECT id,name FROM users WHERE id IN ('+s.roster.map(()=>'?').join(',')+')',...s.roster.map(p=>p.id)):[]).map(p=>[p.id,p])),next=publicProtocolEpisode(s,{episode:old?.episode||Math.max(0,...all.map(e=>e.episode))+1,completedAt:old?.completedAt||now(),users});if(old&&JSON.stringify(old)===JSON.stringify(next))return false;await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',key,JSON.stringify(next),now());return true;},
+  async list(){const episodes=[firstEpisode(),...(await rows()).map(e=>({...e,episode:e.episode+1}))],cast=new Map();for(const e of episodes)for(const p of e.cast)cast.set(p.characterId,p);const season=parse((await db.one('SELECT state FROM world_seasons WHERE id=?','antarctica-1'))?.state)||{},active=await db.all('SELECT user_id FROM world_contestants WHERE season=? AND status=?','antarctica-1','active'),winner=[...cast.values()].find(p=>season.winner&&p.id===season.winner),final=winner?{winner:winner.characterId,runners:active.length<=3?[...cast.values()].filter(p=>p.id!==season.winner&&active.some(a=>a.user_id===p.id)).map(p=>p.characterId):[]}:null;return {season:'Apocalypse II',episodes,cast:[...cast.values()],final};}
  };
 }

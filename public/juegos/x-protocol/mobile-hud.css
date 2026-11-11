@@ -1,0 +1,139 @@
+/* Keep the interactive controls usable on phones held in landscape. */
+@media (orientation:landscape) and (max-height:540px) and (pointer:coarse) {
+ body {
+  --phone-header:50px;
+  grid-template-rows:var(--phone-header) minmax(0,1fr);
+ }
+ header {
+  height:var(--phone-header);
+  padding:3px max(8px,env(safe-area-inset-right)) 3px max(8px,env(safe-area-inset-left));
+  gap:8px;
+ }
+ header .brand {height:40px}
+ header .brand img {max-height:34px}
+ header .title {font-size:clamp(17px,3.4vw,25px)}
+ header .title small {display:none}
+ header .header-icon,header #help {width:42px;height:42px;min-height:42px;padding:5px}
+ #connection {display:block;flex:none;font-size:9px}
+
+ body[data-duel="true"] {--duel-footer-height:88px}
+ body[data-duel="true"] .scene-wrap {
+  inset:0 0 var(--duel-footer-height);
+  height:auto;
+ }
+ body[data-duel="true"] #play-panel {
+  grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) minmax(0,.65fr);
+  grid-template-rows:minmax(0,1fr) 15px;
+  gap:4px 8px;
+  padding:4px max(9px,env(safe-area-inset-right)) 3px max(9px,env(safe-area-inset-left));
+ }
+ body[data-duel="true"] #play-panel .duel-footer-copy {display:block;grid-column:auto}
+ body[data-duel="true"] #play-panel .duel-footer-copy h2 {font-size:15px;margin:0 0 2px}
+ body[data-duel="true"] #play-panel .duel-footer-copy p {font-size:11px}
+ body[data-duel="true"] #play-panel #vitals {grid-row:2;gap:4px 10px}
+ body[data-duel="true"] #play-panel #cast {grid-template-columns:repeat(6,minmax(0,1fr));gap:2px}
+ body[data-duel="true"] #play-panel #cast img {width:100%;height:auto;aspect-ratio:1}
+ body[data-duel="true"] #play-panel #cast .spectator-count {font-size:9px}
+
+ body[data-duel="true"] #private-station,
+ body[data-duel="true"][data-side="1"] #private-station {
+  position:absolute;
+  top:auto;
+  bottom:8px;
+  left:50%;
+  right:auto;
+  transform:translateX(-50%);
+  width:min(400px,calc(100% - 28px));
+  height:auto;
+  max-height:calc(100% - 16px);
+  padding:8px;
+  overflow:auto;
+ }
+ body[data-duel="true"][data-game="puzzle"] #private-station,
+ body[data-duel="true"][data-game="puzzle"][data-side="1"] #private-station {
+  top:50%;
+  bottom:auto;
+  transform:translate(-50%,-50%);
+  width:min(600px,calc(100% - 28px));
+ }
+ #private-station .puzzle-layout {
+  grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);
+  gap:10px;
+ }
+ #private-station .puzzle-working {
+  max-width:min(100%,calc(clamp(110px,calc(100dvh - 224px),218px)*var(--puzzle-aspect,1)));
+ }
+ #private-station .puzzle-reference-wrap {display:block}
+ #private-station .puzzle-reference {width:100%!important;max-height:min(27dvh,130px)}
+ #private-station .puzzle-working>small,#private-station figcaption {font-size:11px;margin:0 0 4px;max-width:none}
+ #private-station .private-timer {margin:0 auto 4px;font-size:21px;padding:1px 8px;min-width:66px}
+ #private-station .puzzle-status {top:12px;right:9px;font-size:11px;gap:4px}
+ body[data-duel="true"][data-game="puzzle"]:is([data-side="0"],[data-side="1"]) #arena-timer {display:none}
+ body[data-duel="true"][data-game="typing"] #private-station[data-keyboard],
+ body[data-duel="true"][data-game="typing"][data-side="1"] #private-station[data-keyboard] {
+  position:fixed;
+  top:calc(var(--keyboard-top) + 5px);
+  bottom:auto;
+  z-index:9;
+  max-height:calc(var(--keyboard-height) - 10px);
+ }
+ #private-station[data-keyboard] .phrase {line-height:1.2}
+ #private-station .phrase {font-size:16px;padding:6px;margin-bottom:4px}
+ #private-station :is(input,textarea),#chat-input,#last-words {font-size:16px}
+ #private-station .light {min-height:44px}
+ #private-station .action-pulse {min-height:48px}
+ #private-station .balance-track {height:20px;margin-bottom:4px}
+ #private-station .feedback {margin:3px 0 0;min-height:14px}
+
+ body[data-scene="betting"] #play-panel {
+  height:min(190px,57%);
+  min-height:0;
+  padding:7px 10px;
+  overflow:auto;
+ }
+ body[data-scene="betting"] #play-panel .bet-form {gap:5px}
+ body[data-scene="betting"] .bet-pick {min-height:52px}
+ body[data-scene="betting"] .bet-pick img {width:40px;height:40px}
+ body[data-scene="betting"] .bet-confirm {min-height:39px}
+ body[data-scene="betting"] #arena-timer {
+  top:auto;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  width:auto;
+  min-width:54px;
+  padding:4px 7px;
+  font-size:16px;
+  white-space:nowrap;
+ }
+ body[data-scene="betting"] #vitals {
+  top:auto;
+  left:auto;
+  right:8px;
+  bottom:8px;
+  width:auto;
+  display:grid;
+  grid-template-columns:repeat(2,auto);
+  gap:2px 7px;
+ }
+ body[data-scene="betting"] #vitals .vital {margin:0}
+ body[data-scene="betting"] #vitals :is(small,.impact) {display:none}
+ #arena-chat-toggle kbd {display:none}
+ #direction {top:calc(var(--phone-header) + 5px);max-height:calc(100dvh - var(--phone-header) - 10px)}
+ #chat {bottom:8px;max-height:calc(100% - 14px);overflow:auto}
+ #chat-log {max-height:32dvh}
+ #duel-countdown {backdrop-filter:none}
+}
+@media (pointer:coarse) {
+ body[data-phase]:not([data-phase="ELIMINATION_LOADING"]) #asset-loader {
+  inset:5px auto auto 50%;
+  width:max-content;
+  max-width:calc(100% - 20px);
+  transform:translateX(-50%);
+  padding:5px 10px;
+  border:1px solid #986545;
+  pointer-events:none;
+ }
+ body[data-phase]:not([data-phase="ELIMINATION_LOADING"]) #asset-loader :is(b,i) {display:none}
+ body[data-phase]:not([data-phase="ELIMINATION_LOADING"]) #asset-loader span {font-size:11px;color:#f4d7aa}
+}

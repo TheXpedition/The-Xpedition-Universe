@@ -24,6 +24,16 @@ test('local controls stop without waiting for a packet, preserve phase across st
  const slow=new WorldLocalMotion();slow.setInput({x:1,y:0,run:true});const low={...p,speedFactor:.35,canRun:false};slow.sample(low,0,1000,map);assert(slow.sample(low,50,1050,map).x-p.x<4);
  const other={...p,characterId:'bruno'};local.setInput({x:1,y:0});local.sample(other,90,1090,map);assert(local.sample(other,110,1110,map).x>other.x);
 });
+test('click-to-walk interpolates the player and walking phase between server snapshots',()=>{
+ const local=new WorldLocalMotion(),p={...actor(),x:820,y:812,walk:2,moving:true,
+  previous:{x:800,y:800,z:0,walk:1,at:100}};
+ assert.equal(local.sample(p,100,1000,map).x,800);
+ const halfway=local.sample(p,150,1050,map);
+ assert.equal(halfway.x,810);assert.equal(halfway.y,806);assert.equal(halfway.walk,1.5);
+ assert.equal(local.sample(p,200,1100,map).x,820);
+ assert.equal(p.x,820);
+});
+
 test('prediction consumes snapshots mutated into the same player object, as the live UI does',()=>{
  const p=actor(),local=new WorldLocalMotion();local.setInput({x:1,y:0});local.sample(p,0,1000,map);local.sample(p,16,1016,map);
  Object.assign(p,{z:30,vz:250,grounded:false,jumpAt:1020,jumpGravity:1600,previous:{at:32}});

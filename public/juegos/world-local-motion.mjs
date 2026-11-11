@@ -1,4 +1,5 @@
 import {stepWorld,jumpWorld} from './world-motion.mjs';
+import {interpolateWorldPlayer} from './world-player-state.mjs';
 const copy=p=>({...p,path:[],vz:Number(p.vz)||0,falling:Number(p.falling)||0});
 // Presentation prediction only. The server remains authoritative for collisions,
 // interactions and persistence. No new coordinates are sent by the client.
@@ -8,7 +9,8 @@ export class WorldLocalMotion {
  setInput(input){this.intent={x:Math.sign(input.x||0),y:Math.sign(input.y||0),run:input.run===true};}
  jump(worldTime,player){if(this.intent===null)return false;if(!this.pose&&player&&!player.motionLocked&&!player.seatId&&!player.clinicPose&&!player.swimming&&!['dead','fainted','sit','sleep'].includes(player.state))this.pose=copy(player);if(!this.pose)return false;const ok=jumpWorld(this.pose,worldTime,{quick:this.pose.characterId==='maria-villegas'});if(ok)this.pendingJump=worldTime;return ok;}
  sample(p,stamp,worldTime,zone){
-  if(this.intent===null||p.motionLocked||p.seatId||p.clinicPose||p.swimming||['sit','sleep','dead','fainted'].includes(p.state)||p.life?.status==='dead'||p.life?.status==='fainted'){this.pose=null;this.source=null;this.stamp=stamp;return p;}
+  if(this.intent===null){this.stamp=stamp;return interpolateWorldPlayer(p,stamp);}
+  if(p.motionLocked||p.seatId||p.clinicPose||p.swimming||['sit','sleep','dead','fainted'].includes(p.state)||p.life?.status==='dead'||p.life?.status==='fainted'){this.pose=null;this.source=null;this.stamp=stamp;return p;}
   const dt=this.stamp===null?0:Math.min(.05,Math.max(0,(stamp-this.stamp)/1000));this.stamp=stamp;
   if(this.source!==p||this.sourceAt!==p.previous?.at){
    const previous=this.pose,shown=previous?{x:previous.x+this.offset.x,y:previous.y+this.offset.y}:p;
