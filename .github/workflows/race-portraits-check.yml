@@ -1,0 +1,27 @@
+name: Race portrait regression
+on:
+  pull_request:
+    paths:
+      - public/simulator/game/index.html
+      - public/simulator/catalog.json
+      - tests/simulator-race-portraits.test.mjs
+      - .github/workflows/race-portraits-check.yml
+  push:
+    branches:
+      - main
+    paths:
+      - public/simulator/game/index.html
+      - public/simulator/catalog.json
+      - tests/simulator-race-portraits.test.mjs
+      - .github/workflows/race-portraits-check.yml
+jobs:
+  verify-race-portraits:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Race portraits against actual PNG assets
+        run: node --test tests/simulator-race-portraits.test.mjs
