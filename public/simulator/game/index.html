@@ -9870,7 +9870,7 @@ window._seasonPurgados = new Set(_purgePurged.map(n => norm(n)));
   const clearReveal = ()=>{ revealToken++; revealTimers.forEach(clearTimeout); revealTimers=[]; };
   const later = (fn,ms,token)=>{ const id=setTimeout(()=>{ if(token===revealToken) fn(); },ms); revealTimers.push(id); return id; };
   const angryCandidates = name => { const s=slug(name); return [`enojados/${s}.png`,`enojados/${s}.jpg`,`enojados/${s}.jpeg`]; };
-  const loadAngry = (el,name)=>loadImg(el,angryCandidates(name),name);
+  const loadAngry = (el,name)=>loadImg(el,[...angryCandidates(name),...imgFor(name)],name);
   cruiseShowEliminationReveal = function(safeOrder, eliminatedNow, finalist){
     // La música de Noche debe acompañar toda la entrega de salvavidas.
     // "eliminado" comienza solamente al revelar la despedida final.
