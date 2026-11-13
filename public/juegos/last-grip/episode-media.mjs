@@ -22,8 +22,7 @@ export class EpisodeMedia {
  }
  render(){
   const active=!!this.descriptor,ended=active&&this.finishedKey===this.key;
-  this.video.hidden=!active||ended;
-  this.video.dataset.frameReady=String(active&&this.frameReady&&!ended);
+  this.video.hidden=!active||!this.frameReady||ended;
   this.playButton.hidden=!active||ended||this.enabled&&!this.autoplayMuted&&!this.needsGesture&&!this.exhausted;
   if(!this.status)return;
   const text=!active?'':ended?'Esperando a los demás espectadores…':this.exhausted?'No se pudo cargar el video. Pulsa Continuar para reintentar.':this.needsGesture?'Pulsa Continuar para reproducir el video.':this.retryTimer?'Reconectando el video…':!this.frameReady||this.buffering?'Cargando el video…':'';
@@ -83,7 +82,7 @@ export class EpisodeMedia {
   this.video.muted=!this.enabled||this.autoplayMuted;
   if(d&&this.finishedKey!==this.key){
    if(state.paused||document.hidden){this.video.pause();this.clearStartTimer();}
-   else {this.render();this.playVideo();}
+   else this.playVideo();
   }
   this.render();
   const landing=state.phase==='arrival'&&state.clock-state.phaseAt<7200&&!state.paused&&!document.hidden&&this.enabled;

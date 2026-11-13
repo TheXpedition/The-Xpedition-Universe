@@ -30,7 +30,7 @@ $('#announcement-unlock').onclick=()=>void announcer.unlock().catch(()=>notice('
 let announcementGestureSeen=false;const activateAnnouncements=()=>{if(announcementGestureSeen)return;announcementGestureSeen=true;void announcer.unlock().catch(()=>{});};document.addEventListener('pointerdown',activateAnnouncements,{once:true});document.addEventListener('keydown',activateAnnouncements,{once:true});
 let summaryPhase=null;
 const arenaView=new ArenaView({read:key=>{try{return sessionStorage.getItem(key);}catch{return null;}},write:(key,value)=>{try{sessionStorage.setItem(key,value);}catch{}}});
-let loadedGuide=null,cameraArea=null,clinicPanel=null,clinicState=null,clinicPoll=null;
+let loadedGuide=null,cameraArea=null,loading=false,clinicPanel=null,clinicState=null,clinicPoll=null;
 const self=()=>[...(state?.roster||[]),...(state?.visitors||[])].find(p=>p.id===state.selfId);
 let state=null,socket=null,boot=null,receivedAt=0,connected=false,subscribed=false,uiSignature='',pendingConfirm=null,lastPhase=null,lastResult=0,noticeTimer,context,wind,muted=true,lastStep=0,previousActive=false,disposed=false,pointerTarget=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -59,12 +59,8 @@ function rowActions(){if(!state)return;const p=[...state.roster,...(state.visito
 }
 $('#lobby').addEventListener('click',e=>{const button=e.target.closest('[data-lobby-action],[data-kick]');if(!button||button.disabled||!state?.staff)return;if(button.dataset.kick){emit({type:'kick',target:button.dataset.kick});return;}const control={type:button.dataset.lobbyAction};if(control.type==='start'){confirmAction('Comenzará con '+state.roster.length+' participantes'+(state.roster.length<18?' (FORMATO REDUCIDO)':'')+'. Todos los conectados entrarán al recinto. ¿Iniciar?',{type:'start',confirmReduced:true,confirmMissingArt:true});return;}emit(control);});
 $('#staff-players').onclick=e=>{const id=e.target.closest('[data-kick]')?.dataset.kick;if(id)emit({type:'kick',target:id});};
-function enter(type){
- if(!connected||!state){notice('Reconectando: espera antes de entrar.');return;}
- emit({type});
- void setSound(true).catch(()=>{});
-}
-$('#join').onclick=()=>enter('join');$('#visit').onclick=()=>enter('visit');$('#help').onclick=()=>{stopMovement();$('#guide-dialog').showModal();};$('#guide-close').onclick=()=>$('#guide-dialog').close();
+async function enter(type){if(loading)return;loading=true;$('#loading').hidden=false;void setSound(true).catch(()=>{});try{await renderer.preload([boot?.profile?.characterId,...state.roster.map(p=>p.characterId)]);emit({type});}finally{loading=false;$('#loading').hidden=true;}}
+$('#join').onclick=()=>void enter('join');$('#visit').onclick=()=>void enter('visit');$('#help').onclick=()=>{stopMovement();$('#guide-dialog').showModal();};$('#guide-close').onclick=()=>$('#guide-dialog').close();
 $('#watch').onclick=()=>{stopMovement();cameraArea=arenaView.toggle()?'stands':null;$('#actions').dataset.watching=String(!!cameraArea);$('#watch').textContent=cameraArea?'DEJAR DE VER':'VER ARENA';rowActions();};$('#context-action').onclick=()=>interact();
 $('#ready').onclick=()=>emit({type:'ready',ready:![...state.roster,...(state.visitors||[])].find(p=>p.id===state.selfId)?.ready});$('#leave').onclick=()=>emit({type:'leave'});
 function interact(){if(cameraArea)return;const p=self(),node=p&&nearbyNode(p,{interactiveOnly:true});if(node){stopMovement();if(node.kind==='clinic')void openClinic();else emit({type:'interact',target:node.id});}}
@@ -99,9 +95,7 @@ $('#clinic-close').onclick=()=>$('#clinic-dialog').close();clinicPoll=setInterva
 async function connect(){if(disposed)return;try{const response=await fetch('/api/world/bootstrap',{credentials:'same-origin'});if(!response.ok)throw Error('Tu sesión de World no está disponible. Vuelve a entrar desde el universo.');boot=await response.json();if(boot.protocolInvite){location.replace(boot.protocolInvite);return;}atmosphere.environment=boot.environment;const d=await fetch('/api/world/last-grip').then(r=>r.json());if(d.episode){state=d.episode;cameraArea=arenaView.sync(state)?'stands':null;receivedAt=Date.now();timingClock.sync(state,performance.now());motion.sync(state,performance.now());announcer.clock(state.serverTime);for(const a of state.announcements||[])announcer.add(a);rowActions();if(new URLSearchParams(location.search).has('staff-preview')&&state.staff&&boot.profile.characterId==='maria-villegas')$('#direction').hidden=false;void renderer.preload([...state.roster,...(state.visitors||[])].map(p=>p.characterId));}for(const m of d.history||[])chat(m);socket=new WebSocket(location.origin.replace(/^http/,'ws')+'/api/world/live?zone='+encodeURIComponent(boot.profile.lastZone));socket.onopen=()=>{connected=true;$('#connection').textContent='● EN VIVO';socket.send(JSON.stringify({type:'grip-subscribe'}));sendWire({type:'grip-media-viewer',visible:!document.hidden});};socket.onmessage=e=>{let d;try{d=JSON.parse(e.data);}catch{return;}if(d.type==='grip-pong')timingClock.pong(d,performance.now());if(d.type==='protocol-start'){location.assign(d.url);return;}if(d.type==='environment')atmosphere.environment=d.environment;if(d.type==='welcome'){clinicAlerts.refresh();if(d.environment)atmosphere.environment=d.environment;subscribed=true;socket.send(JSON.stringify({type:'grip-subscribe'}));}if(d.type==='grip-state'){const old=state;state=d.episode;cameraArea=arenaView.sync(state)?'stands':null;if(state.environment)atmosphere.environment=state.environment;receivedAt=Date.now();timingClock.sync(state,performance.now());motion.sync(state,performance.now());announcer.clock(state.serverTime);for(const a of state.announcements||[])announcer.add(a);const signature=JSON.stringify([state.phase,state.staff,state.paused,state.config.speedMultiplier,state.visitors?.map(p=>[p.id,p.characterId,p.changed,p.area]),state.roster.map(p=>[p.id,p.characterId,p.ready,p.changed,p.connected,p.area]),state.round?.members,state.round?.falls,state.events?.map(e=>[e.kind,e.start]),state.canBeginRound]);if(signature!==uiSignature){uiSignature=signature;rowActions();void renderer.preload([...state.roster,...(state.visitors||[])].map(p=>p.characterId));}if(old?.phase!==state.phase){keys.clear();chime('good');}if(state.round?.falls.some(f=>f.id===state.selfId)&&!old?.round?.falls.some(f=>f.id===state.selfId)){notice(cameraArea?'Has caído y estás en el monitor. Sigues viendo la arena; pulsa «Dejar de ver» para caminar.':'Has caído y estás en el monitor. Puedes usar «Ver arena» para espectar.');}const result=state.round?.actors[state.selfId]?.lastResult;if(result&&result.clock!==lastResult){lastResult=result.clock;chime(result.result);}}if(d.type==='maria-voice')announcer.add(d.announcement);if(d.type==='maria-voice-error')announcer.dismiss(d.id);for(const a of d.mariaVoice||[])announcer.add(a);if(d.type==='grip-announcement')announcer.add(d.announcement);if(d.type==='grip-chat'){announcer.preview(d.message);chat(d.message);}if(d.type==='grip-aftercare'){state.ownVitals=d.vitals;notice('Esfuerzo del reto: −'+d.effect.energy+' energía'+(d.effect.health?' · −'+d.effect.health+' salud':'')+'. Puedes pedir cita con Isabel en el puesto del monitor.');}if(d.type?.startsWith('clinic-'))clinicAlerts.handle(d);if(d.type==='clinic-appointment')clinicGuide.show(d.appointment,state.selfId);if(d.type?.startsWith('clinic-'))void refreshClinic().catch(()=>{});if(d.type==='error')notice(d.message);if(d.type==='revoked')notice(d.message);};socket.onclose=e=>{connected=false;$('#connection').textContent='RECONECTANDO';keys.clear();audio.stop();if(e.code===4002)return notice('World se abrió en otra pestaña. Usa una sola pestaña por cuenta.');setTimeout(()=>{if(!disposed)void connect();},3000);};socket.onerror=()=>{};}catch(error){notice(error.message);$('#phase').textContent='Acceso no disponible';$('#connection').textContent='SIN CONEXIÓN';}}
 void connect();
 const text=(selector,value)=>{const el=$(selector);if(el.textContent!==value)el.textContent=value;};
-let paintBudget=0,lastBands='';
-const coarsePointer=matchMedia('(any-pointer: coarse)');
-const perfectBand=$('#timing .perfect'),goodBand=$('#timing .good');
+let paintBudget=0;
 function frame(time){
  if(disposed)return;requestAnimationFrame(frame);if(document.hidden||!state)return;
  if(connected&&time-lastPing>2000){lastPing=time;sendWire({type:'grip-ping',sent:performance.now()});}
@@ -120,21 +114,14 @@ function frame(time){
  }
  // The timing marker remains on every animation frame. Scenic work is bounded
  // separately and walking positions interpolate between authoritative samples.
- const hz=paintBudget>time?30:coarsePointer.matches?40:60;
+ const hz=paintBudget>time?30:matchMedia('(any-pointer: coarse)').matches?40:60;
  if(paintSceneryForMedia($('#episode-video'))&&time-lastPaint>=1000/hz){const start=performance.now();lastPaint=time;renderer.render(motion.sample(current,time),{time:Date.now(),area:cameraArea,arenaView:!!cameraArea,cssScale:scale,hud:false});if(performance.now()-start>20)paintBudget=time+3000;}
  if(state.phase==='active'&&state.round){
   const elapsed=Math.max(0,(current.clock-state.round.at)/1000);text('#clock',String(Math.floor(elapsed/60)).padStart(2,'0')+':'+String(Math.floor(elapsed%60)).padStart(2,'0'));
   const pulse=pulseAt(current),bands=precision(current);text('#speed-readout','x'+(pulse.speed===.65?0:pulse.speed));
   if(!timingWidth)timingWidth=$('#timing').getBoundingClientRect().width;
   $('#cursor').style.transform='translate3d('+Math.max(0,Math.min(1,pulse.progress))*(timingWidth-3)+'px,0,0)';shownPulse={clock:current.clock,pulseId:pulse.id};$('#cursor').style.opacity=pulse.progress>=0&&pulse.progress<=1?'1':'.15';
-  const bandKey=bands.center+':'+bands.perfect+':'+bands.good;
-  if(bandKey!==lastBands){
-   lastBands=bandKey;
-   perfectBand.style.left=(bands.center-bands.perfect)*100+'%';
-   perfectBand.style.width=bands.perfect*200+'%';
-   goodBand.style.left=(bands.center-bands.good)*100+'%';
-   goodBand.style.width=bands.good*200+'%';
-  }
+  $('#timing .perfect').style.left=(bands.center-bands.perfect)*100+'%';$('#timing .perfect').style.width=bands.perfect*200+'%';$('#timing .good').style.left=(bands.center-bands.good)*100+'%';$('#timing .good').style.width=bands.good*200+'%';
   const actor=state.round.actors[state.selfId],result=actor?.lastResult;text('#own-stamina',actor?Math.ceil(actor.stamina)+'% AGARRE':'ESPECTADOR');
   text('#last-result',result&&current.clock-result.clock<1800?({perfect:'¡PERFECTO! +4',good:'BIEN +2',fail:'FALLO −6',miss:'SIN RESPUESTA −6'}[result.result]):pulse.progress>=0&&pulse.progress<=1?'¡CALCULA EL CENTRO!':'ESPERA AL SIGUIENTE PULSO');
   $('#grip').disabled=state.paused||!connected||!timingClock.fresh(time)||pulse.progress<0||pulse.progress>1||sentPulse===pulse.id;
