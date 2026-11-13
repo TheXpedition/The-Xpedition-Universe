@@ -30,7 +30,7 @@ $('#announcement-unlock').onclick=()=>void announcer.unlock().catch(()=>notice('
 let announcementGestureSeen=false;const activateAnnouncements=()=>{if(announcementGestureSeen)return;announcementGestureSeen=true;void announcer.unlock().catch(()=>{});};document.addEventListener('pointerdown',activateAnnouncements,{once:true});document.addEventListener('keydown',activateAnnouncements,{once:true});
 let summaryPhase=null;
 const arenaView=new ArenaView({read:key=>{try{return sessionStorage.getItem(key);}catch{return null;}},write:(key,value)=>{try{sessionStorage.setItem(key,value);}catch{}}});
-let loadedGuide=null,cameraArea=null,loading=false,clinicPanel=null,clinicState=null,clinicPoll=null;
+let loadedGuide=null,cameraArea=null,clinicPanel=null,clinicState=null,clinicPoll=null;
 const self=()=>[...(state?.roster||[]),...(state?.visitors||[])].find(p=>p.id===state.selfId);
 let state=null,socket=null,boot=null,receivedAt=0,connected=false,subscribed=false,uiSignature='',pendingConfirm=null,lastPhase=null,lastResult=0,noticeTimer,context,wind,muted=true,lastStep=0,previousActive=false,disposed=false,pointerTarget=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -59,8 +59,12 @@ function rowActions(){if(!state)return;const p=[...state.roster,...(state.visito
 }
 $('#lobby').addEventListener('click',e=>{const button=e.target.closest('[data-lobby-action],[data-kick]');if(!button||button.disabled||!state?.staff)return;if(button.dataset.kick){emit({type:'kick',target:button.dataset.kick});return;}const control={type:button.dataset.lobbyAction};if(control.type==='start'){confirmAction('Comenzará con '+state.roster.length+' participantes'+(state.roster.length<18?' (FORMATO REDUCIDO)':'')+'. Todos los conectados entrarán al recinto. ¿Iniciar?',{type:'start',confirmReduced:true,confirmMissingArt:true});return;}emit(control);});
 $('#staff-players').onclick=e=>{const id=e.target.closest('[data-kick]')?.dataset.kick;if(id)emit({type:'kick',target:id});};
-async function enter(type){if(loading)return;loading=true;$('#loading').hidden=false;void setSound(true).catch(()=>{});try{await renderer.preload([boot?.profile?.characterId,...state.roster.map(p=>p.characterId)]);emit({type});}finally{loading=false;$('#loading').hidden=true;}}
-$('#join').onclick=()=>void enter('join');$('#visit').onclick=()=>void enter('visit');$('#help').onclick=()=>{stopMovement();$('#guide-dialog').showModal();};$('#guide-close').onclick=()=>$('#guide-dialog').close();
+function enter(type){
+ if(!connected||!state){notice('Reconectando: espera antes de entrar.');return;}
+ emit({type});
+ void setSound(true).catch(()=>{});
+}
+$('#join').onclick=()=>enter('join');$('#visit').onclick=()=>enter('visit');$('#help').onclick=()=>{stopMovement();$('#guide-dialog').showModal();};$('#guide-close').onclick=()=>$('#guide-dialog').close();
 $('#watch').onclick=()=>{stopMovement();cameraArea=arenaView.toggle()?'stands':null;$('#actions').dataset.watching=String(!!cameraArea);$('#watch').textContent=cameraArea?'DEJAR DE VER':'VER ARENA';rowActions();};$('#context-action').onclick=()=>interact();
 $('#ready').onclick=()=>emit({type:'ready',ready:![...state.roster,...(state.visitors||[])].find(p=>p.id===state.selfId)?.ready});$('#leave').onclick=()=>emit({type:'leave'});
 function interact(){if(cameraArea)return;const p=self(),node=p&&nearbyNode(p,{interactiveOnly:true});if(node){stopMovement();if(node.kind==='clinic')void openClinic();else emit({type:'interact',target:node.id});}}
