@@ -2,7 +2,7 @@ import {createGripAnnouncements,serveAnnouncement} from './world-grip-announceme
 import {mobility} from './public/juegos/world-health-systems.mjs';
 import {CLINIC_POINT} from './public/juegos/last-grip/navigation.mjs';
 import {randomUUID,randomInt} from 'node:crypto';
-import {createEpisode,applyEpisode,tickEpisode,episodeView,isEngaged,touch,attendee,normalizeEpisode,cinematicFor} from './public/juegos/last-grip/engine.mjs';
+import {createEpisode,applyEpisode,tickEpisode,episodeView,sharedEpisodeView,isEngaged,touch,attendee,normalizeEpisode,cinematicFor} from './public/juegos/last-grip/engine.mjs';
 import {MediaGate} from './public/juegos/last-grip/media-gate.mjs';
 import {EPISODE_MEDIA} from './public/juegos/last-grip/media-config.mjs';
 import {worldCharacter} from './public/juegos/world-characters.mjs';
@@ -18,7 +18,14 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStar
  const serial=fn=>{const result=queue.then(fn);queue=result.catch(()=>{});return result;};
  const save=async()=>{if(state.winner&&state.completedId!==state.id){state.completedAt=now();state.completedId=state.id;}await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated', 'last-grip',JSON.stringify(state),now());lastSave=now();dirty=false;};
  function actorFor(c){return {id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};}
- function snapshot(c){return {...episodeView(state,{selfId:c.user.id,staff:!!c.direct,now:now()}),announcements:announcements.live(state.id),environment:getEnvironment(),mediaWaiting:mediaGate.pending()&&cinematicFor(state)&&state.clock>=cinematicFor(state).start+cinematicFor(state).duration-1,ownVitals:{...c.vitals}};}
+ function snapshot(c,common){
+  const shared=common?.shared??sharedEpisodeView(state,now()),cinematic=shared.cinematic;
+  return {...episodeView(state,{selfId:c.user.id,staff:!!c.direct,shared}),
+   announcements:common?common.announcements:announcements.live(state.id),
+   environment:common?common.environment:getEnvironment(),
+   mediaWaiting:mediaGate.pending()&&cinematic&&state.clock>=cinematic.start+cinematic.duration-1,
+   ownVitals:{...c.vitals}};
+ }
  async function excludedCharacters(){const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions');return new Set(row?JSON.parse(row.state):[]);}
  async function enrollUser(live,{prepared=false,excluded=new Set()}={}){
   if(live.direct||!await canParticipate(live.user)||live.wellness?.life?.status!=='alive'||worldCharacter(live.characterId)?.role!=='participant'||excluded.has(live.characterId))return false;
@@ -33,7 +40,15 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStar
  async function fillUsers(){const excluded=await excludedCharacters();let added=0;for(const live of clients.values())if(await enrollUser(live,{prepared:true,excluded}))added++;return {added,total:state.roster.filter(p=>!p.bot).length};}
  async function flushEffort(){for(const record of state.aftercare||[])if(!record.applied){await onAftermath(record);record.applied=true;dirty=true;}}
  function syncActors(){for(const c of clients.values()){const p=attendee(state,c.user.id);if(p){p.clinicPose=c.clinicProcedure?{kind:c.clinicProcedure.kind,step:c.clinicProcedure.step,stepAt:c.clinicProcedure.stepAt,role:c.clinicProcedure.role}:null;if(c.clinicProcedure){p.path=[];p.input=null;p.moving=false;}if(c.direct&&!state.roster.includes(p)&&p.characterId!==c.characterId){p.characterId=c.characterId;p.name=worldCharacter(c.characterId)?.name||c.user.name;p.changed=false;touch(state,'staff-character',c.user.id);dirty=true;}p.petId=c.petId||null;p.vitals={...c.vitals};const m=mobility(c.wellness,c.vitals);p.moveScale=m.speedFactor;p.canRun=m.canRun;}}}
- function publish(){for(const c of clients.values())if(subscribers.has(c.user.id)||isEngaged(state,c.user.id))send(c,{type:'grip-state',episode:snapshot(c)});lastWire=now();}
+ function publish(){
+  let common;
+  for(const c of clients.values()){
+   if(!subscribers.has(c.user.id)&&!isEngaged(state,c.user.id))continue;
+   common??={shared:sharedEpisodeView(state,now()),announcements:announcements.live(state.id),environment:getEnvironment()};
+   send(c,{type:'grip-state',episode:snapshot(c,common)});
+  }
+  lastWire=now();
+ }
   async function action(c,input){await ready;return serial(async()=>{if(c.clinicProcedure&&['path','move','area','interact','change','beginRound','startRound'].includes(input?.type))throw Object.assign(Error('Termina o detén la atención de Enfermería antes de moverte.'),{status:409});
   if(!input||typeof input.type!=='string')throw Object.assign(Error('Acción del episodio inválida.'),{status:400});
   syncActors();advance();if(input.type==='start'&&await can(c.user,'direct'))await beforeStart(c);const director=await can(c.user,'direct'),actor={id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};
