@@ -2,7 +2,7 @@ import {GRIP_MAPS,BOOTHS} from '../public/juegos/last-grip/navigation.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
 import {createEpisode} from '../public/juegos/last-grip/engine.mjs';import {GRIP_IDS} from '../public/juegos/last-grip/assets.mjs';
 test('real World sockets share lobby, staff permissions, restart-safe state and exclusive episode membership',async()=>{
- const f=await liveFixture('last-grip',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'grip-one',character:'bruno',zone:'base',x:1100,y:700},{id:'grip-two',character:'peggy',zone:'base',x:1200,y:700}]);
+ const f=await liveFixture('last-grip',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'grip-one',character:'bruno',zone:'base',x:1100,y:700},{id:'grip-two',character:'vita',zone:'base',x:1200,y:700}]);
  try{const staff=await f.connect(STAFF_ID),a=await f.connect('grip-one'),b=await f.connect('grip-two');for(const p of [staff,a,b])f.send(p,{type:'grip-subscribe'});await f.until(()=>a.messages.some(m=>m.type==='grip-state'));
  f.send(a,{type:'grip-action',action:{type:'open'}});await f.until(()=>a.messages.some(m=>m.type==='error'&&/Dirección/.test(m.message)));
  f.send(staff,{type:'grip-action',action:{type:'open'}});await f.until(()=>a.messages.some(m=>m.episode?.phase==='lobby'));
@@ -15,14 +15,17 @@ test('real World sockets share lobby, staff permissions, restart-safe state and 
 });
 test('18 real WebSocket participants complete all qualifying rounds, final and return through the production service', {timeout:180000},async()=>{
  const actors=[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},...GRIP_IDS.map((character,i)=>({id:'grip-cast-'+i,character,zone:'base',x:1000+(i%5)*60,y:700}))];
- const f=await liveFixture('last-grip-full',actors,{setup:async db=>{for(const a of actors){await db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?',a.character,a.id);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',a.character,a.id,Date.now());}for(const a of actors.slice(1))await db.run('INSERT INTO world_vitals(user_id,state,updated) VALUES(?,?,?)',a.id,JSON.stringify({health:83,hunger:72,energy:65,sleep:78,stress:20}),Date.now());const s=createEpisode({id:'test-complete',now:Date.now()});Object.assign(s.config,{baseDrain:32,arrivalDuration:100,drawInterval:20,resultDuration:100,readyDuration:100});
- // This fixture starts after the introduction. Full media delivery and playback barriers have independent tests.
- s.phase='changing';s.phaseAt=0;s.started=Date.now();s.media.draws=Array.from({length:3},()=>Object.fromEntries(GRIP_IDS.map(id=>[id,{url:'/juegos/last-grip/media/selection-'+id+'.mp4',duration:20}])));s.roster=actors.slice(1).map((a,i)=>({id:a.id,name:a.character,characterId:a.character,role:'participant',ready:false,changed:false,connected:false,area:'monitor',x:600+(i%7)*100,y:755+Math.floor(i/7)*25,vitals:{health:83,hunger:72,energy:65,sleep:78,stress:20},origin:{zone:a.zone,x:a.x,y:a.y}}));await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','last-grip',JSON.stringify(s),Date.now());}});
+ const f=await liveFixture('last-grip-full',actors,{setup:async db=>{for(const a of actors){await db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?',a.character,a.id);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',a.character,a.id,Date.now());}for(const a of actors.slice(1))await db.run('INSERT INTO world_vitals(user_id,state,updated) VALUES(?,?,?)',a.id,JSON.stringify({health:83,hunger:72,energy:65,sleep:78,stress:20}),Date.now());const s=createEpisode({id:'test-complete',now:Date.now()});Object.assign(s.config,{baseDrain:32,arrivalDuration:500,welcomeDuration:800,guideDuration:500,drawInterval:200,resultDuration:100,readyDuration:100});
+ s.phase='arrival';s.phaseAt=0;s.started=Date.now();s.roster=actors.slice(1).map((a,i)=>({id:a.id,name:a.character,characterId:a.character,role:'participant',ready:false,changed:false,connected:false,area:'monitor',x:600+(i%7)*100,y:755+Math.floor(i/7)*25,vitals:{health:83,hunger:72,energy:65,sleep:78,stress:20},origin:{zone:a.zone,x:a.x,y:a.y}}));await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','last-grip',JSON.stringify(s),Date.now());}});
  try{
   const staff=await f.connect(STAFF_ID,{claim:false}),peers=[];f.send(staff,{type:'grip-subscribe'});const latest=()=>staff.messages.filter(m=>m.type==='grip-state').at(-1)?.episode;
   const command=action=>f.send(staff,{type:'grip-action',action});
   for(const a of actors.slice(1)){const p=await f.connect(a.id,{claim:false});peers.push(p);f.send(p,{type:'grip-subscribe'});}
   await f.until(()=>latest()?.roster.length===18&&latest().roster.every(p=>p.connected));command({type:'resume'});await f.until(()=>latest()?.paused===false);
+  await f.until(()=>latest()?.phase==='intro');
+  await f.until(()=>latest()?.phase==='guide');
+  await f.until(()=>latest()?.phase==='changing');
+  assert(peers.every(p=>p.messages.some(m=>m.episode?.phase==='intro'&&m.episode.cinematic===null)));
   // Real path requests follow the monitor's left exit, then the actual booth approaches.
   const doorway=GRIP_MAPS.monitor.nodes.find(n=>n.to==='changing');
   peers.forEach(p=>f.send(p,{type:'grip-action',action:{type:'path',target:doorway.id,run:true}}));

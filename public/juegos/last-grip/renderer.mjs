@@ -18,7 +18,7 @@ export class GripRenderer{
  async preload(ids=[]){this.image(ART+'medical-station.png');this.image('/juegos/last-grip/media/helicopter.png');for(const name of ['arena','pit','runway','monitor','changing','stands','platform','entrance'])this.image(ART+name+'.webp');for(const id of ids){if(SWIMWEAR[id]){this.image(SWIMWEAR[id].image);void this.swimMotion.load(id);}if(GRIP_POSES[id])this.image(GRIP_POSES[id].image);this.image('/juegos/cast-apocalypse/'+id+'-portrait.webp');this.image('/juegos/cast-apocalypse/'+id+'-original.png');}this.image('/juegos/cast-apocalypse/maria-villegas-original.png');await Promise.all([...this.pending.values()]);}
  render(s,{selfId=s.selfId,time=Date.now(),area,review=false,overlay=false,cssScale=1,hud=true,arenaView}={}){
  this.anchors.clear();const c=this.canvas.getContext('2d'),W=this.canvas.width,H=this.canvas.height;c.setTransform(W/1672,0,0,H/941,0,0);c.clearRect(0,0,1672,941);if(activeGripEvents(s).some(e=>e.kind==='shake'))c.translate(Math.sin(time/46)*2,Math.cos(time/39)*1.5);
- const self=[...s.roster,...(s.visitors||[])].find(p=>p.id===selfId),arena=(arenaView??(!self||!['changing','runway','entrance','monitor'].includes(area||self.area)))&&['draw','ready','active','ending','results','finalReady','winner'].includes(s.phase),place=area||self?.area||'stands',scene=arena?'arena':s.phase==='arrival'?'runway':s.phase==='intro'?'monitor':['lobby','closed','finished'].includes(s.phase)?'entrance':place;
+ const self=[...s.roster,...(s.visitors||[])].find(p=>p.id===selfId),arena=(arenaView??(!self||!['changing','runway','entrance','monitor'].includes(area||self.area)))&&['ready','active','ending','results','finalReady','winner'].includes(s.phase),place=area||self?.area||'stands',scene=arena?'arena':s.phase==='arrival'?'runway':['intro','draw'].includes(s.phase)?'monitor':['lobby','closed','finished'].includes(s.phase)?'entrance':place;
  const bg=this.image(ART+scene+'.webp');if(bg)c.drawImage(bg,0,0,1672,941);else fill(c,0,0,1672,941,'#24160f',0);
  this.environment(c,s,time,scene);
  if(scene==='monitor')this.clinic(c);
@@ -39,7 +39,7 @@ export class GripRenderer{
    const by=713,labelWidth=Math.min(230,Math.max(172,52/cssScale)),name=cssScale<.55&&p.name.length>9?p.name.slice(0,8)+'…':p.name;fill(c,x-labelWidth/2,by,labelWidth,31,'#1c100df0');text(c,name,x,by+23,Math.max(21,11/cssScale),'#ffe5c0');fill(c,x-78,by+40,156,9,'#1b0f0b');if(!fall)fill(c,x-78,by+40,156*a.stamina/100,9,a.stamina<25?'#e74930':'#ecb257',4);const resultLabel=s.phase==='winner'&&s.winner===id?'GANADOR':s.phase==='results'&&s.round.survivors?.includes(id)?'CLASIFICADO':Math.ceil(a.stamina)+'% · AGARRE';text(c,fall?'EN EL MONITOR':resultLabel,x,by+70,16,fall?'#d59377':'#ffe5c0');
   }
 
- }else if(!['closed','lobby','finished','intro','opening','guide'].includes(s.phase)){
+ }else if(!['closed','lobby','finished','intro','opening','guide','draw'].includes(s.phase)){
   const all=[...s.roster,...(s.visitors||[])],people=(s.phase==='arrival'?all:all.filter(p=>p.area===place&&!(['active','ending'].includes(s.phase)&&s.round?.members.includes(p.id)&&!s.round.falls.some(f=>f.id===p.id)))).sort((a,b)=>(a.y||0)-(b.y||0));
   if(s.phase==='arrival'){const im=this.image('/juegos/last-grip/media/helicopter.png'),t=s.clock-s.phaseAt,land=Math.min(1,t/4300);if(im){const w=Math.min(1050,520*im.width/im.height),h=w*im.height/im.width,y=620-h-(1-land)*730;c.drawImage(im,(1672-w)/2,y,w,h);c.save();c.globalAlpha=.25;c.fillStyle='#c1c3b7';c.beginPath();c.ellipse(836,y+24,430,7+Math.sin(time/40)*3,0,0,Math.PI*2);c.fill();c.restore();}}for(const [i,p]of people.entries()){
    if(s.phase==='arrival'&&s.clock-s.phaseAt<4500+i*110)continue;
@@ -49,11 +49,36 @@ export class GripRenderer{
    fill(c,x-74,y-h-33,148,26,'#20130deb');text(c,p.name,x,y-h-13,17);
   }
  }
- if(s.phase==='intro'){
-  // Clip the host feed inside the supplied black monitor, never over its frame.
-  c.save();c.beginPath();c.moveTo(389,213);c.lineTo(1145,213);c.lineTo(1145,503);c.lineTo(389,503);c.closePath();c.clip();fill(c,375,205,800,310,'#130e0c',0);
-  text(c,'THE LAST GRIP',767,324,42,'#f5b663');text(c,s.cinematic?'PRESENTACIÓN DEL EPISODIO':'VIDEO DE PRESENTACIÓN PENDIENTE',767,380,22);c.restore();
-
+ if(['intro','draw'].includes(s.phase)){
+  c.save();
+  c.beginPath();
+  c.rect(389,213,756,290);
+  c.clip();
+  fill(c,389,213,756,290,'#150e0c',0);
+  c.strokeStyle='#a76b3c';
+  c.lineWidth=2;
+  c.strokeRect(403,227,728,262);
+  if(s.phase==='intro'){
+   const portrait=this.image('/juegos/cast-apocalypse/maria-villegas-portrait.webp');
+   if(portrait)c.drawImage(portrait,434,280,150,150);
+   text(c,'THE LAST GRIP',852,303,55,'#ffc479');
+   text(c,'Hola, bienvenidos a The Last Grip.',852,367,32);
+   text(c,'Resiste hasta que solo quede uno.',852,413,30,'#e5bb89');
+  }else{
+   const reveals=s.round.reveals||[],selected=reveals.at(-1);
+   const participant=s.roster.find(person=>person.id===selected?.id);
+   text(c,'SORTEO · RONDA '+s.round.number,767,275,36,'#ffc479');
+   if(participant){
+    const portrait=this.image('/juegos/cast-apocalypse/'+participant.characterId+'-portrait.webp');
+    if(portrait)c.drawImage(portrait,444,303,147,147);
+    c.font='700 51px "World Condensed",sans-serif';
+    c.fillStyle='#ffe6c4';
+    c.textAlign='center';
+    c.fillText(participant.name,846,386,472);
+   }
+   text(c,reveals.length+' PARTICIPANTES REVELADOS',846,435,24,'#e5bb89');
+  }
+  c.restore();
  }
  if(['ready','draw'].includes(s.phase)){fill(c,530,808,612,62,'#1c100df2');text(c,s.phase==='draw'?'SORTEO EN VIVO · '+s.round.members.length+' REVELADOS':s.round.autoStart?'PREPÁRATE · '+Math.max(1,Math.ceil((3000-(s.clock-s.phaseAt))/1000)):'POSICIONES CONFIRMADAS',836,847,24);}
  if(['results','winner'].includes(s.phase)&&(arena||scene==='monitor')){c.save();if(!arena){c.translate(444,213);c.scale(.90625,.90625);c.translate(-480,-245);}
@@ -61,7 +86,7 @@ export class GripRenderer{
   for(const [i,id]of ids.entries()){const p=s.roster.find(p=>p.id===id),x=ids.length===1?836:690+i*292,im=this.image('/juegos/cast-apocalypse/'+p.characterId+'-portrait.webp');if(im)c.drawImage(im,x-57,323,114,114);text(c,p.name,x,477,30);}
   text(c,Math.floor(s.round.duration/60)+':'+String(Math.floor(s.round.duration%60)).padStart(2,'0')+' DE RESISTENCIA',836,528,20,'#bda78a');c.restore();
  }
- if(!arena&&!['arrival','opening','intro','guide','closed','lobby','finished'].includes(s.phase))this.signs(c,place);
+ if(!arena&&!['arrival','opening','intro','guide','draw','closed','lobby','finished'].includes(s.phase))this.signs(c,place);
  if(s.paused){fill(c,675,405,322,72,'#150d0df0');text(c,'PAUSA DE DIRECCIÓN',836,451,28,'#ffd595');}
  if(hud&&s.phase==='active'&&s.round)this.hud(c,s,selfId);
  if(overlay){fill(c,0,0,1672,77,'#160e0bf5',0);c.fillStyle='#ad632d';c.fillRect(0,76,1672,2);text(c,'THE XPEDITION',30,37,25,'#fff1d5','left');text(c,'APOCALYPSE II',30,59,13,'#cf9a62','left');text(c,'THE LAST GRIP / ONLY ONE REMAINS',836,29,16,'#f0ad69');text(c,PHASE_LABELS[s.phase],836,58,27);c.fillStyle='#bfd38b';c.beginPath();c.arc(1537,39,4,0,Math.PI*2);c.fill();text(c,'EN VIVO',1630,45,18,'#bfd38b','right');}

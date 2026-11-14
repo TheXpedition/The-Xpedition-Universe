@@ -2,23 +2,39 @@ import {createGripAnnouncements,serveAnnouncement} from './world-grip-announceme
 import {mobility} from './public/juegos/world-health-systems.mjs';
 import {CLINIC_POINT} from './public/juegos/last-grip/navigation.mjs';
 import {randomUUID,randomInt} from 'node:crypto';
-import {createEpisode,applyEpisode,tickEpisode,episodeView,isEngaged,touch,attendee,normalizeEpisode,cinematicFor} from './public/juegos/last-grip/engine.mjs';
-import {MediaGate} from './public/juegos/last-grip/media-gate.mjs';
-import {EPISODE_MEDIA} from './public/juegos/last-grip/media-config.mjs';
+import {createEpisode,applyEpisode,tickEpisode,episodeView,isEngaged,touch,attendee,normalizeEpisode} from './public/juegos/last-grip/engine.mjs';
 import {worldCharacter} from './public/juegos/world-characters.mjs';
-export function episodeMediaFor(saved={}){return {...structuredClone(EPISODE_MEDIA),...saved,presentation:saved.presentation||structuredClone(EPISODE_MEDIA.presentation),draws:EPISODE_MEDIA.draws.map((round,i)=>({...round,...saved.draws?.[i]}))};}
+function migrateLegacyScenes(state){
+ if(!state.media)return;
+ delete state.media;
+ const {round}=state;
+ if(!round?.reveals?.some(reveal=>reveal.video))return;
+ let cursor=state.clock;
+ for(const reveal of round.reveals){
+  delete reveal.video;
+  if(state.phase!=='draw')continue;
+  if(reveal.start<=state.clock){
+   reveal.end=Math.min(reveal.end,state.clock+state.config.drawInterval);
+   cursor=Math.max(cursor,reveal.end);
+  }else{
+   reveal.start=cursor;
+   cursor+=state.config.drawInterval;
+   reveal.end=cursor;
+  }
+ }
+ if(state.phase==='draw')round.drawEnd=cursor+1000;
+}
+
 export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStart=async()=>{},getEnvironment=()=>null,onAftermath=async()=>{},synthesizeAnnouncement,onMariaMessage,canMariaAnnounce,canParticipate=async()=>true,autoBots=false}){
  let state=createEpisode({id:randomUUID(),now:now()}),queue=Promise.resolve(),closed=false,lastSave=0,lastWire=0,dirty=false,tickQueued=false;
  const subscribers=new Set();
  const announcements=createGripAnnouncements({now,synthesize:synthesizeAnnouncement,onReady:announcement=>{if(announcement.episodeId!==state.id)return;for(const c of clients.values())if(isEngaged(state,c.user.id)||subscribers.has(c.user.id)&&(attendee(state,c.user.id)||c.direct))send(c,{type:'grip-announcement',announcement});},onError:m=>{const c=[...clients.values()].find(c=>c.user.id===m.userId);if(c)send(c,{type:'error',message:'No se pudo generar la voz de este anuncio. El mensaje permanece en el chat; puedes volver a enviarlo.'});}});
- const mediaGate=new MediaGate({maxWaitMs:20000}),eligible=id=>isEngaged(state,id)&&[...clients.values()].some(c=>c.user.id===id);
- function observeMedia(){mediaGate.observe(cinematicFor(state),eligible);}
- function advance(){observeMedia();const time=now(),delta=Math.max(0,Math.min(1000,time-state.at)),allowed=mediaGate.advance(cinematicFor(state),state.clock,delta),changed=tickEpisode(state,state.at+allowed);state.at=time;observeMedia();return changed;}
- const ready=(async()=>{const row=await db.one('SELECT state FROM world_environment WHERE id=?','last-grip');if(row){try{const loaded=JSON.parse(row.state);if(loaded.version===1){if(loaded.winner&&!loaded.completedAt){loaded.completedAt=Number(row.updated);loaded.completedId=loaded.id;}state=normalizeEpisode(loaded);state.media=episodeMediaFor(loaded.media);if(state.phase==='intro'&&!loaded.media?.presentation)state.phaseAt=state.clock;state.at=now();for(const p of [...state.roster,...state.visitors]){p.connected=!!p.bot;p.lastSeen=state.clock;p.input=null;}if(!['closed','lobby','finished'].includes(state.phase)){state.paused=true;touch(state,'restart-paused');}}}catch{}}if(!row)state.media=structuredClone(EPISODE_MEDIA);normalizeEpisode(state);})();
+ const advance=()=>tickEpisode(state,now());
+ const ready=(async()=>{const row=await db.one('SELECT state FROM world_environment WHERE id=?','last-grip');if(row){try{const loaded=JSON.parse(row.state);if(loaded.version===1){if(loaded.winner&&!loaded.completedAt){loaded.completedAt=Number(row.updated);loaded.completedId=loaded.id;}state=normalizeEpisode(loaded);migrateLegacyScenes(state);state.at=now();for(const p of [...state.roster,...state.visitors]){p.connected=!!p.bot;p.lastSeen=state.clock;p.input=null;}if(!['closed','lobby','finished'].includes(state.phase)){state.paused=true;touch(state,'restart-paused');}}}catch{}}normalizeEpisode(state);})();
  const serial=fn=>{const result=queue.then(fn);queue=result.catch(()=>{});return result;};
  const save=async()=>{if(state.winner&&state.completedId!==state.id){state.completedAt=now();state.completedId=state.id;}await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated', 'last-grip',JSON.stringify(state),now());lastSave=now();dirty=false;};
  function actorFor(c){return {id:c.user.id,name:c.user.name,characterId:c.characterId,petId:c.petId||null,role:worldCharacter(c.characterId)?.role,vitals:c.vitals,origin:{zone:c.zone.id,x:c.p.x,y:c.p.y}};}
- function snapshot(c){return {...episodeView(state,{selfId:c.user.id,staff:!!c.direct,now:now()}),announcements:announcements.live(state.id),environment:getEnvironment(),mediaWaiting:mediaGate.pending()&&cinematicFor(state)&&state.clock>=cinematicFor(state).start+cinematicFor(state).duration-1,ownVitals:{...c.vitals}};}
+ function snapshot(c){return {...episodeView(state,{selfId:c.user.id,staff:!!c.direct,now:now()}),announcements:announcements.live(state.id),environment:getEnvironment(),ownVitals:{...c.vitals}};}
  async function excludedCharacters(){const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions');return new Set(row?JSON.parse(row.state):[]);}
  async function enrollUser(live,{prepared=false,excluded=new Set()}={}){
   if(live.direct||!await canParticipate(live.user)||live.wellness?.life?.status!=='alive'||worldCharacter(live.characterId)?.role!=='participant'||excluded.has(live.characterId))return false;
@@ -41,7 +57,6 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStar
   if(input.type==='join'&&c.wellness?.life?.status!=='alive')throw Object.assign(Error('Debes estar consciente para competir.'),{status:409});
   if(director&&['start','draw','final','beginRound'].includes(input.type)){for(const p of state.roster){const live=[...clients.values()].find(q=>q.user.id===p.id);if(live){if(input.type==='start')p.origin={zone:live.zone.id,x:live.p.x,y:live.p.y};p.vitals={...live.vitals};p.connected=true;}}}
   if(director&&input.type==='open'&&state.phase==='finished')await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','last-grip:history:'+state.id,JSON.stringify(state),now());
-  if(input.type==='open'&&director)state.media=structuredClone(EPISODE_MEDIA);
   if(input.type==='fillUsers'&&(!director||state.phase!=='lobby'))throw Object.assign(Error(director?'Los usuarios se completan antes de iniciar el episodio.':'Solo Dirección puede completar con usuarios.'),{status:director?409:403});
   let result;
   if(director&&input.type==='fillUsers'){result=await fillUsers();touch(state,'fillUsers',c.user.id,result);}
@@ -60,7 +75,7 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStar
   if(input.type==='start')for(const live of clients.values())if(isEngaged(state,live.user.id))stop(live);
   if(input.type==='visit'&&isEngaged(state,c.user.id))stop(c);
   if(input.type==='finish')for(const live of clients.values())if(state.returns[live.user.id])stop(live);
-  observeMedia();dirty=true;await flushEffort();
+  dirty=true;await flushEffort();
   // Sample movement at 10 Hz instead of broadcasting and writing every input.
   if(input.type==='move')return result;
   if(input.type!=='pulse')await save();publish();send(c,{type:'grip-result',action:input.type,result,requestId:input.requestId});return result;
@@ -71,8 +86,8 @@ export function createLastGrip({db,clients,send,can,now=Date.now,stop,beforeStar
   async completeIfWinner(){await ready;return serial(async()=>{if(state.phase!=='winner')return false;applyEpisode(state,{type:'finish',confirm:true},{actor:{id:'system'},staff:true,now:now()});dirty=true;await flushEffort();await save();publish();return true;});},
   clinicVenue(id){const p=attendee(state,id);return p&&isEngaged(state,id)&&p.area==='monitor'&&Math.hypot(p.x-CLINIC_POINT.x,p.y-CLINIC_POINT.y)<145?'last-grip:'+state.id:null;},
   async attach(c){await ready;if(!c.direct&&!['closed','lobby','finished'].includes(state.phase)&&!attendee(state,c.user.id))await action(c,{type:'visit'});syncActors();const p=attendee(state,c.user.id);if(p){p.connected=true;p.lastSeen=state.clock;p.input=null;dirty=true;}if(isEngaged(state,c.user.id))send(c,{type:'grip-state',episode:snapshot(c)});},
-  disconnect(c){const p=attendee(state,c.user.id);if(p){p.connected=false;p.lastSeen=state.clock;p.input=null;dirty=true;}subscribers.delete(c.user.id);mediaGate.viewer(c.user.id,false,cinematicFor(state),eligible);},
-  async handle(c,input){if(input.type==='grip-ping'){await ready;const at=now();send(c,{type:'grip-pong',sent:input.sent,clock:state.clock+(state.paused||['closed','lobby','finished'].includes(state.phase)?0:Math.max(0,Math.min(1000,at-state.at)))});return true;}if(input.type==='grip-media-viewer'){await ready;return serial(()=>{mediaGate.viewer(c.user.id,input.visible===true,cinematicFor(state),eligible);return true;});}if(input.type==='grip-media-ended'||input.type==='grip-media-failed'){await ready;return serial(()=>{if(input.type==='grip-media-ended')mediaGate.ended(c.user.id,input.key);else mediaGate.failed(c.user.id,input.key);return true;});}if(input.type==='grip-subscribe'){await ready;subscribers.add(c.user.id);send(c,{type:'grip-state',episode:snapshot(c)});return true;}if(input.type==='grip-action'){await action(c,input.action);return true;}if(input.type==='grip-chat'){
+  disconnect(c){const p=attendee(state,c.user.id);if(p){p.connected=false;p.lastSeen=state.clock;p.input=null;dirty=true;}subscribers.delete(c.user.id);},
+  async handle(c,input){if(input.type==='grip-ping'){await ready;const at=now();send(c,{type:'grip-pong',sent:input.sent,clock:state.clock+(state.paused||['closed','lobby','finished'].includes(state.phase)?0:Math.max(0,Math.min(1000,at-state.at)))});return true;}if(['grip-media-viewer','grip-media-ended','grip-media-failed'].includes(input.type))return true;if(input.type==='grip-subscribe'){await ready;subscribers.add(c.user.id);send(c,{type:'grip-state',episode:snapshot(c)});return true;}if(input.type==='grip-action'){await action(c,input.action);return true;}if(input.type==='grip-chat'){
     await ready;if(!attendee(state,c.user.id)&&!await can(c.user,'direct'))throw Object.assign(Error('El chat está reservado al episodio.'),{status:403});
     if(now()-(c.lastChat||0)<1400)throw Object.assign(Error('Espera antes de enviar otro mensaje.'),{status:429});
     const mute=await db.one('SELECT muted_until FROM world_contestants WHERE user_id=? AND season=?',c.user.id,'antarctica-1').catch(()=>null);if(Number(mute?.muted_until)>now())throw Object.assign(Error('Tienes el chat silenciado.'),{status:403});
