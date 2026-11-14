@@ -1,6 +1,5 @@
 'use strict';
 const worldLandscapeModule=import('/world-landscape.mjs');
-const worldIntroModule=import('/world-intro-player.mjs');
 let activeWorldFrame=null;
 
 async function renderWorldEntry(){
@@ -36,19 +35,8 @@ function confirmWorldServerRemoval(server){return new Promise(resolve=>{const di
 function openWorldFrame(server){
  if(activeWorldFrame)return;
  const iframe=document.createElement('iframe');iframe.className='world-server-frame';iframe.title='World · '+server.name;iframe.allow='autoplay; fullscreen';
- const warm=document.createElement('video');warm.playsInline=true;warm.preload='auto';warm.volume=1;warm.muted=false;warm.hidden=true;warm.src='/world-intro-warmup.mp4';document.body.append(warm);
- // On desktop Edge, a hidden video's play() may remain pending forever
- // while it buffers or the browser blocks autoplay. Warmup is best effort:
- // the actual introduction still runs via playWorldIntro below.
- const warmed=Promise.race([Promise.resolve().then(()=>warm.play()).catch(()=>{}),new Promise(resolve=>setTimeout(resolve,1600))]);
  const previousTitle=document.title;document.title=server.name+' · World';document.documentElement.classList.add('world-frame-open');
- const record={iframe,warm,previousTitle,closed:false,abort:new AbortController()};activeWorldFrame=record;void worldLandscapeModule.then(m=>{if(!record.closed){record.landscape=m.installLandscapeMode();void record.landscape.request();}});
- record.listener=async event=>{
-  if(event.source!==iframe.contentWindow||event.origin!==location.origin||event.data?.type!=='world-intro-ready'||!event.ports?.[0])return;
-  const port=event.ports[0],pending=new Map();let sequence=0;port.onmessage=message=>{const value=message.data;if(value?.reply){const callback=pending.get(value.reply);if(callback){pending.delete(value.reply);value.error?callback.reject(Error(value.error)):callback.resolve(value.value);}}};port.postMessage({type:'accepted'});
-  const request=(action,body)=>{const id=++sequence;return new Promise((resolve,reject)=>{pending.set(id,{resolve,reject});port.postMessage({id,action,body});});};
-  try{await warmed;if(record.closed)return;const module=await worldIntroModule;await module.playWorldIntro({...event.data.config,url:'/world-intro-video.mp4',mobileUrl:'/world-intro-video-mobile.mp4'},{video:warm,signal:record.abort.signal,request:(action,body)=>action==='start'?Promise.resolve(event.data.session):request(action,body)});if(!record.closed)port.postMessage({type:'finished'});}catch(error){port.postMessage({type:'failed',error:error.message});}
- };
+ const record={iframe,previousTitle,closed:false};activeWorldFrame=record;void worldLandscapeModule.then(m=>{if(!record.closed)record.landscape=m.installLandscapeMode();});
  // /juegos/ redirects an expired or revoked session to the login page.
  // In a full-screen iframe this otherwise looks exactly like an endless
  // "Preparando tu próxima aventura" spinner on desktop Edge.
@@ -63,9 +51,9 @@ function openWorldFrame(server){
    openAuth('login');
   }catch{/* Cross-origin handoffs must not be inspected. */}
  });
- window.addEventListener('message',record.listener);iframe.src='/juegos/?server='+encodeURIComponent(server.id);document.body.append(iframe);
+ iframe.src='/juegos/?server='+encodeURIComponent(server.id);document.body.append(iframe);
 }
-function closeWorldFrame(){const record=activeWorldFrame;if(!record)return;record.closed=true;record.landscape?.destroy();record.abort.abort();window.removeEventListener('message',record.listener);record.iframe.remove();record.warm.pause();record.warm.remove();document.documentElement.classList.remove('world-frame-open');document.title=record.previousTitle;activeWorldFrame=null;}
+function closeWorldFrame(){const record=activeWorldFrame;if(!record)return;record.closed=true;record.landscape?.destroy();record.iframe.remove();document.documentElement.classList.remove('world-frame-open');document.title=record.previousTitle;activeWorldFrame=null;}
 window.addEventListener('hashchange',()=>{if(location.hash!=='#world')closeWorldFrame();});
 
 moderationTabs.push(['world','World']);

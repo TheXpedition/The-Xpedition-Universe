@@ -1,4 +1,3 @@
-import {playWorldIntro,needsWorldIntro} from './world-intro.mjs';
 import {BootProgress,createBootDisplay,loadBootImage,clearBootWallpaper,showBootWallpaper,optionalBootResource} from './world-boot.mjs';
 let generation=0;
 export async function startWorld(){
@@ -20,9 +19,9 @@ export async function startWorld(){
    progress.track('scene',optionalBootResource(()=>Promise.all([...new Set([WORLD_MAPS.base,scene])].map(preloadWorldArt)),{name:'map artwork',timeoutMs:6500})),
    progress.track('character',optionalBootResource(()=>loadBootImage('/juegos/sprites/'+encodeURIComponent(data.profile.characterId)+(window.XpeditionPerformance?.lite?'-lite':'')+'.webp'),{name:'character artwork',timeoutMs:6500}))
   ]);
-  const module=loaded.at(-1),introOptions={userId:data.user.id},introPending=needsWorldIntro(data.intro,introOptions);
-  let worldApp;await progress.track('interface',(async()=>{worldApp=await module.bootWorld({...data,deferNetwork:introPending});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})());
-  document.querySelector('#world-main').setAttribute('aria-busy','false');if(introPending)document.body.classList.add('is-intro-pending');await display.finish();try{if(introPending)await playWorldIntro(data.intro,introOptions);}finally{document.body.classList.remove('is-intro-pending');}if(data.protocolInvite){location.replace(data.protocolInvite);return;}worldApp?.startNetwork();
+  const module=loaded.at(-1);
+  let worldApp;await progress.track('interface',(async()=>{worldApp=await module.bootWorld({...data,deferNetwork:true});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})());
+  document.querySelector('#world-main').setAttribute('aria-busy','false');await display.finish();if(data.protocolInvite){location.replace(data.protocolInvite);return;}worldApp?.startNetwork();
  }catch(error){
   if(turn!==generation)return;
   const message=error.status===401?'Entra con tu cuenta de The Xpedition para continuar.':error.status===403?'World sigue en pruebas privadas. Tu cuenta necesita acceso autorizado.':error.message||'No se pudo preparar el mundo.';
