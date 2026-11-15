@@ -104,7 +104,7 @@ test('la tercera edición muestra sus 22 categorías anunciadas y los nominados 
  assert.equal(edition.groups.find(g=>g.id==='personalidad').categories.at(-1).name,'Mejor Momento');
  assert.deepEqual(edition.groups.find(g=>g.id==='produccion').categories.map(c=>c.name),[
   'Mejor Episodio','Mejor Temporada','Mejor Diseño & Vestuario','Mejor Canción',
-  'Mejor Proyecto Independiente','Mejor Participación en Proyecto Independiente'
+  'Mejor Proyecto Independiente','Mejor Participación Externa'
  ]);
  assert(categories(edition).every(c=>c.nominees.length===0));
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
