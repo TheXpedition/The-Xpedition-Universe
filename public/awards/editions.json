@@ -1517,6 +1517,12 @@
               "name": "Mejor Proyecto Independiente",
               "nominees": [],
               "production": true
+            },
+            {
+              "id": "produccion-6",
+              "name": "Mejor Participación en Proyecto Independiente",
+              "nominees": [],
+              "production": true
             }
           ]
         }
