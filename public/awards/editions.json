@@ -1540,7 +1540,29 @@
             {
               "id": "estrategia-5",
               "name": "Mejor Superviviente",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Gabriel Sab",
+                  "people": [
+                    "Gabriel Sab"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Bodega Bodeguita",
+                  "people": [
+                    "Bodega Bodeguita"
+                  ],
+                  "description": "Showdown II"
+                }
+              ]
             },
             {
               "id": "estrategia-6",
