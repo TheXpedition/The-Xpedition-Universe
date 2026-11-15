@@ -7,13 +7,14 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
 import { PGlite } from '@electric-sql/pglite';
 import { schema, postgresSQL } from '../database.mjs';
-import { lockRoomStatus, readRoomProtocol, serverDatabase } from '../world-server-store.mjs';
+import { lockRoomStatus, readRoomProtocol, serverDatabase, serverTablePrefix } from '../world-server-store.mjs';
+import { FOOD_CATALOG } from '../public/juegos/world-foods.mjs';
 import { createWorld } from '../world.mjs';
 import { createProgression } from '../progression.mjs';
 import { createArcade } from '../arcade.mjs';
 import { WORLD_MAPS } from '../public/juegos/world-maps.mjs';
 
-test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', { timeout: 60000 }, async () => {
+test('an existing PostgreSQL World migrates its food inventory and bootstraps with BIGINT coordinates', { timeout: 60000 }, async () => {
  const pg = new PGlite(), ctx = new AsyncLocalStorage();
  let tail = Promise.resolve(), world, liveServer, liveSocket;
  const query = async (sql, args = []) => {
@@ -42,7 +43,14 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   await db.run('INSERT INTO world_servers(id,name,creator,enabled,settings,created,updated) VALUES(?,?,?,1,?,?,?)', id, 'Postgres test', staff, '{}', Date.now(), Date.now());
   await db.run('INSERT INTO world_server_leases(server_id,owner,expires) VALUES(?,?,?)', id, lease, Date.now() + 3600000);
   assert.equal(await readRoomProtocol(db, id), null);
+  const priorRoom = await serverDatabase(db, id, { leaseOwner: lease });
+  const foodId = FOOD_CATALOG[0].id;
+  await db.exec('ALTER TABLE xpedition.' + serverTablePrefix(id) + 'world_food_inventory DROP COLUMN freshness');
+  await priorRoom.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,?,?)', staff, foodId, 2, Date.now());
   const scoped = await serverDatabase(db, id, { leaseOwner: lease });
+  const savedFood = await scoped.one('SELECT quantity,freshness FROM world_food_inventory WHERE user_id=? AND food_id=?', staff, foodId);
+  assert.equal(savedFood.quantity, 2);
+  assert.equal(savedFood.freshness, '[]');
   await scoped.transaction(async () => {
    assert.equal((await lockRoomStatus(scoped, id)).enabled, 1);
    await scoped.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)', 'x-protocol', '{"phase":"INTRO_VIDEO"}', Date.now());
@@ -59,7 +67,7 @@ test('a fresh independent World bootstraps with PostgreSQL BIGINT coordinates', 
   const user = { id: staff, name: 'SQL test' };
   const bootstrap = () => world.handle({ method: 'GET' }, { setHeader() {}, getHeader() {} }, new URL('http://localhost/api/world/bootstrap'), user);
   await bootstrap();
-  assert.equal(output.intro.seen, false);
+  assert.equal(output.intro.seen, true);
   assert.equal(output.user.wallet.coins, 0);
   assert.equal(output.profile.x, Math.round(WORLD_MAPS['tren-pasajeros'].spawn[0]));
   assert.equal(output.profile.y, Math.round(WORLD_MAPS['tren-pasajeros'].spawn[1]));

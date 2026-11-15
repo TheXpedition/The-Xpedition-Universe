@@ -17,8 +17,7 @@ export function optionalBootResource(task,{name='Visual',timeoutMs=5000,onWarnin
  });
 }
 export function loadBootImage(url){return new Promise((resolve,reject)=>{const image=new Image();image.onload=async()=>{try{if(image.decode)await image.decode();resolve(image);}catch(e){reject(e);}};image.onerror=()=>reject(Error('No se pudo cargar un recurso visual.'));image.src=url;});}
-export function clearBootWallpaper(root){root.classList.remove('boot-art-ready');root.querySelector('.boot-art')?.removeAttribute('src');const bleed=root.querySelector('.boot-bleed');if(bleed)bleed.style.backgroundImage='none';}
-export async function showBootWallpaper(root,url,{isCurrent=()=>true,load=loadBootImage}={}){const image=await load(url);if(!isCurrent())return image;root.querySelector('.boot-art').src=image.src;root.querySelector('.boot-bleed').style.backgroundImage='url("'+image.src+'")';root.classList.add('boot-art-ready');return image;}
+export async function showBootWallpaper(root,url,{isCurrent=()=>true,load=loadBootImage}={}){const image=await load(url);if(!isCurrent())return image;root.querySelector('.boot-art').src=image.src;root.querySelector('.boot-bleed').style.setProperty('--boot-wallpaper','url("'+image.src+'")');return image;}
 export function createBootDisplay(root){
  const bar=root.querySelector('[role=progressbar]'),percent=root.querySelector('#boot-percent'),message=root.querySelector('#boot-message');let target=0,shown=0,raf,alive=true;
  root.hidden=false;root.classList.remove('boot-leaving','boot-error');root.querySelector('#boot-actions').hidden=true;

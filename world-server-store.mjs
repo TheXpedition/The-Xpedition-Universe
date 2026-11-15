@@ -48,8 +48,14 @@ export async function serverDatabase(base,id,{leaseOwner}={}){
   await fence();
   const ddl=statements.map(sql=>rewrite(base.kind==='postgres'?sql.replace(/\bINTEGER\b/g,'BIGINT'):sql));
   if(base.kind==='postgres')for(const table of SERVER_TABLES){const name=names.get(table);ddl.push('ALTER TABLE '+name+' ENABLE ROW LEVEL SECURITY','REVOKE ALL ON TABLE '+name+' FROM PUBLIC');}
+  // Existing rooms have their own inventory tables and need the same column as the global table.
+  const foodInventory=names.get('world_food_inventory');
+  if(base.kind==='postgres')ddl.push("ALTER TABLE "+foodInventory+" ADD COLUMN IF NOT EXISTS freshness TEXT NOT NULL DEFAULT '[]'");
   // One round trip instead of hundreds during a room restart on hosted Postgres.
   if(base.exec)await base.exec(ddl.join(';')+';');else for(const sql of ddl)await base.run(sql);
+  if(base.kind==='sqlite'&&!(await base.all('PRAGMA table_info('+foodInventory+')')).some(column=>column.name==='freshness')){
+   await base.run("ALTER TABLE "+foodInventory+" ADD COLUMN freshness TEXT NOT NULL DEFAULT '[]'");
+  }
  });
  const transaction=fn=>base.transaction(async()=>{await fence();return fencing.run(true,fn);});
  async function run(sql,...args){if(leaseOwner&&!fencing.getStore()&&/^\s*(?:INSERT|UPDATE|DELETE|REPLACE|ALTER|CREATE)/i.test(sql))return transaction(()=>base.run(rewrite(sql),...args));return base.run(rewrite(sql),...args);}
