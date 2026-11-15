@@ -1663,17 +1663,119 @@
             {
               "id": "personalidad-4",
               "name": "Amistad de la Temporada",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Lucas Mendez, Adriana Pereira",
+                  "people": [
+                    "Lucas Mendez",
+                    "Adriana Pereira"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Alexandro, Ari Salgado",
+                  "people": [
+                    "Alexandro",
+                    "Ari Salgado"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Alice, Bayron, Carlos Harrington, Eduard, Luciano",
+                  "people": [
+                    "Alice",
+                    "Bayron",
+                    "Carlos Harrington",
+                    "Eduard",
+                    "Luciano"
+                  ],
+                  "description": "Showdown 2"
+                },
+                {
+                  "title": "Sal Lua, Peggy",
+                  "people": [
+                    "Sal Lua",
+                    "Peggy"
+                  ],
+                  "description": "Showdown 2"
+                }
+              ]
             },
             {
               "id": "personalidad-5",
               "name": "Rivalidad de la Temporada",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Lucas Mendez vs Bruno Macri, Bayron, Adriana Pereira, Alexandro, Mary Hao, Daelly, Christopher, Alice",
+                  "people": [
+                    "Lucas Mendez",
+                    "Bruno Macri",
+                    "Bayron",
+                    "Adriana Pereira",
+                    "Alexandro",
+                    "Mary Hao",
+                    "Daelly",
+                    "Christopher",
+                    "Alice"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Kim Camila y Lalamila vs Pier",
+                  "people": [
+                    "Kim Camila",
+                    "Lalamila",
+                    "Pier"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Carlos Harrington vs Sal Lua y Peggy",
+                  "people": [
+                    "Carlos Harrington",
+                    "Sal Lua",
+                    "Peggy"
+                  ],
+                  "description": "Showdown 2"
+                }
+              ]
             },
             {
               "id": "personalidad-6",
               "name": "Mejor Momento",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Andromeda",
+                  "people": [
+                    "Andromeda"
+                  ],
+                  "description": "Andromeda traiciona a Peggy en The Traitor 2"
+                },
+                {
+                  "title": "Alice, Kim Camila, Renzo, Lalamila",
+                  "people": [
+                    "Alice",
+                    "Kim Camila",
+                    "Renzo",
+                    "Lalamila"
+                  ],
+                  "description": "Alice, Kim Camila, Renzo, Pier y Lalamila enloquecen pensando que hay un infiltrado entre los traidores y se empiezan a eliminar."
+                },
+                {
+                  "title": "Leandro",
+                  "people": [
+                    "Leandro"
+                  ],
+                  "description": "Leandro logra pasar de los últimos lugares al segundo con más estrellas y clasifica a la final de Showdown 2."
+                },
+                {
+                  "title": "Ari Santana",
+                  "people": [
+                    "Ari Santana"
+                  ],
+                  "description": "Ari Santana queda fuera de la Final del primer reto en Apocalypse II antes de haber comenzado."
+                }
+              ]
             }
           ]
         },
@@ -1721,8 +1823,30 @@
             {
               "id": "produccion-4",
               "name": "Mejor Canción",
-              "nominees": [],
-              "production": true
+              "nominees": [
+                {
+                  "title": "Marcos",
+                  "people": [
+                    "Marcos"
+                  ],
+                  "description": "Marcostoso"
+                },
+                {
+                  "title": "Eduard",
+                  "people": [
+                    "Eduard"
+                  ],
+                  "description": "Mis Lechosas"
+                },
+                {
+                  "title": "Felix",
+                  "people": [
+                    "Felix"
+                  ],
+                  "description": "El Rap del Abuelo"
+                }
+              ],
+              "production": false
             },
             {
               "id": "produccion-5",

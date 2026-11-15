@@ -28,8 +28,10 @@
 .aw-nominees>.aw-nominee,.aw-main-others .aw-nominees>.aw-nominee{padding:clamp(7px,calc(15cqw / var(--aw-nominee-count)),25px) clamp(1px,calc(7cqw / var(--aw-nominee-count)),14px)}
 .aw-nominees .aw-nominee-faces,.aw-main-others .aw-nominees .aw-nominee-faces{width:100%;min-height:0}
 .aw-nominees .aw-person,.aw-main-others .aw-nominees .aw-person{width:min(64px,100%);height:auto;aspect-ratio:1}
-.aw-nominees .aw-nominee-faces:has(.aw-person+.aw-person)>.aw-person{width:min(52px,39%)}
-.aw-nominees .aw-nominee-faces.aw-ensemble>.aw-person{width:min(45px,26%)}
+.aw-nominees .aw-nominee-faces:not(.aw-ensemble):has(.aw-person+.aw-person)>.aw-person{width:min(52px,39%)}
+.aw-nominees .aw-nominee-faces.aw-ensemble{--aw-portrait-overlap:min(12%,6px)}
+.aw-nominees .aw-nominee-faces.aw-ensemble>.aw-person{width:min(45px,calc((100% - var(--aw-portrait-overlap)) / var(--aw-people-count) + var(--aw-portrait-overlap)))}
+.aw-nominees .aw-nominee-faces.aw-ensemble>.aw-person+.aw-person{margin-left:calc(0px - var(--aw-portrait-overlap))}
 .aw-nominees .aw-person+.aw-person{margin-left:max(-16px,-12%)}
 .aw-nominees .aw-nominee h4,.aw-main-others .aw-nominees .aw-nominee h4{font-size:clamp(7px,calc(38cqw / var(--aw-nominee-count)),11px);line-height:1.4}
 .aw-nominees .aw-nominee>p,.aw-main-others .aw-nominees .aw-nominee>p{font-size:clamp(7px,calc(33cqw / var(--aw-nominee-count)),10px);line-height:1.4;overflow-wrap:anywhere}

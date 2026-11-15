@@ -83,7 +83,8 @@ function awardPerson(name){
 function awardNominee(nominee,item){
  const search=norm([nominee.title,nominee.description,...nominee.people,nominee.note||''].join(' '));
  const show=nominee.show?allContent().find(content=>content.id===nominee.show):null;
- const visual=show?`<div class="aw-episode-art"><img src="${esc(contentArt(show))}" alt="" loading="lazy">${brandArt(show,'aw-show-logo')}</div>`:nominee.people.length?`<div class="aw-nominee-faces ${nominee.people.length>2?'aw-ensemble':''}">${nominee.people.map(awardPerson).join('')}</div>`:`<div class="aw-team-symbol" aria-hidden="true">${icon('users')}</div>`;
+ const peopleCount=nominee.people.length;
+ const visual=show?`<div class="aw-episode-art"><img src="${esc(contentArt(show))}" alt="" loading="lazy">${brandArt(show,'aw-show-logo')}</div>`:peopleCount?`<div class="aw-nominee-faces ${peopleCount>2?'aw-ensemble':''}" style="--aw-people-count:${peopleCount}">${nominee.people.map(awardPerson).join('')}</div>`:`<div class="aw-team-symbol" aria-hidden="true">${icon('users')}</div>`;
  return `<article class="aw-nominee ${nominee.winner?'is-award-winner':''}" data-nominee-search="${esc(search)}" data-winner="${!!nominee.winner}">${nominee.winner?`<div class="aw-prize"><img src="${esc(item.trophy)}" alt="Trofeo de la ${item.edition}.ª edición" loading="lazy"><span>${nominee.people.length>1?'Ganadores':'Ganador'}</span></div>`:''}${visual}<h4>${esc(nominee.title)}</h4>${nominee.description?`<p>${esc(nominee.description)}</p>`:''}${nominee.note?`<small class="aw-recipient-note">${esc(nominee.note)}</small>`:''}</article>`;
 }
 function filterAwards(){
