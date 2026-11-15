@@ -46,13 +46,13 @@ export function mountFoodPanel(root,{mode='fridge',data={},onTake,onDeposit,onCo
   const stored=(team.slots||[]).filter(item=>quantity(item.quantity)>0);
   const owned=items.filter(item=>quantity(item.quantity)>0);
   const choice=selectedItem(),disabled=pending?' disabled':'';
-  const cards=shelterDeposit?owned:stored;
+  const cards=shelterDeposit?owned:stored,total=count(cards);
   return `<header class="food-panel-heading">
     <span class="food-heading-symbol">${svg(shelterDeposit?'inventory':'fridge')}</span>
     <div><p class="food-eyebrow">${escape(team.name)}</p><h2>${shelterDeposit?'Guardar comida':'Nevera del refugio'}</h2></div>
    </header>
    <section class="food-shelter-shelf" aria-label="${shelterDeposit?'Comida de tu inventario':'Comida guardada'}">
-    <div class="food-section-label"><h3>${shelterDeposit?'Tu inventario':'Comida guardada'}</h3><span>${count(cards)} unidades</span></div>
+    <div class="food-section-label"><h3>${shelterDeposit?'Tu inventario':'Comida guardada'}</h3><span>${total} ${total===1?'unidad':'unidades'}</span></div>
     ${cards.length?`<div class="food-slots">${cards.map(item=>slot(item,shelterDeposit?undefined:team.id)).join('')}</div>`:`<p class="food-shelter-empty">${shelterDeposit?'No tienes comida en tu inventario.':'La nevera está vacía.'}</p>`}
    </section>
    <div class="food-shelter-actions">

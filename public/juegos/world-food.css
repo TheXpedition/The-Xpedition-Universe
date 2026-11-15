@@ -133,10 +133,18 @@ body #modal.food-dialog:has([data-food-mode=shelter]){
 .food-shelter-shelf{min-width:0;padding:11px;border:1px solid #6d4930;border-radius:4px;background:#211813;box-shadow:inset 0 0 0 3px #130e0b}
 .food-shelter-shelf .food-section-label{margin-bottom:8px;padding-bottom:7px}
 .food-shelter-shelf .food-section-label h3{font-size:17px}
-.food-shelter-shelf .food-slots{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));max-height:min(40dvh,245px)}
-.food-shelter-shelf .food-slot{min-height:79px;padding:7px 3px 4px}
-.food-shelter-shelf .food-slot-art{width:33px;height:33px}
+.food-shelter-shelf .food-slots{grid-template-columns:repeat(auto-fill,minmax(70px,1fr));max-height:clamp(68px,calc(100dvh - 245px),245px)}
+[data-food-mode=shelter] .food-slot{min-height:0;grid-template-rows:33px auto;gap:3px;padding:8px 4px 6px!important;margin:0}
+[data-food-mode=shelter] .food-slot-art{width:33px!important;height:33px!important}
 .food-shelter-shelf .food-slot-name{min-height:0;font-size:10px}
 .food-shelter-empty{padding:10px 3px;color:#d0b795;font-size:12px}
 .food-shelter-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;margin-top:12px}
-.food-shelter-actions button{min-height:40px}
+.food-shelter-actions button{min-height:40px;margin:0}
+
+@media(max-height:380px){
+ [data-food-mode=shelter] .food-panel-heading{margin-bottom:6px}
+ .food-shelter-shelf{padding:6px 8px}
+ .food-shelter-shelf .food-section-label{margin-bottom:4px;padding-bottom:4px}
+ .food-shelter-shelf .food-slots{max-height:clamp(62px,calc(100dvh - 250px),130px)}
+ .food-shelter-actions{margin-top:6px}
+}
