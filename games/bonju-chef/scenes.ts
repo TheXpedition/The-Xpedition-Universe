@@ -8,6 +8,29 @@ import {KitchenRig,occludeKitchen} from './kitchen-rig';
 import {CHEF_CAST,INGREDIENTS,RECIPES} from '../../public/juegos/bonju-chef/data.mjs';
 import {model,clock,sceneKey,events,own,displayActor,displayStation} from './model';
 const ART='/juegos/bonju-chef/art/';
+const FINISH_COUNTER={x:110,back:760,width:1700,height:320};
+const COUNTER_SURFACE=FINISH_COUNTER.back+28;
+const PLATE_X=1135;
+const bottomPadding=new Map<string,number>();
+function setOnCounter(image:Phaser.GameObjects.Image,surface:number){
+ const {texture,frame}=image,key=texture.key+':'+frame.name;
+ if(!bottomPadding.has(key)){
+  const canvas=document.createElement('canvas');
+  canvas.width=frame.cutWidth;canvas.height=frame.cutHeight;
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  let padding=0;
+  const source=texture.getSourceImage(frame.sourceIndex);
+  if(ctx&&canvas.width&&canvas.height&&(source instanceof HTMLImageElement||source instanceof HTMLCanvasElement)){
+   ctx.drawImage(source,frame.cutX,frame.cutY,canvas.width,canvas.height,0,0,canvas.width,canvas.height);
+   const pixels=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+   rows: for(let y=canvas.height-1;y>=0;y--){
+    for(let x=0;x<canvas.width;x++)if(pixels[(y*canvas.width+x)*4+3]>96){padding=canvas.height-1-y;break rows;}
+   }
+  }
+  bottomPadding.set(key,padding);
+ }
+ image.setOrigin(.5,1).setY(surface+(bottomPadding.get(key)||0)*image.scaleY).setDepth(1100);
+}
 export class BootScene extends Phaser.Scene{
  constructor(){super('BootScene');}
  preload(){const progress=document.querySelector<HTMLProgressElement>('#loader progress')!;this.load.on('progress',(n:number)=>progress.value=n);this.load.image('arena',ART+'arena.webp');for(const id of ['plating-v5','blender-v5','stage-elimination-v4','elimination-front-v4','stage-jury-v3','stage-floor-v3','stage-pantry-v3','jury-front-v3','fridge-closed-v3','serving-top-v3','serving-front-v3','knife-v3','spoon-v3','board-v3','podium-gold-v3','podium-silver-v3','podium-bronze-v3','trophy-v3'])this.load.image(id,ART+id+'.webp');for(const recipe of RECIPES)for(const q of ['excellent','normal','ugly'])this.load.image('dish-'+recipe.id+'-'+q,ART+'plates-v4/'+recipe.id+'-'+q+'.webp');this.load.image('station',ART+'station-v2.webp');this.load.spritesheet('ingredients',ART+'ingredients-v4.webp',{frameWidth:200,frameHeight:200});this.load.spritesheet('extra-ingredients',ART+'ingredients-extra-v5.webp',{frameWidth:200,frameHeight:200});this.load.spritesheet('garbage',ART+'garbage.webp',{frameWidth:512,frameHeight:512});this.load.spritesheet('judge-reactions',ART+'judges-reactions-v4.webp',{frameWidth:512,frameHeight:512});this.load.image('cold-station',ART+'cold-station.webp');this.load.spritesheet('judges',ART+'judges.webp',{frameWidth:512,frameHeight:512});for(const c of CHEF_CAST){this.load.image('cook-'+c.id,ART+'cast-v3/'+c.id+'.webp');this.load.image('work-'+c.id,ART+'work-v4/'+c.id+'.webp');this.load.spritesheet('walk-'+c.id,ART+'walk-v3/'+c.id+'.webp',{frameWidth:160,frameHeight:200});}this.load.on('loaderror',(f:any)=>events.emit('notice','No se pudo cargar '+f.key+'. Reintentando al volver a entrar.'));}
@@ -27,7 +50,11 @@ class StageScene extends Phaser.Scene{blenderRig?:BlenderRig;
 
   if(key==='SharedFridgeScene'){const f=STAGE.fridge;const im=this.add.image(f.x,f.y,'fridge-closed-v3').setOrigin(.5,1);im.setScale(f.height/im.frame.realHeight).setDepth(f.y-1);this.add.ellipse(f.x,f.y+2,190,22,0x26170e,.25).setDepth(1);for(const p of s.roster.filter((p:any)=>p.active))this.walker(p);}
   if(key==='StationPlateScene')this.add.image(960,540,'plating-v5').setDisplaySize(1920,1080);
-  if(key==='StationBlendScene'){this.rig=new KitchenRig(this,displayActor().characterId,'blend');this.counter(80,780,1760,300);this.blenderRig=new BlenderRig(this);}
+  if(key==='StationBlendScene'){
+   const actor=displayActor();
+   if(actor)this.rig=new KitchenRig(this,actor.characterId,'blend',false,{x:1030,y:COUNTER_SURFACE-45});
+   this.finishCounter();this.blenderRig=new BlenderRig(this,1215,COUNTER_SURFACE);
+  }
   if(key.startsWith('Station')&&!['StationServeScene','StationPlateScene','StationBlendScene'].includes(key)){
    const st=displayStation(),stage=st.stage,cold=['cold','fresh'].includes(stationRecipe(s,st).method),working=stage==='cook',mixing=stage==='mix',pan=working?-480:mixing?480:0,p=displayActor();
    const table=this.add.image(960+pan,working?(cold?640:580):mixing?470:360,working&&cold?'cold-station':'station').setOrigin(.5,0).setDepth(400);table.setScale(1700/table.frame.realWidth);
@@ -35,7 +62,7 @@ class StageScene extends Phaser.Scene{blenderRig?:BlenderRig;
    occludeKitchen(this,table,stage,working&&cold);
    const item=prepProgress(st).current||'carrot',index=INGREDIENTS.find(i=>i.id===item)?.index??0;if(!working&&!mixing){const food=fit(this.add.image(840,715,index>=48?'extra-ingredients':'ingredients',index>=48?index-48:index),150,115).setDepth(610);this.things.push({food});}this.steam=this.add.graphics().setDepth(610);
   }
-  if(key==='StationServeScene'){const p=displayActor();if(p){const h=visualHeight(p.characterId,580),im=fit(this.add.image(960,820,'work-'+p.characterId).setOrigin(.5,1),780,h).setDepth(300);this.actors.set(p.id,{p,image:im,x:960,y:820,h:im.displayHeight});}this.counter(110,760,1700,320);dish(this,960,755,displayStation()?.result?.plateId||s.round,s.mode==='blind'?'covered':displayStation()?.result?.quality,360,displayStation()?.result?.garbage).setDepth(1100);}
+  if(key==='StationServeScene'){const p=displayActor();if(p){const h=visualHeight(p.characterId,580),im=fit(this.add.image(848,820,'work-'+p.characterId).setOrigin(.5,1),780,h).setDepth(300);this.actors.set(p.id,{p,image:im,x:848,y:820,h:im.displayHeight});}this.finishCounter();const result=displayStation()?.result;setOnCounter(dish(this,PLATE_X,COUNTER_SURFACE,result?.plateId||s.round,s.mode==='blind'?'covered':result?.quality,320,result?.garbage),COUNTER_SURFACE);}
   if(key==='AudienceScene'||key==='GroupResultsScene'){
    const people=key==='AudienceScene'?s.roster.filter((p:any)=>p.active):(s.phase==='between'?s.results.filter((r:any)=>s.roster.some((p:any)=>p.id===r.id&&p.active)):s.results).map((r:any)=>s.roster.find((p:any)=>p.id===r.id)),layout=groupLayout(people.length),rows=[...new Set(layout.map(a=>a.row))];
    for(const row of rows){const members=layout.map((a,i)=>({...a,i})).filter(a=>a.row===row),base=row*300;for(const a of members){const p=people[a.i];this.cook(p,a.x,a.y,a.height)?.setDepth(base+50);}this.servingCounter(40,members[0].tableY,1840,base+100);for(const a of members){const r=s.results.find((r:any)=>r.id===people[a.i].id);dish(this,a.x,a.tableY+13,key==='AudienceScene'?s.round:r.plateId||s.round,key==='AudienceScene'?'covered':r.quality,people.length>9?135:180,key==='AudienceScene'?undefined:r.garbage).setDepth(base+150);}}
@@ -54,12 +81,12 @@ class StageScene extends Phaser.Scene{blenderRig?:BlenderRig;
 
  knifeProp(x:number,y:number){const c=this.add.container(x,y),im=this.add.image(-38,-9,'knife-v3').setOrigin(0,.5);im.setScale(175/im.frame.realWidth).setRotation(.28);c.add(im);return c;}
  spoonProp(x:number,y:number){const c=this.add.container(x,y),im=this.add.image(-35,-5,'spoon-v3').setOrigin(0,.5);im.setScale(148/im.frame.realWidth).setRotation(.38);c.add(im);return c;}
- counter(x:number,y:number,w:number,h:number){const top=60*w/1920;this.add.image(x,y,'serving-top-v3').setOrigin(0,0).setDisplaySize(w,top).setDepth(1000);this.add.image(x,y+top,'serving-front-v3').setOrigin(0,0).setDisplaySize(w,h-top).setDepth(1000);}
+ finishCounter(){const {x,back:y,width:w,height:h}=FINISH_COUNTER,top=60*w/1920;this.add.image(x,y,'serving-top-v3').setOrigin(0,0).setDisplaySize(w,top).setDepth(1000);this.add.image(x,y+top,'serving-front-v3').setOrigin(0,0).setDisplaySize(w,h-top).setDepth(1000);}
  trophy(x:number,y:number,scale=1){const im=this.add.image(x,y,'trophy-v3').setOrigin(.5,1).setDepth(1500);im.setScale(190*scale/im.frame.realHeight);}
  medal(x:number,y:number,color:number){const g=this.add.graphics().setDepth(1400);g.lineStyle(9,0x8a302b);g.lineBetween(x-22,y-48,x,y);g.lineBetween(x+22,y-48,x,y);g.fillStyle(color);g.fillCircle(x,y,25);g.lineStyle(3,0xe3cda3);g.strokeCircle(x,y,25);}
  update(time:number,dt:number){if(!model.episode)return;const desired=sceneKey();if(desired!==this.phaseName){this.scene.start(desired);return;}const s=model.episode,t=clock.read();if(this.phaseName.startsWith('Station')&&(displayActor()?.id||'')!==this.lastScene){this.scene.restart();return;}if(this.phaseName==='EliminationScene'&&Math.min(s.eliminated.length-1,Math.max(0,Math.floor((t-s.phaseAt)/12000)))!==this.outIndex){this.scene.restart();return;}if(this.phaseName==='SharedFridgeScene'){for(const p of s.roster.filter((p:any)=>p.active)){let a=this.actors.get(p.id);if(!a){this.walker(p);a=this.actors.get(p.id);}const prevX=a.x;a.x+=(p.x-a.x)*Math.min(1,dt/90);a.y+=(p.y-a.y)*Math.min(1,dt/90);a.image.setPosition(a.x,a.y).setDepth(a.y);a.shadow?.setPosition(a.x,a.y).setDepth(a.y-.5);const moving=Math.hypot(p.x-a.x,p.y-a.y)>2;a.image.setFrame(moving?(Math.floor(time/90)+p.characterId.length*3)%8:8);if(moving)a.image.setFlipX(p.x>prevX);}}
   if(this.phaseName==='JudgingScene'){const r=s.results[s.judgingIndex];if(r){if(this.judgedDish!==s.judgingIndex){this.judgedDish=s.judgingIndex;this.judgedPlates.forEach(p=>p.destroy());this.judgedPlates=STAGE.judgeSeats.map(x=>dish(this,x,766,r.plateId||s.round,r.quality,195,r.garbage).setOrigin(.5,1).setDepth(1050));}const step=judgingStep({...s,clock:t}),who=step.judge,index=({bonju:0,maria:1,dua:2} as any)[who],key=s.round+':'+s.judgingIndex+':'+who+':'+(step.age<1000?'taste':'reaction');if(key!==this.reactionState){this.reactionState=key;for(const a of this.judgeSprites){const judge=(['bonju','maria','dua'] as const)[a.index],done=JUDGE_ORDER.indexOf(judge)<step.slot,current=a.index===index,review=critique(r,judge,s.id+':'+s.round+':'+r.id);a.image.setTexture(current&&step.age<1000&&r.quality!=='empty'?'judges':current||done?'judge-reactions':'judges',current&&step.age<1000&&r.quality!=='empty'?3+a.index:current||done?review.frame:a.index);fit(a.image,560,600);this.tweens.add({targets:a.image,alpha:1,duration:250});}}this.steam?.clear();const review=critique(r,who,s.id+':'+s.round+':'+r.id);if(step.age>=1000&&review.reaction==='nausea'){const a=this.judgeSprites[index];for(let j=0;j<8;j++){const q=((time/900+j*.12)%1);this.steam?.fillStyle(0x9cae62,(1-q)*.8).fillEllipse(a.image.x+20+q*100,a.image.y-a.image.displayHeight*.55+q*q*190,10+q*9,18+q*6);}}}}
-  if(this.phaseName==='StationPrepScene'){const item=prepProgress(displayStation()).current,index=INGREDIENTS.find(i=>i.id===item)?.index??15;for(const a of this.things)if(a.food){a.food.setTexture(index>=48?'extra-ingredients':'ingredients',index>=48?index-48:index);fit(a.food,150,115);}}this.rig?.update(time,displayStation(),t);this.blenderRig?.update(time,displayStation());
+  if(this.phaseName==='StationPrepScene'){const item=prepProgress(displayStation()).current,index=INGREDIENTS.find(i=>i.id===item)?.index??15;for(const a of this.things)if(a.food){a.food.setTexture(index>=48?'extra-ingredients':'ingredients',index>=48?index-48:index);fit(a.food,150,115);}}this.rig?.update(time,displayStation(),t);this.blenderRig?.update(time,displayStation(),s.paused);
   if(this.steam&&this.phaseName!=='JudgingScene'){this.steam.clear();const cold=['cold','fresh'].includes(stationRecipe(s,displayStation()).method),heat=this.phaseName!=='StationCookScene'||cold?0:displayStation()?.heat||.5;for(let i=0;i<(heat?5:0);i++){const phase=(time/2000+i*.2)%1;this.steam.lineStyle(7*(1-phase),0xead9b7,(1-phase)*.24);this.steam.beginPath();for(let j=0;j<12;j++){const x=980+i*12+Math.sin(j*.7+time/500+i)*12,y=700-phase*140-j*5;if(j===0)this.steam.moveTo(x,y);else this.steam.lineTo(x,y);}this.steam.strokePath();}for(let i=0;i<(heat?7:0);i++){this.steam.fillStyle(i%2?0xf5a33b:0xd34b28,.85);this.steam.fillTriangle(950+i*16,780,960+i*16,780-(18+Math.sin(time/110+i)*10)*heat,970+i*16,780);}}
   if(this.fireGlow){this.fireGlow.clear();for(const x of ['JudgingScene','MariaIntroScene','FarewellScene'].includes(this.phaseName)?[178,1744]:[64,1856]){this.fireGlow.fillStyle(0xf4a84e,.045+Math.sin(time/180+x)*.01);this.fireGlow.fillCircle(x,190,45);}}
   // Chat anchors are measured in the actual character coordinate system.

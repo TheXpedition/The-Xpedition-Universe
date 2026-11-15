@@ -7,10 +7,10 @@ export class KitchenRig{
  body:Phaser.GameObjects.Sprite;arm:Phaser.GameObjects.Sprite;hand:Phaser.GameObjects.Sprite;tool:Phaser.GameObjects.Image;
  armMask:Phaser.GameObjects.Graphics;handMask:Phaser.GameObjects.Graphics;
  meta:any;scale:number;x:number;y:number;stage:string;lastFrame=-1;
- constructor(scene:Phaser.Scene,id:string,stage:string,cold=false){
+ constructor(scene:Phaser.Scene,id:string,stage:string,cold=false,anchor?:{x:number,y:number}){
   this.stage=stage;this.meta=WORK_MOTION[id];const start=this.meta.frames[stage==='prep'?0:8];
-  const target=stage==='blend'?{x:1080,y:310}:stage==='prep'?{x:755,y:700}:stage==='mix'?{x:835,y:650}:cold?{x:970,y:700}:{x:1000,y:700};
-  this.scale=visualHeight(id,580)/384;this.x=target.x-(start.grip.x-192)*this.scale;this.y=target.y+(384-start.grip.y)*this.scale;
+  const target=anchor??(stage==='prep'?{x:755,y:700}:stage==='mix'?{x:835,y:650}:cold?{x:970,y:700}:{x:1000,y:700});
+  this.scale=visualHeight(id,stage==='blend'?520:580)/384;this.x=target.x-(start.grip.x-192)*this.scale;this.y=target.y+(384-start.grip.y)*this.scale;
   const texture='motion-'+id;
   this.body=scene.add.sprite(this.x,this.y,texture,0).setOrigin(.5,1).setScale(this.scale).setDepth(300);
   this.arm=scene.add.sprite(this.x,this.y,texture,0).setOrigin(.5,1).setScale(this.scale).setDepth(500);

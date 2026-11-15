@@ -17,3 +17,8 @@ body[data-scene=EliminationScene] .elimination-plaque{grid-template-rows:60% 40%
 .shelf-bank.cold{grid-template-rows:repeat(9,minmax(4.7cqw,1fr))}body[data-spectating=true] #scene-ui [data-blend]{pointer-events:none;opacity:.55}@media(pointer:coarse){.jury-critique{top:77%;height:12%}.jury-critique>p{font-size:9px;line-height:1.15}.jury-critique>b{font-size:9px}.jury-scoreboard .overall-note strong{font-size:22px}}
 
 [data-dir],[data-heat],[data-blend]{touch-action:none}
+
+body[data-scene=StationServeScene] .delivered{top:23%;left:61%;right:8%;padding:.6cqw 1cqw;background:#24150de0;border:1px solid #ad7848;border-radius:5px}
+body[data-scene=StationServeScene] .delivered>span{font-size:clamp(17px,2.4cqw,38px);line-height:1}
+body[data-scene=StationServeScene] .delivered h2{font-size:clamp(13px,1.85cqw,30px)}
+body[data-scene=StationServeScene] .delivered p{font-size:clamp(10px,1.1cqw,18px);margin:.35em 0}
