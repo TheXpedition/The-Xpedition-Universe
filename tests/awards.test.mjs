@@ -96,14 +96,18 @@ test('las fichas de Awards abren la edición en la misma página, incluida la pr
  }
 });
 
-test('la tercera edición muestra sus quince categorías anunciadas sin inventar nominados ni ganadores',()=>{
+test('la tercera edición muestra sus diecinueve categorías anunciadas y los nominados pendientes',()=>{
  const edition=archive.editions['edicion-3'];assert.equal(edition.status,'upcoming');
  assert.deepEqual(edition.groups.map(g=>g.name),['Categorías Principales','Estrategia y Competencia','Personalidad','Premios de Producción']);
- assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,5,5,1]);
+ assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,5,5,5]);
+ assert.deepEqual(edition.groups.find(g=>g.id==='produccion').categories.map(c=>c.name),[
+  'Mejor Episodio','Mejor Temporada','Mejor Diseño & Vestuario','Mejor Canción','Mejor Proyecto Independiente'
+ ]);
  assert(categories(edition).every(c=>c.nominees.length===0));
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
- for(const category of categories(edition))assert(html.includes(category.name));
+ for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
+ assert(html.includes('Las 19 categorías'));
  assert(html.includes('Nominados por anunciar'));assert(!html.includes('is-award-winner'));
 });
 

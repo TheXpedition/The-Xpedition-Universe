@@ -1483,6 +1483,30 @@
               "name": "Mejor Episodio",
               "nominees": [],
               "production": true
+            },
+            {
+              "id": "produccion-2",
+              "name": "Mejor Temporada",
+              "nominees": [],
+              "production": true
+            },
+            {
+              "id": "produccion-3",
+              "name": "Mejor Diseño & Vestuario",
+              "nominees": [],
+              "production": true
+            },
+            {
+              "id": "produccion-4",
+              "name": "Mejor Canción",
+              "nominees": [],
+              "production": true
+            },
+            {
+              "id": "produccion-5",
+              "name": "Mejor Proyecto Independiente",
+              "nominees": [],
+              "production": true
             }
           ]
         }
