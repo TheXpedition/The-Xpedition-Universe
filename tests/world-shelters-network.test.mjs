@@ -59,24 +59,40 @@ test('Staff playing María can enter through either shelter door without unlocki
  }
 });
 
-test('the refuge kitchen stores ingredients for its team and blocks another fridge compartment',async()=>{
- const [home]=SHELTERS,zone=home.rooms.cocina,fridge=WORLD_MAPS[zone].props.find(p=>p.id==='kitchen-fridge');
- const actors=[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:1700},
-  {id:'fridge-resident',character:'bruno',home:'left',zone,...fridge.approach}];
- const f=await liveFixture('refuge-fridge',actors,{setup:db=>seedConstructedShelters(db,actors)});
- const resident=actors[1].id;
+test('refuge fridges start empty and only hold food their own team deposits',async()=>{
+ const [home,rivalHome]=SHELTERS,zone=home.rooms.cocina,fridge=WORLD_MAPS[zone].props.find(p=>p.id==='kitchen-fridge');
+ const rivalZone=rivalHome.rooms.cocina,rivalFridge=WORLD_MAPS[rivalZone].props.find(p=>p.id==='kitchen-fridge');
+ const kitchen=WORLD_MAPS.cocina.props.find(p=>p.id==='kitchen-fridge');
+ const actors=[
+  {id:STAFF_ID,character:'maria-villegas',zone:'cocina',...kitchen.approach},
+  {id:'fridge-resident',character:'bruno',home:'left',zone,...fridge.approach},
+  {id:'fridge-rival',character:'alice',home:'right',zone:rivalZone,...rivalFridge.approach}
+ ];
+ const f=await liveFixture('refuge-fridge',actors,{setup:async db=>{
+  await seedConstructedShelters(db,actors);
+  await db.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,?,?)',actors[1].id,'apple',1,Date.now());
+ }});
+ const resident=actors[1].id,rival=actors[2].id;
+ const slot=(data,teamId='left')=>data.teams.find(team=>team.id===teamId).slots.find(item=>item.foodId==='apple').quantity;
  try{
-  await f.connect(resident);
+  await f.connect(STAFF_ID);await f.connect(resident);await f.connect(rival);
   const initial=await f.call('/api/world/fridge',resident);
   assert.equal(initial.status,200);assert.deepEqual(initial.teams.map(t=>t.id),['left']);
-  const slot=data=>data.teams[0].slots.find(v=>v.foodId==='apple').quantity;
-  const taken=await f.call('/api/world/fridge/take',resident,'POST',{teamId:'left',foodId:'apple'});
-  assert.equal(taken.status,200,JSON.stringify(taken));assert.equal(slot(taken),slot(initial)-1);
+  assert(initial.teams[0].slots.every(item=>item.quantity===0));
+  const camp=await f.call('/api/world/fridge',STAFF_ID);
+  assert.equal(slot(camp),3);assert.equal(slot(camp,'right'),3);
   const wrong=await f.call('/api/world/fridge/deposit',resident,'POST',{teamId:'right',foodId:'apple'});
   assert.equal(wrong.status,403);
   const stored=await f.call('/api/world/fridge/deposit',resident,'POST',{teamId:'left',foodId:'apple'});
-  assert.equal(stored.status,200);assert.equal(slot(stored),slot(initial));
-  assert(!stored.inventory.items.some(v=>v.foodId==='apple'));
+  assert.equal(stored.status,200);assert.equal(slot(stored),1);
+  assert(!stored.inventory.items.some(item=>item.foodId==='apple'));
+  const takeFromRival=await f.call('/api/world/fridge/take',rival,'POST',{teamId:'left',foodId:'apple'});
+  assert.equal(takeFromRival.status,403);
+  assert.equal(slot(await f.call('/api/world/fridge',rival),'right'),0);
+  const taken=await f.call('/api/world/fridge/take',resident,'POST',{teamId:'left',foodId:'apple'});
+  assert.equal(taken.status,200);assert.equal(slot(taken),0);
+  assert.equal(taken.inventory.items.find(item=>item.foodId==='apple').quantity,1);
+  assert.equal(slot(await f.call('/api/world/fridge',STAFF_ID)),slot(camp));
  }finally{await f.close();}
 });
 
