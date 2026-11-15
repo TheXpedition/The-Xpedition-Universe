@@ -1,5 +1,15 @@
-// The scene uses contain on every screen. Keep input, TV video and contextual
-// interactions on the same transform instead of mixing cover/contain maths.
-export function sceneLayout(rect){const scale=Math.min(rect.width/1672,rect.height/941);return {scale,left:rect.left+(rect.width-1672*scale)/2,top:rect.top+(rect.height-941*scale)/2,width:1672*scale,height:941*scale};}
-export function scenePoint(rect,x,y){const v=sceneLayout(rect);return {x:(x-v.left)/v.scale,y:(y-v.top)/v.scale};}
+const WIDTH=1672,HEIGHT=941;
+const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
+export function sceneLayout(rect,{x=WIDTH/2,y=HEIGHT/2}={}){
+ const scale=Math.max(rect.width/WIDTH,rect.height/HEIGHT)||1;
+ const width=WIDTH*scale,height=HEIGHT*scale;
+ const overflowX=Math.max(0,width-rect.width),overflowY=Math.max(0,height-rect.height);
+ const cropX=clamp(x*scale-rect.width/2,0,overflowX);
+ const cropY=clamp(y*scale-rect.height/2,0,overflowY);
+ return {scale,width,height,left:rect.left-cropX,top:rect.top-cropY,
+  positionX:overflowX?100*cropX/overflowX:50,positionY:overflowY?100*cropY/overflowY:50};
+}
+export function scenePoint(rect,x,y,view=sceneLayout(rect)){
+ return {x:(x-view.left)/view.scale,y:(y-view.top)/view.scale};
+}
 export const paintSceneryForMedia=video=>video.hidden||video.dataset.placement==='monitor';

@@ -15,7 +15,7 @@ export class GripClock {
 export class GripMotion {
  constructor(){this.at=0;this.duration=100;this.frames=new Map();}
  sync(s,stamp){const previous=this.sample(s,stamp);const rendered=new Map([...previous.roster,...(previous.visitors||[])].map(p=>[p.id,p]));const next=new Map();
-  for(const p of [...s.roster,...(s.visitors||[])]){const old=rendered.get(p.id),smooth=old&&old.area===p.area&&Math.hypot(old.x-p.x,old.y-p.y)<180;next.set(p.id,{from:smooth?old:p,to:p});}
+  for(const p of [...s.roster,...(s.visitors||[])]){const old=rendered.get(p.id),smooth=old&&old.area===p.area&&Math.hypot(old.x-p.x,old.y-p.y)<180;const reversed=smooth&&p.moving&&Math.abs(p.x-old.x)>.1&&Math.sign(p.x-old.x)!==p.facing;next.set(p.id,{from:smooth?old:p,to:reversed?{...p,x:old.x}:p});}
   this.duration=Math.max(80,Math.min(160,stamp-this.at||100));this.at=stamp;this.frames=next;
  }
  sample(s,stamp){const t=Math.min(1,Math.max(0,(stamp-this.at)/this.duration));const actor=p=>{const f=this.frames.get(p.id);if(!f||f.to.area!==p.area)return p;return {...p,x:f.from.x+(f.to.x-f.from.x)*t,y:f.from.y+(f.to.y-f.from.y)*t,walk:(f.from.walk||0)+((f.to.walk||0)-(f.from.walk||0))*t};};return {...s,roster:s.roster.map(actor),visitors:(s.visitors||[]).map(actor)};}

@@ -13,30 +13,49 @@ export const ART='/juegos/last-grip/art/';
 const fill=(c,x,y,w,h,color,r=7)=>{c.fillStyle=color;c.beginPath();c.roundRect(x,y,w,h,r);c.fill();};
 const text=(c,line,x,y,size=24,color='#ffe6c4',align='center')=>{c.font=`700 ${size}px "World Condensed",sans-serif`;c.fillStyle=color;c.textAlign=align;c.fillText(String(line),x,y);};
 export class GripRenderer{
- constructor(canvas,{loadImage,bank}={}){this.canvas=canvas;this.swimMotion=new SwimwearMotion();this.pets=new WorldPets();this.bubbles=new Map();this.anchors=new Map();this.images=new Map();this.pending=new Map();this.loadImage=loadImage||((src)=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=src;}));this.bank=bank;this.failed=new Set();}
+ constructor(canvas,{loadImage,bank}={}){this.canvas=canvas;this.context=canvas.getContext('2d',{alpha:false});this.swimMotion=new SwimwearMotion();this.pets=new WorldPets();this.bubbles=new Map();this.anchors=new Map();this.images=new Map();this.pending=new Map();this.loadImage=loadImage||((src)=>new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=src;}));this.bank=bank;this.failed=new Set();}
  image(src){if(this.images.has(src))return this.images.get(src);if(!this.pending.has(src)&&!this.failed.has(src)){this.pending.set(src,this.loadImage(src).then(im=>{this.images.set(src,im);return im;}).catch(()=>this.failed.add(src)).finally(()=>this.pending.delete(src)));}return null;}
  async preload(ids=[]){this.image(ART+'medical-station.png');this.image('/juegos/last-grip/media/helicopter.png');for(const name of ['arena','pit','runway','monitor','changing','stands','platform','entrance'])this.image(ART+name+'.webp');for(const id of ids){if(SWIMWEAR[id]){this.image(SWIMWEAR[id].image);void this.swimMotion.load(id);}if(GRIP_POSES[id])this.image(GRIP_POSES[id].image);this.image('/juegos/cast-apocalypse/'+id+'-portrait.webp');this.image('/juegos/cast-apocalypse/'+id+'-original.png');}this.image('/juegos/cast-apocalypse/maria-villegas-original.png');await Promise.all([...this.pending.values()]);}
- render(s,{selfId=s.selfId,time=Date.now(),area,review=false,overlay=false,cssScale=1,hud=true,arenaView}={}){
- this.anchors.clear();const c=this.canvas.getContext('2d'),W=this.canvas.width,H=this.canvas.height;c.setTransform(W/1672,0,0,H/941,0,0);c.clearRect(0,0,1672,941);if(activeGripEvents(s).some(e=>e.kind==='shake'))c.translate(Math.sin(time/46)*2,Math.cos(time/39)*1.5);
+ preparePhase(s){
+  if(['closed','lobby','arrival'].includes(s.phase)){
+   this.image(ART+'runway.webp');
+   this.image('/juegos/last-grip/media/helicopter.png');
+  }
+  if(['lobby','arrival','intro','changing','preparation','draw','results'].includes(s.phase)){
+   this.image(ART+'monitor.webp');
+   this.image('/juegos/cast-apocalypse/maria-villegas-portrait.webp');
+  }
+  if(s.phase==='intro'||s.phase==='guide')this.image(ART+'changing.webp');
+  if(s.phase==='draw'){
+   this.image(ART+'arena.webp');
+   const visible=new Set(s.round.members);
+   for(const p of s.roster)if(visible.has(p.id)){
+    this.image('/juegos/cast-apocalypse/'+p.characterId+'-portrait.webp');
+    const pose=GRIP_POSES[p.characterId];if(pose)this.image(pose.image);
+   }
+  }
+ }
+ render(s,{selfId=s.selfId,time=Date.now(),area,review=false,overlay=false,cssScale=1,viewWidth=1672,light=false,hud=true,arenaView}={}){
+ this.anchors.clear();const c=this.context,W=this.canvas.width,H=this.canvas.height;c.setTransform(W/1672,0,0,H/941,0,0);c.clearRect(0,0,1672,941);if(activeGripEvents(s).some(e=>e.kind==='shake'))c.translate(Math.sin(time/46)*2,Math.cos(time/39)*1.5);
  const self=[...s.roster,...(s.visitors||[])].find(p=>p.id===selfId),arena=(arenaView??(!self||!['changing','runway','entrance','monitor'].includes(area||self.area)))&&['ready','active','ending','results','finalReady','winner'].includes(s.phase),place=area||self?.area||'stands',scene=arena?'arena':s.phase==='arrival'?'runway':['intro','draw'].includes(s.phase)?'monitor':['lobby','closed','finished'].includes(s.phase)?'entrance':place;
  const bg=this.image(ART+scene+'.webp');if(bg)c.drawImage(bg,0,0,1672,941);else fill(c,0,0,1672,941,'#24160f',0);
- this.environment(c,s,time,scene);
+ this.environment(c,s,time,scene,light);
  if(scene==='monitor')this.clinic(c);
- const shade=c.createLinearGradient(0,0,0,941);shade.addColorStop(0,'#0e09081f');shade.addColorStop(.65,'#0e090800');shade.addColorStop(1,'#0e0908a0');c.fillStyle=shade;c.fillRect(0,0,1672,941);
+ if(!this.shade){this.shade=c.createLinearGradient(0,0,0,941);this.shade.addColorStop(0,'#0e09081f');this.shade.addColorStop(.65,'#0e090800');this.shade.addColorStop(1,'#0e0908a0');}c.fillStyle=this.shade;c.fillRect(0,0,1672,941);
  // Ember light belongs to the scenery and does not obscure actors or UI.
- for(const [i,x]of [180,520,1430,1580].entries()){const y=110+(i%2)*200;c.globalAlpha=.08+Math.sin(time/460+i)*.025;const g=c.createRadialGradient(x,y,5,x,y,140);g.addColorStop(0,'#ffac41');g.addColorStop(1,'#ff9d3000');c.fillStyle=g;c.fillRect(x-140,y-140,280,280);}c.globalAlpha=1;
+ if(!light)for(const [i,x]of [180,520,1430,1580].entries()){const y=110+(i%2)*200;c.globalAlpha=.08+Math.sin(time/460+i)*.025;const g=c.createRadialGradient(x,y,5,x,y,140);g.addColorStop(0,'#ffac41');g.addColorStop(1,'#ff9d3000');c.fillStyle=g;c.fillRect(x-140,y-140,280,280);}c.globalAlpha=1;
  if(arena&&s.round){
-  const members=s.round.members,n=members.length,span=1280,start=196;
+  const members=s.round.members,n=members.length,span=Math.min(1280,viewWidth*.80),start=836-span/2;
   for(const [i,id]of members.entries()){
    const p=s.roster.find(p=>p.id===id),pose=p&&GRIP_POSES[p.characterId];if(!pose)continue;const im=this.image(pose.image);if(!im)continue;
-   const x=n===1?836:start+i*span/Math.max(1,n-1),height=480*castHeightRatio(p.characterId),scale=height/pose.height,w=pose.width*scale,y=172-pose.gripY*scale;
+   const x=n===1?836:start+i*span/Math.max(1,n-1),height=480*Math.min(1,viewWidth/1060)*castHeightRatio(p.characterId),scale=height/pose.height,w=pose.width*scale,y=172-pose.gripY*scale;
    const a=s.round.actors[id]||{stamina:100},fall=s.round.falls.find(f=>f.id===id),fallT=fall?Math.max(0,(s.clock-fall.clock)/1000):0;
    // Keep contact fixed while hanging; a fall moves the complete illustration,
    // so no hands or wrists are left behind on the beam.
    if(!fall)c.drawImage(im,0,0,pose.width,pose.gripY, x-w/2,y,w,pose.gripY*scale);
    if(!fall||fallT<1.7){c.save();const fatigue=(100-a.stamina)/100,angle=fall?Math.min(.28,fallT*.2):Math.sin(time/650+i)*(.006+fatigue*.009);c.translate(x,172+(fall?fallT*fallT*310:Math.sin(time/530+i)*fatigue*2));c.rotate(angle);c.globalAlpha=fall?Math.max(0,1-fallT/1.7):1;if(fall)c.drawImage(im,-w/2,-pose.gripY*scale,w,height);else c.drawImage(im,0,pose.gripY,pose.width,pose.height-pose.gripY,-w/2,0,w,(pose.height-pose.gripY)*scale);c.restore();}
    if(!fall)this.anchors.set(id,{x,y:225});
-   const by=713,labelWidth=Math.min(230,Math.max(172,52/cssScale)),name=cssScale<.55&&p.name.length>9?p.name.slice(0,8)+'…':p.name;fill(c,x-labelWidth/2,by,labelWidth,31,'#1c100df0');text(c,name,x,by+23,Math.max(21,11/cssScale),'#ffe5c0');fill(c,x-78,by+40,156,9,'#1b0f0b');if(!fall)fill(c,x-78,by+40,156*a.stamina/100,9,a.stamina<25?'#e74930':'#ecb257',4);const resultLabel=s.phase==='winner'&&s.winner===id?'GANADOR':s.phase==='results'&&s.round.survivors?.includes(id)?'CLASIFICADO':Math.ceil(a.stamina)+'% · AGARRE';text(c,fall?'EN EL MONITOR':resultLabel,x,by+70,16,fall?'#d59377':'#ffe5c0');
+   const by=713,labelWidth=Math.min(230,viewWidth*.16,Math.max(172,52/cssScale)),name=cssScale<.55&&p.name.length>9?p.name.slice(0,8)+'…':p.name;fill(c,x-labelWidth/2,by,labelWidth,31,'#1c100df0');text(c,name,x,by+23,Math.max(14,Math.min(22,10/cssScale)),'#ffe5c0');fill(c,x-labelWidth*.45,by+40,labelWidth*.9,9,'#1b0f0b');if(!fall)fill(c,x-labelWidth*.45,by+40,labelWidth*.9*a.stamina/100,9,a.stamina<25?'#e74930':'#ecb257',4);const resultLabel=s.phase==='winner'&&s.winner===id?'GANADOR':s.phase==='results'&&s.round.survivors?.includes(id)?'CLASIFICADO':Math.ceil(a.stamina)+'% · AGARRE';text(c,fall?'EN EL MONITOR':resultLabel,x,by+70,16,fall?'#d59377':'#ffe5c0');
   }
 
  }else if(!['closed','lobby','finished','intro','opening','guide','draw'].includes(s.phase)){
@@ -54,33 +73,40 @@ export class GripRenderer{
   c.beginPath();
   c.rect(389,213,756,290);
   c.clip();
-  fill(c,389,213,756,290,'#150e0c',0);
+  if(!this.monitorShade){
+   this.monitorShade=c.createLinearGradient(389,213,1145,503);
+   this.monitorShade.addColorStop(0,'#281810');this.monitorShade.addColorStop(.58,'#170e0a');this.monitorShade.addColorStop(1,'#100b09');
+  }
+  fill(c,389,213,756,290,this.monitorShade,0);
   c.strokeStyle='#a76b3c';
   c.lineWidth=2;
   c.strokeRect(403,227,728,262);
-  if(s.phase==='intro'){
-   const portrait=this.image('/juegos/cast-apocalypse/maria-villegas-portrait.webp');
-   if(portrait)c.drawImage(portrait,434,280,150,150);
-   text(c,'THE LAST GRIP',852,303,55,'#ffc479');
-   text(c,'Hola, bienvenidos a The Last Grip.',852,367,32);
-   text(c,'Resiste hasta que solo quede uno.',852,413,30,'#e5bb89');
-  }else{
-   const reveals=s.round.reveals||[],selected=reveals.at(-1);
-   const participant=s.roster.find(person=>person.id===selected?.id);
-   text(c,'SORTEO · RONDA '+s.round.number,767,275,36,'#ffc479');
-   if(participant){
-    const portrait=this.image('/juegos/cast-apocalypse/'+participant.characterId+'-portrait.webp');
-    if(portrait)c.drawImage(portrait,444,303,147,147);
-    c.font='700 51px "World Condensed",sans-serif';
-    c.fillStyle='#ffe6c4';
-    c.textAlign='center';
-    c.fillText(participant.name,846,386,472);
-   }
-   text(c,reveals.length+' PARTICIPANTES REVELADOS',846,435,24,'#e5bb89');
+  const scale=Math.min(1,(viewWidth-30)/712);c.translate(767,355);c.scale(scale,scale);c.translate(-767,-355);
+  const intro=s.phase==='intro',reveals=s.round?.reveals||[],selected=reveals.at(-1);
+  const participant=intro?null:s.roster.find(person=>person.id===selected?.id);
+  const character=intro?'maria-villegas':participant?.characterId;
+  const fade=Math.min(1,Math.max(0,(s.clock-(selected?.start??s.phaseAt))/360));
+  c.globalAlpha=.72+fade*.28;
+  c.translate(0,(1-fade)*5);
+  const portrait=character&&this.image('/juegos/cast-apocalypse/'+character+'-portrait.webp');
+  if(portrait){
+   c.save();c.beginPath();c.roundRect(445,278,148,148,10);c.clip();
+   c.drawImage(portrait,445,278,148,148);c.restore();
+   c.strokeStyle='#c18245';c.lineWidth=2;c.beginPath();c.roundRect(445,278,148,148,10);c.stroke();
+  }
+  const title=intro?'THE LAST GRIP':'SORTEO · RONDA '+s.round.number;
+  const line=intro?'Hola, bienvenidos a The Last Grip.':participant?.name||'Sorteando…';
+  text(c,title,628,304,34,'#f0ad61','left');
+  c.font='700 '+(intro?35:54)+'px "World Condensed",sans-serif';
+  c.fillStyle='#fff1db';c.textAlign='left';c.fillText(line,628,365,448);
+  if(intro)text(c,'Resiste hasta que solo quede uno.',628,411,28,'#dcb993','left');
+  else{
+   const count=Math.max(reveals.length,s.round.size||0),gap=12;
+   for(let i=0;i<count;i++)fill(c,629+i*(27+gap),395,27,5,i<reveals.length?'#efad64':'#755640',2);
   }
   c.restore();
  }
- if(['ready','draw'].includes(s.phase)){fill(c,530,808,612,62,'#1c100df2');text(c,s.phase==='draw'?'SORTEO EN VIVO · '+s.round.members.length+' REVELADOS':s.round.autoStart?'PREPÁRATE · '+Math.max(1,Math.ceil((3000-(s.clock-s.phaseAt))/1000)):'POSICIONES CONFIRMADAS',836,847,24);}
+ if(s.phase==='ready'){fill(c,530,808,612,62,'#1c100df2');text(c,s.round.autoStart?'PREPÁRATE · '+Math.max(1,Math.ceil((3000-(s.clock-s.phaseAt))/1000)):'POSICIONES CONFIRMADAS',836,847,24);}
  if(['results','winner'].includes(s.phase)&&(arena||scene==='monitor')){c.save();if(!arena){c.translate(444,213);c.scale(.90625,.90625);c.translate(-480,-245);}
   const final=s.phase==='winner',ids=final?[s.winner]:s.round.survivors||[],title=final?'ONLY ONE REMAINS':'CLASIFICADOS A LA FINAL';fill(c,480,245,712,320,'#120c09f5',16);c.strokeStyle='#d9923d';c.lineWidth=2;c.strokeRect(492,257,688,296);text(c,title,836,300,33,'#ffbd67');
   for(const [i,id]of ids.entries()){const p=s.roster.find(p=>p.id===id),x=ids.length===1?836:690+i*292,im=this.image('/juegos/cast-apocalypse/'+p.characterId+'-portrait.webp');if(im)c.drawImage(im,x-57,323,114,114);text(c,p.name,x,477,30);}
@@ -94,7 +120,7 @@ export class GripRenderer{
  this.speech(c,{time,width:1672,height:941,cssScale});
  return {scene,place,arena};
  }
- environment(c,s,time,scene){const e=s.environment,events=activeGripEvents(s),rain=['rain','storm'].includes(e?.weather)||events.some(e=>e.kind==='rain'),snow=e?.weather==='snow';c.save();if(e?.phase==='night'){c.fillStyle='#08162c55';c.fillRect(0,0,1672,941);}else if(e?.phase==='afternoon'){c.fillStyle='#c46d2110';c.fillRect(0,0,1672,941);}if(scene!=='changing'&&(rain||snow)){c.strokeStyle='#d5e5ef88';c.fillStyle='#e3eef0aa';c.lineWidth=snow?3:1.7;for(let i=0;i<(snow?70:150);i++){const x=(i*137+time*(snow?.018:.1))%1740-34,y=(i*71+time*(snow?.045:.6))%941;c.beginPath();c.moveTo(x,y);c.lineTo(x-(snow?1:8),y+(snow?2:22));c.stroke();}}if(events.some(e=>e.kind==='wind')){c.strokeStyle='#e4c69a55';c.lineWidth=2;for(let i=0;i<18;i++){const x=(time*.7+i*127)%1860-180,y=185+i*39+Math.sin(time/300+i)*13;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+60,y-13,x+135,y-3);c.stroke();}}if(events.some(e=>e.kind==='pressure')){const g=c.createRadialGradient(836,470,240,836,470,920);g.addColorStop(0,'#4b130000');g.addColorStop(1,'#891b1640');c.fillStyle=g;c.fillRect(0,0,1672,941);}c.restore();}
+ environment(c,s,time,scene,light){const e=s.environment,events=activeGripEvents(s),rain=['rain','storm'].includes(e?.weather)||events.some(e=>e.kind==='rain'),snow=e?.weather==='snow';c.save();if(e?.phase==='night'){c.fillStyle='#08162c55';c.fillRect(0,0,1672,941);}else if(e?.phase==='afternoon'){c.fillStyle='#c46d2110';c.fillRect(0,0,1672,941);}if(scene!=='changing'&&(rain||snow)){c.strokeStyle='#d5e5ef88';c.fillStyle='#e3eef0aa';c.lineWidth=snow?3:1.7;for(let i=0;i<(light?(snow?26:52):(snow?70:150));i++){const x=(i*137+time*(snow?.018:.1))%1740-34,y=(i*71+time*(snow?.045:.6))%941;c.beginPath();c.moveTo(x,y);c.lineTo(x-(snow?1:8),y+(snow?2:22));c.stroke();}}if(events.some(e=>e.kind==='wind')){c.strokeStyle='#e4c69a55';c.lineWidth=2;for(let i=0;i<(light?8:18);i++){const x=(time*.7+i*127)%1860-180,y=185+i*39+Math.sin(time/300+i)*13;c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+60,y-13,x+135,y-3);c.stroke();}}if(events.some(e=>e.kind==='pressure')){const g=c.createRadialGradient(836,470,240,836,470,920);g.addColorStop(0,'#4b130000');g.addColorStop(1,'#891b1640');c.fillStyle=g;c.fillRect(0,0,1672,941);}c.restore();}
  speak(message){if(message?.userId&&message.text)this.bubbles.set(message.userId,{text:String(message.text).slice(0,280),until:Date.now()+Math.min(12000,5000+String(message.text).length*35)});}
  speech(c,{time,width,height,cssScale}){for(const [id,b]of this.bubbles){if(Date.now()>b.until){this.bubbles.delete(id);continue;}const a=this.anchors.get(id);if(a)paintSpeechBubble(c,b.text,{...a,width,height,cssScale});}}
  signs(c,area){for(const n of GRIP_MAPS[area]?.nodes||[]){if(n.kind==='door'){const x=n.anchor.x,y=n.anchor.y;fill(c,x-89,y-19,178,28,'#2c1b11dc',3);text(c,n.name,x,y+1,15,'#e5bf84');}else if(n.kind==='booth'){fill(c,n.anchor.x-14,434,28,24,'#362015e8',3);text(c,n.id.slice(-1),n.anchor.x,452,16,'#e5bf84');}}}

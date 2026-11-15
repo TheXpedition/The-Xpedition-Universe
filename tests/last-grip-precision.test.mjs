@@ -33,3 +33,24 @@ test('walking is interpolated between snapshots and a change of map never slides
  const halfway=m.sample(moved,150).roster[0];assert.equal(halfway.x,s.roster[0].x+15);assert.equal(halfway.walk,.5);
  const changed=structuredClone(moved);placeAttendee(changed.roster[0],'monitor');m.sync(changed,200);assert.equal(m.sample(changed,210).roster[0].x,changed.roster[0].x);assert.equal(m.sample(changed,210).roster[0].area,'monitor');
 });
+
+test('María can reverse while an earlier movement snapshot is still being animated',()=>{
+ const motion=new GripMotion(),initial=round();
+ const player=initial.roster[0];
+ player.characterId='maria-villegas';player.facing=1;player.moving=true;
+ motion.sync(initial,0);
+ const right=structuredClone(initial);
+ right.roster[0].x+=30;
+ motion.sync(right,100);
+ const before=motion.sample(right,120).roster[0].x;
+ const turning=structuredClone(right);
+ turning.roster[0].x-=8;turning.roster[0].facing=-1;
+ motion.sync(turning,120);
+ assert.equal(motion.sample(turning,140).roster[0].x,before);
+ const left=structuredClone(turning);
+ left.roster[0].x=before-20;
+ motion.sync(left,200);
+ const after=motion.sample(left,240).roster[0];
+ assert(after.x<before);
+ assert.equal(after.facing,-1);
+});
