@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {COOP_BIRDS,flockAt,startFlock,resizeFlock} from '../public/juegos/world-shelter-care.mjs';
+import {COOP_BIRDS,flockAt,startFlock,resizeFlock,coopBirdName} from '../public/juegos/world-shelter-care.mjs';
 import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';
 import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
 import {clearPoint} from '../public/juegos/world-motion.mjs';
@@ -62,4 +62,16 @@ test('each configured total has the requested species split and neglected birds 
  assert.equal(later.birds.canela.health,0);
  assert.equal(later.birds.canela.eggs,0);
  assert.equal(flockAt(later,time+120_000).birds.canela.health,0);
+});
+
+test('each refuge uses the nominated names and puts its principal birds in the first slots',()=>{
+ const hens=['Daelly','Gennie Sheet','Zoila Menos','Mary Weed','Doppel','Peggy'].sort();
+ const roosters=['Miss Tea','Xavier','Eduardo Buñuelo','Mel RZ','Beto Trujillo','Jose Serna'].sort();
+ const names=(team,birds)=>birds.map(bird=>coopBirdName(team,bird.id));
+ for(const team of ['left','right']){
+  assert.deepEqual(names(team,COOP_BIRDS.filter(bird=>!bird.rooster)).sort(),hens);
+  assert.deepEqual(names(team,COOP_BIRDS.filter(bird=>bird.rooster)).sort(),roosters);
+ }
+ assert.deepEqual(names('left',COOP_BIRDS.slice(0,4)),['Daelly','Mel RZ','Doppel','Miss Tea']);
+ assert.deepEqual(names('right',COOP_BIRDS.slice(0,2)),['Peggy','Jose Serna']);
 });

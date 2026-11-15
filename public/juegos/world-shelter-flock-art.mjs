@@ -1,5 +1,5 @@
 import {shelterForZone} from './world-shelter-layout.mjs';
-import {flockAt,COOP_BIRDS,birdMotion} from './world-shelter-care.mjs';
+import {flockAt,COOP_BIRDS,birdMotion,coopBirdName} from './world-shelter-care.mjs';
 
 const directory='/assets/maps/apocalypse/refugios/';
 const flockSprites=new Map();
@@ -36,7 +36,7 @@ export function pickShelterBird(map,point,time,shared){
    pick=bird;distance=score;
   }
  }
- return pick;
+ return pick&&{...pick,name:coopBirdName(shelterForZone(map.id).id,pick.id)};
 }
 
 function birdImage(name){

@@ -8,7 +8,7 @@ import {fishingCatch} from './public/juegos/world-fishing.mjs';
 import {PRAYER_REASONS,PRAYER_COOLDOWN} from './public/juegos/world-prayer.mjs';
 import {RESOURCES,RESOURCE_BY_ID,RESOURCE_CAPACITY,CHEST_CAPACITY,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,EVENT_BY_ID,SURVIVAL_STATIONS} from './public/juegos/world-survival-catalog.mjs';
 import {SHELTERS,shelterForZone} from './public/juegos/world-shelters.mjs';
-import {CROPS,startFlock,flockAt,COOP_BIRDS,COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE,birdMotion,COOP_MIN,COOP_MAX,resizeFlock} from './public/juegos/world-shelter-care.mjs';
+import {CROPS,startFlock,flockAt,COOP_BIRDS,COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE,birdMotion,COOP_MIN,COOP_MAX,resizeFlock,coopBirdName} from './public/juegos/world-shelter-care.mjs';
 import {FOOD_BY_ID,FOOD_CATALOG} from './public/juegos/world-foods.mjs';
 const decode=(s,f)=>{try{return JSON.parse(s);}catch{return f;}},sum=o=>Object.values(o||{}).reduce((n,v)=>n+Number(v||0),0),normal=s=>String(s||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
 const initialShared=now=>({projects:Object.fromEntries(PROJECTS.map(p=>[p.id,{ready:p.id==='generator',paid:{}}])),chests:{left:{},right:{}},upgrades:{},gardens:{left:[],right:[]},nodes:{},fires:[],event:null,history:[],auto:true,nextAt:now+25*60000,sequence:0,gatherAuto:false,gatherInterval:30,gatherNextAt:now+30*60000,gatherRound:0,provisioned:{},generatorFuel:now+30*60000});
@@ -157,20 +157,20 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
      const index=COOP_BIRDS.findIndex(bird=>bird.id===input.bird),bird=COOP_BIRDS[index];
      const animal=bird&&flock.birds[bird.id];
      if(!animal||animal.health<=0)fail(409,'Esa ave ya no está en el corral.');
-     const map=WORLD_MAPS[ctx.zone],pos=birdMotion(bird,index,now()),floorY=(map.walkBand[0]+.045)*map.height;
-     if(Math.hypot(ctx.x-pos.x*map.width,(ctx.y-floorY)*.75)>195)fail(409,'Acércate a '+bird.name+' para interactuar.');
+     const name=coopBirdName(home.id,bird.id),map=WORLD_MAPS[ctx.zone],pos=birdMotion(bird,index,now()),floorY=(map.walkBand[0]+.045)*map.height;
+     if(Math.hypot(ctx.x-pos.x*map.width,(ctx.y-floorY)*.75)>195)fail(409,'Acércate a '+name+' para interactuar.');
      if(input.id==='feed'){
       if(!Object.hasOwn(COOP_FEED,input.item))fail(400,'Elige trigo o maíz.');
-      if(animal.food>=95)fail(409,bird.name+' ya está bien alimentada.');
+      if(animal.food>=95)fail(409,name+' ya tiene suficiente alimento.');
       const feed=COOP_FEED[input.item];
       if(feed.kind==='resource')change(p,input.item,-1);
       else await foodChange(user.id,input.item,-1);
       animal.food=Math.min(100,animal.food+feed.gain);animal.fed=true;
-      message='Alimentaste a '+bird.name+'.';
+      message='Alimentaste a '+name+'.';
      }else if(input.id==='eggs'){
       if(bird.rooster||!animal.eggs)fail(409,'Esta gallina todavía no tiene huevos.');
       await foodChange(user.id,'fresh-egg',1);animal.eggs--;
-      message='Guardaste un huevo de '+bird.name+'.';
+      message='Guardaste un huevo de '+name+'.';
      }else{
       if(!Object.hasOwn(COOP_TOOLS,input.item)||!p.items[input.item])fail(409,'Necesitas la herramienta indicada en tu mochila.');
       if(input.item==='rope')change(p,'rope',-1);

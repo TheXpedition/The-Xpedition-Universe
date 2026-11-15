@@ -9,22 +9,29 @@ export const CROPS=Object.freeze({
 
 const minute=60_000;
 export const COOP_MIN=2,COOP_MAX=12,COOP_DEFAULT=3;
-const henNames=['Canela','Pepita','Miel','Pimienta','Luna','Nuez'];
-const roosterNames=['Canelo','Trueno','Cobre','Sol','Tizón','Faro'];
 export const COOP_BIRDS=Object.freeze([
- {id:'canela',name:'Canela',x:.43,y:.695,size:85,pace:.37,layAfter:55},
- {id:'gallo',name:'Canelo',x:.737,y:.70,size:105,pace:.31,rooster:true},
- {id:'pepita',name:'Pepita',x:.58,y:.714,size:79,pace:.47,layAfter:65},
+ {id:'canela',x:.43,y:.695,size:85,pace:.37,layAfter:55},
+ {id:'gallo',x:.737,y:.70,size:105,pace:.31,rooster:true},
+ {id:'pepita',x:.58,y:.714,size:79,pace:.47,layAfter:65},
  ...Array.from({length:9},(_,i)=>{
   const rooster=i%2===0,index=Math.floor(i/2)+(rooster?1:2);
   return {
-   id:(rooster?'gallo-':'gallina-')+(index+1),name:(rooster?roosterNames:henNames)[index],
+   id:(rooster?'gallo-':'gallina-')+(index+1),
    x:.404+(i%3)*.16+(Math.floor(i/3)%2)*.085,y:.622+Math.floor(i/3)*.027,
    size:rooster?91:72,pace:.31+(i%5)*.035,range:.45,rooster,
    ...(rooster?{}:{layAfter:55+(index%2)*10})
   };
  })
 ]);
+const namesByTeam={
+ left:['Daelly','Mel RZ','Doppel','Miss Tea','Gennie Sheet','Xavier','Zoila Menos','Eduardo Buñuelo','Mary Weed','Beto Trujillo','Peggy','Jose Serna'],
+ right:['Peggy','Jose Serna','Daelly','Miss Tea','Gennie Sheet','Xavier','Zoila Menos','Eduardo Buñuelo','Mary Weed','Mel RZ','Doppel','Beto Trujillo']
+};
+const birdNames=Object.fromEntries(Object.entries(namesByTeam).map(([team,names])=>[
+ team,Object.fromEntries(COOP_BIRDS.map(({id},index)=>[id,names[index]]))
+]));
+export const coopBirdName=(team,id)=>birdNames[team]?.[id];
+
 export const COOP_WATER_PER_BOTTLE=6;
 export const COOP_FEED={
  wheat:{label:'Dar trigo',kind:'resource',gain:27},
