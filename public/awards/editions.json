@@ -1567,7 +1567,16 @@
             {
               "id": "estrategia-6",
               "name": "Mejor Duelo",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Sal Lua vs Luciano",
+                  "people": [
+                    "Sal Lua",
+                    "Luciano"
+                  ],
+                  "description": "Showdown II"
+                }
+              ]
             }
           ]
         },
