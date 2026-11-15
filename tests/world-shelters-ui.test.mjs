@@ -31,6 +31,8 @@ test('the door badge stays centered and keeps progress only while construction i
  };
  try{
   assert.equal(shelterPortalContext({key:'door'},{zone:'refugio-1'},view).label,'Construir');
+  const visitor=shelterPortalContext({key:'door'},{zone:'refugio-1'},view,true);
+  assert.equal(visitor.label,'Entrar');assert.equal(visitor.detail,'Refugio 1');
   hud.update(view);draw('base');
   assert.equal(badge.style.left,'618px');assert.equal(badge.style.top,'336px');
   assert(badge.querySelector('progress'));

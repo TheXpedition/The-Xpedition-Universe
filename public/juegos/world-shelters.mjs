@@ -13,6 +13,7 @@ export const SHELTERS=Object.freeze([
 ]);
 export const shelterForZone=zone=>SHELTERS.find(s=>s.inside===zone);
 export const shelterAt=zone=>SHELTERS.find(s=>s.outside===zone);
+export const mayVisitShelters=(characterId,staff)=>characterId==='maria-villegas'&&staff===true;
 export const SHELTER_MATERIALS=Object.freeze([
  {id:'nails',name:'Clavos',resource:'scrap',zone:'gasolinera-interior',place:'Tienda de la gasolinera',x:.65,detail:'Un lote de clavos para fijar la estructura.'},
  {id:'planks',name:'Tablones',resource:'plank',zone:'muelle-ruinas',place:'Muelle de las ruinas',x:.73,detail:'En el camino de piedra, frente a la lancha encallada.'},
@@ -39,8 +40,9 @@ export function buildShelterProps(maps,view){
  for(const map of Object.values(maps)){map.props=map.props.filter(p=>!p.shelterSupply);map.interactionRevision=(map.interactionRevision||0)+1;}
  for(const item of SHELTER_MATERIALS){if(view&&!view.available?.includes(item.id))continue;const map=maps[item.zone];if(map)map.props.push(shelterSupplyProp(item,map));}
 }
-export function shelterPortalContext(context,portal,view){
+export function shelterPortalContext(context,portal,view,visitor=false){
  const definition=shelterForZone(portal?.zone),s=definition&&view?.shelters.find(s=>s.id===definition.id);
  if(!context||!s)return context;
+ if(visitor)return {...context,key:context.key+':shelter',label:'Entrar',detail:s.name,icon:'door'};
  return {...context,key:context.key+':shelter',label:s.built?'Entrar':'Construir',detail:s.name+(s.built?' · '+(view.home===s.id?'Tu refugio':'Solo integrantes'):' · '+s.percent+' %'),icon:s.built?'door':'build'};
 }

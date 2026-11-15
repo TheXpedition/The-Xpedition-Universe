@@ -4,6 +4,31 @@ import {SHELTER_MATERIALS,shelterSupplyProp} from '../public/juegos/world-shelte
 import {seedConstructedShelters} from './helpers/world-shelter-fixtures.mjs';import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
 const material=SHELTER_MATERIALS[0],point=shelterSupplyProp(material,WORLD_MAPS[material.zone]);
 
+test('Staff playing María can enter through either shelter door without unlocking it for other characters',async()=>{
+ for(const [outside,inside,built] of [['base','refugio-1',true],['refugio-2','dormitorio-2',false]]){
+  const {x,y}=WORLD_MAPS[outside].props.find(p=>p.portal?.zone===inside).portal;
+  const resident={id:'builder',character:'alice',home:'right',zone:outside,x,y};
+  const f=await liveFixture('maria-shelter-door',[{id:STAFF_ID,character:'maria-villegas',zone:outside,x,y},resident],
+   {setup:built?db=>seedConstructedShelters(db,[resident]):undefined});
+  try{
+   const maria=await f.connect(STAFF_ID),builder=await f.connect(resident.id);
+   const latest=p=>p.messages.filter(m=>m.type==='zone'||m.type==='welcome').at(-1).zone;
+   const bootstrap=await f.call('/api/world/bootstrap',STAFF_ID);
+   const housing=bootstrap.shelters.shelters.find(s=>s.inside===inside);
+   assert.equal(housing.built,built);
+   assert(bootstrap.zones.find(z=>z.id===inside).canEnter);
+   f.send(maria,{type:'enter',zone:inside});
+   await f.until(()=>latest(maria)===inside);
+   f.send(builder,{type:'enter',zone:inside});
+   await f.until(()=>builder.messages.some(m=>m.type==='error'&&m.message.includes(built?'no tiene acceso':'construir')));
+   assert.equal(latest(builder),outside);
+   const fresh=await f.call('/api/world/bootstrap',STAFF_ID);
+   assert.equal(fresh.profile.lastZone,inside);
+   assert.equal(fresh.shelters.shelters.find(s=>s.inside===inside).built,built);
+  }finally{await f.close();}
+ }
+});
+
 test('Direction can teleport staff into either unfinished shelter without unlocking it for participants',async()=>{
  const f=await liveFixture('staff-shelter-visit',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'visitor',character:'bruno',zone:'base',x:1000,y:700}]);
  try{const staff=await f.connect(STAFF_ID),participant=await f.connect('visitor'),last=p=>p.messages.filter(m=>m.type==='zone'||m.type==='welcome').at(-1);
