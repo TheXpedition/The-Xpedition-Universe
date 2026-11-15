@@ -1771,6 +1771,55 @@
                 }
               ],
               "production": false
+            },
+            {
+              "id": "produccion-7",
+              "name": "Mejor Presentación/Jurado",
+              "nominees": [
+                {
+                  "title": "Dua Lingo",
+                  "people": [
+                    "Dua Lingo"
+                  ],
+                  "description": "Showdown II"
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": "TOS All Stars 2"
+                },
+                {
+                  "title": "Ian Esteban",
+                  "people": [
+                    "Ian Esteban"
+                  ],
+                  "description": "Global War"
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": "Global War"
+                },
+                {
+                  "title": "Marcos",
+                  "people": [
+                    "Marcos"
+                  ],
+                  "description": "Turn It Up"
+                },
+                {
+                  "title": "Heidi Cum",
+                  "people": [
+                    "Heidi Cum"
+                  ],
+                  "description": "Project Runway"
+                }
+              ],
+              "production": false
             }
           ]
         }

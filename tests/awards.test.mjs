@@ -96,19 +96,21 @@ test('las fichas de Awards abren la edición en la misma página, incluida la pr
  }
 });
 
-test('la tercera edición muestra sus 22 categorías anunciadas y los nominados pendientes',()=>{
+test('la tercera edición muestra sus 23 categorías anunciadas y los nominados pendientes',()=>{
  const edition=archive.editions['edicion-3'];assert.equal(edition.status,'upcoming');
  assert.deepEqual(edition.groups.map(g=>g.name),['Categorías Principales','Estrategia y Competencia','Personalidad','Premios de Producción']);
- assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,6,6,6]);
+ assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,6,6,7]);
  assert.equal(edition.groups.find(g=>g.id==='estrategia').categories.at(-1).name,'Mejor Duelo');
  assert.equal(edition.groups.find(g=>g.id==='personalidad').categories.at(-1).name,'Mejor Momento');
  assert.deepEqual(edition.groups.find(g=>g.id==='produccion').categories.map(c=>c.name),[
   'Mejor Episodio','Mejor Temporada','Mejor Diseño & Vestuario','Mejor Canción',
-  'Mejor Proyecto Independiente','Mejor Participación Externa'
+  'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
-  'estrategia-2':5,'estrategia-3':5,'personalidad-3':10,'produccion-2':3,'produccion-5':6,'produccion-6':6
+  'estrategia-2':5,'estrategia-3':5,'personalidad-3':10,'produccion-2':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
  });
+ const jury=categories(edition).find(c=>c.id==='produccion-7');
+ assert.deepEqual(jury.nominees.map(n=>[n.title,n.description]),[["Dua Lingo","Showdown II"],["Isabel","TOS All Stars 2"],["Ian Esteban","Global War"],["Lucas Mendez","Global War"],["Marcos","Turn It Up"],["Heidi Cum","Project Runway"]]);
  const revelation=categories(edition).find(c=>c.id==='personalidad-3');
  assert.deepEqual(revelation.nominees.map(n=>n.title),[
   'Ari Santana','Guillermo','Roger','Carmine','Leandro','Bruno Macri','Mary Hao','Alice','Paula García','Christopher Gonzales'
@@ -116,9 +118,9 @@ test('la tercera edición muestra sus 22 categorías anunciadas y los nominados 
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
- assert(html.includes('Las 22 categorías'));
- assert(html.includes('35 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,35);
+ assert(html.includes('Las 23 categorías'));
+ assert(html.includes('41 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,41);
  assert(html.includes('personajes/christopher.png'));
  for(const {nominees} of categories(edition))for(const nominee of nominees){
   assert(html.includes('<h4>'+nominee.title+'</h4>'));
@@ -128,7 +130,7 @@ test('la tercera edición muestra sus 22 categorías anunciadas y los nominados 
  const totals=c.awardProfileTotals(archive);
  const pastTotals=c.awardProfileTotals({...archive,editions:{...archive.editions,'edicion-3':{groups:[]}}});
  assert.equal(totals.get('bonju').nominations,pastTotals.get('bonju').nominations);
- assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+2);
+ assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+3);
 });
 
 test('los retratos de Andrómeda se enlazan al personaje correcto sin confundir nombres',()=>{
@@ -163,7 +165,7 @@ test('la rivalidad de Emanuel nomina a todos los involucrados y entrega el premi
 
 test('Bonju recibe producción y extras; Maria Villegas y Dua Lingo conservan sus extras adicionales',()=>{
  const {context:c}=context(),totals=c.awardProfileTotals(archive);
- for(const [name,nominations,awards] of [['Bonju',28,9],['Maria',14,5],['Dua Lingo',5,1]]){
+ for(const [name,nominations,awards] of [['Bonju',28,9],['Maria',14,5],['Dua Lingo',6,1]]){
   const actual=totals.get(castKey(name));assert.equal(actual.nominations,nominations,name);assert.equal(actual.awards,awards,name);
  }
  assert.equal(vm.runInContext("awardIdentity('Maria Villegas')",c),'Maria');
