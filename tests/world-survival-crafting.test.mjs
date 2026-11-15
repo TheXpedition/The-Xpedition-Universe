@@ -1,3 +1,4 @@
+import {LUGGAGE,LUGGAGE_BY_ID} from '../public/juegos/world-luggage.mjs';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
 import {openDatabase} from '../database.mjs';import {createSurvivalStore} from '../world-survival-service.mjs';import {createFoodStore} from '../world-food-service.mjs';import {createWellness} from '../public/juegos/world-wellness.mjs';import {createVitals} from '../public/juegos/world-vitals.mjs';
 import {RESOURCES,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {hasFloor,clearPoint} from '../public/juegos/world-motion.mjs';
@@ -23,3 +24,45 @@ test('recipes require a bench, projects accept partial contributions and radio n
 test('campfires cook owned food, gardens mature faster with compost and harvest only once',async t=>{const f=await fixture(t);await f.grant('wood',3);await f.grant('stone',2);await f.grant('raw-meat');await f.act({action:'fire'});const fire=(await f.store.snapshot(f.a,f.ctx)).shared.fires[0];assert(f.store.effect('base',f.ctx).fire);await f.act({action:'cook',id:'raw-meat',fireId:fire.id});assert.equal((await f.food.snapshot(f.a.id)).inventory.items[0].foodId,'roast-beef');await f.grant('seed-carrot');await f.grant('clean-water');await f.grant('compost');await f.act({action:'plant',seed:'carrot',slot:0,compost:true});await assert.rejects(f.act({action:'harvest',slot:0}),/listo/);f.advance(4*60000);await f.act({action:'harvest',slot:0});await assert.rejects(f.act({action:'harvest',slot:0}),/listo/);assert.equal((await f.food.snapshot(f.a.id)).inventory.items.find(i=>i.foodId==='carrot').quantity,3);});
 test('events persist, staff controls them, bridge repair changes routes, rations rollback with failed food pickup',async t=>{const f=await fixture(t);await assert.rejects(f.store.eventControl(f.a,{action:'start',type:'flood'},{staff:false}),/Dirección/);await f.store.eventControl(f.a,{action:'start',type:'flood',minutes:3},{staff:true});assert.equal(f.store.effect('poza-cascada').flood,true);buildSurvivalProps(WORLD_MAPS,f.store.public());assert(Object.values(WORLD_MAPS).some(m=>m.props.some(p=>p.portal?.eventBlocked)));const reopened=createSurvivalStore({db:f.db,now:f.now});await reopened.ready;assert.equal(reopened.public().event.type,'flood');f.advance(3*60000);await f.store.tick();assert.equal(f.store.public().event,null);await f.store.eventControl(f.a,{action:'start',type:'scarcity',minutes:3},{staff:true});const context={staff:true,beforeTake:input=>f.store.ration(f.a,input)};await assert.rejects(f.food.take(f.a.id,{teamId:'left',foodId:'apple',quantity:2},context),/porción/);await f.food.take(f.a.id,{teamId:'left',foodId:'apple',quantity:1},context);await assert.rejects(f.food.take(f.a.id,{teamId:'left',foodId:'apple',quantity:1},context),/minuto/);});
 test('resource transfers preserve capacities and revival clears every material without new starter items',async t=>{const f=await fixture(t);await f.grant('walkie');await f.store.transfer(f.a,f.b,'walkie',1);assert.equal((await f.store.snapshot(f.b)).personal.items.walkie,1);assert.equal((await f.store.snapshot(f.a)).personal.items.walkie,undefined);await f.db.transaction(()=>f.store.clearInventory(f.b.id));assert.deepEqual((await f.store.snapshot(f.b)).personal.items,{});});
+
+test('each workshop input has a source and the equipment points are separate in both shelters',()=>{
+ const maps=structuredClone(WORLD_MAPS);
+ buildSurvivalProps(maps);
+ const sources=new Set(['dirty-water',...GATHER_NODES.flatMap(node=>Object.keys(node.loot)),
+  ...LUGGAGE.flatMap(bag=>Object.keys(bag.contents).filter(key=>key.startsWith('resource:')).map(key=>key.slice(9)))]);
+ for(const recipe of RECIPES)for(const id of [...Object.keys(recipe.cost),recipe.tool].filter(Boolean))assert(sources.has(id),recipe.name+': '+id);
+ for(const zone of ['refugio-1','dormitorio-2']){
+  const [bench,chest]=['bench','chest'].map(kind=>maps[zone].props.find(p=>p.survival?.kind===kind));
+  assert(Math.hypot(bench.approach.x-chest.approach.x,bench.approach.y-chest.approach.y)>250);
+ }
+});
+test('a repaired river filter can fill a bottle directly and verifies proximity',async t=>{
+ const f=await fixture(t),ctx={...f.ctx,staff:false,zone:'cascada-ribera',near:(id,kind)=>id==='filter'&&kind==='project'};
+ await assert.rejects(f.store.act(f.a,{action:'fill-water',id:'filter'},ctx),/instala el filtro/);
+ for(const [id,q] of Object.entries({charcoal:3,scrap:4,cloth:2}))await f.grant(id,q);
+ for(const [resource,quantity] of Object.entries({charcoal:3,scrap:4,cloth:2}))await f.store.act(f.a,{action:'repair',id:'filter',resource,quantity},ctx);
+ await assert.rejects(f.store.act(f.a,{action:'fill-water',id:'filter'},{...ctx,near:()=>false}),/Acércate/);
+ const result=await f.store.act(f.a,{action:'fill-water',id:'filter'},ctx);
+ assert.equal(result.data.personal.items['clean-water'],1);
+ assert.equal(result.data.personal.items['empty-bottle'],undefined);
+});
+test('the supply refresh affects existing worlds once and preserves repairs and stored items',async t=>{
+ const f=await fixture(t),row=await f.db.one("SELECT state FROM world_survival_state WHERE id='shared'"),state=JSON.parse(row.state);
+ const bag='cabin-grey-case';
+ delete state.shelterSuppliesRestocked;
+ state.luggage[bag]={items:{},revision:7};
+ state.nodes['forest-wood']={layout:2,remaining:0};
+ state.chests.left={'resource:wood':5};state.projects.filter.ready=true;
+ await f.db.run("UPDATE world_survival_state SET state=? WHERE id='shared'",JSON.stringify(state));
+ const a=createSurvivalStore({db:f.db,now:f.now}),b=createSurvivalStore({db:f.db,now:f.now});
+ await Promise.all([a.ready,b.ready]);
+ const fresh=await a.snapshot(f.a,f.ctx);
+ assert.equal(fresh.shared.luggage[bag].revision,8);
+ assert.deepEqual(fresh.shared.luggage[bag].items,LUGGAGE_BY_ID[bag].contents);
+ assert.equal(fresh.shared.nodes['forest-wood'],undefined);
+ assert.equal(fresh.shared.projects.filter.ready,true);
+ assert.equal((await a.storage(f.a,'left',f.ctx)).chest.items['resource:wood'],5);
+ await a.act(f.a,{action:'take-luggage',id:bag,itemKey:'resource:battery',quantity:1},f.ctx);
+ const reopened=createSurvivalStore({db:f.db,now:f.now});await reopened.ready;
+ assert.equal((await reopened.snapshot(f.a,f.ctx)).shared.luggage[bag].items['resource:battery'],1);
+});

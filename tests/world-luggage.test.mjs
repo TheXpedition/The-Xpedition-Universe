@@ -35,7 +35,7 @@ test('luggage requires proximity, rejects fabricated loot and rolls back when pe
 test('food is transferred only to the picker, empty stock persists, and staff restocking is explicit',async t=>{
  const {store,a,b,context}=await fixture(t),bag='cabin-travel-case';
  for(const [itemKey,quantity]of Object.entries(LUGGAGE_BY_ID[bag].contents))await store.act(a,{action:'take-luggage',id:bag,itemKey,quantity,requestId:itemKey},context);
- assert.deepEqual((await store.luggage(b,bag,context)).luggage.items,{});assert.equal((await store.snapshot(b,context)).food.length,0);assert.equal((await store.snapshot(a,context)).food.find(f=>f.foodId==='apple').quantity,2);
+ assert.deepEqual((await store.luggage(b,bag,context)).luggage.items,{});assert.equal((await store.snapshot(b,context)).food.length,0);assert.equal((await store.snapshot(a,context)).food.find(f=>f.foodId==='apple').quantity,LUGGAGE_BY_ID[bag].contents['food:apple']);
  await assert.rejects(store.act(a,{action:'take-luggage',id:bag,itemKey:'food:apple',quantity:2,requestId:'food:apple'},context),/procesada/);
  const maps=structuredClone(WORLD_MAPS);buildSurvivalProps(maps,(await store.snapshot(b,context)).shared);assert.equal(maps['avion-interior'].props.find(p=>p.survival?.id===bag).survival.remaining,0);
  await store.act(a,{action:'restock-luggage',id:bag},{...context,staff:true});assert.deepEqual((await store.luggage(b,bag,context)).luggage.items,LUGGAGE_BY_ID[bag].contents);

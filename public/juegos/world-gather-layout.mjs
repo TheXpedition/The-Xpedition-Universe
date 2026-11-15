@@ -34,6 +34,7 @@ export function resolveGatherNode(node,shared={}){
 export function newGatherRound(nodes,previous={},random=Math.random){
  const occupied=new Map(),result={};
  for(const node of nodes){
+  if(node.fixed){if(previous[node.id])result[node.id]=previous[node.id];continue;}
   const options=spots[node.zone]||[[node.x,node.y]],used=occupied.get(node.zone)||new Set();occupied.set(node.zone,used);
   const old=resolveGatherNode(node,{nodes:previous});let free=options.map((_,i)=>i).filter(i=>!used.has(i));
   const different=free.filter(i=>options[i][0]!==old.x);if(different.length)free=different;

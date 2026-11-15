@@ -7,13 +7,13 @@ export const LUGGAGE = Object.freeze([
  {id:'gas-pantry-shelf',zone:'gasolinera-interior',name:'Estantería de ingredientes',category:'supplies',x:.90,y:.68,anchorY:.53,painted:true,contents:{'food:dry-beans':3,'food:dry-rice':3}},
  {id:'gas-cigarette-box',hideWhenEmpty:true,zone:'gasolinera-interior',name:'Caja de 10 cigarrillos',category:'supplies',x:.43,y:.61,anchorY:.59,width:60,art:'cigarettes.png',contents:{'resource:cigarette':10}},
  {id:'gas-fuel-can',hideWhenEmpty:true,zone:'gasolinera-interior',name:'Bidón de combustible',category:'supplies',x:.28,y:.76,anchorY:.72,width:65,art:'fuel-can.png',contents:{'resource:fuel':1}},
- {id:'plane-red-case',zone:'avion',name:'Maleta roja',x:.595,y:.69,anchorY:.66,painted:true,contents:{'resource:light-clothes':1,'resource:cloth':2,'food:apple':1}},
- {id:'plane-grey-case',zone:'avion',name:'Maleta de herramientas',x:.655,y:.663,anchorY:.62,painted:true,contents:{'resource:battery':2,'resource:wire':2,'resource:fuse':1}},
- {id:'plane-travel-case',zone:'avion',name:'Equipaje abandonado',x:.465,y:.675,anchorY:.64,painted:true,contents:{'resource:empty-bottle':1,'resource:purifier':2,'food:carrot':2}},
- {id:'cabin-red-case',zone:'avion-interior',name:'Maleta de ropa',x:.31,y:.845,art:'maleta-roja.png',contents:{'resource:coat':1,'resource:cloth':2,'resource:rope':1}},
- {id:'cabin-grey-case',zone:'avion-interior',name:'Maleta de emergencia',x:.55,y:.845,art:'maleta-gris.png',contents:{'resource:flashlight':1,'resource:battery':2,'resource:purifier':2}},
- {id:'cabin-travel-case',zone:'avion-interior',name:'Bolsa de provisiones',x:.69,y:.845,art:'maleta-roja.png',contents:{'food:apple':2,'food:carrot':2,'resource:empty-bottle':1,'resource:matches':1}},
- {id:'train-baggage-case',zone:'tren-equipaje',name:'Equipaje de la expedición',x:.426,y:.723,anchorY:.65,painted:true,contents:{'resource:rope':2,'resource:matches':1,'food:apple':2}},
+ {id:'plane-red-case',zone:'avion',name:'Maleta roja',x:.595,y:.69,anchorY:.66,painted:true,contents:{'resource:light-clothes':1,'resource:cloth':4,'resource:rope':2,'food:apple':1}},
+ {id:'plane-grey-case',zone:'avion',name:'Maleta de herramientas',x:.655,y:.663,anchorY:.62,painted:true,contents:{'resource:battery':2,'resource:wire':4,'resource:fuse':2,'resource:scrap':3,'resource:toolkit':1}},
+ {id:'plane-travel-case',zone:'avion',name:'Equipaje abandonado',x:.465,y:.675,anchorY:.64,painted:true,contents:{'resource:empty-bottle':2,'resource:charcoal':3,'resource:plank':3,'food:carrot':1}},
+ {id:'cabin-red-case',zone:'avion-interior',name:'Maleta de ropa',x:.31,y:.845,art:'maleta-roja.png',contents:{'resource:coat':1,'resource:cloth':4,'resource:rope':3,'resource:plank':2}},
+ {id:'cabin-grey-case',zone:'avion-interior',name:'Maleta de emergencia',x:.55,y:.845,art:'maleta-gris.png',contents:{'resource:flashlight':1,'resource:battery':2,'resource:fuse':2,'resource:wire':3,'resource:charcoal':2}},
+ {id:'cabin-travel-case',zone:'avion-interior',name:'Bolsa de provisiones',x:.69,y:.845,art:'maleta-roja.png',contents:{'food:apple':1,'resource:empty-bottle':2,'resource:matches':2,'resource:seed-wheat':2,'resource:seed-carrot':2,'resource:seed-berries':1}},
+ {id:'train-baggage-case',zone:'tren-equipaje',name:'Equipaje de la expedición',x:.426,y:.723,anchorY:.65,painted:true,contents:{'resource:rope':3,'resource:matches':1,'resource:cloth':3,'resource:scrap':3,'resource:plank':3,'food:apple':1}},
 ]);
 export const LUGGAGE_BY_ID = Object.freeze(Object.fromEntries(LUGGAGE.map(v=>[v.id,v])));
 export const initialLuggage = () => Object.fromEntries(LUGGAGE.map(v=>[v.id,{items:{...v.contents},revision:0}]));
