@@ -1393,17 +1393,97 @@
             {
               "id": "principales-1",
               "name": "Fan Favorite",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Kim Camila",
+                  "people": [
+                    "Kim Camila"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Alice",
+                  "people": [
+                    "Alice"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bruno Macri",
+                  "people": [
+                    "Bruno Macri"
+                  ],
+                  "description": ""
+                }
+              ]
             },
             {
               "id": "principales-2",
               "name": "Mejor Villano",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Andromeda",
+                  "people": [
+                    "Andromeda"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Leandro",
+                  "people": [
+                    "Leandro"
+                  ],
+                  "description": "Showdown 2"
+                }
+              ]
             },
             {
               "id": "principales-3",
               "name": "Mejor Competidor",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Bruno Macri",
+                  "people": [
+                    "Bruno Macri"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Alice",
+                  "people": [
+                    "Alice"
+                  ],
+                  "description": "Showdown 2"
+                },
+                {
+                  "title": "Luciano",
+                  "people": [
+                    "Luciano"
+                  ],
+                  "description": "Showdown 2"
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "Showdown 2"
+                }
+              ]
             },
             {
               "id": "principales-4",
