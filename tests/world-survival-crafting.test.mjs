@@ -1,3 +1,4 @@
+import {COOP_BIRDS,birdMotion} from '../public/juegos/world-shelter-care.mjs';
 import {LUGGAGE,LUGGAGE_BY_ID} from '../public/juegos/world-luggage.mjs';
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
 import {openDatabase} from '../database.mjs';import {createSurvivalStore} from '../world-survival-service.mjs';import {createFoodStore} from '../world-food-service.mjs';import {createWellness} from '../public/juegos/world-wellness.mjs';import {createVitals} from '../public/juegos/world-vitals.mjs';
@@ -17,7 +18,7 @@ test('a bottle grants only a bottle, disappears for everyone, cannot duplicate, 
  await f.act({action:'restock-gather',id:node.id});buildSurvivalProps(maps,(await f.store.snapshot(f.a,f.ctx)).shared);assert(maps[node.zone].props.some(p=>p.survival?.id===node.id));
  const natural=GATHER_NODES.find(n=>n.renewable);await f.act({action:'gather',id:natural.id});f.advance(31*60000);await f.store.tick();assert.equal((await f.store.snapshot(f.a,f.ctx)).shared.nodes[natural.id],undefined);
 });
-test('raster survival resources and every station have reachable 2D floor contacts',()=>{assert.equal(RESOURCES.length,37);assert.equal(RECIPES.length,14);assert.equal(PROJECTS.length,5);assert.equal(EVENT_TYPES.length,6);buildSurvivalProps(WORLD_MAPS);for(const n of GATHER_NODES)assert(WORLD_MAPS[n.zone]);for(const map of Object.values(WORLD_MAPS))for(const p of map.props.filter(p=>p.survival)){assert(hasFloor(map,p.approach.x,p.approach.y),p.id);assert(clearPoint(map,p.approach.x,p.approach.y),p.id);}});
+test('raster survival resources and every station have reachable 2D floor contacts',()=>{assert.equal(RESOURCES.length,38);assert.equal(RECIPES.length,15);assert.equal(PROJECTS.length,5);assert.equal(EVENT_TYPES.length,6);buildSurvivalProps(WORLD_MAPS);for(const n of GATHER_NODES)assert(WORLD_MAPS[n.zone]);for(const map of Object.values(WORLD_MAPS))for(const p of map.props.filter(p=>p.survival)){assert(hasFloor(map,p.approach.x,p.approach.y),p.id);assert(clearPoint(map,p.approach.x,p.approach.y),p.id);}});
 test('team storage conserves resources and food; opponents, overflow and repeated requests cannot duplicate stock',async t=>{const f=await fixture(t),{a,b,ctx,store,food}=f;await f.grant('wood',8);await food.forage(a.id,'apple',2);await f.act({action:'deposit',teamId:'left',itemKey:'resource:wood',quantity:4,requestId:'once'});await assert.rejects(f.act({action:'deposit',teamId:'left',itemKey:'resource:wood',quantity:4,requestId:'once'}),/procesada/);await f.act({action:'deposit',teamId:'left',itemKey:'food:apple',quantity:2});await assert.rejects(store.storage(b,'left',{...ctx,staff:false,team:'Equipo 2'}),/otro equipo/);let box=await store.storage(a,'left',ctx);assert.equal(box.chest.items['resource:wood'],4);assert.equal(box.chest.items['food:apple'],2);const r=await Promise.allSettled([f.act({action:'withdraw',teamId:'left',itemKey:'resource:wood',quantity:4}),f.act({action:'withdraw',teamId:'left',itemKey:'resource:wood',quantity:4})]);assert.equal(r.filter(v=>v.status==='fulfilled').length,1);assert.equal((await store.snapshot(a,ctx)).personal.items.wood,8);assert.equal((await food.snapshot(a.id)).inventory.items.length,0);await assert.rejects(f.grant('stone',40),/llena/);});
 test('gathering, portable purification, dirty water and raw food have meaningful and conserved effects',async t=>{const f=await fixture(t);await f.act({action:'gather',id:'forest-wood'});await assert.rejects(f.act({action:'gather',id:'forest-wood'}),/agotado/);await f.act({action:'fill-water'});await f.grant('purifier');await f.act({action:'craft',id:'water-tablet'});let value=(await f.store.snapshot(f.a,f.ctx)).personal.items;assert.equal(value['dirty-water'],undefined);assert.equal(value['clean-water'],1);await f.act({action:'use',id:'clean-water'});assert.equal(f.ctx.vitals.health,80);await f.act({action:'fill-water'});await f.act({action:'use',id:'dirty-water'});assert.equal(f.ctx.vitals.health,75);assert(f.ctx.body.conditions.some(c=>c.id==='food-sickness'));f.ctx.near=()=>false;await assert.rejects(f.act({action:'fill-water'}),/Acércate/);});
 test('recipes require a bench, projects accept partial contributions and radio needs repair and charged hardware',async t=>{const f=await fixture(t);await f.grant('wire',4);await f.grant('scrap',3);await f.grant('fuse');assert.equal((await f.store.radio(f.a)).ready,false);for(const [resource,quantity]of Object.entries({wire:4,scrap:3,fuse:1}))await f.act({action:'repair',id:'radio',resource,quantity});assert.equal((await f.store.snapshot(f.a,f.ctx)).shared.projects.radio.ready,true);await f.grant('walkie');await f.act({action:'use',id:'walkie'});assert.equal((await f.store.radio(f.a)).ready,true);f.advance(21*60000);assert.equal((await f.store.radio(f.a)).ready,false);await f.grant('wood',2);f.ctx.near=()=>false;await assert.rejects(f.act({action:'craft',id:'planks'}),/Acércate/);assert.equal((await f.store.snapshot(f.a,f.ctx)).personal.items.wood,2);});
@@ -47,22 +48,33 @@ test('a repaired river filter can fill a bottle directly and verifies proximity'
  assert.equal(result.data.personal.items['empty-bottle'],undefined);
 });
 
-test('a tended flock lays shared eggs, the stove cooks them and rival teams cannot collect twice',async t=>{
- const f=await fixture(t);
- const coop={...f.ctx,staff:false,zone:'corral-refugio-1',near:(id,kind)=>id==='coop-left'&&kind==='coop'};
- const act=(input,ctx=coop)=>f.store.act(f.a,input,ctx);
- const egg={action:'flock',id:'eggs'};
- await assert.rejects(act(egg),/Todavía no hay huevos/);
- await f.grant('seed-wheat');
- await act({action:'flock',id:'feed'});
+test('individual care, staff roster settings and egg collection persist without recruiting the rival group',async t=>{
+ const f=await fixture(t),map=WORLD_MAPS['corral-refugio-1'],canela=COOP_BIRDS[0];
+ const ctx=()=>({...f.ctx,staff:false,zone:map.id,x:map.width*birdMotion(canela,0,f.now()).x,y:map.height*.81,
+  near:(id,kind)=>id==='coop-water-left'&&kind==='coop-water'});
+ const act=input=>f.store.act(f.a,input,ctx());
+ const egg={action:'flock',id:'eggs',bird:canela.id};
+ await assert.rejects(f.store.configureFlock({team:'left',count:7},{staff:false}),/Dirección/);
+ const configured=await f.store.configureFlock({team:'right',count:7},{staff:true});
+ assert.equal(configured.flocks.right.count,7);
+ assert.equal(configured.flocks.left.count,3);
+ const reopened=createSurvivalStore({db:f.db,now:f.now});await reopened.ready;
+ assert.equal(reopened.public().flocks.right.count,7);
+ await assert.rejects(act(egg),/todavía no tiene huevos/i);
+ await f.grant('wheat',2);await f.grant('clean-water',17);
+ await act({action:'flock',id:'feed',bird:canela.id,item:'wheat'});
+ await act({action:'flock',id:'feed',bird:canela.id,item:'wheat'});
+ for(let i=0;i<16;i++)await act({action:'flock',id:'water'});
  f.advance(8*60000);
- await assert.rejects(f.store.act(f.b,egg,{...coop,team:'Equipo 2'}),/Acércate/);
+ await assert.rejects(act(egg),/todavía no tiene huevos/i);
+ await act({action:'flock',id:'water'});
+ f.advance(47*60000);
+ await assert.rejects(f.store.act(f.b,egg,{...ctx(),team:'Equipo 2'}),/equipo del refugio/);
  const results=await Promise.allSettled([act(egg),act(egg)]);
  assert.equal(results.filter(result=>result.status==='fulfilled').length,1);
- const stove={...coop,zone:'cocina-refugio-1',near:(id,kind)=>id==='stove-left'&&kind==='fire'};
- await act({action:'cook',fireId:'stove-left',id:'fresh-egg'},stove);
- const {food}=await f.store.snapshot(f.a,stove);
- assert.deepEqual(Object.fromEntries(food.map(i=>[i.foodId,i.quantity])),{'fresh-egg':1,'boiled-egg':1});
+ const stove={...ctx(),zone:'cocina-refugio-1',near:(id,kind)=>id==='stove-left'&&kind==='fire'};
+ await f.store.act(f.a,{action:'cook',fireId:'stove-left',id:'fresh-egg'},stove);
+ assert.equal((await f.store.snapshot(f.a,stove)).food.find(item=>item.foodId==='boiled-egg').quantity,1);
 });
 
 test('greenhouse crops, private lockers and the workshop repair use the player inventory',async t=>{

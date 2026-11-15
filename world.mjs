@@ -383,6 +383,13 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
    const token=Symbol('pray'),zone=c.zone.id;c.activityToken=token;c.activity='pray';c.activityAt=now();c.careBusy=true;stopActorMotion(c,now());presence(c);
    try{await new Promise(resolve=>setTimeout(resolve,PRAYER_DURATION));if(c.activityToken!==token||!clients.has(c.ws)||c.zone.id!==zone||c.wellness.life.status!=='alive')fail(409,'Interrumpiste la oración; no se aplicó ningún cambio.');const result=await survival.act(user,{action:'pray',reason:input.reason,requestId:randomUUID()},await survivalContext(user));c.wellness=result.body;c.vitals=result.vitals;c.gear=result.data.personal;sendWellness(c);sendVitals(c);json(res,{...result.data,body:wellnessSnapshot(c.wellness),vitals:vitalView(c.vitals)});}finally{if(c.activityToken===token){c.activityToken=null;c.activity=null;c.careBusy=false;presence(c);}}return true;
   }
+  if(p==='/api/world/survival/flock'&&req.method==='PUT'){
+   if(!await can(user,'direct'))fail(403,'Solo Dirección puede ajustar las aves del corral.');
+   const input=await body(req);
+   const shared=await survival.configureFlock(input||{},{staff:true});
+   await audit(user,'coop-bird-count',{team:input.team,count:input.count});
+   json(res,{shared});return true;
+  }
   if(p==='/api/world/survival/action'&&req.method==='POST'){const input=await body(req),c=clientFor(user);if(!c||c.wellness.life.status!=='alive'||c.eating||c.careBusy||c.tradeBusy||c.seat)fail(409,'Termina la acción actual y acércate al recurso.');const ctx=await survivalContext(user,input?.teamId);c.careBusy=true;c.input={x:0,y:0};c.p.path=[];c.p.moving=false;try{const result=await survival.act(user,input,ctx);c.wellness=result.body;c.vitals=result.vitals;c.gear=result.data.personal;c.hasPerishable=perishable((await foodStore.snapshot(user.id)).inventory.items);sendWellness(c);sendVitals(c);await observeLife(c);send(c,{type:'survival-personal',data:result.data});json(res,{...result.data,body:wellnessSnapshot(c.wellness),vitals:vitalView(c.vitals)});}finally{c.careBusy=false;}return true;}
   if(p==='/api/world/staff/player-care'&&req.method==='POST'){
    if(!await can(user,'direct')&&!await can(user,'moderate'))fail(403,'Solo Staff puede ajustar la salud de un personaje.');

@@ -13,3 +13,17 @@ dialog.survival-dialog:has(.luggage-panel){width:min(830px,calc(100vw - 30px));p
 
 .survival-coop>header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.survival-coop>header h3{margin:0}.survival-coop>header svg,.survival-recipes>article>.food-icon{width:46px;height:46px;flex:none}.survival-coop-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px}.survival-coop-metrics label{display:grid;grid-template-columns:1fr auto;gap:5px;padding:8px;border:1px solid #90654760;border-radius:5px;background:#332519}.survival-coop-metrics progress{grid-column:1/-1;width:100%;height:6px;accent-color:#a5b46a}.survival-coop .survival-recipes{margin-top:12px}
 .survival-coop-eggs{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding:12px;background:#372818;border:1px solid #92663b70;border-radius:6px}.survival-coop-eggs small{display:block;margin-top:4px}.survival-coop .survival-recipes>article{display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:7px}.survival-coop .survival-recipes>article button{margin:0}
+.world-coop-bubbles{position:fixed;top:0;left:0;z-index:42;width:max-content;max-width:calc(100vw - 16px);color:#fbe0b4;text-align:center;pointer-events:none;font-family:system-ui,sans-serif}
+.world-coop-bubbles[hidden]{display:none}
+.coop-bubble-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0 0 6px}
+.coop-bubble-actions button,.coop-bubble-card{border:1px solid #ba834e;background:#241912;color:#ffe3b8;box-shadow:0 3px 10px #0009}
+.coop-bubble-actions button{pointer-events:auto;min-height:42px;margin:0;padding:6px 14px;border-radius:100px;font:700 12px/1.25 system-ui,sans-serif}
+.coop-bubble-actions button:disabled{opacity:.82;background:#231d17;border-color:#796753;color:#a69784;cursor:default}
+.coop-bubble-actions button:focus-visible,.coop-bubble-actions button:hover:not(:disabled){outline:2px solid #f2ad5f;outline-offset:1px}
+.coop-bubble-card{display:table;margin:auto;padding:5px 10px 6px;border-radius:10px;font-size:12px}
+.coop-bubble-card::after{content:"";display:block;position:absolute;left:calc(50% - 4px);bottom:-4px;width:8px;height:8px;transform:rotate(45deg);background:#241912;border-right:1px solid #ba834e;border-bottom:1px solid #ba834e}
+.coop-bubble-card small{display:block;color:#d3b897}
+.coop-bubble-meter{display:flex;align-items:center;gap:6px;font-size:10px}
+.coop-bubble-meter progress{height:7px;width:58px;accent-color:#d99757}
+.coop-back-label{margin-left:4px}
+.survival-coop-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}

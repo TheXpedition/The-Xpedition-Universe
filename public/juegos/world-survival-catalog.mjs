@@ -12,7 +12,8 @@ entries.push(
  ['seed-tomato','Semillas de tomate',20,'Se cultivan en el invernadero del refugio.'],
  ['seed-herbs','Semillas medicinales',18,'Producen hierbas para preparar infusión.'],
  ['coop-alarm','Trampa de aviso',22,'Sirve para proteger el corral. Se instala desde el panel de las gallinas.'],
- ['coop-sling','Honda del vigía',23,'Equipo de World para ahuyentar depredadores del corral.']
+ ['coop-sling','Honda del vigía',23,'Equipo de World para ahuyentar depredadores del corral.'],
+ ['machete','Machete',22,'Herramienta del corral que se fabrica en la mesa de trabajo.']
 );
 export const RESOURCES=Object.freeze(entries.map(([id,name,sprite,description])=>Object.freeze({id,name,sprite,description})));export const RESOURCE_BY_ID=Object.freeze(Object.fromEntries(RESOURCES.map(r=>[r.id,r])));
 export function resourceArt(id){const r=RESOURCE_BY_ID[id];return r?(['fuel','cigarette'].includes(id)?'<img class="survival-item-art" src="/juegos/survival/'+(id==='fuel'?'fuel-can.png':'cigarettes.png')+'" alt="'+r.name+'">':itemAtlasArt(r.sprite,{label:r.name})):'';}
@@ -30,7 +31,8 @@ export const RECIPES=Object.freeze([
  {id:'chest',tool:'toolkit',name:'Construir otro baúl de equipo',cost:{plank:6,rope:2,scrap:3},upgrade:true,bench:true},
  {id:'toolkit',name:'Fabricar herramientas',cost:{plank:1,scrap:3},result:{toolkit:1},bench:true},
  {id:'coop-alarm',name:'Fabricar trampa de aviso',cost:{plank:1,rope:1,scrap:1},result:{'coop-alarm':1},bench:true},
- {id:'coop-sling',name:'Fabricar honda del vigía',cost:{wood:1,cloth:1},result:{'coop-sling':1},bench:true}
+ {id:'coop-sling',name:'Fabricar honda del vigía',cost:{wood:1,cloth:1},result:{'coop-sling':1},bench:true},
+ {id:'machete',name:'Fabricar machete',cost:{wood:1,scrap:3},result:{machete:1},bench:true}
 ]);
 export const PROJECTS=Object.freeze([
  {id:'radio',name:'Restaurar la estación de radio',zone:'confesionario',x:.86,y:.51,anchorY:.445,cost:{wire:4,scrap:3,fuse:1},description:'El transmisor de la mesa del confesionario está averiado. Recupera cable, metal y un fusible; la reparación compartida reactiva los walkies.',reward:'Activa los walkies del equipo y una señal de radio audible.'},
@@ -97,11 +99,12 @@ export const EVENT_BY_ID=Object.freeze(Object.fromEntries(EVENT_TYPES.map(e=>[e.
 export const eventImage=e=>e.image.startsWith('/')?e.image:'/juegos/survival/'+e.image+'.webp';
 export const SURVIVAL_STATIONS=Object.freeze(SHELTERS.flatMap(({id:team,rooms})=>[
  {id:team==='left'?'bench-base':'bench-east',kind:'bench',team,zone:rooms.taller,x:.62,y:.79,painted:true},
- {id:'chest-'+team,kind:'chest',team,zone:rooms.taller,x:.31,y:.9,width:235},
+ {id:'chest-'+team,kind:'chest',team,zone:rooms.taller,x:.365,y:.719,anchorY:.62,approachY:.807,width:490},
  {id:'garden-'+team,kind:'garden',team,zone:rooms.huerto,x:.59,y:.887,width:990},
  {id:'coop-'+team,kind:'coop',team,zone:rooms.corral,x:.71,y:.765,painted:true},
+ {id:'coop-water-'+team,kind:'coop-water',team,zone:rooms.corral,x:.247,y:.747,anchorY:.606,painted:true,width:410,name:'Depósito del corral'},
  {id:'stove-'+team,kind:'fire',team,zone:rooms.cocina,x:.433,y:.771,painted:true,fixed:true,name:'Fogón de la cocina'},
- {id:'patio-fire-'+team,kind:'fire',team,zone:rooms.patio,x:.51,y:.922,fixed:true,name:'Fogata del patio'}
+ {id:'patio-fire-'+team,kind:'fire-spot',team,zone:rooms.patio,x:.51,y:.922,painted:true,name:'Patio central'}
 ]));
 export function buildSurvivalProps(maps,shared={}){
  for(const map of Object.values(maps)){map.props=map.props.filter(p=>!p.survival);map.interactionRevision=(map.interactionRevision||0)+1;}
@@ -112,8 +115,8 @@ export function buildSurvivalProps(maps,shared={}){
   const placed=map.props.at(-1);
   if(p.width)placed.w=p.width;
   placed.y=p.y*map.height;
-  placed.approach.y=Math.min(map.walkBand[1]-.025,p.y+.045)*map.height;
-  placed.contextAnchor={x:placed.x,y:placed.y};
+  placed.approach.y=Math.min(map.walkBand[1]-.025,p.approachY??p.y+.045)*map.height;
+  placed.contextAnchor={x:placed.x,y:(p.anchorY??p.y)*map.height};
   if(p.kind==='bench'){
    placed.survival.painted=true;
    placed.painted=true;
@@ -123,9 +126,10 @@ export function buildSurvivalProps(maps,shared={}){
   }
  };
  for(const station of SURVIVAL_STATIONS){
+  if(station.kind==='fire-spot'&&shared.fires?.some(fire=>fire.zone===station.zone))continue;
   placeStation(station);
   if(station.kind==='chest'&&shared.upgrades?.[station.team]){
-   placeStation({...station,id:station.id+'-extra',x:.44,width:200});
+   placeStation({...station,id:station.id+'-extra',x:.42,y:.88,anchorY:.86,approachY:.92,width:200});
   }
  }
  for(const original of GATHER_NODES){const n=resolveGatherNode(original,shared);if(shared.nodes?.[n.id]?.remaining===0)continue;add(n.zone,n.id,'gather',n.x,{resource:Object.keys(n.loot)[0],name:shared.nodes?.[n.id]?.placement?RESOURCE_BY_ID[Object.keys(n.loot)[0]].name:n.name,container:!!n.container,loot:n.loot});const map=maps[n.zone],prop=map?.props.at(-1);if(prop?.survival?.id===n.id){prop.y=(n.y??map.walkBand[0])*map.height;prop.approach.y=(n.fixed?Math.min(map.walkBand[1]-.018,Math.max(map.walkBand[0]+.025,n.y+.042)):map.walkBand[0]+.025)*map.height;prop.w=n.container?110:58;prop.contextAnchor={x:prop.x,y:prop.y};}}

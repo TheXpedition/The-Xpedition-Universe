@@ -2,7 +2,7 @@ import {DURABLE} from './world-durability.mjs';
 import {LUGGAGE,LUGGAGE_BY_ID,mergeLuggageShared} from './world-luggage.mjs';
 import {RESOURCES,RESOURCE_BY_ID,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,EVENT_BY_ID,eventImage,resourceArt} from './world-survival-catalog.mjs';
 import {resolveGatherNode} from './world-gather-layout.mjs';
-import {CROPS,EGG_INTERVAL,flockAt} from './world-shelter-care.mjs';
+import {CROPS,flockAt} from './world-shelter-care.mjs';
 import {FOOD_BY_ID,foodIcon,foodNutritionText} from './world-foods.mjs';
 import {zoneById} from './zones.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -30,19 +30,16 @@ export function mountSurvivalPanel(root,{data={},context={},onAction,onEvent,onU
  }
  function coopContent(){
   const flock=flockAt(state.shared?.flocks?.[context.team],Date.now()),items=state.personal?.items||{};
-  const metrics=[['Salud','health'],['Alimento','food'],['Agua','water'],['Limpieza','clean'],['Protección','fence']];
+  const metrics=[['Limpieza','clean'],['Protección','fence']];
   const actions=[
-   ['feed','Alimentar','1 trigo o semilla',flock.food>=95||(!items.wheat&&!items['seed-wheat'])],
-   ['water','Dar agua','1 botella potable',flock.water>=95||!items['clean-water']],
    ['clean','Limpiar corral','Retira los restos y cambia la paja',flock.clean>=100],
    ['repair','Reparar cerca','1 tablón y 1 cuerda',flock.fence>=95||!items.plank||!items.rope],
    ['alarm','Instalar trampa','1 trampa de aviso del taller',flock.fence>=95||!items['coop-alarm']],
    ['guard','Vigilar el corral','Requiere la honda del vigía',flock.fence>=95||flock.fence<35||!items['coop-sling']||(flock.guardedAt??0)+900000>Date.now()]
   ];
-  const allowed=state.team===context.team;
-  const laying=flock.fence>=35&&flock.health>=50&&Math.min(flock.food,flock.water,flock.clean)>=38;
-  const next=flock.eggs>=8?'Nidos llenos':laying?'Próxima puesta · '+(EGG_INTERVAL-flock.laying)+' min':'Puesta pausada · revisa el cuidado del corral';
-  return '<section class="survival-coop"><header><div><h3>Dos gallinas y un gallo</h3><p>Cuida el alimento, el agua y la cerca para que las gallinas sigan poniendo.</p></div>'+foodIcon('fresh-egg')+'</header><div class="survival-coop-metrics">'+metrics.map(([label,key])=>'<label>'+label+' <b>'+Math.floor(flock[key])+' %</b><progress value="'+flock[key]+'" max="100"></progress></label>').join('')+'</div><div class="survival-coop-eggs"><div><strong>Huevos en el nido · '+flock.eggs+'</strong><small>'+next+'</small></div>'+button('Recoger hasta 2 huevos',{action:'flock',id:'eggs'},!allowed||!flock.eggs)+'</div><div class="survival-recipes">'+actions.map(([id,label,detail,disabled])=>'<article><small>'+detail+'</small>'+button(label,{action:'flock',id},!allowed||disabled)+'</article>').join('')+'</div></section>';
+  const allowed=state.staff||state.team===context.team;
+  return '<section class="survival-coop"><div class="survival-coop-metrics">'+metrics.map(([label,key])=>'<label>'+label+' <b>'+Math.floor(flock[key])+' %</b><progress value="'+flock[key]+'" max="100"></progress></label>').join('')+'</div><div class="survival-recipes">'+actions.map(([id,label,detail,disabled])=>'<article><small>'+detail+'</small>'+button(label,{action:'flock',id},!allowed||disabled)+'</article>').join('')+'</div></section>';
+
  }
  const container=()=>{const current=state.luggage,live=state.shared?.luggage?.[context.id];return live&&live.revision>=(current?.revision||0)?{...current,...live}:current;};
  function detail(){if(!selected)return '<p class="survival-hint">Selecciona un objeto para ver qué hace y elegir una cantidad.</p>';const i=item(selected.key,selected.n);return '<div class="survival-selection">'+itemArt(i)+'<div><h3>'+esc(i.name)+'</h3><p>'+esc(i.description)+'</p>'+(i.kind==='resource'&&DURABLE[i.id]?'<p class="gear-condition">Estado · '+Math.round(state.personal?.condition?.[i.id]?.[0]??100)+' %</p>':'')+'</div><label>Cantidad<input data-draft="quantity" type="number" min="1" max="'+i.n+'" value="1"></label>'+(tab==='luggage'&&selected.side==='luggage'?button('Guardar en mi inventario',{action:'take-luggage',id:context.id,itemKey:i.key}):tab==='locker'?button(selected.side==='own'?'Guardar en el casillero →':'← Llevar a mi inventario',{action:selected.side==='own'?'locker-deposit':'locker-withdraw',itemKey:i.key}):tab==='storage'?button(selected.side==='own'?'Guardar en el baúl →':'← Llevar a mi inventario',{action:selected.side==='own'?'deposit':'withdraw',teamId:context.team,itemKey:i.key}):i.kind==='resource'&&['cigarette','flashlight','walkie','clean-water','dirty-water','coat','light-clothes','raw-meat','raw-fish'].includes(i.id)?button(i.id==='cigarette'?'Fumar 1 cigarrillo':['flashlight','walkie'].includes(i.id)?'Encender / apagar':i.id.includes('clothes')||i.id==='coat'?'Equipar':'Usar',{action:'use',id:i.id}):'')+(selected.side==='own'&&i.kind==='resource'&&DURABLE[i.id]?button('Reparar en mesa de trabajo',{action:'mend',id:i.id}):'')+(selected.side==='own'?button('Tirar',{action:'discard',itemKey:i.key}):'')+'</div>';}

@@ -77,11 +77,11 @@ function riverFilter(working){
   }
  });
 }
-export function survivalBounds(p){return {x:p.x,y:p.y*.62+8,w:p.w,h:p.survival.kind==='gather'?65:p.survival.kind==='garden'?p.w*.24:p.survival.id==='filter'?175:p.survival.kind==='bench'?210:p.survival.kind==='chest'||p.survival.kind==='drop'?190:125};}
+export function survivalBounds(p){return {x:p.x,y:p.y*.62+8,w:p.w,h:p.survival.kind==='gather'?65:p.survival.kind==='garden'?p.w*.24:p.survival.id==='filter'?175:p.survival.kind==='bench'?210:p.survival.kind==='chest'?p.w*2/3:p.survival.kind==='drop'?190:125};}
 export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=false}={}){
  const b=survivalBounds(p),kind=p.survival.kind,id=p.survival.id;let label='';c.save();
  if(kind==='luggage'){const empty=p.survival.remaining===0,im=survivalImage(p.survival.art||'maleta-roja.png');if(!p.survival.painted&&ready(im)){const height=b.w*im.height/im.width;c.globalAlpha=empty?.65:1;c.drawImage(im,b.x-b.w/2,b.y-height,b.w,height);c.globalAlpha=1;}if(!empty&&!reducedMotion){c.fillStyle='#f2cb87';c.globalAlpha=.35+Math.sin(time*2.4)*.2;c.beginPath();c.arc(b.x,b.y-12,2,0,Math.PI*2);c.fill();c.globalAlpha=1;}if(labels)label=empty?'MALETA VACÍA':p.survival.name;else {c.restore();return true;}}
- else if(p.survival.painted&&['bench','fire','coop'].includes(kind)){c.restore();return true;}
+ else if(p.survival.painted&&['bench','fire','coop','coop-water','fire-spot'].includes(kind)){c.restore();return true;}
  else if(kind==='chest'||kind==='bench'||kind==='drop'){
   const im=survivalImage(kind==='bench'?'workbench.png':'team-chest.png');
   if(ready(im)){

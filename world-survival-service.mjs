@@ -1,3 +1,4 @@
+import {WORLD_MAPS} from './public/juegos/world-maps.mjs';
 import {DURABLE,normalizeCondition,resizeCondition,itemCondition,usableGear,wearUse,wearGear,syncClothing} from './public/juegos/world-durability.mjs';
 import {LUGGAGE_BY_ID,luggageStock,luggageSummary} from './public/juegos/world-luggage.mjs';
 import {smokeCigarette} from './public/juegos/world-smoking.mjs';
@@ -7,7 +8,7 @@ import {fishingCatch} from './public/juegos/world-fishing.mjs';
 import {PRAYER_REASONS,PRAYER_COOLDOWN} from './public/juegos/world-prayer.mjs';
 import {RESOURCES,RESOURCE_BY_ID,RESOURCE_CAPACITY,CHEST_CAPACITY,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,EVENT_BY_ID,SURVIVAL_STATIONS} from './public/juegos/world-survival-catalog.mjs';
 import {SHELTERS,shelterForZone} from './public/juegos/world-shelters.mjs';
-import {CROPS,startFlock,flockAt} from './public/juegos/world-shelter-care.mjs';
+import {CROPS,startFlock,flockAt,COOP_BIRDS,COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE,birdMotion,COOP_MIN,COOP_MAX,resizeFlock} from './public/juegos/world-shelter-care.mjs';
 import {FOOD_BY_ID,FOOD_CATALOG} from './public/juegos/world-foods.mjs';
 const decode=(s,f)=>{try{return JSON.parse(s);}catch{return f;}},sum=o=>Object.values(o||{}).reduce((n,v)=>n+Number(v||0),0),normal=s=>String(s||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
 const initialShared=now=>({projects:Object.fromEntries(PROJECTS.map(p=>[p.id,{ready:p.id==='generator',paid:{}}])),chests:{left:{},right:{}},upgrades:{},gardens:{left:[],right:[]},nodes:{},fires:[],event:null,history:[],auto:true,nextAt:now+25*60000,sequence:0,gatherAuto:false,gatherInterval:30,gatherNextAt:now+30*60000,gatherRound:0,provisioned:{},generatorFuel:now+30*60000});
@@ -19,6 +20,10 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
   if(!state.flocks){
    state.flocks=Object.fromEntries(SHELTERS.map(s=>[s.id,startFlock(now())]));
    changed=true;
+  }
+  for(const {id} of SHELTERS){
+   if(state.flocks[id]?.birds)continue;
+   state.flocks[id]=flockAt(state.flocks[id],now());changed=true;
   }
   if(!state.shelterSuppliesRestocked){
    state.luggage??={};
@@ -96,7 +101,18 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
     else if(id==='raw-meat'||id==='raw-fish'){change(p,id,-1);vitals.health=Math.max(0,vitals.health-6);vitals.hunger=Math.min(100,vitals.hunger+3);if(!body.conditions.some(c=>c.id==='food-sickness'))body.conditions.push({id:'food-sickness',severity:30,age:0,treatment:0});message='Consumiste alimento crudo. Perdiste 6 puntos de salud; cocínalo la próxima vez.';}
     else fail(409,'Este material se utiliza en una receta o reparación.');
    }else if(input.action==='fire'){
-    if(!['base','refugio-2','estacion','sendero-bosque','acceso-bosque','cascada-ribera','muelle-ruinas','puerto'].includes(ctx.zone))fail(409,'Busca una zona exterior de campamento para encender una fogata.');if(s.fires.some(f=>f.zone===ctx.zone&&f.team===team&&f.until>now()))fail(409,'Tu equipo ya tiene una fogata encendida aquí.');if(s.fires.filter(f=>f.until>now()).length>=12)fail(409,'Hay suficientes fogatas activas.');pay(p,{wood:3,stone:2,...(p.items.flint?{}:{matches:1})});s.fires.push({id:'fire-'+randomUUID(),zone:ctx.zone,x:ctx.firePoint?.x??ctx.x,y:ctx.firePoint?.y??ctx.y,team,until:now()+15*60000});sharedChanged=true;message='Fogata encendida durante 15 minutos. Puedes cocinar y calentarte cerca.';
+    const spot=SURVIVAL_STATIONS.find(station=>station.kind==='fire-spot'&&station.zone===ctx.zone);
+    let point=ctx.firePoint||ctx;
+    if(spot){
+     if(spot.team!==team&&!ctx.staff)fail(403,'Esta fogata pertenece al equipo del refugio.');
+     needsNear(ctx,spot.id,'fire-spot');
+     const map=WORLD_MAPS[ctx.zone];point={x:spot.x*map.width,y:spot.y*map.height};
+    }else if(!['base','refugio-2','estacion','sendero-bosque','acceso-bosque','cascada-ribera','muelle-ruinas','puerto'].includes(ctx.zone))fail(409,'Busca una zona exterior de campamento para encender una fogata.');
+    if(s.fires.some(f=>f.zone===ctx.zone&&(spot||f.team===team)&&f.until>now()))fail(409,'Ya hay una fogata encendida aquí.');
+    if(s.fires.filter(f=>f.until>now()).length>=12)fail(409,'Hay suficientes fogatas activas.');
+    pay(p,{wood:3,stone:2,...(p.items.flint?{}:{matches:1})});
+    s.fires.push({id:'fire-'+randomUUID(),zone:ctx.zone,x:point.x,y:point.y,team:spot?.team||team,until:now()+15*60000});
+    sharedChanged=true;message='Fogata encendida durante 15 minutos. Puedes cocinar y calentarte cerca.';
    }else if(input.action==='cook'){
     needsNear(ctx,input.fireId,'fire');
     const station=SURVIVAL_STATIONS.find(s=>s.kind==='fire'&&s.fixed&&s.id===input.fireId&&s.zone===ctx.zone);
@@ -134,21 +150,44 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
     }
     sharedChanged=true;
    }else if(input.action==='flock'){
-    if(!team)fail(403,'El corral está reservado al equipo del refugio.');
-    needsNear(ctx,'coop-'+team,'coop');
-    const flock=flockAt(s.flocks[team],now());
-    if(input.id==='feed'){
-     if(flock.food>=95)fail(409,'El comedero ya está lleno.');
-     change(p,p.items.wheat?'wheat':'seed-wheat',-1);flock.food=Math.min(100,flock.food+42);
-     message='Llenaste el comedero.';
+    const home=shelterForZone(ctx.zone);
+    if(!home||home.rooms.corral!==ctx.zone||(!ctx.staff&&home.id!==team))fail(403,'Este corral pertenece al equipo del refugio.');
+    const flock=flockAt(s.flocks[home.id],now());
+    if(['feed','kill','eggs'].includes(input.id)){
+     const index=COOP_BIRDS.findIndex(bird=>bird.id===input.bird),bird=COOP_BIRDS[index];
+     const animal=bird&&flock.birds[bird.id];
+     if(!animal||animal.health<=0)fail(409,'Esa ave ya no está en el corral.');
+     const map=WORLD_MAPS[ctx.zone],pos=birdMotion(bird,index,now()),floorY=(map.walkBand[0]+.045)*map.height;
+     if(Math.hypot(ctx.x-pos.x*map.width,(ctx.y-floorY)*.75)>195)fail(409,'Acércate a '+bird.name+' para interactuar.');
+     if(input.id==='feed'){
+      if(!Object.hasOwn(COOP_FEED,input.item))fail(400,'Elige trigo o maíz.');
+      if(animal.food>=95)fail(409,bird.name+' ya está bien alimentada.');
+      const feed=COOP_FEED[input.item];
+      if(feed.kind==='resource')change(p,input.item,-1);
+      else await foodChange(user.id,input.item,-1);
+      animal.food=Math.min(100,animal.food+feed.gain);animal.fed=true;
+      message='Alimentaste a '+bird.name+'.';
+     }else if(input.id==='eggs'){
+      if(bird.rooster||!animal.eggs)fail(409,'Esta gallina todavía no tiene huevos.');
+      await foodChange(user.id,'fresh-egg',1);animal.eggs--;
+      message='Guardaste un huevo de '+bird.name+'.';
+     }else{
+      if(!Object.hasOwn(COOP_TOOLS,input.item)||!p.items[input.item])fail(409,'Necesitas la herramienta indicada en tu mochila.');
+      if(input.item==='rope')change(p,'rope',-1);
+      change(p,'raw-meat',1);animal.health=0;animal.eggs=0;
+      message='Guardaste una porción de carne cruda.';
+     }
     }else if(input.id==='water'){
-     if(flock.water>=95)fail(409,'El bebedero ya está lleno.');
-     change(p,'clean-water',-1);change(p,'empty-bottle',1);flock.water=Math.min(100,flock.water+48);
-     message='Añadiste agua potable al bebedero.';
+     needsNear(ctx,'coop-water-'+home.id,'coop-water');
+     if(flock.water>=100)fail(409,'El depósito ya está lleno.');
+     change(p,'clean-water',-1);change(p,'empty-bottle',1);flock.water=Math.min(100,flock.water+COOP_WATER_PER_BOTTLE);
+     message='Añadiste una botella al depósito del corral.';
     }else if(input.id==='clean'){
+     needsNear(ctx,'coop-'+home.id,'coop');
      if(flock.clean>=100)fail(409,'El corral está limpio.');
      flock.clean=100;message='Limpiaste el corral.';
     }else if(input.id==='repair'||input.id==='alarm'||input.id==='guard'){
+     needsNear(ctx,'coop-'+home.id,'coop');
      if(flock.fence>=95)fail(409,'El corral ya está protegido.');
      if(input.id==='repair')pay(p,{plank:1,rope:1});
      if(input.id==='alarm')change(p,'coop-alarm',-1);
@@ -158,13 +197,8 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
      if(input.id==='guard')flock.guardedAt=now();
      flock.fence=Math.min(100,flock.fence+(input.id==='alarm'?55:input.id==='repair'?39:18));
      message=input.id==='guard'?'Vigilaste el corral. Los animales siguen protegidos.':'Reforzaste la protección del corral.';
-    }else if(input.id==='eggs'){
-     if(!flock.eggs)fail(409,'Todavía no hay huevos en los nidos.');
-     const amount=Math.min(2,flock.eggs);
-     await foodChange(user.id,'fresh-egg',amount);flock.eggs-=amount;
-     message='Guardaste '+amount+' huevos frescos.';
     }else fail(400,'Selecciona una tarea del corral.');
-    s.flocks[team]=flock;sharedChanged=true;
+    s.flocks[home.id]=flock;sharedChanged=true;
    }else if(input.action==='locker-deposit'||input.action==='locker-withdraw'){
     const room=shelterForZone(ctx.zone);
     if(!room||room.rooms.dormitorio!==ctx.zone||(!ctx.staff&&room.id!==team))fail(403,'Usa el casillero de tu dormitorio.');
@@ -208,6 +242,19 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
    if(body)syncClothing(p,body);if(input.requestId)p.receipts=[...p.receipts,input.requestId].slice(-40);await save('user:'+user.id,p);if(sharedChanged)await save('shared',s);if(body&&ctx.saveBody)await ctx.saveBody(body,vitals);return {data:{...await view(user,p,s,team,frame),...(input.action==='take-luggage'?{luggage:{id:input.id,name:LUGGAGE_BY_ID[input.id].name,...luggageStock(s,input.id)}}:{}),message},shared:sharedChanged?s:null,body,vitals};
   });if(result.shared)await publish(result.shared);return result;
  }
+ async function configureFlock({team,count}={},context={}){
+  if(!context.staff)fail(403,'Solo Dirección puede ajustar las aves del corral.');
+  if(!SHELTERS.some(shelter=>shelter.id===team)||!Number.isInteger(count)||count<COOP_MIN||count>COOP_MAX)fail(400,'Selecciona un refugio y entre '+COOP_MIN+' y '+COOP_MAX+' aves.');
+  let shared;
+  await serial(async()=>{
+   const time=now();
+   shared=await row('shared',initialShared(time));
+   shared.flocks[team]=resizeFlock(flockAt(shared.flocks[team],time),count);
+   await save('shared',shared);
+  });
+  await publish(shared);
+  return publicShared(shared);
+ }
  async function eventControl(user,input,context={}){if(!context.staff)fail(403,'Solo Dirección puede activar eventos.');if(!input||typeof input!=='object')fail(400,'Evento inválido.');let state;await serial(async()=>{state=await row('shared',initialShared(now()));if(input.action==='start')eventRecord(state,input.type,input.minutes??EVENT_BY_ID[input.type]?.minutes,user.id);else if(input.action==='end')finishEvent(state,'Finalizado por Dirección');else if(input.action==='auto'){if(typeof input.enabled!=='boolean')fail(400,'Configuración inválida.');state.auto=input.enabled;state.nextAt=now()+25*60000;}else fail(400,'Acción de evento inválida.');await save('shared',state);});await publish(state);return publicShared(state);}
  const depleted=s=>GATHER_NODES.every(n=>n.fixed||s.nodes[n.id]?.remaining===0);
  async function tick(){await ready;const time=now();if(!(cached.gatherAuto&&cached.gatherNextAt<=time&&depleted(cached)||cached.auto&&!cached.event&&cached.generatorFuel<=time||cached.event&&cached.event.endsAt<=time||cached.auto&&!cached.event&&cached.nextAt<=time||cached.fires.some(f=>f.until<=time)||Object.values(cached.nodes).some(n=>n.remaining===0&&n.resetsAt&&n.resetsAt<=time)))return;let s;await serial(async()=>{s=await row('shared',initialShared(time));if(s.gatherAuto&&s.gatherNextAt<=time&&depleted(s)){s.nodes=newGatherRound(GATHER_NODES,s.nodes,random);s.gatherRound=(s.gatherRound||0)+1;s.gatherNextAt=time+(s.gatherInterval||30)*60000;}if(s.event?.endsAt<=time)finishEvent(s);if(s.auto&&!s.event&&s.generatorFuel<=time){eventRecord(s,'blackout',10,'generator');}if(s.auto&&!s.event&&s.nextAt<=time){const type=EVENT_TYPES[s.sequence++%EVENT_TYPES.length];eventRecord(s,type.id,type.minutes,'world');}s.fires=s.fires.filter(f=>f.until>time);for(const [id,node]of Object.entries(s.nodes))if(node.remaining===0&&node.resetsAt&&node.resetsAt<=time)delete s.nodes[id];await save('shared',s);});await publish(s);}
@@ -218,5 +265,5 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
  async function ration(user,input){if(cached.event?.type!=='scarcity')return;const p=await row('user:'+user.id,initialPersonal());if(input?.quantity!==undefined&&input.quantity!==1)fail(409,'Durante el racionamiento solo puedes retirar una porción.');if(p.cooldowns.ration>now())fail(409,'Racionamiento: espera un minuto antes de retirar otra porción.');p.cooldowns.ration=now()+60000;await save('user:'+user.id,p);}
  async function catchFishing(user,ctx={}){return serial(async()=>{needsNear(ctx,null,'fishing');const s=await row('shared',initialShared(now())),p=await row('user:'+user.id,initialPersonal()),frame=await foodLock(),catchItem=fishingCatch(usableGear(p,'fishing-rod'),random);if(usableGear(p,'fishing-rod'))wearUse(p,'fishing-rod');if(catchItem){if(catchItem.kind==='food')await foodChange(user.id,catchItem.id,catchItem.quantity);else change(p,catchItem.id,catchItem.quantity);}await save('user:'+user.id,p);return {...await view(user,p,s,await member(user,ctx,frame),frame),catch:catchItem,message:catchItem?(catchItem.kind==='food'?'Captura guardada: ':'Recuperaste del agua: ')+catchItem.name+'.':'Esta vez el anzuelo volvió vacío. Una caña mejorada aumenta tus posibilidades.'};});}
  async function wear(user,body,context){return serial(async()=>{const p=await row('user:'+user.id,initialPersonal());wearGear(p,body,context);await save('user:'+user.id,p);return p;});}
- return {ready,wear,snapshot,storage,luggage,act,catchFishing,eventControl,tick,environment,effect,radio,transfer,ration,public:()=>publicShared(cached),async clearInventory(id){await db.run('UPDATE world_survival_state SET state=?,updated=? WHERE id=?',JSON.stringify({...initialPersonal(),items:{}}),now(),'user:'+id);}};
+ return {ready,wear,snapshot,storage,luggage,act,catchFishing,configureFlock,eventControl,tick,environment,effect,radio,transfer,ration,public:()=>publicShared(cached),async clearInventory(id){await db.run('UPDATE world_survival_state SET state=?,updated=? WHERE id=?',JSON.stringify({...initialPersonal(),items:{}}),now(),'user:'+id);}};
 }
