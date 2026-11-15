@@ -107,14 +107,19 @@ test('la tercera edición muestra sus 22 categorías anunciadas y los nominados 
   'Mejor Proyecto Independiente','Mejor Participación Externa'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
-  'estrategia-2':5,'estrategia-3':5,'produccion-2':3,'produccion-5':6,'produccion-6':6
+  'estrategia-2':5,'estrategia-3':5,'personalidad-3':10,'produccion-2':3,'produccion-5':6,'produccion-6':6
  });
+ const revelation=categories(edition).find(c=>c.id==='personalidad-3');
+ assert.deepEqual(revelation.nominees.map(n=>n.title),[
+  'Ari Santana','Guillermo','Roger','Carmine','Leandro','Bruno Macri','Mary Hao','Alice','Paula García','Christopher Gonzales'
+ ]);
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 22 categorías'));
- assert(html.includes('25 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,25);
+ assert(html.includes('35 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,35);
+ assert(html.includes('personajes/christopher.png'));
  for(const {nominees} of categories(edition))for(const nominee of nominees){
   assert(html.includes('<h4>'+nominee.title+'</h4>'));
   if(nominee.description)assert(html.includes('<p>'+nominee.description+'</p>'));

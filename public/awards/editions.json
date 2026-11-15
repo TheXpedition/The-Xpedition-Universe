@@ -1537,7 +1537,78 @@
             {
               "id": "personalidad-3",
               "name": "Mejor Participante Revelación",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Ari Santana",
+                  "people": [
+                    "Ari Santana"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Guillermo",
+                  "people": [
+                    "Guillermo"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Roger",
+                  "people": [
+                    "Roger"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Carmine",
+                  "people": [
+                    "Carmine"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Leandro",
+                  "people": [
+                    "Leandro"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Bruno Macri",
+                  "people": [
+                    "Bruno Macri"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Mary Hao",
+                  "people": [
+                    "Mary Hao"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Alice",
+                  "people": [
+                    "Alice"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Paula García",
+                  "people": [
+                    "Paula García"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Christopher Gonzales",
+                  "people": [
+                    "Christopher"
+                  ],
+                  "description": ""
+                }
+              ]
             },
             {
               "id": "personalidad-4",
