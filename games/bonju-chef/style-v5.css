@@ -22,3 +22,5 @@ body[data-scene=StationServeScene] .delivered{top:23%;left:61%;right:8%;padding:
 body[data-scene=StationServeScene] .delivered>span{font-size:clamp(17px,2.4cqw,38px);line-height:1}
 body[data-scene=StationServeScene] .delivered h2{font-size:clamp(13px,1.85cqw,30px)}
 body[data-scene=StationServeScene] .delivered p{font-size:clamp(10px,1.1cqw,18px);margin:.35em 0}
+
+.delivered .overview-button{position:static;margin-top:.35em;min-height:32px;max-width:100%;white-space:normal}

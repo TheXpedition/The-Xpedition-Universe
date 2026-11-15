@@ -94,6 +94,21 @@ test('costume walk atlases contain moving limbs, transparent cutouts and distinc
  for(const id of ['stage-jury-v3','stage-pantry-v3','stage-floor-v3']){const m=await sharp(path.join(art,id+'.webp')).metadata();assert.equal(m.width,1920);assert.equal(m.height,1080);}
 });
 
+test('the delivered-dish card contains the overview button for its cook only',()=>{
+ const {s,q,all}=screen('kitchen');
+ const [cook,viewer]=s.roster;
+ Object.assign(s.stations[cook.id],{stage:'served',served:true,result:{plateId:'burger',quality:'normal'}});
+ ui.model.episode=chefView(s,{selfId:cook.id});
+ ui.renderUI(true);
+ assert.equal(all('[data-overview]').length,1);
+ assert(q('.delivered [data-overview]'));
+ ui.model.episode=chefView(s,{selfId:viewer.id,watchId:cook.id});
+ ui.renderUI(true);
+ assert(q('.delivered'));
+ assert(!q('[data-overview]'));
+ assert(q('[data-watch-back]'));
+});
+
 test('every overview cook has a spectate action; a watched kitchen is read-only and has a return arrow',()=>{
  const {s,q,all}=screen('kitchen');ui.model.overview=true;ui.renderUI(true);assert.equal(all('[data-watch]').length,18);assert(q('[data-my-kitchen]'));
  const id=s.roster[1].id;Object.assign(ui.model,{overview:false,episode:chefView(s,{selfId:s.roster[0].id,watchId:id})});ui.renderUI(true);assert.equal(document.body.dataset.spectating,'true');assert(q('[data-watch-back]'));assert.match(q('.watching-label').textContent,new RegExp(s.roster[1].name));assert(q('[data-action="cut"]').disabled);assert(q('#round-skip').disabled===false,'watching does not remove one’s own skip consent');
