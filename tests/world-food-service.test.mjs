@@ -5,7 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import {openDatabase} from '../database.mjs';
 import {createFoodStore,FOOD_INVENTORY_CAPACITY} from '../world-food-service.mjs';
-import {FOOD_CATALOG} from '../public/juegos/world-foods.mjs';
+import {freshnessFor,freshnessRecovery} from '../public/juegos/world-food-freshness.mjs';
+import {FOOD_CATALOG,FOOD_BY_ID} from '../public/juegos/world-foods.mjs';
 const first=FOOD_CATALOG[0].id;
 const stock=(snapshot,door,food=first)=>snapshot.teams.find(t=>t.id===door).slots.find(s=>s.foodId===food).quantity;
 const quantity=(snapshot,food=first)=>snapshot.inventory.items.find(item=>item.foodId===food)?.quantity||0;
@@ -47,4 +48,44 @@ test('personal capacity counts portions across stacks and concurrent requests ca
 test('staff add and remove quantities atomically without changing other products or private food',async()=>{
  const {db,store}=await fixture();try{await store.manage('staff',{action:'adjust',teamId:'left',foodId:first,amount:5},{staff:true});assert.equal(stock(await store.snapshot('a'),'left'),8);await store.manage('staff',{action:'adjust',teamId:'left',foodId:first,amount:-2},{staff:true});const result=await store.snapshot('a');assert.equal(stock(result,'left'),6);assert.equal(stock(result,'right'),3);assert.equal(quantity(result),0);for(const amount of [-7,94])await assert.rejects(store.manage('staff',{action:'adjust',teamId:'left',foodId:first,amount},{staff:true}),error(409));await assert.rejects(store.manage('a',{action:'adjust',teamId:'left',foodId:first,amount:1}),error(403));assert.equal(stock(await store.snapshot('a'),'left'),6);
  }finally{await db.close();}
+});
+
+test('freshness ages each serving, stays older through transfer, and advances four times slower in a refrigerator',async()=>{
+ const {db,dir}=await fixture();
+ let now=1000;
+ const store=createFoodStore({db,now:()=>now}),hour=3600000,foodId='apple';
+ const fridge={teamId:'left',roomTeam:'left'},portion={teamId:'left',foodId};
+ const grade=async user=>(await store.snapshot(user)).inventory.items.find(item=>item.foodId===foodId)?.freshness;
+ try{
+  await store.forage('a',foodId);await store.forage('b',foodId);
+  assert.equal(await grade('a'),'fresh');
+  now+=5*hour;await store.deposit('a',portion,fridge);
+  now+=8*hour;
+  assert.equal(await grade('b'),'acceptable');
+  await store.take('a',portion,fridge);
+  assert.equal(await grade('a'),'acceptable');
+  now+=14*hour;
+  assert.equal(await grade('a'),'stale');
+  now+=10*hour;await store.forage('a',foodId);
+  assert.equal(await grade('a'),'rotten');
+  await store.transfer('a','staff',foodId);
+  assert.equal(await grade('staff'),'rotten');
+  assert.equal(await grade('a'),'fresh');
+  await store.consume('staff',foodId,(food,freshness)=>{
+   assert.equal(freshness,'rotten');assert.equal(freshnessRecovery(food,freshness).spoilage,'rotten');
+   return {applied:true};
+  });
+  assert.equal(await grade('staff'),undefined);
+ }finally{await db.close();fs.rmSync(dir,{recursive:true,force:true});}
+});
+
+test('food effects scale from fresh to rotten and rancid illness is probabilistic',()=>{
+ const food=FOOD_BY_ID.banana;
+ assert.equal(freshnessFor(food.id,0),'fresh');
+ assert.equal(freshnessRecovery(food,'fresh').hunger,7);
+ assert.equal(freshnessRecovery(food,'acceptable').hunger,4);
+ assert.equal(freshnessRecovery(food,'stale',()=>0).spoilage,'stale');
+ assert.equal(freshnessRecovery(food,'stale',()=>1).spoilage,undefined);
+ assert(freshnessRecovery(food,'rotten').health<0);
+ assert.equal(freshnessFor('dry-beans',1000*3600000),null);
 });

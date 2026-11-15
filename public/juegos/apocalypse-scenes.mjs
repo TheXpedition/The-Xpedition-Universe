@@ -62,7 +62,7 @@ export function buildApocalypseMaps(){
   for(const room of SHELTER_ROOMS){
    const id=shelter.rooms[room.kind];
    if(room.kind!=='dormitorio'){
-    const asset={id:'refugio-'+room.kind,url:'/assets/maps/apocalypse/refugios/'+room.kind+'.webp',width:1600,height:800,revision:1};
+    const asset={id:'refugio-'+room.kind,url:'/assets/maps/apocalypse/refugios/'+room.kind+'-v2.webp',width:1600,height:800,revision:2};
     maps[id]=createFrontScene({id,asset,name:shelter.name+' · '+room.name,description:room.description,walk:[.765,.955],spawn:[.15,.86]});
     maps[id].avatarHeight=240;
    }else{

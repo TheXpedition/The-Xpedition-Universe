@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {COOP_BIRDS,flockAt,startFlock,resizeFlock,coopBirdName} from '../public/juegos/world-shelter-care.mjs';
+import {COOP_BIRDS,flockAt,startFlock,resizeFlock,coopBirdName,gardenPhase,gardenDuration,gardenTimeLabel} from '../public/juegos/world-shelter-care.mjs';
 import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';
 import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
 import {clearPoint} from '../public/juegos/world-motion.mjs';
@@ -74,4 +74,19 @@ test('each refuge uses the nominated names and puts its principal birds in the f
  }
  assert.deepEqual(names('left',COOP_BIRDS.slice(0,4)),['Daelly','Mel RZ','Doppel','Miss Tea']);
  assert.deepEqual(names('right',COOP_BIRDS.slice(0,2)),['Peggy','Jose Serna']);
+});
+
+test('the new growth stages and real-time durations use the saved planting and harvest timestamps',()=>{
+ const at=1800000000000,hour=3600000,duration=gardenDuration('tomato');
+ assert.equal(duration,6*hour);
+ assert.equal(gardenDuration('tomato',true),4.5*hour);
+ assert.equal(gardenDuration('carrot'),3*hour);
+ const crop={seed:'tomato',at,readyAt:at+duration};
+ assert.equal(gardenPhase(null,at).stage,'empty');
+ assert.equal(gardenPhase(crop,at+30000).stage,'sown');
+ assert.equal(gardenPhase(crop,at+2*hour).stage,'sprouts');
+ assert.equal(gardenPhase(crop,at+4*hour).stage,'growing');
+ assert.equal(gardenPhase(crop,at+duration).stage,'ripe');
+ assert.equal(gardenTimeLabel(156),'2 h 36 min');
+ assert.equal(gardenPhase({seed:'wheat',at,readyAt:at+420000},at+420000).stage,'ripe');
 });

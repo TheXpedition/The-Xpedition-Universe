@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS world_clinic_events(id TEXT PRIMARY KEY,patient_id TE
 CREATE INDEX IF NOT EXISTS world_clinic_events_patient ON world_clinic_events(patient_id,created);
 CREATE TABLE IF NOT EXISTS world_clinic_notes(id TEXT PRIMARY KEY,patient_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nurse_id TEXT NOT NULL REFERENCES users(id),text TEXT NOT NULL,created INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS world_food_state(id TEXT PRIMARY KEY,state TEXT NOT NULL,revision INTEGER NOT NULL DEFAULT 0,updated INTEGER NOT NULL);
-CREATE TABLE IF NOT EXISTS world_food_inventory(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,food_id TEXT NOT NULL,quantity INTEGER NOT NULL CHECK(quantity>=0 AND quantity<=48),updated INTEGER NOT NULL,PRIMARY KEY(user_id,food_id));
+CREATE TABLE IF NOT EXISTS world_food_inventory(user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,food_id TEXT NOT NULL,quantity INTEGER NOT NULL CHECK(quantity>=0 AND quantity<=48),updated INTEGER NOT NULL,freshness TEXT NOT NULL DEFAULT '[]',PRIMARY KEY(user_id,food_id));
 CREATE TABLE IF NOT EXISTS world_chat(id TEXT PRIMARY KEY,zone TEXT NOT NULL,sender TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,text TEXT NOT NULL,created INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS world_chat_zone ON world_chat(zone,created);
 CREATE TABLE IF NOT EXISTS world_seasons(id TEXT PRIMARY KEY,name TEXT NOT NULL,state TEXT NOT NULL,updated INTEGER NOT NULL);
@@ -120,6 +120,7 @@ export async function openDatabase(dataDir,{initialize=true}={}) {
       if (!columns.has(name)) database.exec(`ALTER TABLE conversations ADD COLUMN ${name} ${type}`);
     }
     if (!database.prepare('PRAGMA table_info(messages)').all().some(c=>c.name==='duration_ms')) database.exec('ALTER TABLE messages ADD COLUMN duration_ms INTEGER NOT NULL DEFAULT 0');
+    if (!database.prepare('PRAGMA table_info(world_food_inventory)').all().some(c=>c.name==='freshness')) database.exec("ALTER TABLE world_food_inventory ADD COLUMN freshness TEXT NOT NULL DEFAULT '[]'");
     const userColumns=new Set(database.prepare('PRAGMA table_info(users)').all().map(c=>c.name));
     for(const [name,type] of profileColumns)if(!userColumns.has(name))database.exec(`ALTER TABLE users ADD COLUMN ${name} ${type}`);
     // Requests for live games may arrive while another asynchronous transaction is open.
@@ -169,6 +170,7 @@ export async function openDatabase(dataDir,{initialize=true}={}) {
     // Index names are schema-qualified by PostgreSQL through their table.
     await installation.query(postgresSQL(pgSchema));
     await installation.query(['ALTER TABLE xpedition.messages ADD COLUMN IF NOT EXISTS duration_ms BIGINT NOT NULL DEFAULT 0',
+      "ALTER TABLE xpedition.world_food_inventory ADD COLUMN IF NOT EXISTS freshness TEXT NOT NULL DEFAULT '[]'",
       ...profileColumns.map(([name,type])=>`ALTER TABLE xpedition.users ADD COLUMN IF NOT EXISTS ${name} ${type.replace('INTEGER','BIGINT')}`),
       ...tables.map(table=>`ALTER TABLE xpedition.${table} ENABLE ROW LEVEL SECURITY`)].join(';'));
     await installation.query(`REVOKE ALL ON ALL TABLES IN SCHEMA xpedition FROM PUBLIC;

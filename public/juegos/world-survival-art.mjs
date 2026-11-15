@@ -1,3 +1,4 @@
+import {drawShelterGarden} from './world-garden-art.mjs';
 import {RESOURCE_BY_ID,PROJECTS,GATHER_NODES,EVENT_BY_ID} from './world-survival-catalog.mjs';
 import {ITEM_ART_RECTS,ITEM_ART_MASKS} from './world-item-art.mjs';
 const images=new Map();
@@ -18,44 +19,6 @@ function polygon(c,points,fill,stroke='#241a13',width=2){
  c.beginPath();for(const [i,[x,y]] of points.entries())if(i)c.lineTo(x,y);else c.moveTo(x,y);
  c.closePath();c.fillStyle=fill;c.fill();
  if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}
-}
-function seedbed(seed,stage){
- return shelterSprite('bed:'+seed+':'+stage,144,112,c=>{
-  c.fillStyle='#19160f52';c.beginPath();c.ellipse(72,101,68,9,0,0,Math.PI*2);c.fill();
-  polygon(c,[[5,79],[24,60],[126,60],[140,79],[132,98],[11,98]],'#5d4028');
-  polygon(c,[[5,79],[140,79],[132,98],[11,98]],'#825432');
-  polygon(c,[[5,79],[24,60],[126,60],[140,79],[133,83],[12,83]],'#b48650');
-  polygon(c,[[17,77],[29,65],[122,65],[131,77]],'#433021',null);
-  for(let i=0;i<18;i++){
-   const x=24+(i*29)%99,y=68+(i*7)%9;c.fillStyle=i%3?'#6e4b2b':'#8f6440';c.fillRect(x,y,2+i%4,1);
-  }
-  c.fillStyle='#3e2a1d';for(const x of [15,128])c.fillRect(x,87,3,3);
-  for(let i=0;i<8;i++){
-   c.fillStyle=i%2?'#715135':'#9c7350';c.fillRect(21+14*i,87+i%2*4,7,1);
-  }
-  if(!stage)return;
-  const count=stage===2?5:3;
-  for(let i=0;i<count;i++){
-   const x=28+i*(count===5?21:40),base=77-i%2*5;
-   const length=(stage===2?30:15)+(i%3)*4,top=base-length;
-   c.lineCap='round';c.strokeStyle='#41592b';c.lineWidth=3;
-   c.beginPath();c.moveTo(x,base);c.quadraticCurveTo(x-4,top+8,x+1,top);c.stroke();
-   if(seed==='wheat'&&stage===2){
-    polygon(c,[[x-4,top+7],[x-7,top-6],[x,top-14],[x+6,top-5],[x+4,top+6]],'#d5a951','#72552a',1);
-    c.strokeStyle='#f2cc77';c.lineWidth=1;c.beginPath();c.moveTo(x,top+5);c.lineTo(x,top-10);c.stroke();
-   }else{
-    polygon(c,[[x,top+8],[x-13,top-3],[x-7,top-4],[x+1,top+3],[x+9,top-8],[x+14,top-7],[x+6,top+6]],i%2?'#7d933e':'#628234','#354b25',1.5);
-    if(stage===2)polygon(c,[[x,top+13],[x-10,top+8],[x-15,top+2],[x-3,top+6],[x+5,top+10],[x+14,top+3],[x+13,top+9],[x+5,top+14]],'#587135','#304623',1);
-    if(stage===2&&seed==='carrot')polygon(c,[[x-6,base-5],[x+7,base-6],[x+4,base+2],[x-2,base+3]],'#db873c','#794521',1);
-    if(stage===2&&(seed==='berries'||seed==='tomato')){
-     const radius=seed==='tomato'?6:4;
-     c.fillStyle=seed==='tomato'?'#d85e32':'#be5140';c.beginPath();c.arc(x-5,top+9,radius,0,Math.PI*2);c.arc(x+7,top+11,radius,0,Math.PI*2);c.fill();
-    }
-    if(stage===2&&seed==='potato'){c.fillStyle='#bd9254';c.beginPath();c.ellipse(x+3,base-2,7,4,-.2,0,Math.PI*2);c.fill();}
-    if(stage===2&&seed==='herbs'){c.fillStyle='#c297cf';c.beginPath();c.arc(x,top-3,3,0,Math.PI*2);c.arc(x+8,top+1,3,0,Math.PI*2);c.fill();}
-   }
-  }
- });
 }
 function riverFilter(working){
  return shelterSprite('filter:'+working,180,175,c=>{
@@ -100,16 +63,8 @@ export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=fals
  }
  else if(kind==='fire'){const base=survivalImage('firepit-base.png'),flames=survivalImage('fire-flipbook.png');glow(c,b.x,b.y-20,210);if(ready(base))c.drawImage(base,b.x-90,b.y-65,180,90);crop(c,flames,reducedMotion?1:Math.floor(time*9)%6,6,1,b.x-90,b.y-175,180,180);if(!reducedMotion){c.fillStyle='#ffc371';for(let i=0;i<5;i++){const rise=(time*43+i*29)%95;c.globalAlpha=1-rise/95;c.fillRect(b.x+Math.sin(i*9+time)*19,b.y-40-rise,2,3);}c.globalAlpha=1;}label='FOGATA';}
  else if(kind==='garden'){
-  const crops=shared?.gardens?.[p.survival.team]||[];
-  let harvestable=0;
-  for(let i=0;i<3;i++){
-   const growth=crops[i],mature=growth&&growth.readyAt<=time*1000,stage=mature?2:growth?1:0;
-   if(mature)harvestable++;
-   const bed=seedbed(growth?.seed||'',stage);
-   const width=b.w/3;
-   if(bed)c.drawImage(bed,b.x-b.w/2+i*width,b.y-width*.66,width-6,width*.70);
-  }
-  label=harvestable?'HUERTA · '+harvestable+(harvestable===1?' COSECHA LISTA':' COSECHAS LISTAS'):'HUERTA DEL REFUGIO';
+  drawShelterGarden(c,b,shared?.gardens?.[p.survival.team],time*1000,{labels,image:survivalImage});
+  c.restore();return true;
  }
  else if(id==='filter'){
   const working=!!shared?.projects?.filter?.ready,filter=riverFilter(working);

@@ -1,13 +1,29 @@
 export const CROPS=Object.freeze({
- wheat:{name:'Trigo',resource:'wheat',harvest:'espigas de trigo'},
- carrot:{name:'Zanahorias',food:'carrot',harvest:'zanahorias'},
- berries:{name:'Fresas',food:'strawberries',harvest:'porciones de fresas'},
- potato:{name:'Papas',food:'potato',harvest:'papas'},
- tomato:{name:'Tomates',food:'tomato',harvest:'tomates'},
- herbs:{name:'Hierbas medicinales',food:'herbal-leaves',harvest:'porciones de hierbas medicinales'}
+ wheat:{minutes:240,name:'Trigo',resource:'wheat',harvest:'espigas de trigo'},
+ carrot:{minutes:180,name:'Zanahorias',food:'carrot',harvest:'zanahorias'},
+ berries:{minutes:240,name:'Fresas',food:'strawberries',harvest:'porciones de fresas'},
+ potato:{minutes:300,name:'Papas',food:'potato',harvest:'papas'},
+ tomato:{minutes:360,name:'Tomates',food:'tomato',harvest:'tomates'},
+ herbs:{minutes:180,name:'Hierbas medicinales',food:'herbal-leaves',harvest:'porciones de hierbas medicinales'}
 });
 
 const minute=60_000;
+export const GARDEN_PHASES=Object.freeze({
+ empty:'Lista para plantar',sown:'Sembrado',sprouts:'Brotes',growing:'Creciendo',ripe:'Listo para cosechar'
+});
+export function gardenDuration(seed,compost=false){return CROPS[seed].minutes*minute*(compost?.75:1);}
+export function gardenTimeLabel(minutes){
+ const hours=Math.floor(minutes/60),rest=minutes%60;
+ return hours?hours+' h'+(rest?' '+rest+' min':''):rest+' min';
+}
+export function gardenPhase(crop,now){
+ if(!crop||!Object.hasOwn(CROPS,crop.seed)||!Number.isFinite(crop.readyAt))return {stage:'empty',progress:0,minutes:0};
+ const start=Number.isFinite(crop.at)&&crop.at<crop.readyAt?crop.at:crop.readyAt-7*minute;
+ const progress=Math.max(0,Math.min(1,(now-start)/(crop.readyAt-start)));
+ const minutes=Math.max(0,Math.ceil((crop.readyAt-now)/minute));
+ const stage=progress===1?'ripe':progress>=.55?'growing':progress>=.19?'sprouts':'sown';
+ return {stage,progress,minutes};
+}
 export const COOP_MIN=2,COOP_MAX=12,COOP_DEFAULT=3;
 export const COOP_BIRDS=Object.freeze([
  {id:'canela',x:.43,y:.695,size:85,pace:.37,layAfter:55},

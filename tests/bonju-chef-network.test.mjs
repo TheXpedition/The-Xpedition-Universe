@@ -83,3 +83,32 @@ test('all eighteen connected participants control their own station and can plat
   assert(peers.slice(1).every(peer=>!peer.messages.some(m=>m.type==='error')));
  }finally{await f.close();}
 });
+
+test('a saved active Bonju Chef round keeps counting with no contestant connected',async()=>{
+ const human='chef-disconnected-player',saved=createChef({id:'chef-disconnect-continues',now:Date.now()});
+ chefAction(saved,{type:'open'},{staff:true});
+ chefAction(saved,{type:'join'},{actor:{id:human,name:'Ari Santana',characterId:'arisantana'}});
+ chefAction(saved,{type:'fillBots',count:7},{staff:true});
+ chefAction(saved,{type:'start'},{staff:true});
+ saved.phase='kitchen';saved.phaseAt=saved.clock;saved.paused=true;saved.recovering=true;
+ const actors=[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:400,y:700},{id:human,character:'arisantana',zone:'base',x:500,y:700}];
+ const f=await liveFixture('chef-disconnect-continues',actors,{setup:async db=>{
+  await db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?','arisantana',human);
+  await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)','arisantana',human,Date.now());
+  await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','bonju-chef',JSON.stringify(saved),Date.now());
+ }});
+ try{
+  const staff=await f.connect(STAFF_ID);
+  f.send(staff,{type:'chef-subscribe'});
+  const last=()=>staff.messages.filter(message=>message.type==='chef-state').at(-1)?.episode;
+  const first=await f.until(last);
+  assert.equal(first.paused,false);
+  assert.equal(first.recovering,false);
+  await f.until(()=>last()?.clock>first.clock+200);
+  const player=await f.connect(human,{claim:false});
+  player.socket.terminate();
+  const before=last().clock;
+  await f.until(()=>last()?.clock>before+200);
+  assert.equal(last().paused,false);
+ }finally{await f.close();}
+});

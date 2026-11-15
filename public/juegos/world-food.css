@@ -148,3 +148,21 @@ body #modal.food-dialog:has([data-food-mode=shelter]){
  .food-shelter-shelf .food-slots{max-height:clamp(62px,calc(100dvh - 250px),130px)}
  .food-shelter-actions{margin-top:6px}
 }
+
+.shop-inventory-dialog[data-shop-dialog=inventory]>header{padding-bottom:5px;margin-bottom:7px}
+.shop-inventory-dialog[data-shop-dialog=inventory]>header button{width:32px;height:32px}
+.shop-inventory-dialog[data-shop-dialog=inventory] .food-gear-link{margin-bottom:7px}
+.shop-inventory-dialog[data-shop-dialog=inventory] .food-panel-intro,
+.shop-inventory-dialog[data-shop-dialog=inventory] .food-detail.is-unselected{display:none}
+.shop-inventory-dialog .food-section-label{padding:0 0 4px;margin-bottom:6px}
+.shop-inventory-dialog .rewards-first{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:6px;margin:4px 0 9px}
+.shop-inventory-dialog .rewards-first .shop-inventory-item{display:grid;grid-template-columns:28px minmax(0,1fr);min-height:48px;padding:5px;gap:2px 5px;margin:0;text-align:left}
+.shop-inventory-dialog .rewards-first .shop-inventory-item :is(img,svg){grid-row:span 2;width:27px;height:27px;max-height:27px;object-fit:contain}
+.shop-inventory-dialog .rewards-first .shop-inventory-item strong{font:700 13px/1.15 "World Condensed",sans-serif}
+.shop-inventory-dialog .rewards-first .shop-inventory-item small{grid-column:2;font-size:7px;letter-spacing:.35px}
+.shop-inventory-dialog .food-objects-food{font-size:18px;margin:5px 0}
+.shop-inventory-dialog .food-inventory-grid .food-slot{grid-template-rows:auto auto auto;min-height:74px;gap:2px;padding:5px 3px!important}
+.shop-inventory-dialog .food-inventory-grid .food-slot-art{width:29px!important;height:29px!important}
+.shop-inventory-dialog .food-inventory-grid .food-slot-name{min-height:0;font-size:9px}
+.food-freshness{display:inline-block;max-width:100%;padding:2px 5px;border:1px solid currentColor;border-radius:6px;font:700 8px/1.1 system-ui,sans-serif;background:#201711}
+.food-freshness.fresh{color:#b8da86}.food-freshness.acceptable{color:#e8cb71}.food-freshness.stale{color:#ffaf66}.food-freshness.rotten{color:#f2a3c3}

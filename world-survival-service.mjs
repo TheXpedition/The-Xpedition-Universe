@@ -1,3 +1,5 @@
+import {freshnessFor} from './public/juegos/world-food-freshness.mjs';
+import {readFoodRows,inventoryUnits,saveInventoryUnits,addInventoryUnits,normalizeFoodUnits,takeOldestUnits} from './world-food-inventory.mjs';
 import {WORLD_MAPS} from './public/juegos/world-maps.mjs';
 import {DURABLE,normalizeCondition,resizeCondition,itemCondition,usableGear,wearUse,wearGear,syncClothing} from './public/juegos/world-durability.mjs';
 import {LUGGAGE_BY_ID,luggageStock,luggageSummary} from './public/juegos/world-luggage.mjs';
@@ -8,7 +10,7 @@ import {fishingCatch} from './public/juegos/world-fishing.mjs';
 import {PRAYER_REASONS,PRAYER_COOLDOWN} from './public/juegos/world-prayer.mjs';
 import {RESOURCES,RESOURCE_BY_ID,RESOURCE_CAPACITY,CHEST_CAPACITY,RECIPES,PROJECTS,GATHER_NODES,EVENT_TYPES,EVENT_BY_ID,SURVIVAL_STATIONS} from './public/juegos/world-survival-catalog.mjs';
 import {SHELTERS,shelterForZone} from './public/juegos/world-shelters.mjs';
-import {CROPS,startFlock,flockAt,COOP_BIRDS,COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE,birdMotion,COOP_MIN,COOP_MAX,resizeFlock,coopBirdName} from './public/juegos/world-shelter-care.mjs';
+import {CROPS,startFlock,flockAt,COOP_BIRDS,COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE,birdMotion,COOP_MIN,COOP_MAX,resizeFlock,coopBirdName,gardenDuration} from './public/juegos/world-shelter-care.mjs';
 import {FOOD_BY_ID,FOOD_CATALOG} from './public/juegos/world-foods.mjs';
 const decode=(s,f)=>{try{return JSON.parse(s);}catch{return f;}},sum=o=>Object.values(o||{}).reduce((n,v)=>n+Number(v||0),0),normal=s=>String(s||'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
 const initialShared=now=>({projects:Object.fromEntries(PROJECTS.map(p=>[p.id,{ready:p.id==='generator',paid:{}}])),chests:{left:{},right:{}},upgrades:{},gardens:{left:[],right:[]},nodes:{},fires:[],event:null,history:[],auto:true,nextAt:now+25*60000,sequence:0,gatherAuto:false,gatherInterval:30,gatherNextAt:now+30*60000,gatherRound:0,provisioned:{},generatorFuel:now+30*60000});
@@ -43,8 +45,26 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
  const save=(id,value)=>db.run('UPDATE world_survival_state SET state=?,updated=? WHERE id=?',JSON.stringify(value),now(),id);
  async function foodLock(){const stock=Object.fromEntries(FOOD_CATALOG.map(f=>[f.id,3]));await db.run('INSERT INTO world_food_state(id,state,revision,updated) VALUES(?,?,0,?) ON CONFLICT(id) DO NOTHING','camp-fridge',JSON.stringify({teams:[{id:'left',name:'Equipo 1'},{id:'right',name:'Equipo 2'}],stock:{left:stock,right:stock}}),now());return decode((await db.one('SELECT state FROM world_food_state WHERE id=?'+(db.kind==='postgres'?' FOR UPDATE':''),'camp-fridge')).state,{});}
  async function member(user,context,frame){if(context.shelterTeam!==undefined)return context.shelterTeam;if(context.staff&&context.teamId)return context.teamId;const assigned=context.team??(await db.one('SELECT team FROM world_contestants WHERE season=? AND user_id=?','antarctica-1',user.id))?.team;return frame.teams.find(t=>normal(t.name)===normal(assigned))?.id||null;}
- async function foodRows(id){return (await db.all('SELECT food_id,quantity FROM world_food_inventory WHERE user_id=? AND quantity>0',id)).map(r=>({foodId:r.food_id,quantity:Number(r.quantity)}));}
- async function foodChange(id,foodId,delta){if(!Object.hasOwn(FOOD_BY_ID,foodId))fail(400,'Alimento inválido.');if(delta<0){const r=await db.run('UPDATE world_food_inventory SET quantity=quantity+?,updated=? WHERE user_id=? AND food_id=? AND quantity>=?',delta,now(),id,foodId,-delta);if(!r.changes)fail(409,'No tienes esa cantidad de alimento.');}else{const total=await db.one('SELECT COALESCE(SUM(quantity),0) AS n FROM world_food_inventory WHERE user_id=?',id);if(Number(total.n)+delta>48)fail(409,'Tu bolsa de alimentos está llena.');await db.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,?,?) ON CONFLICT(user_id,food_id) DO UPDATE SET quantity=world_food_inventory.quantity+excluded.quantity,updated=excluded.updated',id,foodId,delta,now());}await db.run('DELETE FROM world_food_inventory WHERE user_id=? AND food_id=? AND quantity<=0',id,foodId);}
+ const foodRows=id=>readFoodRows(db,id,now());
+ async function foodChange(id,foodId,delta,units){
+  if(!Object.hasOwn(FOOD_BY_ID,foodId))fail(400,'Alimento inválido.');
+  const time=now();
+  if(delta<0){
+   const held=await inventoryUnits(db,id,foodId,time);
+   if(held.length<-delta)fail(409,'No tienes esa cantidad de alimento.');
+   const moved=takeOldestUnits(held,-delta,time);await saveInventoryUnits(db,id,foodId,held,time);
+   return moved;
+  }
+  const total=await db.one('SELECT COALESCE(SUM(quantity),0) AS n FROM world_food_inventory WHERE user_id=?',id);
+  if(Number(total.n)+delta>48)fail(409,'Tu bolsa de alimentos está llena.');
+  await addInventoryUnits(db,id,foodId,units||normalizeFoodUnits(null,delta,time),time);
+ }
+ async function transferPantryFood(userId,id,n,stock,quantity,deposit){
+  const time=now(),stored=normalizeFoodUnits(stock[id],quantity,time);
+  if(deposit)stored.push(...await foodChange(userId,id,-n));
+  else await foodChange(userId,id,n,takeOldestUnits(stored,n,time));
+  if(stored.length)stock[id]=stored;else delete stock[id];
+ }
  const change=(p,id,delta)=>{normalizeCondition(p);if(!Object.hasOwn(RESOURCE_BY_ID,id))fail(400,'Recurso inválido.');if((p.items[id]||0)+delta<0)fail(409,'Te falta '+RESOURCE_BY_ID[id].name+'.');if(delta>0&&sum(p.items)+delta>RESOURCE_CAPACITY)fail(409,'Tu mochila de recursos está llena. Guarda materiales en el baúl.');resizeCondition(p,id,delta);p.items[id]=(p.items[id]||0)+delta;if(!p.items[id])delete p.items[id];};
  const pay=(p,cost)=>{for(const[id,n]of Object.entries(cost))if((p.items[id]||0)<n)fail(409,'Necesitas '+n+' × '+RESOURCE_BY_ID[id].name+'.');for(const[id,n]of Object.entries(cost))change(p,id,-n);};
  const needsNear=(ctx,id,kind)=>{if(!ctx.near?.(id,kind))fail(409,'Acércate al punto de '+({bench:'trabajo',fire:'fuego',chest:'almacenamiento',garden:'cultivo',water:'agua'}[kind]||'interacción')+' para continuar.');};
@@ -65,7 +85,7 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
    }else if(input.action==='restock-luggage'){
     if(!ctx.staff)fail(403,'Solo Dirección repone el equipaje.');if(input.id&&!Object.hasOwn(LUGGAGE_BY_ID,input.id))fail(404,'Maleta inexistente.');s.luggage??={};for(const definition of Object.values(LUGGAGE_BY_ID).filter(v=>!input.id||v.id===input.id))s.luggage[definition.id]={items:{...definition.contents},revision:(s.luggage[definition.id]?.revision||0)+1};sharedChanged=true;message='Equipaje repuesto por Dirección.';
    }else if(input.action==='deposit'||input.action==='withdraw'){
-    const target=input.teamId;if(!['left','right'].includes(target))fail(400,'Baúl inválido.');await authorizeStorage(user,target,ctx);if(!ctx.staff&&team!==target)fail(403,'No puedes utilizar el baúl de otro equipo.');needsNear(ctx,'chest-'+target,'chest');const key=input.itemKey,[kind,id]=String(key).split(':');if(!['food','resource'].includes(kind)||!Object.hasOwn(kind==='food'?FOOD_BY_ID:RESOURCE_BY_ID,id))fail(400,'Objeto inválido.');const chest=s.chests[target],deposit=input.action==='deposit';if(deposit&&sum(chest)+n>CHEST_CAPACITY+(s.upgrades[target]?80:0))fail(409,'El baúl está lleno.');if(!deposit&&(chest[key]||0)<n)fail(409,'Ya no queda esa cantidad en el baúl.');if(kind==='food')await foodChange(user.id,id,deposit?-n:n);else {s.chestConditions??={left:{},right:{}};const units=s.chestConditions[target][id]??Array(chest[key]||0).fill(100),moved=deposit?p.condition[id]?.slice(0,n):units.slice(0,n);change(p,id,deposit?-n:n);if(DURABLE[id]){if(deposit)units.push(...moved);else{units.splice(0,n);p.condition[id].splice(-n,n,...moved);}s.chestConditions[target][id]=units;}}chest[key]=(chest[key]||0)+(deposit?n:-n);if(!chest[key])delete chest[key];message=deposit?'Guardado en el baúl del equipo.':'Retirado a tu inventario.';sharedChanged=true;
+    const target=input.teamId;if(!['left','right'].includes(target))fail(400,'Baúl inválido.');await authorizeStorage(user,target,ctx);if(!ctx.staff&&team!==target)fail(403,'No puedes utilizar el baúl de otro equipo.');needsNear(ctx,'chest-'+target,'chest');const key=input.itemKey,[kind,id]=String(key).split(':');if(!['food','resource'].includes(kind)||!Object.hasOwn(kind==='food'?FOOD_BY_ID:RESOURCE_BY_ID,id))fail(400,'Objeto inválido.');const chest=s.chests[target],deposit=input.action==='deposit';if(deposit&&sum(chest)+n>CHEST_CAPACITY+(s.upgrades[target]?80:0))fail(409,'El baúl está lleno.');if(!deposit&&(chest[key]||0)<n)fail(409,'Ya no queda esa cantidad en el baúl.');if(kind==='food'){s.chestFreshness??={left:{},right:{}};await transferPantryFood(user.id,id,n,s.chestFreshness[target],chest[key]||0,deposit);}else {s.chestConditions??={left:{},right:{}};const units=s.chestConditions[target][id]??Array(chest[key]||0).fill(100),moved=deposit?p.condition[id]?.slice(0,n):units.slice(0,n);change(p,id,deposit?-n:n);if(DURABLE[id]){if(deposit)units.push(...moved);else{units.splice(0,n);p.condition[id].splice(-n,n,...moved);}s.chestConditions[target][id]=units;}}chest[key]=(chest[key]||0)+(deposit?n:-n);if(!chest[key])delete chest[key];message=deposit?'Guardado en el baúl del equipo.':'Retirado a tu inventario.';sharedChanged=true;
     }else if(input.action==='mend'){
     needsNear(ctx,null,'bench');const id=input.id;if(id==='base-clothes'){if((body.baseClothingCondition??100)>=100)fail(409,'Tu ropa está en buen estado.');pay(p,{cloth:1});body.baseClothingCondition=100;}else {const def=DURABLE[id];if(!def||!p.items[id])fail(400,'Elige un objeto reparable de tu mochila.');if(itemCondition(p,id)>=100)fail(409,'Este objeto está en buen estado.');pay(p,def.repair);p.condition[id][0]=100;}message='Reparación completada. Estado: 100 %.';
    }else if(input.action==='discard'){
@@ -115,14 +135,18 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
     sharedChanged=true;message='Fogata encendida durante 15 minutos. Puedes cocinar y calentarte cerca.';
    }else if(input.action==='cook'){
     needsNear(ctx,input.fireId,'fire');
+    async function useIngredient(id){
+     const [unit]=await foodChange(user.id,id,-1);
+     if(freshnessFor(id,unit.age)==='rotten')fail(409,'Ese ingrediente está podrido. Retíralo de tu inventario.');
+    }
     const station=SURVIVAL_STATIONS.find(s=>s.kind==='fire'&&s.fixed&&s.id===input.fireId&&s.zone===ctx.zone);
     if(!station&&!s.fires.some(f=>f.id===input.fireId&&f.until>now()))fail(409,'La fogata está apagada.');
     if(station&&!ctx.staff&&team!==station.team)fail(403,'Este fogón pertenece al otro equipo.');
     if(input.id==='camp-stew'&&station){
      change(p,'raw-meat',-1);
-     await foodChange(user.id,'potato',-1);await foodChange(user.id,'tomato',-1);
+     await useIngredient('potato');await useIngredient('tomato');
      await foodChange(user.id,'camp-stew',1);
-    }else if(input.id==='river-fish'){await foodChange(user.id,'river-fish',-1);await foodChange(user.id,'grilled-fish',1);}else if(input.id==='raw-fish'){change(p,'raw-fish',-1);await foodChange(user.id,'grilled-fish',1);}else if(input.id==='raw-meat'){change(p,'raw-meat',-1);await foodChange(user.id,'roast-beef',1);}else if(input.id==='wheat'){change(p,'wheat',-2);await foodChange(user.id,'wholegrain-bread',1);}else if(FOOD_BY_ID[input.id]?.requiresCooking&&FOOD_BY_ID[FOOD_BY_ID[input.id].cooksTo]){await foodChange(user.id,input.id,-1);await foodChange(user.id,FOOD_BY_ID[input.id].cooksTo,1);}else fail(400,'Selecciona un ingrediente de tu inventario que pueda cocinarse.');
+    }else if(input.id==='river-fish'){await useIngredient('river-fish');await foodChange(user.id,'grilled-fish',1);}else if(input.id==='raw-fish'){change(p,'raw-fish',-1);await foodChange(user.id,'grilled-fish',1);}else if(input.id==='raw-meat'){change(p,'raw-meat',-1);await foodChange(user.id,'roast-beef',1);}else if(input.id==='wheat'){change(p,'wheat',-2);await foodChange(user.id,'wholegrain-bread',1);}else if(FOOD_BY_ID[input.id]?.requiresCooking&&FOOD_BY_ID[FOOD_BY_ID[input.id].cooksTo]){await useIngredient(input.id);await foodChange(user.id,FOOD_BY_ID[input.id].cooksTo,1);}else fail(400,'Selecciona un ingrediente de tu inventario que pueda cocinarse.');
     message='La comida está cocinada y guardada en tu bolsa.';
    }else if(input.action==='refuel-fire'){
     needsNear(ctx,input.id,'fire');const fire=s.fires.find(f=>f.id===input.id);if(!fire)fail(409,'La fogata ya no existe.');change(p,'wood',-1);fire.until=Math.max(now(),fire.until)+5*60000;sharedChanged=true;message='La leña añade cinco minutos de fuego.';
@@ -138,7 +162,8 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
      if(!Object.hasOwn(CROPS,input.seed))fail(400,'Semilla inválida.');
      pay(p,{['seed-'+input.seed]:1,'clean-water':1,...(input.compost?{compost:1}:{})});
      change(p,'empty-bottle',1);
-     slots[slot]={seed:input.seed,at:now(),readyAt:now()+(input.compost?4:7)*60000};
+     const plantedAt=now();
+     slots[slot]={seed:input.seed,at:plantedAt,readyAt:plantedAt+gardenDuration(input.seed,!!input.compost)};
      message='Semilla plantada y regada. El cultivo aparecerá en el escenario.';
     }else{
      const crop=slots[slot];
@@ -209,7 +234,7 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
     const deposit=input.action==='locker-deposit',stored=p.locker[key]||0;
     if(deposit&&sum(p.locker)+n>32)fail(409,'Tu casillero admite 32 objetos.');
     if(!deposit&&stored<n)fail(409,'No hay esa cantidad en el casillero.');
-    if(kind==='food')await foodChange(user.id,id,deposit?-n:n);
+    if(kind==='food'){p.lockerFreshness??={};await transferPantryFood(user.id,id,n,p.lockerFreshness,stored,deposit);}
     else{
      const conditions=p.lockerConditions[id]??Array(stored).fill(100),moved=deposit?p.condition[id]?.slice(0,n):conditions.slice(0,n);
      change(p,id,deposit?-n:n);
@@ -233,7 +258,7 @@ export function createSurvivalStore({db,now=Date.now,fail=(status,message)=>{thr
    }else if(input.action==='collect-drop'){
     needsNear(ctx,'event-drop','drop');if(s.event?.type!=='supply-drop')fail(409,'No hay un envío disponible.');const id=input.id;if(!Object.hasOwn(s.event.loot,id)||s.event.loot[id]<1)fail(409,'Ese suministro ya se agotó.');change(p,id,1);s.event.loot[id]--;if(sum(s.event.loot)===0)finishEvent(s,'Envío recuperado');sharedChanged=true;message='Recogiste una unidad del envío compartido.';
    }else if(input.action==='provisions'){
-    if(!team||s.provisioned[team])fail(409,'La reserva ya está organizada o no tienes equipo.');needsNear(ctx,'chest-'+team,'chest');const chest=s.chests[team],foodKeys=Object.keys(chest).filter(k=>k.startsWith('food:'));if((chest['resource:wood']||0)<6||(chest['resource:clean-water']||0)<4||foodKeys.reduce((a,k)=>a+chest[k],0)<6)fail(409,'Reserva necesaria: 6 leñas, 4 aguas potables y 6 alimentos en el baúl.');chest['resource:wood']-=6;chest['resource:clean-water']-=4;let left=6;for(const k of foodKeys){const used=Math.min(left,chest[k]);chest[k]-=used;left-=used;}chest['resource:seed-wheat']=(chest['resource:seed-wheat']||0)+2;chest['resource:fuse']=(chest['resource:fuse']||0)+2;s.provisioned[team]=now();sharedChanged=true;message='Reserva organizada. Tu equipo recibe semillas y fusibles y descansa mejor.';
+    if(!team||s.provisioned[team])fail(409,'La reserva ya está organizada o no tienes equipo.');needsNear(ctx,'chest-'+team,'chest');const chest=s.chests[team],foodKeys=Object.keys(chest).filter(k=>k.startsWith('food:'));if((chest['resource:wood']||0)<6||(chest['resource:clean-water']||0)<4||foodKeys.reduce((a,k)=>a+chest[k],0)<6)fail(409,'Reserva necesaria: 6 leñas, 4 aguas potables y 6 alimentos en el baúl.');chest['resource:wood']-=6;chest['resource:clean-water']-=4;let left=6;for(const k of foodKeys){const used=Math.min(left,chest[k]),id=k.slice(5),ages=s.chestFreshness?.[team]?.[id];if(ages)takeOldestUnits(ages,used,now());chest[k]-=used;left-=used;}chest['resource:seed-wheat']=(chest['resource:seed-wheat']||0)+2;chest['resource:fuse']=(chest['resource:fuse']||0)+2;s.provisioned[team]=now();sharedChanged=true;message='Reserva organizada. Tu equipo recibe semillas y fusibles y descansa mejor.';
    }else if(input.action==='salvage-food'){
     if(body.foodWarmth<480)fail(409,'Los alimentos todavía no están deteriorados por el calor.');const food=FOOD_BY_ID[input.id];if(!food||!['meal','protein','dairy'].includes(food.category))fail(409,'Selecciona un alimento deteriorado.');await foodChange(user.id,food.id,-1);change(p,'spoiled-food',1);message='Separaste restos para preparar abono.';
    }else if(input.action==='grant'){

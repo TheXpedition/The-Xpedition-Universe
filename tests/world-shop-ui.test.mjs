@@ -65,3 +65,18 @@ test('sold-out Isabel remains visible but cannot be bought in that World server'
   assert(dua&&!dua.disabled);
  }finally{f.close();}
 });
+
+test('reopening the inventory refreshes newly collected fruit and renders its freshness',async()=>{
+ const f=fixture();
+ try{
+  f.ui.inventory();await new Promise(resolve=>setImmediate(resolve));
+  const d=f.w.document.querySelector('.shop-inventory-dialog');
+  assert.equal(d.querySelector('[data-food-id=apple] .food-slot-quantity').textContent,'2');
+  d.close();
+  globalThis.fetch=async()=>({ok:true,json:async()=>({inventory:{capacity:48,items:[{foodId:'apple',quantity:3,freshness:'acceptable'},{foodId:'pear',quantity:1,freshness:'fresh'}]}})});
+  f.ui.inventory();await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(d.querySelector('[data-food-id=apple] .food-slot-quantity').textContent,'3');
+  assert.equal(d.querySelector('[data-food-id=apple] .food-freshness').textContent,'Aceptable');
+  assert.equal(d.querySelector('[data-food-id=pear] .food-freshness').textContent,'Fresco');
+ }finally{f.close();}
+});
