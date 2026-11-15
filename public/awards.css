@@ -24,3 +24,6 @@
 
 .aw-main-category .aw-main-winner.aw-nominee{background:none;border:0;box-shadow:none}.aw-main-category .aw-main-winner.aw-nominee .aw-prize{border-color:var(--aw-accent);background:#0d0a17ed}
 .aw-pending-categories>.aw-category{grid-column:1/-1;margin-bottom:0}
+.aw-nominees,.aw-main-others>.aw-nominees{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(132px,1fr);overflow-x:auto;scrollbar-color:var(--aw-accent) #ffffff0c}
+.aw-main-others>.aw-nominees{grid-auto-columns:minmax(76px,1fr)}
+.aw-nominees:focus-visible{outline:2px solid var(--aw-accent);outline-offset:2px}
