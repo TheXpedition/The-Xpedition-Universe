@@ -1419,7 +1419,29 @@
             {
               "id": "estrategia-1",
               "name": "Estratega del Año",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Andromeda",
+                  "people": [
+                    "Andromeda"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Leandro",
+                  "people": [
+                    "Leandro"
+                  ],
+                  "description": ""
+                }
+              ]
             },
             {
               "id": "estrategia-2",

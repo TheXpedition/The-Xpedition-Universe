@@ -107,7 +107,7 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
   'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
-  'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,'estrategia-6':1,
+  'estrategia-1':3,'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,'estrategia-6':1,
   'personalidad-1':5,'personalidad-2':4,'personalidad-3':12,'personalidad-4':4,'personalidad-5':3,
   'personalidad-6':4,'produccion-2':3,'produccion-4':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
  });
@@ -125,8 +125,8 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 23 categorías'));
- assert(html.includes('74 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,74);
+ assert(html.includes('77 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,77);
  assert(html.includes('--aw-people-count:9'));
  assert(html.includes('personajes/christopher.png'));
  for(const {nominees} of categories(edition))for(const nominee of nominees){
@@ -138,7 +138,7 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
  const pastTotals=c.awardProfileTotals({...archive,editions:{...archive.editions,'edicion-3':{groups:[]}}});
  assert.equal(totals.get('ivy').nominations,(pastTotals.get('ivy')?.nominations||0)+5);
  assert.equal(totals.get('bonju').nominations,pastTotals.get('bonju').nominations);
- assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+5);
+ assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+6);
 });
 
 test('los retratos de Andrómeda se enlazan al personaje correcto sin confundir nombres',()=>{
