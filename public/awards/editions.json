@@ -1424,12 +1424,84 @@
             {
               "id": "estrategia-2",
               "name": "Mejor Traidor",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Andromeda",
+                  "people": [
+                    "Andromeda"
+                  ],
+                  "description": "The Traitor 2, Grupo Corazón"
+                },
+                {
+                  "title": "Daelly",
+                  "people": [
+                    "Daelly"
+                  ],
+                  "description": "The Traitor 2, Grupo Espada"
+                },
+                {
+                  "title": "Alice",
+                  "people": [
+                    "Alice"
+                  ],
+                  "description": "The Traitor 2, Grupo Diamante"
+                },
+                {
+                  "title": "Kim Camila",
+                  "people": [
+                    "Kim Camila"
+                  ],
+                  "description": "The Traitor 2, Grupo Diamante"
+                },
+                {
+                  "title": "Renzo",
+                  "people": [
+                    "Renzo"
+                  ],
+                  "description": "The Traitor 2, Grupo Diamante"
+                }
+              ]
             },
             {
               "id": "estrategia-3",
               "name": "Mejor Inocente",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Renata",
+                  "people": [
+                    "Renata"
+                  ],
+                  "description": "The Traitor 2, Grupo Corazón"
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": "The Traitor 2, Grupo Espada"
+                },
+                {
+                  "title": "Bruno Macri",
+                  "people": [
+                    "Bruno Macri"
+                  ],
+                  "description": "The Traitor 2, Grupo Trébol"
+                },
+                {
+                  "title": "Nahuee",
+                  "people": [
+                    "Nahuee"
+                  ],
+                  "description": "The Traitor 2, Grupo Trébol"
+                },
+                {
+                  "title": "Ari Salgado",
+                  "people": [
+                    "Ari Salgado"
+                  ],
+                  "description": "The Traitor 2, Grupo Trébol"
+                }
+              ]
             },
             {
               "id": "estrategia-4",
@@ -1497,8 +1569,27 @@
             {
               "id": "produccion-2",
               "name": "Mejor Temporada",
-              "nominees": [],
-              "production": true
+              "nominees": [
+                {
+                  "title": "The Traitor 2",
+                  "people": [],
+                  "description": "",
+                  "show": "traitor2"
+                },
+                {
+                  "title": "Showdown 2",
+                  "people": [],
+                  "description": "",
+                  "show": "traitor-showdown"
+                },
+                {
+                  "title": "Apocalypse 2",
+                  "people": [],
+                  "description": "",
+                  "show": "apocalypse-ii"
+                }
+              ],
+              "production": false
             },
             {
               "id": "produccion-3",
@@ -1515,14 +1606,100 @@
             {
               "id": "produccion-5",
               "name": "Mejor Proyecto Independiente",
-              "nominees": [],
-              "production": true
+              "nominees": [
+                {
+                  "title": "Greg",
+                  "people": [
+                    "Greg"
+                  ],
+                  "description": "The Idol"
+                },
+                {
+                  "title": "Eduard",
+                  "people": [
+                    "Eduard"
+                  ],
+                  "description": "Turn It Up"
+                },
+                {
+                  "title": "Sal Lua",
+                  "people": [
+                    "Sal Lua"
+                  ],
+                  "description": "Un Camp Ahí"
+                },
+                {
+                  "title": "Alexandro",
+                  "people": [
+                    "Alexandro"
+                  ],
+                  "description": "Global War"
+                },
+                {
+                  "title": "Renzo",
+                  "people": [
+                    "Renzo"
+                  ],
+                  "description": "TOS All Stars 2"
+                },
+                {
+                  "title": "Lucas Mendez",
+                  "people": [
+                    "Lucas Mendez"
+                  ],
+                  "description": "Music Chart II"
+                }
+              ],
+              "production": false
             },
             {
               "id": "produccion-6",
               "name": "Mejor Participación Externa",
-              "nominees": [],
-              "production": true
+              "nominees": [
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": "Global War"
+                },
+                {
+                  "title": "Isabel",
+                  "people": [
+                    "Isabel"
+                  ],
+                  "description": "Turn It Up"
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "The Idol"
+                },
+                {
+                  "title": "Luciano",
+                  "people": [
+                    "Luciano"
+                  ],
+                  "description": "Un Camp Ahí"
+                },
+                {
+                  "title": "Kim Camila",
+                  "people": [
+                    "Kim Camila"
+                  ],
+                  "description": "Global War"
+                },
+                {
+                  "title": "Esteban",
+                  "people": [
+                    "Esteban"
+                  ],
+                  "description": "TOS All Stars 2"
+                }
+              ],
+              "production": false
             }
           ]
         }

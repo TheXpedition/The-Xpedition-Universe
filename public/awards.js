@@ -42,16 +42,21 @@ async function renderAwardsPage(id){
  }catch(error){if(state.route==='premios'&&decodeURIComponent(location.hash.split('/')[1]||'')===id)$('#main').innerHTML='<div class="empty-state"><h1>No pudimos abrir esta edición.</h1><p>Revisa tu conexión y vuelve a intentarlo.</p><button class="btn primary" data-award-action="retry" data-id="'+esc(id)+'">Volver a intentar</button><a class="btn secondary" href="#explorar/awards">Ver ediciones</a></div>';}
 }
 function awardUpcoming(item,record){
- const categoryCount=record.groups.reduce((total,group)=>total+group.categories.length,0);
- return `<section class="aw-upcoming" aria-labelledby="upcomingAwardTitle"><img src="${esc(item.trophy)}" alt="Trofeo de la tercera edición" loading="lazy"><div><div class="eyebrow">TERCERA EDICIÓN · 2026</div><h2 id="upcomingAwardTitle">La próxima historia<br>también merece un premio.</h2><p>Las ${categoryCount} categorías de esta edición ya están anunciadas. Los nominados se revelarán próximamente.</p><a href="#premios/edicion-2" class="link-button">Revive la segunda edición ${icon('arrow')}</a></div></section><div class="aw-pending-groups">${record.groups.map((group,index)=>awardPendingGroup(group,index,item)).join('')}</div>`;
+ const categories=awardCategories(record),nominations=awardCount(record);
+ const announcement=nominations?`Ya hay ${nominations} nominaciones anunciadas.`:'Los nominados se revelarán próximamente.';
+ return `<section class="aw-upcoming" aria-labelledby="upcomingAwardTitle"><img src="${esc(item.trophy)}" alt="Trofeo de la tercera edición" loading="lazy"><div><div class="eyebrow">TERCERA EDICIÓN · 2026</div><h2 id="upcomingAwardTitle">La próxima historia<br>también merece un premio.</h2><p>Las ${categories.length} categorías de esta edición ya están anunciadas. ${announcement}</p><a href="#premios/edicion-2" class="link-button">Revive la segunda edición ${icon('arrow')}</a></div></section><div class="aw-pending-groups">${record.groups.map((group,index)=>awardPendingGroup(group,index,item)).join('')}</div>`;
 }
 function awardPendingGroup(group,index,item){
- const cards=group.id==='principales'?`<div class="aw-principal-grid">${group.categories.map((category,i)=>awardMainCategory(category,i,item,true)).join('')}</div>`:`<div class="aw-pending-categories">${group.categories.map((category,i)=>`<article class="aw-pending-category"><span>${String(i+1).padStart(2,'0')}</span><div><h3>${esc(category.name)}</h3><p>Nominados por anunciar</p></div></article>`).join('')}</div>`;
+ const cards=group.id==='principales'?`<div class="aw-principal-grid">${group.categories.map((category,i)=>awardMainCategory(category,i,item,true)).join('')}</div>`:`<div class="aw-pending-categories">${group.categories.map((category,i)=>category.nominees.length?awardCategory(category,i,item):`<article class="aw-pending-category"><span>${String(i+1).padStart(2,'0')}</span><div><h3>${esc(category.name)}</h3><p>Nominados por anunciar</p></div></article>`).join('')}</div>`;
  return `<section class="aw-group" id="awards-${esc(group.id)}" aria-labelledby="awardGroup-${esc(group.id)}"><div class="aw-group-heading"><span class="aw-section-number">0${index+1}</span><div><div class="eyebrow">2026 <span aria-hidden="true">/</span> ${group.categories.length} CATEGORÍAS</div><h2 id="awardGroup-${esc(group.id)}" tabindex="-1">${esc(group.name)}</h2></div></div>${cards}</section>`;
+}
+function awardCategory(category,index,item){
+ const trophyItem=category.trophy?{...item,trophy:category.trophy}:item;
+ return `<section class="aw-category" aria-labelledby="award-${esc(category.id)}" data-category-name="${esc(norm(category.name))}"><header><span>${String(index+1).padStart(2,'0')}</span><h3 id="award-${esc(category.id)}">${esc(category.name)}</h3><small>${category.nominees.length} nominaciones</small></header><div class="aw-nominees">${category.nominees.map(nominee=>awardNominee(nominee,trophyItem)).join('')}</div></section>`;
 }
 function awardGroup(group,index,item){
  if(group.id==='principales')return `<section class="aw-group" id="awards-principales" aria-labelledby="awardGroup-principales"><div class="aw-group-heading"><span class="aw-section-number">0${index+1}</span><div><div class="eyebrow">${item.year} <span aria-hidden="true">/</span> ${group.categories.length} PREMIOS</div><h2 id="awardGroup-principales" tabindex="-1">${esc(group.name)}</h2></div></div><div class="aw-principal-grid">${group.categories.map((category,i)=>awardMainCategory(category,i,item)).join('')}</div></section>`;
- return `<section class="aw-group" id="awards-${esc(group.id)}" aria-labelledby="awardGroup-${esc(group.id)}"><div class="aw-group-heading"><span class="aw-section-number">0${index+1}</span><div><div class="eyebrow">${item.year} <span aria-hidden="true">/</span> ${group.categories.length} PREMIOS</div><h2 id="awardGroup-${esc(group.id)}" tabindex="-1">${esc(group.name)}</h2></div></div>${group.categories.map((category,i)=>`<section class="aw-category" aria-labelledby="award-${esc(category.id)}" data-category-name="${esc(norm(category.name))}"><header><span>${String(i+1).padStart(2,'0')}</span><h3 id="award-${esc(category.id)}">${esc(category.name)}</h3><small>${category.nominees.length} nominaciones</small></header><div class="aw-nominees">${category.nominees.map(nominee=>awardNominee(nominee,category.trophy?{...item,trophy:category.trophy}:item)).join('')}</div></section>`).join('')}</section>`;
+ return `<section class="aw-group" id="awards-${esc(group.id)}" aria-labelledby="awardGroup-${esc(group.id)}"><div class="aw-group-heading"><span class="aw-section-number">0${index+1}</span><div><div class="eyebrow">${item.year} <span aria-hidden="true">/</span> ${group.categories.length} PREMIOS</div><h2 id="awardGroup-${esc(group.id)}" tabindex="-1">${esc(group.name)}</h2></div></div>${group.categories.map((category,i)=>awardCategory(category,i,item)).join('')}</section>`;
 }
 function awardLaurels(){
  const points=[[71,162,-54],[56,146,-42],[44,128,-30],[38,107,-17],[37,86,-4],[40,65,11],[47,45,22]];
@@ -116,7 +121,7 @@ function awardProfileTotals(archive){
  const totals=new Map();
  const add=(name,nominations,awards)=>{const key=castKey(awardIdentity(name)),current=totals.get(key)||{nominations:0,awards:0};current.nominations+=nominations;current.awards+=awards;totals.set(key,current);};
  for(const edition of Object.values(archive.editions))for(const group of edition.groups)for(const category of group.categories)for(const nominee of category.nominees){
-  const production=category.production||group.id==='produccion'?['Bonju']:[];
+  const production=(category.production??(group.id==='produccion'))?['Bonju']:[];
   const people=[...(nominee.nominationCredits||nominee.people),...production];
   const credited=new Map(people.map(name=>[castKey(awardIdentity(name)),name]));
   const recipients=new Set([...(nominee.awardRecipients||nominee.people),...production].map(name=>castKey(awardIdentity(name))));

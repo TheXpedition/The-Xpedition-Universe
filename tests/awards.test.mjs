@@ -106,12 +106,24 @@ test('la tercera edición muestra sus 22 categorías anunciadas y los nominados 
   'Mejor Episodio','Mejor Temporada','Mejor Diseño & Vestuario','Mejor Canción',
   'Mejor Proyecto Independiente','Mejor Participación Externa'
  ]);
- assert(categories(edition).every(c=>c.nominees.length===0));
+ assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
+  'estrategia-2':5,'estrategia-3':5,'produccion-2':3,'produccion-5':6,'produccion-6':6
+ });
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 22 categorías'));
+ assert(html.includes('25 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,25);
+ for(const {nominees} of categories(edition))for(const nominee of nominees){
+  assert(html.includes('<h4>'+nominee.title+'</h4>'));
+  if(nominee.description)assert(html.includes('<p>'+nominee.description+'</p>'));
+ }
  assert(html.includes('Nominados por anunciar'));assert(!html.includes('is-award-winner'));
+ const totals=c.awardProfileTotals(archive);
+ const pastTotals=c.awardProfileTotals({...archive,editions:{...archive.editions,'edicion-3':{groups:[]}}});
+ assert.equal(totals.get('bonju').nominations,pastTotals.get('bonju').nominations);
+ assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+2);
 });
 
 test('los retratos de Andrómeda se enlazan al personaje correcto sin confundir nombres',()=>{
