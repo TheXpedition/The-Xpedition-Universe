@@ -107,7 +107,7 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
   'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
-  'principales-1':4,'principales-2':3,'principales-3':4,
+  'principales-1':4,'principales-2':3,'principales-3':4,'principales-4':6,
   'estrategia-1':3,'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,'estrategia-6':1,
   'personalidad-1':5,'personalidad-2':4,'personalidad-3':12,'personalidad-4':4,'personalidad-5':3,
   'personalidad-6':4,'produccion-2':3,'produccion-4':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
@@ -126,9 +126,9 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 23 categorías'));
- assert(html.includes('88 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,88);
- for(const category of edition.groups[0].categories.slice(0,3)){
+ assert(html.includes('94 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,94);
+ for(const category of edition.groups[0].categories){
   const card=c.awardMainCategory(category,0,catalog.content.awards[2],true);
   assert(card.includes('Ganador por anunciar'));
   assert(card.includes('<p>NOMINADOS</p>'));
@@ -165,7 +165,7 @@ test('Eris sustituye a Angel en el dúo y los cinco integrantes reciben la nomin
 
 test('los perfiles cuentan cada nominación individual, repetida, de grupo y de dúo sin deduplicar categorías',()=>{
  const {context:c}=context(),totals=c.awardProfileTotals(archive);
- for(const [name,nominations,awards] of [['Eris Midnight',10,2],['Dani',7,1],['Vita',5,0],['Emanuel',9,2],['Bayron',12,1],['Ximena',8,3],['Iñaella Rose',12,3]]){
+ for(const [name,nominations,awards] of [['Eris Midnight',11,2],['Dani',7,1],['Vita',5,0],['Emanuel',9,2],['Bayron',12,1],['Ximena',8,3],['Iñaella Rose',12,3]]){
   const actual=totals.get(castKey(name));assert.equal(actual.nominations,nominations,name);assert.equal(actual.awards,awards,name);
  }
 });
@@ -204,7 +204,7 @@ test('las categorías principales destacan al ganador con su fondo, laureles y l
  }
  const upcoming=archive.editions['edicion-3'];
  const pending=upcoming.groups[0].categories.find(c=>c.id==='principales-4');
- const html=c.awardMainCategory(pending,3,catalog.content.awards[2],true);
+ const html=c.awardMainCategory({...pending,nominees:[]},3,catalog.content.awards[2],true);
  assert(html.includes('Nominados por anunciar'));assert(!html.includes('is-award-winner')&&!html.includes('aw-crown'));
 });
 

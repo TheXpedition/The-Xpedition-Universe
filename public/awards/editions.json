@@ -1488,7 +1488,50 @@
             {
               "id": "principales-4",
               "name": "Poop of the Year",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Sal Lua",
+                  "people": [
+                    "Sal Lua"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eris Midnight",
+                  "people": [
+                    "Eris Midnight"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Elian",
+                  "people": [
+                    "Elian"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Julián",
+                  "people": [
+                    "Julián"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Coronel",
+                  "people": [
+                    "Coronel"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Peggy",
+                  "people": [
+                    "Peggy"
+                  ],
+                  "description": ""
+                }
+              ]
             }
           ]
         },
