@@ -1527,7 +1527,43 @@
             {
               "id": "personalidad-1",
               "name": "Participante más Gracioso",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Gabriel Sab",
+                  "people": [
+                    "Gabriel Sab"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Sal Lua",
+                  "people": [
+                    "Sal Lua"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Eduard",
+                  "people": [
+                    "Eduard"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Marianito",
+                  "people": [
+                    "Marianito"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Carlos Harrington",
+                  "people": [
+                    "Carlos Harrington"
+                  ],
+                  "description": ""
+                }
+              ]
             },
             {
               "id": "personalidad-2",
@@ -1605,6 +1641,20 @@
                   "title": "Christopher Gonzales",
                   "people": [
                     "Christopher"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Marianito",
+                  "people": [
+                    "Marianito"
+                  ],
+                  "description": ""
+                },
+                {
+                  "title": "Ari Salgado",
+                  "people": [
+                    "Ari Salgado"
                   ],
                   "description": ""
                 }

@@ -107,20 +107,24 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
   'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
-  'estrategia-2':5,'estrategia-3':5,'personalidad-3':10,'produccion-2':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
+  'estrategia-2':5,'estrategia-3':5,'personalidad-1':5,'personalidad-3':12,'produccion-2':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
  });
  const jury=categories(edition).find(c=>c.id==='produccion-7');
  assert.deepEqual(jury.nominees.map(n=>[n.title,n.description]),[["Dua Lingo","Showdown II"],["Isabel","TOS All Stars 2"],["Ian Esteban","Global War"],["Lucas Mendez","Global War"],["Marcos","Turn It Up"],["Heidi Cum","Project Runway"]]);
  const revelation=categories(edition).find(c=>c.id==='personalidad-3');
  assert.deepEqual(revelation.nominees.map(n=>n.title),[
-  'Ari Santana','Guillermo','Roger','Carmine','Leandro','Bruno Macri','Mary Hao','Alice','Paula García','Christopher Gonzales'
+  'Ari Santana','Guillermo','Roger','Carmine','Leandro','Bruno Macri','Mary Hao','Alice','Paula García','Christopher Gonzales',
+  'Marianito','Ari Salgado'
+ ]);
+ assert.deepEqual(categories(edition).find(c=>c.id==='personalidad-1').nominees.map(n=>n.title),[
+  'Gabriel Sab','Sal Lua','Eduard','Marianito','Carlos Harrington'
  ]);
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 23 categorías'));
- assert(html.includes('41 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,41);
+ assert(html.includes('48 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,48);
  assert(html.includes('personajes/christopher.png'));
  for(const {nominees} of categories(edition))for(const nominee of nominees){
   assert(html.includes('<h4>'+nominee.title+'</h4>'));
