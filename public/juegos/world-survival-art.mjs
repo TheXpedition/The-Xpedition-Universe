@@ -79,7 +79,20 @@ export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=fals
  const b=survivalBounds(p),kind=p.survival.kind,id=p.survival.id;let label='';c.save();
  if(kind==='luggage'){const empty=p.survival.remaining===0,im=survivalImage(p.survival.art||'maleta-roja.png');if(!p.survival.painted&&ready(im)){const height=b.w*im.height/im.width;c.globalAlpha=empty?.65:1;c.drawImage(im,b.x-b.w/2,b.y-height,b.w,height);c.globalAlpha=1;}if(!empty&&!reducedMotion){c.fillStyle='#f2cb87';c.globalAlpha=.35+Math.sin(time*2.4)*.2;c.beginPath();c.arc(b.x,b.y-12,2,0,Math.PI*2);c.fill();c.globalAlpha=1;}if(labels)label=empty?'MALETA VACÍA':p.survival.name;else {c.restore();return true;}}
  else if(kind==='bench'&&p.survival.painted){c.restore();return true;}
- else if(kind==='chest'||kind==='bench'||kind==='drop'){const im=survivalImage(kind==='bench'?'workbench.png':'team-chest.png');if(ready(im)){const height=b.w*im.height/im.width;c.drawImage(im,b.x-b.w/2,b.y-height,b.w,height);}label=kind==='bench'?'MESA DE TRABAJO':kind==='drop'?'ENVÍO COMPARTIDO':'BAÚL DE EQUIPO';}
+ else if(kind==='chest'||kind==='bench'||kind==='drop'){
+  const im=survivalImage(kind==='bench'?'workbench.png':'team-chest.png');
+  if(ready(im)){
+   const height=b.w*im.height/im.width;
+   if(kind==='chest'){
+    c.save();
+    c.translate(b.x,0);
+    c.scale(-1,1);
+    c.drawImage(im,-b.w/2,b.y-height,b.w,height);
+    c.restore();
+   }else c.drawImage(im,b.x-b.w/2,b.y-height,b.w,height);
+  }
+  label=kind==='bench'?'MESA DE TRABAJO':kind==='drop'?'ENVÍO COMPARTIDO':'BAÚL DE EQUIPO';
+ }
  else if(kind==='fire'){const base=survivalImage('firepit-base.png'),flames=survivalImage('fire-flipbook.png');glow(c,b.x,b.y-20,210);if(ready(base))c.drawImage(base,b.x-90,b.y-65,180,90);crop(c,flames,reducedMotion?1:Math.floor(time*9)%6,6,1,b.x-90,b.y-175,180,180);if(!reducedMotion){c.fillStyle='#ffc371';for(let i=0;i<5;i++){const rise=(time*43+i*29)%95;c.globalAlpha=1-rise/95;c.fillRect(b.x+Math.sin(i*9+time)*19,b.y-40-rise,2,3);}c.globalAlpha=1;}label='FOGATA';}
  else if(kind==='garden'){
   const crops=shared?.gardens?.[p.survival.team]||[];

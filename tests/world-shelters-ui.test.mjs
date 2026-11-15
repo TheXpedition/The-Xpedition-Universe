@@ -18,4 +18,28 @@ test('the participant tab presents housing actions without the nursing account s
 const settle=()=>new Promise(r=>setImmediate(r));
 const value=()=>({revision:1,eligible:true,home:'left',inventory:['nails'],delivered:[],available:[],race:'Empate',shelters:SHELTERS.map(s=>({...s,built:false,percent:0,counts:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,0])),members:s.id==='left'?[{characterId:'bruno',name:'Bruno'}]:[]}))});
 test('construction panel is a compact ten-material list, contributes once and reflects live counts and membership',async()=>{const dom=new JSDOM('<body><main id="panel"></main></body>');Object.assign(globalThis,{document:dom.window.document,window:dom.window});const root=document.querySelector('#panel'),view=value();let calls=0;const panel=mountShelterPanel(root,{view,home:'left',canContribute:true,onContribute:async()=>{calls++;const next=structuredClone(view);next.inventory=[];next.delivered=['nails'];next.shelters[0].counts.nails=1;next.shelters[0].percent=1;return {shelters:next};}});try{assert.equal(root.querySelectorAll('.shelter-material').length,10);assert.equal(root.querySelectorAll('.shelter-residents img').length,1);assert.match(root.textContent,/En tu mochila/);root.querySelector('[data-shelter-contribute]').click();root.querySelector('[data-shelter-contribute]').click();await settle();assert.equal(calls,1);assert.match(root.textContent,/1\/9/);assert.match(root.textContent,/Tu aporte entregado/);assert(root.querySelector('[data-shelter-contribute]').disabled);const other={...view,home:'right'};panel.update(other);assert(root.querySelector('[data-shelter-contribute]').disabled);}finally{panel.destroy();dom.window.close();}});
-test('only staff receives assignment bubbles and the small race window; residents stay grouped at their shelter',()=>{const dom=new JSDOM('<body></body>');Object.assign(globalThis,{document:dom.window.document,window:dom.window,innerWidth:1200,innerHeight:800});const view=value(),p={userId:'a',characterId:'bruno',status:'active'};assert.equal(shelterAssignmentMarkup(p,view,true),'');assert.equal(shelterAssignmentMarkup(p,view,false),'');assert.equal(shelterAssignmentMarkup({...p,characterId:'dani'},view,true),'');for(const staff of [true,false]){const hud=mountShelterHUD({staff});hud.update(view);hud.place({zone:'base',playing:true,map:WORLD_MAPS.base,scene:{width:1200,height:800,camera:{project:()=>({x:600,y:450})}},canvas:{getBoundingClientRect:()=>({left:0,top:0,width:1200,height:800})}});assert.equal(document.querySelector('.shelter-race').hidden,!staff);assert(!document.querySelector('.shelter-home-badge').hidden);assert.equal(document.querySelector('.shelter-home-badge').querySelectorAll('img').length,1);hud.destroy();}const context=shelterPortalContext({key:'door'}, {zone:'refugio-1'},view);assert.equal(context.label,'Construir');dom.window.close();});
+test('the door badge stays centered and keeps progress only while construction is active',()=>{
+ const dom=new JSDOM('<body></body>');
+ Object.assign(globalThis,{document:dom.window.document,window:dom.window,innerWidth:1200,innerHeight:800});
+ const view=value(),p={userId:'a',characterId:'bruno',status:'active'};
+ assert.equal(shelterAssignmentMarkup(p,view,true),'');
+ assert.equal(shelterAssignmentMarkup(p,view,false),'');
+ const hud=mountShelterHUD(),badge=document.querySelector('.shelter-home-badge');
+ const draw=zone=>{
+  const map=WORLD_MAPS[zone];
+  hud.place({zone,playing:true,map,scene:{width:1200,height:800,camera:{project:(x,y)=>({x:x/map.width*1200,y:y/map.height*800})}},canvas:{getBoundingClientRect:()=>({left:0,top:0,width:1200,height:800})}});
+ };
+ try{
+  assert.equal(shelterPortalContext({key:'door'},{zone:'refugio-1'},view).label,'Construir');
+  hud.update(view);draw('base');
+  assert.equal(badge.style.left,'618px');assert.equal(badge.style.top,'336px');
+  assert(badge.querySelector('progress'));
+  view.shelters[0].built=true;view.shelters[0].percent=100;view.shelters[1].percent=57;
+  hud.update(view);draw('base');
+  assert(!badge.hidden);assert.equal(badge.querySelectorAll('img').length,1);
+  assert.equal(badge.querySelector('progress'),null);assert(!badge.textContent.includes('100 %'));
+  draw('refugio-2');
+  assert.equal(badge.querySelector('progress').value,57);assert(badge.textContent.includes('57 %'));
+  assert.equal(document.querySelector('.shelter-race'),null);
+ }finally{hud.destroy();dom.window.close();}
+});

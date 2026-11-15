@@ -501,7 +501,7 @@ body.has-vitals.is-playing .world-top>.expedition-pass [data-balance]{
  body.has-vitals.is-playing #world-roster-strip,
  body.has-vitals.is-playing .world-environment-hud{top:calc(var(--explore-top) + 4px)!important}
  body.has-vitals.is-playing .world-event-chip{top:calc(var(--explore-top) + 38px)!important}
- body.has-vitals.is-playing .shelter-race{top:calc(var(--explore-top) + 64px)!important}
+
  body.has-vitals.is-playing>#world-zone-banner{top:calc(var(--explore-top) + 40px)}
 }
 @media (orientation:landscape) and (max-height:600px) and (max-width:685px){

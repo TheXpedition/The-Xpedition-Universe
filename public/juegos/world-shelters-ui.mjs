@@ -14,11 +14,41 @@ export function mountShelterPanel(root,{view,home,canContribute=false,onContribu
  const click=async e=>{if(e.target.closest('[data-shelter-enter]'))return onEnter();if(!e.target.closest('[data-shelter-contribute]')||pending)return;pending=true;render();try{const value=await onContribute();if(value?.shelters)current=value.shelters;}finally{pending=false;render();}};root.addEventListener('click',click);render();
  return {update(value){if(value){current=value;render();}},destroy(){closed=true;root.removeEventListener('click',click);}};
 }
-export function mountShelterHUD({staff=false}={}){
- styles();let view=null,signature='',lastPosition='';const badge=document.createElement('aside'),race=document.createElement('aside');badge.className='shelter-home-badge';race.className='shelter-race';badge.hidden=true;race.hidden=true;race.setAttribute('aria-label','Comparación de construcción de refugios');document.body.append(badge,race);
- function update(value){if(!value)return;view=value;const next=JSON.stringify(value);if(next===signature)return;signature=next;race.innerHTML='<strong>REFUGIOS</strong>'+view.shelters.map(s=>'<div class="shelter-race-row"><span>'+esc(s.name)+'</span><b>'+s.percent+' %</b><progress max="100" value="'+s.percent+'" aria-label="'+esc(s.name)+'"></progress></div>').join('')+'<small>'+esc(view.race||'Empate')+'</small>';badge.dataset.home='';}
- function place({zone,playing,scene,canvas,map}){race.hidden=!staff||!playing||!view;const def=shelterAt(zone),s=def&&view?.shelters.find(s=>s.id===def.id);if(!playing||!s){badge.hidden=true;return;}if(badge.dataset.home!==s.id){badge.dataset.home=s.id;badge.innerHTML='<div class="shelter-badge-title"><strong>'+esc(s.name)+'</strong><span>'+s.percent+' %</span></div><progress max="100" value="'+s.percent+'" aria-label="Construcción de '+esc(s.name)+'"></progress>'+people(s);}
-  const portal=map?.props.find(p=>p.portal?.zone===def.inside);if(!portal){badge.hidden=true;return;}const anchor=portal.contextAnchor||{x:portal.portal.x,y:portal.portal.y},q=scene.camera.project(anchor.x,anchor.y,0,scene.width,scene.height),r=canvas.getBoundingClientRect(),x=r.left+q.x/scene.width*r.width,y=Math.max(200,r.top+q.y/scene.height*r.height-Math.max(170,r.height*.25));badge.hidden=x<0||x>innerWidth||y<70||y>innerHeight;if(badge.hidden)return;const position=Math.round(Math.max(130,Math.min(innerWidth-130,x)))+','+Math.round(y);if(position!==lastPosition){lastPosition=position;badge.style.left=position.split(',')[0]+'px';badge.style.top=position.split(',')[1]+'px';}
+export function mountShelterHUD(){
+ styles();
+ let view=null,signature='',lastPosition='';
+ const badge=document.createElement('aside');
+ badge.className='shelter-home-badge';
+ badge.hidden=true;
+ document.body.append(badge);
+ function update(value){
+  if(!value)return;
+  view=value;
+  const next=JSON.stringify(value.shelters);
+  if(next===signature)return;
+  signature=next;
+  badge.dataset.home='';
  }
- return {update,place,destroy(){badge.remove();race.remove();}};
+ function place({zone,playing,scene,canvas,map}){
+  const def=shelterAt(zone),s=def&&view?.shelters.find(s=>s.id===def.id);
+  if(!playing||!s){badge.hidden=true;return;}
+  if(badge.dataset.home!==s.id){
+   badge.dataset.home=s.id;
+   const percent=s.built?'':'<span>'+s.percent+' %</span>';
+   const progress=s.built?'':'<progress max="100" value="'+s.percent+'" aria-label="Construcción de '+esc(s.name)+'"></progress>';
+   badge.innerHTML='<div class="shelter-badge-title"><strong>'+esc(s.name)+'</strong>'+percent+'</div>'+progress+people(s);
+  }
+  const portal=map?.props.find(p=>p.portal?.zone===def.inside);
+  if(!portal){badge.hidden=true;return;}
+  const anchor=portal.shelterBadgeAnchor||portal.contextAnchor||portal.portal;
+  const q=scene.camera.project(anchor.x,anchor.y,0,scene.width,scene.height),r=canvas.getBoundingClientRect();
+  const x=r.left+q.x/scene.width*r.width,projectedY=r.top+q.y/scene.height*r.height;
+  const y=portal.shelterBadgeAnchor?projectedY:Math.max(200,projectedY-Math.max(170,r.height*.25));
+  badge.hidden=x<0||x>innerWidth||y<70||y>innerHeight;
+  if(badge.hidden)return;
+  const left=Math.round(Math.max(130,Math.min(innerWidth-130,x))),top=Math.round(y);
+  const position=left+','+top;
+  if(position!==lastPosition){lastPosition=position;badge.style.left=left+'px';badge.style.top=top+'px';}
+ }
+ return {update,place,destroy(){badge.remove();}};
 }

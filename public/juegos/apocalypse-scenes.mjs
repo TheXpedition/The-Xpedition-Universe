@@ -113,6 +113,7 @@ export function buildApocalypseMaps(){
  maps['gasolinera-interior'].spawns.entrance=coord('gasolinera-interior',.11,.81);
  maps['gasolinera-interior'].props.find(p=>p.id==='exit').hitRect=[.065*maps['gasolinera-interior'].width,.29*maps['gasolinera-interior'].height,.175*maps['gasolinera-interior'].width,.745*maps['gasolinera-interior'].height];
  interior('base','refugio-1',.48,[.41,.43,.54,.704]);interior('refugio-2','dormitorio-2',.52,[.4,.48,.61,.707]);interior('comida','cocina',.72,[.59,.47,.83,.71]);interior('hospital','hospital-interior',.62,[.55,.42,.69,.72]);interior('iglesia','iglesia-interior',.6,[.55,.49,.66,.73]);interior('comunicaciones','confesionario',.55,[.50,.58,.60,.78]);
+ maps.base.props.find(p=>p.id==='enter-refugio-1').shelterBadgeAnchor=coord('base',.515,.42);
  // The interaction label belongs inside the visible entrance; approach and
  // collision coordinates remain on the pavement in front of the hospital.
  maps.hospital.props.find(p=>p.portal?.zone==='hospital-interior').contextAnchor=coord('hospital',.62,.57);

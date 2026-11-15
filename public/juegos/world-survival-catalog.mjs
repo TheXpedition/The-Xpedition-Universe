@@ -83,11 +83,32 @@ export const EVENT_TYPES=Object.freeze([
 ]);
 export const EVENT_BY_ID=Object.freeze(Object.fromEntries(EVENT_TYPES.map(e=>[e.id,e])));
 export const eventImage=e=>e.image.startsWith('/')?e.image:'/juegos/survival/'+e.image+'.webp';
-export const SURVIVAL_STATIONS=Object.freeze([{id:'bench-base',kind:'bench',zone:'refugio-1',x:.82,y:.79},{id:'bench-east',kind:'bench',zone:'dormitorio-2',x:.82,y:.79},{id:'garden-left',kind:'garden',team:'left',zone:'base',x:.36,y:.84},{id:'garden-right',kind:'garden',team:'right',zone:'refugio-2',x:.69,y:.84},{id:'chest-left',kind:'chest',team:'left',zone:'refugio-1',x:.32,y:.79},{id:'chest-right',kind:'chest',team:'right',zone:'dormitorio-2',x:.32,y:.79}]);
+export const SURVIVAL_STATIONS=Object.freeze([{id:'bench-base',kind:'bench',zone:'refugio-1',x:.82,y:.79},{id:'bench-east',kind:'bench',zone:'dormitorio-2',x:.82,y:.79},{id:'garden-left',kind:'garden',team:'left',zone:'base',x:.36,y:.84},{id:'garden-right',kind:'garden',team:'right',zone:'refugio-2',x:.69,y:.84},{id:'chest-left',kind:'chest',team:'left',zone:'refugio-1',x:.91,y:.901,width:230},{id:'chest-right',kind:'chest',team:'right',zone:'dormitorio-2',x:.91,y:.901,width:230}]);
 export function buildSurvivalProps(maps,shared={}){
  for(const map of Object.values(maps)){map.props=map.props.filter(p=>!p.survival);map.interactionRevision=(map.interactionRevision||0)+1;}
  const add=(zone,id,kind,x,extra={})=>{const map=maps[zone];if(!map)return;const y=(map.walkBand[0]+.035)*map.height,point={x:x*map.width,y:Math.min(map.walkBand[1]-.025,map.walkBand[0]+.09)*map.height};map.props.push({id:'survival-'+id,type:'survival',survival:{id,kind,...extra},x:x*map.width,y,w:kind==='bench'?300:kind==='chest'?260:kind==='garden'?440:145,h:0,solid:false,approach:point,...(kind==='chest'?{imageUrl:'/juegos/survival/team-chest.png'}:kind==='bench'?{imageUrl:'/juegos/survival/workbench.png'}:{})});};
- for(const p of SURVIVAL_STATIONS){add(p.zone,p.id,p.kind,p.x,{team:p.team});const placed=maps[p.zone]?.props.at(-1);if(placed?.survival&&p.y){placed.y=p.y*maps[p.zone].height;placed.approach.y=Math.min(maps[p.zone].walkBand[1]-.025,p.y+.045)*maps[p.zone].height;placed.contextAnchor={x:placed.x,y:placed.y};}if(p.kind==='bench'&&placed){placed.survival.painted=true;placed.painted=true;placed.y=.70*maps[p.zone].height;placed.approach.y=.80*maps[p.zone].height;placed.contextAnchor={x:placed.x,y:.64*maps[p.zone].height};}if(p.kind==='chest'&&shared.upgrades?.[p.team])add(p.zone,p.id+'-extra','chest',.52,{team:p.team});}
+ const placeStation=p=>{
+  const map=maps[p.zone];if(!map)return;
+  add(p.zone,p.id,p.kind,p.x,{team:p.team});
+  const placed=map.props.at(-1);
+  if(p.width)placed.w=p.width;
+  placed.y=p.y*map.height;
+  placed.approach.y=Math.min(map.walkBand[1]-.025,p.y+.045)*map.height;
+  placed.contextAnchor={x:placed.x,y:placed.y};
+  if(p.kind==='bench'){
+   placed.survival.painted=true;
+   placed.painted=true;
+   placed.y=.70*map.height;
+   placed.approach.y=.80*map.height;
+   placed.contextAnchor={x:placed.x,y:.64*map.height};
+  }
+ };
+ for(const station of SURVIVAL_STATIONS){
+  placeStation(station);
+  if(station.kind==='chest'&&shared.upgrades?.[station.team]){
+   placeStation({...station,id:station.id+'-extra',x:.82,width:200});
+  }
+ }
  for(const original of GATHER_NODES){const n=resolveGatherNode(original,shared);if(shared.nodes?.[n.id]?.remaining===0)continue;add(n.zone,n.id,'gather',n.x,{resource:Object.keys(n.loot)[0],name:shared.nodes?.[n.id]?.placement?RESOURCE_BY_ID[Object.keys(n.loot)[0]].name:n.name,container:!!n.container,loot:n.loot});const map=maps[n.zone],prop=map?.props.at(-1);if(prop?.survival?.id===n.id){prop.y=(n.y??map.walkBand[0])*map.height;prop.approach.y=(n.fixed?Math.min(map.walkBand[1]-.018,Math.max(map.walkBand[0]+.025,n.y+.042)):map.walkBand[0]+.025)*map.height;prop.w=n.container?110:58;prop.contextAnchor={x:prop.x,y:prop.y};}}
  for(const bag of LUGGAGE){const map=maps[bag.zone];if(!map)continue;const remaining=shared.luggage?.[bag.id]?.remaining??Object.values(luggageStock(shared,bag.id)?.items||{}).reduce((a,n)=>a+n,0);if(remaining===0&&bag.hideWhenEmpty)continue;add(bag.zone,bag.id,'luggage',bag.x,{name:bag.name,art:bag.art,painted:!!bag.painted,remaining});const prop=map.props.at(-1);prop.y=bag.y*map.height;prop.w=bag.width||(bag.painted?90:130);prop.contextAnchor={x:prop.x,y:(bag.anchorY??bag.y-.055)*map.height};prop.approach.y=Math.min(map.walkBand[1]-.025,Math.max(map.walkBand[0]+.035,bag.y+.055))*map.height;}
  for(const p of PROJECTS){add(p.zone,p.id,'project',p.x,{name:p.name});const prop=maps[p.zone]?.props.at(-1);if(prop){prop.survival.painted=p.id!=='filter';prop.survival.ready=!!shared.projects?.[p.id]?.ready;prop.painted=p.id!=='filter';if(p.y){prop.y=p.y*maps[p.zone].height;prop.approach.y=(p.id==='filter'?.755:.81)*maps[p.zone].height;prop.contextAnchor={x:prop.x,y:(p.anchorY??p.y)*maps[p.zone].height};}}}
