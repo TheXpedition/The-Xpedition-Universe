@@ -17,7 +17,7 @@ test('a bottle grants only a bottle, disappears for everyone, cannot duplicate, 
  await f.act({action:'restock-gather',id:node.id});buildSurvivalProps(maps,(await f.store.snapshot(f.a,f.ctx)).shared);assert(maps[node.zone].props.some(p=>p.survival?.id===node.id));
  const natural=GATHER_NODES.find(n=>n.renewable);await f.act({action:'gather',id:natural.id});f.advance(31*60000);await f.store.tick();assert.equal((await f.store.snapshot(f.a,f.ctx)).shared.nodes[natural.id],undefined);
 });
-test('raster survival resources and every station have reachable 2D floor contacts',()=>{assert.equal(RESOURCES.length,32);assert.equal(RECIPES.length,11);assert.equal(PROJECTS.length,5);assert.equal(EVENT_TYPES.length,6);buildSurvivalProps(WORLD_MAPS);for(const n of GATHER_NODES)assert(WORLD_MAPS[n.zone]);for(const map of Object.values(WORLD_MAPS))for(const p of map.props.filter(p=>p.survival)){assert(hasFloor(map,p.approach.x,p.approach.y),p.id);assert(clearPoint(map,p.approach.x,p.approach.y),p.id);}});
+test('raster survival resources and every station have reachable 2D floor contacts',()=>{assert.equal(RESOURCES.length,37);assert.equal(RECIPES.length,14);assert.equal(PROJECTS.length,5);assert.equal(EVENT_TYPES.length,6);buildSurvivalProps(WORLD_MAPS);for(const n of GATHER_NODES)assert(WORLD_MAPS[n.zone]);for(const map of Object.values(WORLD_MAPS))for(const p of map.props.filter(p=>p.survival)){assert(hasFloor(map,p.approach.x,p.approach.y),p.id);assert(clearPoint(map,p.approach.x,p.approach.y),p.id);}});
 test('team storage conserves resources and food; opponents, overflow and repeated requests cannot duplicate stock',async t=>{const f=await fixture(t),{a,b,ctx,store,food}=f;await f.grant('wood',8);await food.forage(a.id,'apple',2);await f.act({action:'deposit',teamId:'left',itemKey:'resource:wood',quantity:4,requestId:'once'});await assert.rejects(f.act({action:'deposit',teamId:'left',itemKey:'resource:wood',quantity:4,requestId:'once'}),/procesada/);await f.act({action:'deposit',teamId:'left',itemKey:'food:apple',quantity:2});await assert.rejects(store.storage(b,'left',{...ctx,staff:false,team:'Equipo 2'}),/otro equipo/);let box=await store.storage(a,'left',ctx);assert.equal(box.chest.items['resource:wood'],4);assert.equal(box.chest.items['food:apple'],2);const r=await Promise.allSettled([f.act({action:'withdraw',teamId:'left',itemKey:'resource:wood',quantity:4}),f.act({action:'withdraw',teamId:'left',itemKey:'resource:wood',quantity:4})]);assert.equal(r.filter(v=>v.status==='fulfilled').length,1);assert.equal((await store.snapshot(a,ctx)).personal.items.wood,8);assert.equal((await food.snapshot(a.id)).inventory.items.length,0);await assert.rejects(f.grant('stone',40),/llena/);});
 test('gathering, portable purification, dirty water and raw food have meaningful and conserved effects',async t=>{const f=await fixture(t);await f.act({action:'gather',id:'forest-wood'});await assert.rejects(f.act({action:'gather',id:'forest-wood'}),/agotado/);await f.act({action:'fill-water'});await f.grant('purifier');await f.act({action:'craft',id:'water-tablet'});let value=(await f.store.snapshot(f.a,f.ctx)).personal.items;assert.equal(value['dirty-water'],undefined);assert.equal(value['clean-water'],1);await f.act({action:'use',id:'clean-water'});assert.equal(f.ctx.vitals.health,80);await f.act({action:'fill-water'});await f.act({action:'use',id:'dirty-water'});assert.equal(f.ctx.vitals.health,75);assert(f.ctx.body.conditions.some(c=>c.id==='food-sickness'));f.ctx.near=()=>false;await assert.rejects(f.act({action:'fill-water'}),/Acércate/);});
 test('recipes require a bench, projects accept partial contributions and radio needs repair and charged hardware',async t=>{const f=await fixture(t);await f.grant('wire',4);await f.grant('scrap',3);await f.grant('fuse');assert.equal((await f.store.radio(f.a)).ready,false);for(const [resource,quantity]of Object.entries({wire:4,scrap:3,fuse:1}))await f.act({action:'repair',id:'radio',resource,quantity});assert.equal((await f.store.snapshot(f.a,f.ctx)).shared.projects.radio.ready,true);await f.grant('walkie');await f.act({action:'use',id:'walkie'});assert.equal((await f.store.radio(f.a)).ready,true);f.advance(21*60000);assert.equal((await f.store.radio(f.a)).ready,false);await f.grant('wood',2);f.ctx.near=()=>false;await assert.rejects(f.act({action:'craft',id:'planks'}),/Acércate/);assert.equal((await f.store.snapshot(f.a,f.ctx)).personal.items.wood,2);});
@@ -31,7 +31,7 @@ test('each workshop input has a source and the equipment points are separate in 
  const sources=new Set(['dirty-water',...GATHER_NODES.flatMap(node=>Object.keys(node.loot)),
   ...LUGGAGE.flatMap(bag=>Object.keys(bag.contents).filter(key=>key.startsWith('resource:')).map(key=>key.slice(9)))]);
  for(const recipe of RECIPES)for(const id of [...Object.keys(recipe.cost),recipe.tool].filter(Boolean))assert(sources.has(id),recipe.name+': '+id);
- for(const zone of ['refugio-1','dormitorio-2']){
+ for(const zone of ['taller-refugio-1','taller-refugio-2']){
   const [bench,chest]=['bench','chest'].map(kind=>maps[zone].props.find(p=>p.survival?.kind===kind));
   assert(Math.hypot(bench.approach.x-chest.approach.x,bench.approach.y-chest.approach.y)>250);
  }
@@ -45,6 +45,44 @@ test('a repaired river filter can fill a bottle directly and verifies proximity'
  const result=await f.store.act(f.a,{action:'fill-water',id:'filter'},ctx);
  assert.equal(result.data.personal.items['clean-water'],1);
  assert.equal(result.data.personal.items['empty-bottle'],undefined);
+});
+
+test('a tended flock lays shared eggs, the stove cooks them and rival teams cannot collect twice',async t=>{
+ const f=await fixture(t);
+ const coop={...f.ctx,staff:false,zone:'corral-refugio-1',near:(id,kind)=>id==='coop-left'&&kind==='coop'};
+ const act=(input,ctx=coop)=>f.store.act(f.a,input,ctx);
+ const egg={action:'flock',id:'eggs'};
+ await assert.rejects(act(egg),/Todavía no hay huevos/);
+ await f.grant('seed-wheat');
+ await act({action:'flock',id:'feed'});
+ f.advance(8*60000);
+ await assert.rejects(f.store.act(f.b,egg,{...coop,team:'Equipo 2'}),/Acércate/);
+ const results=await Promise.allSettled([act(egg),act(egg)]);
+ assert.equal(results.filter(result=>result.status==='fulfilled').length,1);
+ const stove={...coop,zone:'cocina-refugio-1',near:(id,kind)=>id==='stove-left'&&kind==='fire'};
+ await act({action:'cook',fireId:'stove-left',id:'fresh-egg'},stove);
+ const {food}=await f.store.snapshot(f.a,stove);
+ assert.deepEqual(Object.fromEntries(food.map(i=>[i.foodId,i.quantity])),{'fresh-egg':1,'boiled-egg':1});
+});
+
+test('greenhouse crops, private lockers and the workshop repair use the player inventory',async t=>{
+ const f=await fixture(t);
+ const garden={...f.ctx,staff:false,zone:'huerto-refugio-1',near:(id,kind)=>id==='garden-left'&&kind==='garden'};
+ await f.grant('seed-tomato');await f.grant('clean-water');
+ await f.store.act(f.a,{action:'plant',seed:'tomato',slot:0},garden);
+ f.advance(7*60000);
+ await f.store.act(f.a,{action:'harvest',slot:0},garden);
+ const locker={...garden,zone:'refugio-1',near:(id,kind)=>kind==='locker'};
+ await f.store.act(f.a,{action:'locker-deposit',itemKey:'food:tomato',quantity:2},locker);
+ assert.equal((await f.store.snapshot(f.a,locker)).personal.locker['food:tomato'],2);
+ await assert.rejects(f.store.act(f.b,{action:'locker-withdraw',itemKey:'food:tomato'},locker),/No hay esa cantidad/);
+ await f.store.act(f.a,{action:'locker-withdraw',itemKey:'food:tomato',quantity:2},locker);
+ assert.equal((await f.store.snapshot(f.a,locker)).food.find(i=>i.foodId==='tomato').quantity,3);
+ await f.grant('plank',2);await f.grant('cloth');await f.grant('scrap');
+ const workshop={...garden,zone:'taller-refugio-1',near:(id,kind)=>kind==='bench'};
+ await f.store.act(f.a,{action:'shelter-repair'},workshop);
+ assert(f.store.effect('refugio-1').shelter);
+ await assert.rejects(f.store.act(f.a,{action:'shelter-repair'},workshop),/ya reparó/);
 });
 test('the supply refresh affects existing worlds once and preserves repairs and stored items',async t=>{
  const f=await fixture(t),row=await f.db.one("SELECT state FROM world_survival_state WHERE id='shared'"),state=JSON.parse(row.state);

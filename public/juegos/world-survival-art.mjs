@@ -47,9 +47,12 @@ function seedbed(seed,stage){
     polygon(c,[[x,top+8],[x-13,top-3],[x-7,top-4],[x+1,top+3],[x+9,top-8],[x+14,top-7],[x+6,top+6]],i%2?'#7d933e':'#628234','#354b25',1.5);
     if(stage===2)polygon(c,[[x,top+13],[x-10,top+8],[x-15,top+2],[x-3,top+6],[x+5,top+10],[x+14,top+3],[x+13,top+9],[x+5,top+14]],'#587135','#304623',1);
     if(stage===2&&seed==='carrot')polygon(c,[[x-6,base-5],[x+7,base-6],[x+4,base+2],[x-2,base+3]],'#db873c','#794521',1);
-    if(stage===2&&seed==='berries'){
-     c.fillStyle='#be5140';c.beginPath();c.arc(x-5,top+9,4,0,Math.PI*2);c.arc(x+7,top+11,4,0,Math.PI*2);c.fill();
+    if(stage===2&&(seed==='berries'||seed==='tomato')){
+     const radius=seed==='tomato'?6:4;
+     c.fillStyle=seed==='tomato'?'#d85e32':'#be5140';c.beginPath();c.arc(x-5,top+9,radius,0,Math.PI*2);c.arc(x+7,top+11,radius,0,Math.PI*2);c.fill();
     }
+    if(stage===2&&seed==='potato'){c.fillStyle='#bd9254';c.beginPath();c.ellipse(x+3,base-2,7,4,-.2,0,Math.PI*2);c.fill();}
+    if(stage===2&&seed==='herbs'){c.fillStyle='#c297cf';c.beginPath();c.arc(x,top-3,3,0,Math.PI*2);c.arc(x+8,top+1,3,0,Math.PI*2);c.fill();}
    }
   }
  });
@@ -74,11 +77,11 @@ function riverFilter(working){
   }
  });
 }
-export function survivalBounds(p){return {x:p.x,y:p.y*.62+8,w:p.w,h:p.survival.kind==='gather'?65:p.survival.kind==='garden'?112:p.survival.id==='filter'?175:p.survival.kind==='bench'?210:p.survival.kind==='chest'||p.survival.kind==='drop'?190:125};}
+export function survivalBounds(p){return {x:p.x,y:p.y*.62+8,w:p.w,h:p.survival.kind==='gather'?65:p.survival.kind==='garden'?p.w*.24:p.survival.id==='filter'?175:p.survival.kind==='bench'?210:p.survival.kind==='chest'||p.survival.kind==='drop'?190:125};}
 export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=false}={}){
  const b=survivalBounds(p),kind=p.survival.kind,id=p.survival.id;let label='';c.save();
  if(kind==='luggage'){const empty=p.survival.remaining===0,im=survivalImage(p.survival.art||'maleta-roja.png');if(!p.survival.painted&&ready(im)){const height=b.w*im.height/im.width;c.globalAlpha=empty?.65:1;c.drawImage(im,b.x-b.w/2,b.y-height,b.w,height);c.globalAlpha=1;}if(!empty&&!reducedMotion){c.fillStyle='#f2cb87';c.globalAlpha=.35+Math.sin(time*2.4)*.2;c.beginPath();c.arc(b.x,b.y-12,2,0,Math.PI*2);c.fill();c.globalAlpha=1;}if(labels)label=empty?'MALETA VACÍA':p.survival.name;else {c.restore();return true;}}
- else if(kind==='bench'&&p.survival.painted){c.restore();return true;}
+ else if(p.survival.painted&&['bench','fire','coop'].includes(kind)){c.restore();return true;}
  else if(kind==='chest'||kind==='bench'||kind==='drop'){
   const im=survivalImage(kind==='bench'?'workbench.png':'team-chest.png');
   if(ready(im)){
@@ -101,7 +104,8 @@ export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=fals
    const growth=crops[i],mature=growth&&growth.readyAt<=time*1000,stage=mature?2:growth?1:0;
    if(mature)harvestable++;
    const bed=seedbed(growth?.seed||'',stage);
-   if(bed)c.drawImage(bed,b.x-220+i*148,b.y-103);
+   const width=b.w/3;
+   if(bed)c.drawImage(bed,b.x-b.w/2+i*width,b.y-width*.66,width-6,width*.70);
   }
   label=harvestable?'HUERTA · '+harvestable+(harvestable===1?' COSECHA LISTA':' COSECHAS LISTAS'):'HUERTA DEL REFUGIO';
  }

@@ -19,10 +19,10 @@ export function createFoodStore({db,now=Date.now,fail=(status,message)=>{throw O
   return {state:JSON.parse(row.state),revision:Number(row.revision)};
  }
  async function save(frame){frame.revision++;await db.run('UPDATE world_food_state SET state=?,revision=?,updated=? WHERE id=?',JSON.stringify(frame.state),frame.revision,now(),STATE_ID);}
- const canTake=(team,context)=>context.staff===true||(context.teamId!==undefined?context.teamId===team.id:!!normalizeTeam(context.team)&&normalizeTeam(context.team)===normalizeTeam(team.name));
+ const canTake=(team,context)=>(!context.roomTeam||context.roomTeam===team.id)&&(context.staff===true||(context.teamId!==undefined?context.teamId===team.id:!!normalizeTeam(context.team)&&normalizeTeam(context.team)===normalizeTeam(team.name)));
  async function view(userId,context,frame){
   const items=(await db.all('SELECT food_id,quantity FROM world_food_inventory WHERE user_id=? AND quantity>0 ORDER BY food_id',userId)).filter(item=>Object.hasOwn(FOOD_BY_ID,item.food_id)).map(item=>({foodId:item.food_id,quantity:Number(item.quantity)}));
-  return {revision:frame.revision,teams:frame.state.teams.map(team=>({...team,canTake:canTake(team,context),slots:FOOD_CATALOG.map(food=>({foodId:food.id,quantity:frame.state.stock[team.id]?.[food.id]||0}))})),inventory:{capacity:FOOD_INVENTORY_CAPACITY,items},staff:context.staff===true};
+  return {revision:frame.revision,teams:frame.state.teams.filter(team=>!context.roomTeam||team.id===context.roomTeam).map(team=>({...team,canTake:canTake(team,context),slots:FOOD_CATALOG.map(food=>({foodId:food.id,quantity:frame.state.stock[team.id]?.[food.id]||0}))})),inventory:{capacity:FOOD_INVENTORY_CAPACITY,items},staff:context.staff===true&&!context.roomTeam,roomTeam:context.roomTeam||undefined};
  }
  return {
   async forage(userId,foodId,quantity=1){validUser(userId);const food=foodFor(foodId);return serial(async()=>{const frame=await lockedState(),row=await db.one('SELECT COALESCE(SUM(quantity),0) AS total FROM world_food_inventory WHERE user_id=?',userId);if(!Number.isInteger(quantity)||quantity<1||quantity>2||Number(row.total)+quantity>FOOD_INVENTORY_CAPACITY)reject(409,'Tu inventario está lleno.');await db.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,?,?) ON CONFLICT(user_id,food_id) DO UPDATE SET quantity=world_food_inventory.quantity+excluded.quantity,updated=excluded.updated',userId,food.id,quantity,now());await save(frame);return view(userId,{},frame);});},
@@ -39,6 +39,21 @@ export function createFoodStore({db,now=Date.now,fail=(status,message)=>{throw O
     frame.state.stock[teamId][food.id]=available-1;
     await db.run('INSERT INTO world_food_inventory(user_id,food_id,quantity,updated) VALUES(?,?,?,?) ON CONFLICT(user_id,food_id) DO UPDATE SET quantity=world_food_inventory.quantity+1,updated=excluded.updated',userId,food.id,1,now());
     await save(frame);return view(userId,context,frame);
+   });
+  },
+  async deposit(userId,{teamId,foodId},context={}){
+   validUser(userId);const target=teamFor(teamId),food=foodFor(foodId);
+   return serial(async()=>{
+    const frame=await lockedState(),team=frame.state.teams.find(team=>team.id===target);
+    if(!canTake(team,context))reject(403,'La nevera está reservada a su equipo.');
+    const amount=Number(frame.state.stock[target][food.id])||0;
+    if(amount>=99)reject(409,'No caben más unidades de este alimento.');
+    const item=await db.run('UPDATE world_food_inventory SET quantity=quantity-1,updated=? WHERE user_id=? AND food_id=? AND quantity>0',now(),userId,food.id);
+    if(!item.changes)reject(409,'Ese alimento no está en tu inventario.');
+    await db.run('DELETE FROM world_food_inventory WHERE user_id=? AND food_id=? AND quantity=0',userId,food.id);
+    frame.state.stock[target][food.id]=amount+1;
+    await save(frame);
+    return view(userId,context,frame);
    });
   },
   async consume(userId,foodId,applyNutrition){

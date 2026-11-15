@@ -38,7 +38,7 @@ export function mountShelterHUD(){
    const progress=s.built?'':'<progress max="100" value="'+s.percent+'" aria-label="Construcción de '+esc(s.name)+'"></progress>';
    badge.innerHTML='<div class="shelter-badge-title"><strong>'+esc(s.name)+'</strong>'+percent+'</div>'+progress+people(s);
   }
-  const portal=map?.props.find(p=>p.portal?.zone===def.inside);
+  const portal=map?.props.find(p=>p.portal?.zone===def.entry);
   if(!portal){badge.hidden=true;return;}
   const anchor=portal.shelterBadgeAnchor||portal.contextAnchor||portal.portal;
   const q=scene.camera.project(anchor.x,anchor.y,0,scene.width,scene.height),r=canvas.getBoundingClientRect();

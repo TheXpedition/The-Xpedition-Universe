@@ -6,7 +6,7 @@ import {SHELTERS,SHELTER_ROSTERS,SHELTER_MATERIALS,SHELTER_PARTICIPANTS,shelterF
 import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {worldPath,hasFloor,clearPoint} from '../public/juegos/world-motion.mjs';
 import {createVitalsStore} from '../world-vitals-service.mjs';import {createHealthStore} from '../world-health-service.mjs';
 const atMaterial=m=>({...shelterSupplyProp(m,WORLD_MAPS[m.zone]),zone:m.zone,alive:true});
-const atDoor=home=>{const s=SHELTERS.find(s=>s.id===home);return {...WORLD_MAPS[s.outside].props.find(p=>p.portal?.zone===s.inside).portal,zone:s.outside,alive:true};};
+const atDoor=home=>{const s=SHELTERS.find(s=>s.id===home);return {...WORLD_MAPS[s.outside].props.find(p=>p.portal?.zone===s.entry).portal,zone:s.outside,alive:true};};
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shelters-')),db=await openDatabase(dir),ids=[...SHELTER_PARTICIPANTS,'maria-villegas','isabel','dani','dua-lingo'];for(const id of ids){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani',1000);await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,?)',id,id,1000);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',id,id,1000);}const s=createShelterService({db,now:()=>1000});await s.ready;return {dir,db,s,async close(){await s.close();await db.close();const absolute=path.resolve(dir);assert(absolute.startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(absolute,{recursive:true,force:true});}};}
 test('the replacement cast recovers legacy deliveries once and preserves both original shelters',async()=>{
  const f=await fixture();let restored,restarted;

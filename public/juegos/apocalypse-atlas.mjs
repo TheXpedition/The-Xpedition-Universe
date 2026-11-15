@@ -2,22 +2,25 @@ import {MAIN_WALK_ROUTE,PRODUCTION_WALK_ROUTE,roadDirections} from './world-rout
 import {EVENT_BY_ID,PROJECTS,eventImage} from './world-survival-catalog.mjs';
 import {WORLD_MAPS} from './world-maps.mjs';
 import {routeBetween} from './front-world.mjs';
+import {SHELTERS} from './world-shelter-layout.mjs';
 export const ATLAS_SIZE=Object.freeze({width:3900,height:1500});
 export const ATLAS_POSITIONS=Object.freeze({
  'tren-cabina':[200,180],'tren-salon':[400,180],'tren-pasajeros':[200,420],'tren-equipaje':[400,420],
  'montana-ladera':[1800,180],'caseta-montana':[1800,400],'montana-escalinata':[2000,180],'montana-cresta':[2200,180],'montana-cima':[2400,180],
  'cruce-comunicaciones':[2400,800],'cementerio-interior':[3000,620],
  'gasolinera-interior':[400,620],estacion:[200,800],gasolinera:[400,800],desguace:[600,800],cuarentena:[800,800],'acceso-bosque':[1000,800],base:[1200,800],'sendero-bosque':[1400,800],'refugio-2':[1600,800],'ruta-refugio-oriental':[1800,800],'carretera-patrulla':[2000,800],comisaria:[2200,800],hospital:[2600,800],iglesia:[2800,800],cementerio:[3000,800],cueva:[3200,800],
- comida:[1050,480],cocina:[1050,300],'refugio-1':[1200,620],'dormitorio-2':[1600,620],'comisaria-interior':[2200,620],'hospital-interior':[2600,620],'iglesia-interior':[2800,620],
+ comida:[1050,480],cocina:[1050,300],'refugio-1':[1200,420],'dormitorio-2':[1600,420],'comisaria-interior':[2200,620],'hospital-interior':[2600,620],'iglesia-interior':[2800,620],
+ ...Object.fromEntries(SHELTERS.flatMap(({id,rooms})=>{const x=id==='left'?1200:1600;return Object.entries({patio:[x,635],cocina:[x-125,555],corral:[x+125,555],taller:[x-125,465],huerto:[x+125,465]}).map(([kind,point])=>[rooms[kind],point]);})),
  'cascada-ribera':[1000,1120],'poza-cascada':[1200,1120],puerto:[400,1120],'muelle-ruinas':[600,1120],
  comunicaciones:[2200,1120],confesionario:[2200,1300],'pista-aerodromo':[2400,1120],avion:[2600,1120],'avion-interior':[2600,1300],desafios:[2800,1120],eliminacion:[3000,1120],
  'cueva-galeria':[3400,800],'cueva-profunda':[3600,800],tunel:[3600,480]
 });
-const positions=ATLAS_POSITIONS,small=new Set(['gasolinera-interior','refugio-1','dormitorio-2','cocina','hospital-interior','iglesia-interior','comisaria-interior','confesionario','avion-interior']);
+const positions=ATLAS_POSITIONS,small=new Set(['gasolinera-interior','cocina','hospital-interior','iglesia-interior','comisaria-interior','confesionario','avion-interior',...SHELTERS.flatMap(s=>Object.values(s.rooms))]);
 const sectors=[
  {id:'mountain',name:'Ascenso a la montaña',cover:'montana-cima',zones:['montana-ladera','caseta-montana','montana-escalinata','montana-cresta','montana-cima']},
  {id:'arrival',name:'El tren y la llegada',cover:'estacion',zones:['tren-pasajeros','tren-salon','tren-cabina','tren-equipaje','estacion','gasolinera','desguace']},
  {id:'camp',name:'Bosque y refugios',cover:'sendero-bosque',zones:['cuarentena','acceso-bosque','base','refugio-1','comida','cocina','sendero-bosque','refugio-2','dormitorio-2','ruta-refugio-oriental','carretera-patrulla']},
+ ...SHELTERS.map(s=>({id:s.id+'-refugio',name:s.name,cover:s.entry,zones:[s.outside,...Object.values(s.rooms)]})),
  {id:'town',name:'La ciudad en ruinas',cover:'comisaria',zones:['comisaria','comisaria-interior','cruce-comunicaciones','hospital','hospital-interior','iglesia','iglesia-interior','cementerio','cementerio-interior']},
  {id:'river',name:'Río y cascadas',cover:'poza-cascada',zones:['cascada-ribera','poza-cascada','puerto','muelle-ruinas']},
  {id:'production',name:'Torre y producción',cover:'pista-aerodromo',zones:['comunicaciones','confesionario','pista-aerodromo','avion','avion-interior','desafios','eliminacion']},

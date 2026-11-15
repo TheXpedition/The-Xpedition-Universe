@@ -13,6 +13,7 @@ body #modal.food-dialog{width:min(1120px,calc(100vw - 32px));max-width:none;max-
 .food-capacity small{display:block;font-size:9px;margin-top:1px;text-transform:uppercase;letter-spacing:.7px}
 .food-panel-intro{font-size:12px;line-height:1.7;color:var(--food-muted);padding:14px 0 18px}
 .food-fridge-doors{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}
+.food-fridge-doors>.food-door:only-child{grid-column:1/-1}
 .food-door{min-width:0;position:relative;border:1px solid #6c4a30;border-radius:5px;background:linear-gradient(105deg,#211a14,#161310 45%,#21180f);box-shadow:inset 0 0 0 4px #100c09,inset 0 0 0 5px #4f38294d,0 5px 15px #0005;padding:13px 14px 11px}
 .food-door:after{content:'';position:absolute;pointer-events:none;top:89px;bottom:43px;width:3px;background:linear-gradient(#b17b4b,#61452d,#b17b4b);box-shadow:1px 1px #050403,2px 0 #d3a47122;border-radius:3px}
 .food-door[data-food-door=left]{padding-right:21px}.food-door[data-food-door=right]{padding-left:21px}

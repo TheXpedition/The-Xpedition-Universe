@@ -59,7 +59,10 @@ const portions=[
  ['fresh-peas','Arvejas frescas','vegetable',1,3,1],
  ['cooked-beans','Frijoles cocidos','protein',2,9,3],
  ['cooked-chickpeas','Garbanzos cocidos','protein',2,9,3],
- ['cooked-rice','Arroz cocido','snack',1,7,3]
+ ['cooked-rice','Arroz cocido','snack',1,7,3],
+ ['fresh-egg','Huevo fresco','protein',0,0,0],
+ ['herbal-leaves','Hierbas medicinales','vegetable',0,0,0],
+ ['herbal-tea','Infusión del huerto','meal',4,2,3]
 ];
 // Ingredients remain separate inventory items. The server uses cooksTo for campfire output.
 const ingredients={
@@ -68,7 +71,9 @@ const ingredients={
  'dry-rice':{requiresCooking:true,cooksTo:'cooked-rice'},
  oats:{},onion:{},garlic:{},potato:{requiresCooking:true,cooksTo:'baked-potato'},
  spinach:{},'raw-corn':{requiresCooking:true,cooksTo:'corn'},'fresh-peas':{},
- 'cooked-beans':{cooked:true},'cooked-chickpeas':{cooked:true},'cooked-rice':{cooked:true}
+ 'cooked-beans':{cooked:true},'cooked-chickpeas':{cooked:true},'cooked-rice':{cooked:true},
+ 'fresh-egg':{requiresCooking:true,cooksTo:'boiled-egg'},
+ 'herbal-leaves':{requiresCooking:true,cooksTo:'herbal-tea'},'herbal-tea':{cooked:true}
 };
 export const FOOD_CATALOG=Object.freeze(portions.map(([id,name,category,health,hunger,energy])=>{
  const ingredient=ingredients[id],requiresCooking=ingredient?.requiresCooking===true;

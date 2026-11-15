@@ -1,11 +1,19 @@
 import {LUGGAGE,luggageStock} from './world-luggage.mjs';
 import {resolveGatherNode} from './world-gather-layout.mjs';
 import {itemAtlasArt} from './world-item-art.mjs';
+import {SHELTERS} from './world-shelter-layout.mjs';
 export const RESOURCE_CAPACITY=40,CHEST_CAPACITY=160;
 const entries=[
  ['cigarette','Cigarrillos',0,'Cada unidad es un cigarrillo. La caja compartida contiene 10; retiras una cantidad concreta. Fumar alivia temporalmente el estrés, pero la exposición acumulada afecta la salud respiratoria.'],
  ['battery','Pila / batería',0,'Carga linternas y walkies. Una carga dura 20 minutos de uso.'],['fuel','Combustible',1,'Mantiene en marcha el generador reparado.'],['matches','Cerillas',2,'Encienden una fogata; se consume una caja.'],['flint','Pedernal',3,'Alternativa reutilizable para encender fuego.'],['purifier','Pastillas potabilizadoras',4,'Purifican una botella de agua recogida en la ribera.'],['charcoal','Filtro de carbón',5,'Material para filtrar dos botellas en la mesa de trabajo.'],['empty-bottle','Botella vacía',6,'Recoge agua en una orilla. Vuelve al inventario al beber.'],['dirty-water','Agua sin tratar',7,'Debe purificarse. Beberla puede provocar malestar y resta salud.'],['clean-water','Agua potable',8,'Recupera reservas y permite regar los cultivos.'],['flashlight','Linterna',9,'Ilumina alrededor del personaje de noche, en cuevas y apagones. Necesita una batería.'],['walkie','Walkie-talkie',10,'Permite hablar con compañeros del equipo en otra zona cuando la radio está reparada. Necesita carga.'],['rope','Cuerda',11,'Sirve para el puente, herramientas y baúles.'],['plank','Tablones',12,'Madera preparada para reparar y construir.'],['scrap','Metal recuperado',13,'Piezas para mecanismos, herramientas y estructuras.'],['wire','Cable de cobre',14,'Restaura circuitos y permite fabricar walkies.'],['fuse','Fusible',15,'Protege los circuitos de radio y generador.'],['wood','Leña',16,'Combustible para fogatas y materia prima de tablones.'],['cloth','Tela resistente',17,'Repara el techo y sirve para fabricar ropa.'],['seed-wheat','Semillas de trigo',18,'Se plantan en la huerta y necesitan agua potable.'],['seed-carrot','Semillas de zanahoria',19,'Producen tres zanahorias por cosecha.'],['seed-berries','Semillas de bayas',20,'Producen fruta. El abono acelera el cultivo.'],['compost','Abono',21,'Se fabrica con cuatro porciones de restos y reduce la espera del cultivo.'],['toolkit','Herramientas',22,'Equipo reutilizable necesario para construir walkies, linternas y baúles en la mesa de trabajo.'],['fishing-rod','Caña mejorada',23,'Mejora la probabilidad de pescado del 14 % al 64 %. También puede sacar basura o no capturar nada.'],['raw-fish','Pescado crudo',33,'Se cocina en una fogata encendida. Crudo resta salud.'],['raw-meat','Carne cruda',34,'Cocínala antes de comerla.'],['spoiled-food','Restos orgánicos',35,'Material para abono. No es comestible.'],['coat','Abrigo térmico',17,'Ropa para el frío que puede guardarse en el baúl del equipo.'],['light-clothes','Ropa ligera',17,'Ropa para el calor.'],['stone','Piedra',13,'Forma la base segura de una fogata.'],['wheat','Trigo cosechado',18,'Se puede cocinar para preparar pan.']
 ];
+entries.push(
+ ['seed-potato','Papa de siembra',19,'Cosecha papas para cocinar en el fogón.'],
+ ['seed-tomato','Semillas de tomate',20,'Se cultivan en el invernadero del refugio.'],
+ ['seed-herbs','Semillas medicinales',18,'Producen hierbas para preparar infusión.'],
+ ['coop-alarm','Trampa de aviso',22,'Sirve para proteger el corral. Se instala desde el panel de las gallinas.'],
+ ['coop-sling','Honda del vigía',23,'Equipo de World para ahuyentar depredadores del corral.']
+);
 export const RESOURCES=Object.freeze(entries.map(([id,name,sprite,description])=>Object.freeze({id,name,sprite,description})));export const RESOURCE_BY_ID=Object.freeze(Object.fromEntries(RESOURCES.map(r=>[r.id,r])));
 export function resourceArt(id){const r=RESOURCE_BY_ID[id];return r?(['fuel','cigarette'].includes(id)?'<img class="survival-item-art" src="/juegos/survival/'+(id==='fuel'?'fuel-can.png':'cigarettes.png')+'" alt="'+r.name+'">':itemAtlasArt(r.sprite,{label:r.name})):'';}
 export const RECIPES=Object.freeze([
@@ -19,7 +27,10 @@ export const RECIPES=Object.freeze([
  {id:'coat',name:'Confeccionar abrigo',cost:{cloth:4,rope:1},result:{coat:1},bench:true},
  {id:'compost',name:'Preparar abono',cost:{'spoiled-food':4},result:{compost:1}},
  {id:'bottle',name:'Recuperar un recipiente',cost:{scrap:2},result:{'empty-bottle':1},bench:true},
- {id:'chest',tool:'toolkit',name:'Construir otro baúl de equipo',cost:{plank:6,rope:2,scrap:3},upgrade:true,bench:true}
+ {id:'chest',tool:'toolkit',name:'Construir otro baúl de equipo',cost:{plank:6,rope:2,scrap:3},upgrade:true,bench:true},
+ {id:'toolkit',name:'Fabricar herramientas',cost:{plank:1,scrap:3},result:{toolkit:1},bench:true},
+ {id:'coop-alarm',name:'Fabricar trampa de aviso',cost:{plank:1,rope:1,scrap:1},result:{'coop-alarm':1},bench:true},
+ {id:'coop-sling',name:'Fabricar honda del vigía',cost:{wood:1,cloth:1},result:{'coop-sling':1},bench:true}
 ]);
 export const PROJECTS=Object.freeze([
  {id:'radio',name:'Restaurar la estación de radio',zone:'confesionario',x:.86,y:.51,anchorY:.445,cost:{wire:4,scrap:3,fuse:1},description:'El transmisor de la mesa del confesionario está averiado. Recupera cable, metal y un fusible; la reparación compartida reactiva los walkies.',reward:'Activa los walkies del equipo y una señal de radio audible.'},
@@ -71,7 +82,8 @@ export const GATHER_NODES=Object.freeze([
  {id:'airfield-fuse-case',fixed:true,renewable:true,zone:'pista-aerodromo',x:.70,y:.76,name:'Fusibles del aeródromo',loot:{fuse:2}},
  {id:'mine-filter-carbon',fixed:true,renewable:true,zone:'cueva-galeria',x:.62,y:.755,name:'Carbón para el filtro',loot:{charcoal:3}},
  {id:'kitchen-compost-scraps',fixed:true,renewable:true,zone:'cocina',x:.30,y:.75,name:'Montón de restos para abonar',loot:{'spoiled-food':4}},
- {id:'forest-berry-seeds',fixed:true,renewable:true,zone:'acceso-bosque',x:.48,y:.695,name:'Semillas de fresas del matorral',loot:{'seed-berries':2}}
+ {id:'forest-berry-seeds',fixed:true,renewable:true,zone:'acceso-bosque',x:.48,y:.695,name:'Semillas de fresas del matorral',loot:{'seed-berries':2}},
+ ...SHELTERS.map(s=>({id:'seed-shelf-'+s.id,fixed:true,renewable:true,zone:s.rooms.huerto,x:.24,y:.807,container:true,name:'Semillero del invernadero',loot:{'seed-potato':2,'seed-tomato':2,'seed-herbs':2,'seed-carrot':2,'seed-wheat':2}}))
 ]);
 export const EVENT_TYPES=Object.freeze([
  {id:'blackout',name:'Apagón en el campamento',image:'power-failure',icon:'lightning',minutes:10,zones:['base','refugio-1','refugio-2','dormitorio-2','cocina','comunicaciones'],brief:'El generador se ha detenido. Las lámparas y la refrigeración están sin energía.',consequence:'La comida que llevas en interiores pierde frescura y las zonas quedan menos iluminadas. Una linterna con batería ayuda.',objective:'Lleva fusibles, cable, metal y combustible al generador del Refugio 2.',project:'generator'},
@@ -83,13 +95,20 @@ export const EVENT_TYPES=Object.freeze([
 ]);
 export const EVENT_BY_ID=Object.freeze(Object.fromEntries(EVENT_TYPES.map(e=>[e.id,e])));
 export const eventImage=e=>e.image.startsWith('/')?e.image:'/juegos/survival/'+e.image+'.webp';
-export const SURVIVAL_STATIONS=Object.freeze([{id:'bench-base',kind:'bench',zone:'refugio-1',x:.82,y:.79},{id:'bench-east',kind:'bench',zone:'dormitorio-2',x:.82,y:.79},{id:'garden-left',kind:'garden',team:'left',zone:'base',x:.36,y:.84},{id:'garden-right',kind:'garden',team:'right',zone:'refugio-2',x:.69,y:.84},{id:'chest-left',kind:'chest',team:'left',zone:'refugio-1',x:.91,y:.901,width:230},{id:'chest-right',kind:'chest',team:'right',zone:'dormitorio-2',x:.91,y:.901,width:230}]);
+export const SURVIVAL_STATIONS=Object.freeze(SHELTERS.flatMap(({id:team,rooms})=>[
+ {id:team==='left'?'bench-base':'bench-east',kind:'bench',team,zone:rooms.taller,x:.62,y:.79,painted:true},
+ {id:'chest-'+team,kind:'chest',team,zone:rooms.taller,x:.31,y:.9,width:235},
+ {id:'garden-'+team,kind:'garden',team,zone:rooms.huerto,x:.59,y:.887,width:990},
+ {id:'coop-'+team,kind:'coop',team,zone:rooms.corral,x:.71,y:.765,painted:true},
+ {id:'stove-'+team,kind:'fire',team,zone:rooms.cocina,x:.433,y:.771,painted:true,fixed:true,name:'Fogón de la cocina'},
+ {id:'patio-fire-'+team,kind:'fire',team,zone:rooms.patio,x:.51,y:.922,fixed:true,name:'Fogata del patio'}
+]));
 export function buildSurvivalProps(maps,shared={}){
  for(const map of Object.values(maps)){map.props=map.props.filter(p=>!p.survival);map.interactionRevision=(map.interactionRevision||0)+1;}
  const add=(zone,id,kind,x,extra={})=>{const map=maps[zone];if(!map)return;const y=(map.walkBand[0]+.035)*map.height,point={x:x*map.width,y:Math.min(map.walkBand[1]-.025,map.walkBand[0]+.09)*map.height};map.props.push({id:'survival-'+id,type:'survival',survival:{id,kind,...extra},x:x*map.width,y,w:kind==='bench'?300:kind==='chest'?260:kind==='garden'?440:145,h:0,solid:false,approach:point,...(kind==='chest'?{imageUrl:'/juegos/survival/team-chest.png'}:kind==='bench'?{imageUrl:'/juegos/survival/workbench.png'}:{})});};
  const placeStation=p=>{
   const map=maps[p.zone];if(!map)return;
-  add(p.zone,p.id,p.kind,p.x,{team:p.team});
+  add(p.zone,p.id,p.kind,p.x,{team:p.team,name:p.name,painted:p.painted,fixed:p.fixed});
   const placed=map.props.at(-1);
   if(p.width)placed.w=p.width;
   placed.y=p.y*map.height;
@@ -106,7 +125,7 @@ export function buildSurvivalProps(maps,shared={}){
  for(const station of SURVIVAL_STATIONS){
   placeStation(station);
   if(station.kind==='chest'&&shared.upgrades?.[station.team]){
-   placeStation({...station,id:station.id+'-extra',x:.82,width:200});
+   placeStation({...station,id:station.id+'-extra',x:.44,width:200});
   }
  }
  for(const original of GATHER_NODES){const n=resolveGatherNode(original,shared);if(shared.nodes?.[n.id]?.remaining===0)continue;add(n.zone,n.id,'gather',n.x,{resource:Object.keys(n.loot)[0],name:shared.nodes?.[n.id]?.placement?RESOURCE_BY_ID[Object.keys(n.loot)[0]].name:n.name,container:!!n.container,loot:n.loot});const map=maps[n.zone],prop=map?.props.at(-1);if(prop?.survival?.id===n.id){prop.y=(n.y??map.walkBand[0])*map.height;prop.approach.y=(n.fixed?Math.min(map.walkBand[1]-.018,Math.max(map.walkBand[0]+.025,n.y+.042)):map.walkBand[0]+.025)*map.height;prop.w=n.container?110:58;prop.contextAnchor={x:prop.x,y:prop.y};}}

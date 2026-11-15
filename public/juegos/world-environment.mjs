@@ -1,6 +1,8 @@
+import {SHELTERS} from './world-shelter-layout.mjs';
 export const WEATHER=Object.freeze({clear:{name:'Calor',icon:'sun'},rain:{name:'Lluvia',icon:'rain'},snow:{name:'Nieve',icon:'snow'},storm:{name:'Tormenta',icon:'storm'}});
 const indoors=new Set(['refugio-1','dormitorio-2','cocina','confesionario','hospital-interior','comisaria-interior','gasolinera-interior','avion-interior','caseta-montana','tren-pasajeros','tren-salon','tren-cabina','tren-equipaje','cueva-galeria','cueva-profunda','tunel']);
-export function outdoorExposure(zone){return indoors.has(zone)?0:['iglesia-interior','cementerio-interior'].includes(zone)?.3:zone==='comida'?.45:1;}
+for(const {rooms} of SHELTERS)for(const [kind,id]of Object.entries(rooms))if(kind!=='patio'&&kind!=='corral')indoors.add(id);
+export function outdoorExposure(zone){return indoors.has(zone)?0:['iglesia-interior','cementerio-interior'].includes(zone)?.3:zone==='comida'||zone.startsWith('corral-refugio-')?.45:1;}
 export function createEnvironment(value={},now=Date.now()){return {anchorMinutes:Number.isFinite(value.anchorMinutes)?Math.max(0,value.anchorMinutes):930,anchorAt:Number.isFinite(value.anchorAt)?value.anchorAt:now,...(Number.isSafeInteger(value.dayOffset)?{dayOffset:value.dayOffset}:{}),rate:[12,24,48].includes(value.rate)?value.rate:24,weather:['auto',...Object.keys(WEATHER)].includes(value.weather)?value.weather:'auto'};}
 export function environmentSnapshot(value,now=Date.now()){
  const state=createEnvironment(value,now),total=state.anchorMinutes+Math.max(0,now-state.anchorAt)/60000*state.rate,minute=((total%1440)+1440)%1440,hour=Math.floor(minute/60),phase=hour>=6&&hour<13?'day':hour>=13&&hour<20?'afternoon':'night',phaseName={day:'Día',afternoon:'Tarde',night:'Noche'}[phase],block=Math.floor(total/360),sequence=['clear','rain','clear','snow','clear','storm','clear','clear'],weather=state.weather==='auto'?sequence[block%sequence.length]:state.weather;

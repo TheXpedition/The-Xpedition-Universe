@@ -2,6 +2,7 @@ import {buildMemorialProps} from './world-memorials.mjs';
 import {MAIN_WALK_ROUTE,PRODUCTION_WALK_ROUTE} from './world-route-layout.mjs';
 import {APOCALYPSE_ASSETS as assets} from './apocalypse-assets.mjs';
 import {createFrontScene,frontPoint} from './front-world.mjs';
+import {SHELTERS,SHELTER_ROOMS} from './world-shelter-layout.mjs';
 const definitions=[
  ['montana-ladera','montana-ladera','Montaña · pie del sendero','El puente de patrulla llega al pie de la montaña. Una caseta conserva pocas provisiones. Sigue al este para ascender.'],
  ['montana-escalinata','montana-escalinata','Montaña · escalinata','El sendero sube por las lazadas de roca. Oeste: caseta. Este: cresta.'],
@@ -57,6 +58,21 @@ export const canonicalZone=id=>LEGACY_ZONES[id]||id;
 export function buildApocalypseMaps(){
  const walkBands={'caseta-montana':[.875,.945],comunicaciones:[.78,.948],'acceso-bosque':[.665,.805],'carretera-patrulla':[.706,.805],'ruta-refugio-oriental':[.735,.825],'cascada-ribera':[.718,.785],'poza-cascada':[.815,.935]};
  const maps=Object.fromEntries(definitions.filter(([,asset])=>assets[asset]).map(([id,asset,name,description])=>{const walk=walkBands[id]||[.747,.948];return [id,createFrontScene({id,asset:assets[asset],name,description,artScale:id==='comunicaciones'?1.8:1.5,walk,spawn:[.28,(walk[0]+walk[1])/2],private:id==='confesionario'})];}));
+ for(const shelter of SHELTERS){
+  for(const room of SHELTER_ROOMS){
+   const id=shelter.rooms[room.kind];
+   if(room.kind!=='dormitorio'){
+    const asset={id:'refugio-'+room.kind,url:'/assets/maps/apocalypse/refugios/'+room.kind+'.webp',width:1600,height:800,revision:1};
+    maps[id]=createFrontScene({id,asset,name:shelter.name+' · '+room.name,description:room.description,walk:[.765,.955],spawn:[.15,.86]});
+    maps[id].avatarHeight=240;
+   }else{
+    maps[id].name=shelter.name+' · '+room.name;
+    maps[id].short=maps[id].name.toUpperCase();
+    maps[id].description=room.description;
+   }
+   maps[id].shelterRoom=room.kind;
+  }
+ }
  const coord=(id,x,y)=>frontPoint(maps[id],x,y);
  const groundY=id=>(maps[id].walkBand[0]+maps[id].walkBand[1])/2;
  // Interior paintings use a closer shot: match the adults to their doors and furniture.
@@ -112,8 +128,24 @@ export function buildApocalypseMaps(){
  interior('gasolinera','gasolinera-interior',.775,[.74,.47,.82,.70]);
  maps['gasolinera-interior'].spawns.entrance=coord('gasolinera-interior',.11,.81);
  maps['gasolinera-interior'].props.find(p=>p.id==='exit').hitRect=[.065*maps['gasolinera-interior'].width,.29*maps['gasolinera-interior'].height,.175*maps['gasolinera-interior'].width,.745*maps['gasolinera-interior'].height];
- interior('base','refugio-1',.48,[.41,.43,.54,.704]);interior('refugio-2','dormitorio-2',.52,[.4,.48,.61,.707]);interior('comida','cocina',.72,[.59,.47,.83,.71]);interior('hospital','hospital-interior',.62,[.55,.42,.69,.72]);interior('iglesia','iglesia-interior',.6,[.55,.49,.66,.73]);interior('comunicaciones','confesionario',.55,[.50,.58,.60,.78]);
- maps.base.props.find(p=>p.id==='enter-refugio-1').shelterBadgeAnchor=coord('base',.515,.42);
+ for(const shelter of SHELTERS){
+  const {outside,entry,rooms}=shelter,left=shelter.id==='left';
+  interior(outside,entry,left?.48:.52,left?[.41,.43,.54,.704]:[.4,.48,.61,.707]);
+  maps[entry].spawns.entrance=coord(entry,.12,.86);
+  const exit=maps[entry].props.find(p=>p.portal?.zone===outside).portal;
+  exit.trigger=[.045*maps[entry].width,.772*maps[entry].height,.14*maps[entry].width,.821*maps[entry].height];
+  if(left)maps[outside].props.find(p=>p.portal?.zone===entry).shelterBadgeAnchor=coord(outside,.515,.42);
+  maps[entry].wayfinding=SHELTER_ROOMS.filter(room=>room.doorX).map(room=>({x:room.doorX,y:.56,label:room.name.toUpperCase()}));
+  for(const {kind,name,doorX} of SHELTER_ROOMS){
+   if(!doorX)continue;
+   const destination=rooms[kind],returnSpawn='from-'+kind;
+   maps[entry].spawns[returnSpawn]=coord(entry,doorX,.853);
+   maps[destination].spawns.patio=coord(destination,.15,.86);
+   access(entry,destination,'room-'+kind,doorX,.804,{spawn:'patio',hit:[doorX-.045,.56,doorX+.045,.78],trigger:[doorX-.032,.77,doorX+.032,.821],contextAnchor:coord(entry,doorX,.72),label:name});
+   access(destination,entry,'return-patio',.08,.81,{spawn:returnSpawn,hit:[.025,.50,.14,.78],contextAnchor:coord(destination,.08,.70),label:'Volver al patio'});
+  }
+ }
+ interior('comida','cocina',.72,[.59,.47,.83,.71]);interior('hospital','hospital-interior',.62,[.55,.42,.69,.72]);interior('iglesia','iglesia-interior',.6,[.55,.49,.66,.73]);interior('comunicaciones','confesionario',.55,[.50,.58,.60,.78]);
  // The interaction label belongs inside the visible entrance; approach and
  // collision coordinates remain on the pavement in front of the hospital.
  maps.hospital.props.find(p=>p.portal?.zone==='hospital-interior').contextAnchor=coord('hospital',.62,.57);
@@ -165,6 +197,17 @@ export function buildApocalypseMaps(){
  // Seats are anchored to the furniture already painted in each background.
  function seating(zone,id,type,points){return obj(zone,id,type,points[0][0],points[0][1],{seatContact:true,seatHeight:maps[zone].avatarHeight*1.35,seats:points.map(([x,y,facing=1])=>({...coord(zone,x,y),facing})),approaches:points.map(([x])=>coord(zone,x,.815)),description:'Puedes elegir un espacio libre y levantarte con el botón de acción.'});}
  seating('refugio-1','refuge-bench','bench',[[.245,.635,1],[.282,.635,1]]);
+ for(const {rooms} of SHELTERS){
+  for(const [name,x] of [['left',.23],['right',.78]]){
+   const table=seating(rooms.patio,'patio-table-'+name,'bench',[[x-.034,.898,1],[x+.034,.898,-1]]);
+   Object.assign(table,coord(rooms.patio,x,.929),{painted:false,shelterFurniture:true,artWidth:340,w:340,imageUrl:'/assets/maps/apocalypse/refugios/mesa.webp'});
+   table.approaches=table.seats.map(seat=>({x:seat.x,y:maps[rooms.patio].height*.939}));
+  }
+  seating(rooms.cocina,'refuge-table','bench',Array.from({length:9},(_,i)=>[.57+i*.048,.715,1]));
+  obj(rooms.cocina,'kitchen-fridge','fridge',.235,.767,{approach:coord(rooms.cocina,.235,.823),contextAnchor:coord(rooms.cocina,.235,.65)});
+  const lockerX=rooms.dormitorio==='refugio-1'?.90:.865;
+  obj(rooms.dormitorio,'refuge-lockers','locker',lockerX,.748,{personalLocker:true,approach:coord(rooms.dormitorio,lockerX,.803),contextAnchor:coord(rooms.dormitorio,lockerX,.64),description:'Aquí se guardan los efectos personales del dormitorio.'});
+ }
  seating('confesionario','confessional-chair','chair',[[.515,.565,1]]);
  seating('comida','canteen-bench','bench',[[.175,.722,1],[.237,.722,1],[.306,.722,1]]);
  for(const [id,x,y,facing]of [['left',.105,.59,1],['middle',.46,.60,1],['right',.96,.59,-1]]){const bed=seating('hospital-interior','hospital-bed-'+id,'bench',[[x,y,facing]]);bed.medicalBed=true;bed.restWidth=maps['hospital-interior'].width*.12;if(id==='right')bed.restX=maps['hospital-interior'].width*.947;bed.restBottom=bed.y*.62+12;bed.description='Descansar en la camilla recupera salud y ayuda al tratamiento.';}
