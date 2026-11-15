@@ -2,6 +2,7 @@ import {LUGGAGE,luggageStock} from './world-luggage.mjs';
 import {resolveGatherNode} from './world-gather-layout.mjs';
 import {itemAtlasArt} from './world-item-art.mjs';
 import {SHELTERS} from './world-shelter-layout.mjs';
+import {gardenTitleOffset} from './world-garden-art.mjs';
 export const RESOURCE_CAPACITY=40,CHEST_CAPACITY=160;
 const entries=[
  ['cigarette','Cigarrillos',0,'Cada unidad es un cigarrillo. La caja compartida contiene 10; retiras una cantidad concreta. Fumar alivia temporalmente el estrés, pero la exposición acumulada afecta la salud respiratoria.'],
@@ -100,7 +101,7 @@ export const eventImage=e=>e.image.startsWith('/')?e.image:'/juegos/survival/'+e
 export const SURVIVAL_STATIONS=Object.freeze(SHELTERS.flatMap(({id:team,rooms})=>[
  {id:team==='left'?'bench-base':'bench-east',kind:'bench',team,zone:rooms.taller,x:.62,y:.79,painted:true},
  {id:'chest-'+team,kind:'chest',team,zone:rooms.taller,x:.365,y:.747,anchorY:.69,approachY:.823,width:345},
- {id:'garden-'+team,kind:'garden',team,zone:rooms.huerto,x:.59,y:.794,anchorY:.92,width:1240},
+ {id:'garden-'+team,kind:'garden',team,zone:rooms.huerto,x:.59,y:.794,width:1240},
  {id:'coop-'+team,kind:'coop',team,zone:rooms.corral,x:.71,y:.765,painted:true},
  {id:'coop-water-'+team,kind:'coop-water',team,zone:rooms.corral,x:.247,y:.747,anchorY:.606,painted:true,width:410,name:'Depósito del corral'},
  {id:'stove-'+team,kind:'fire',team,zone:rooms.cocina,x:.433,y:.771,painted:true,fixed:true,name:'Fogón de la cocina'},
@@ -117,6 +118,10 @@ export function buildSurvivalProps(maps,shared={}){
   placed.y=p.y*map.height;
   placed.approach.y=Math.min(map.walkBand[1]-.025,p.approachY??p.y+.045)*map.height;
   placed.contextAnchor={x:placed.x,y:(p.anchorY??p.y)*map.height};
+  if(p.kind==='garden'){
+   placed.contextAnchor.z=gardenTitleOffset(placed.w,shared.gardens?.[p.team])-8;
+   placed.contextAbove=true;
+  }
   if(p.kind==='bench'){
    placed.survival.painted=true;
    placed.painted=true;

@@ -1,6 +1,8 @@
 import {CROPS,GARDEN_PHASES,gardenPhase,gardenTimeLabel} from './world-shelter-care.mjs';
 
 const PLAN_WIDTH=360,PLAN_HEIGHT=146;
+const plotScale=width=>width/3/(PLAN_WIDTH+16);
+export const gardenTitleOffset=(width,crops=[]) => (crops.some(Boolean)?260:185)*plotScale(width);
 const plantLayers=new Map();
 const stemColors={tomato:'#658b38',carrot:'#87a043',potato:'#698e48',herbs:'#629271',wheat:'#a5a254',berries:'#829842'};
 const ready=im=>im?.complete&&im.naturalWidth>0;
@@ -93,7 +95,7 @@ function plotCard(c,seed,{stage,progress,minutes}){
 }
 
 export function drawShelterGarden(c,b,crops=[],now,{labels,image}){
- const slotWidth=b.w/3,scale=slotWidth/(PLAN_WIDTH+16),wood=image('garden-planter-v1.webp');
+ const slotWidth=b.w/3,scale=plotScale(b.w),wood=image('garden-planter-v1.webp');
  for(let i=0;i<3;i++){
   const crop=crops[i],phase=gardenPhase(crop,now),seed=phase.stage==='empty'?null:crop.seed;
   c.save();c.translate(b.x-b.w/2+i*slotWidth+8*scale,b.y);c.scale(scale,scale);
@@ -107,7 +109,7 @@ export function drawShelterGarden(c,b,crops=[],now,{labels,image}){
   c.restore();
  }
  if(!labels)return;
- const titleHeight=39,top=b.y-((crops.some(crop=>crop)?260:185)*scale);
+ const titleHeight=39,top=b.y-gardenTitleOffset(b.w,crops);
  c.fillStyle='#56341f';c.strokeStyle='#b17b47';c.lineWidth=3;c.beginPath();c.roundRect(b.x-124,top,248,titleHeight,12);c.fill();c.stroke();
  c.fillStyle='#ffe1a8';c.font='700 25px "World Condensed",sans-serif';c.textAlign='center';c.fillText('HUERTA DEL REFUGIO',b.x,top+28,224);
 }
