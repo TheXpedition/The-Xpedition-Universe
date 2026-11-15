@@ -1440,6 +1440,11 @@
               "id": "estrategia-5",
               "name": "Mejor Superviviente",
               "nominees": []
+            },
+            {
+              "id": "estrategia-6",
+              "name": "Mejor Duelo",
+              "nominees": []
             }
           ]
         },
@@ -1470,6 +1475,11 @@
             {
               "id": "personalidad-5",
               "name": "Rivalidad de la Temporada",
+              "nominees": []
+            },
+            {
+              "id": "personalidad-6",
+              "name": "Mejor Momento",
               "nominees": []
             }
           ]
