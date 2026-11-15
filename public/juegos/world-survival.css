@@ -27,3 +27,11 @@ dialog.survival-dialog:has(.luggage-panel){width:min(830px,calc(100vw - 30px));p
 .coop-bubble-meter progress{height:7px;width:58px;accent-color:#d99757}
 .coop-back-label{margin-left:4px}
 .survival-coop-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.world-scene-context .coop-bubble-actions{max-width:min(510px,calc(100vw - 18px))}
+.world-scene-context .coop-bubble-card{min-width:105px}
+.world-scene-context .coop-bubble-card::after{left:clamp(8px,calc(var(--bubble-tip-x,50%) - 4px),calc(100% - 8px))}
+.world-scene-context .bubble-result{max-width:min(260px,calc(100vw - 35px));margin:4px 0 0;color:#f0c995;font-size:11px}
+@media(max-height:480px){
+ .world-scene-context .coop-bubble-actions{max-width:min(435px,calc(100vw - 20px));gap:4px}
+ .world-scene-context .coop-bubble-actions button{padding-inline:9px;font-size:11px}
+}

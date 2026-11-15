@@ -1,3 +1,4 @@
+import {placeSceneBubbles} from './world-scene-bubbles.mjs';
 import {birdPoint,sceneFlock} from './world-shelter-flock-art.mjs';
 import {COOP_FEED,COOP_TOOLS,COOP_WATER_PER_BOTTLE} from './world-shelter-care.mjs';
 
@@ -58,12 +59,7 @@ export function createCoopBubbles({canvas,scene,state,clock,act,toast}){
   if(minute!==lastMinute||lastData!==state.survival){lastMinute=minute;lastData=state.survival;refresh();}
   if(!target)return;
   const anchor=target.bird?birdPoint(target.map,target.bird.id,time):target.anchor;
-  const point=scene.camera.project(anchor.x,anchor.y,target.bird?target.bird.size*.88:0,scene.width,scene.height);
-  const rect=canvas.getBoundingClientRect();
-  const x=rect.left+point.x/scene.width*rect.width,y=rect.top+point.y/scene.height*rect.height;
-  const left=Math.max(8,Math.min(innerWidth-width-8,x-width/2));
-  const top=Math.max(8,Math.min(innerHeight-height-8,y-height-7));
-  root.style.transform='translate3d('+Math.round(left)+'px,'+Math.round(top)+'px,0)';
+  if(!placeSceneBubbles(root,{canvas,scene,anchor:{...anchor,z:target.bird?target.bird.size*.88:0}},{width,height}))close();
  }
  async function click(event){
   const key=event.target.closest('[data-coop]')?.dataset.coop;
