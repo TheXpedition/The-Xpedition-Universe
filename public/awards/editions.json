@@ -1506,7 +1506,36 @@
             {
               "id": "estrategia-4",
               "name": "Mayor Amenaza",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Renata",
+                  "people": [
+                    "Renata"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Bruno Macri",
+                  "people": [
+                    "Bruno Macri"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "Showdown II"
+                },
+                {
+                  "title": "Eduard",
+                  "people": [
+                    "Eduard"
+                  ],
+                  "description": "Showdown II"
+                }
+              ]
             },
             {
               "id": "estrategia-5",
@@ -1568,7 +1597,36 @@
             {
               "id": "personalidad-2",
               "name": "Mejor Evolución",
-              "nominees": []
+              "nominees": [
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "The Traitor 2"
+                },
+                {
+                  "title": "Ivy",
+                  "people": [
+                    "Ivy"
+                  ],
+                  "description": "Showdown II"
+                },
+                {
+                  "title": "Marianito",
+                  "people": [
+                    "Marianito"
+                  ],
+                  "description": "Showdown II"
+                },
+                {
+                  "title": "Bodega Bodeguita",
+                  "people": [
+                    "Bodega Bodeguita"
+                  ],
+                  "description": "Showdown II"
+                }
+              ]
             },
             {
               "id": "personalidad-3",
