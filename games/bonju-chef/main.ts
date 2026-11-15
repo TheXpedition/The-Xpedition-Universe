@@ -12,7 +12,7 @@ import {renderUI,updateClock} from './ui-v3';
 import {RECIPES,INGREDIENTS} from '../../public/juegos/bonju-chef/data.mjs';
 let socket:WebSocket|null=null,reconnect:number,disposed=false,loaded=false,lastPing=0,lastMove=0,lastUI=0,pendingCancel=false,noticeTimer:number;
 mountWorldIcons();
-const keys=new Set<string>();let blendHeld=false,blendAudio:any=null;let touch={x:0,y:0},lastMoveWire='',lastSound='',context:AudioContext|null=null;
+const keys=new Set<string>();let blendHeld=false,blendAudio:any=null;const heldPointers=new Map<number,HTMLElement>();let lastMoveWire='',lastHeat=0,lastSound='',context:AudioContext|null=null;
 const sourceURL='/juegos/world-announcement-player.mjs';const {AnnouncementPlayer}=await import(/* @vite-ignore */ sourceURL);
 const announcer=new AnnouncementPlayer({onError:(m:string)=>notify(m)});
 function wire(packet:any){return deliverPacket(packet,{review:document.body.dataset.review==='true',emit:(name:string,value:any)=>events.emit(name,value),socket});}
@@ -20,7 +20,7 @@ events.on('spotlight',()=>sfx('spotlight'));
 events.on('notice',(text:string)=>{$('#notice').textContent=text;$('#notice').hidden=false;clearTimeout(noticeTimer);noticeTimer=window.setTimeout(()=>$('#notice').hidden=true,6000);});
 events.on('send',(action:any)=>{if(!model.connected||action.type==='cut'&&!clock.fresh())return notify('Reconectando: espera un instante antes de actuar.');if(action.type==='cut')action.clock=clock.read();wire({type:'chef-action',action});});
 const readyFonts=Promise.all([document.fonts.load('16px Chef'),document.fonts.ready]).catch(()=>{});
-function receive(s:any){const before=model.episode;model.episode=s;clock.sync(s);if(!before)events.emit('state-ready');if(s.phase!=='fridge'||s.station?.ready){model.basket=false;}if(before?.phase!==s.phase||before?.station?.stage!==s.station?.stage){keys.clear();touch={x:0,y:0};lastMoveWire='';model.selected=null;model.overview=false;}
+function receive(s:any){const before=model.episode;model.episode=s;clock.sync(s);if(!before)events.emit('state-ready');if(s.phase!=='fridge'||s.station?.ready){model.basket=false;}if(before?.phase!==s.phase||before?.station?.stage!==s.station?.stage){stopInput(false);lastMoveWire='';model.selected=null;model.overview=false;}
  if(s.announcement&&(!chefLobby(s)||s.phase==='lobby')&&s.announcement.id!==lastSound){announcer.preview(s.announcement);lastSound=s.announcement.id;}
  if(before?.station?.lastResult?.at!==s.station?.lastResult?.at&&s.station?.lastResult)sfx(s.station.lastResult.type);
  if(loaded)renderUI();else{const inLobby=['closed','lobby','finished','cancelled'].includes(s.phase);$('#loader').hidden=inLobby;if(inLobby)renderUI(true);}
@@ -55,27 +55,80 @@ document.addEventListener('click',e=>{const b=(e.target as Element).closest<HTML
  if(b.dataset.plateId){model.selected=b.dataset.plateId;document.querySelectorAll('[data-plate-id]').forEach(el=>el.classList.toggle('chosen',(el as HTMLElement).dataset.plateId===model.selected));}
  if(b.dataset.cancel){pendingCancel=true;const dialog=document.createElement('dialog');dialog.className='chef-confirm';dialog.innerHTML='<h2>Cancelar Bonju Chef</h2><p>La competencia terminará sin borrar los resultados de otros episodios.</p><div><button data-no>Volver</button><button data-yes>Cancelar competencia</button></div>';document.body.append(dialog);dialog.querySelector('[data-no]')!.addEventListener('click',()=>{pendingCancel=false;dialog.close();dialog.remove();});dialog.querySelector('[data-yes]')!.addEventListener('click',()=>{pendingCancel=false;send({type:'cancel'});dialog.close();dialog.remove();});dialog.addEventListener('cancel',()=>{pendingCancel=false;dialog.remove();});dialog.showModal();}
 });
-function stopInput(){blendHeld=false;stopBlendSound();wire({type:'chef-action',action:{type:'blend',active:false}});keys.clear();touch={x:0,y:0};wire({type:'chef-action',action:{type:'move',x:0,y:0}});wire({type:'chef-action',action:{type:'heat',direction:0}});}
+const directions:Record<string,{x:number,y:number}>={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};
+function moveInput(){
+ const dx=Number(keys.has('KeyD')||keys.has('ArrowRight'))-Number(keys.has('KeyA')||keys.has('ArrowLeft'));
+ const dy=Number(keys.has('KeyS')||keys.has('ArrowDown'))-Number(keys.has('KeyW')||keys.has('ArrowUp'));
+ const taps=[...heldPointers.values()].map(button=>directions[button.dataset.dir||'']).filter(Boolean);
+ const x=Math.sign(dx+taps.reduce((sum,dir)=>sum+dir.x,0)),y=Math.sign(dy+taps.reduce((sum,dir)=>sum+dir.y,0));
+ const value=x+':'+y;
+ if(value!==lastMoveWire||x||y){lastMoveWire=value;wire({type:'chef-action',action:{type:'move',x,y}});}
+}
+function syncHeldControls(){
+ const s=model.episode,st=s?.station;
+ if(s?.paused||s?.spectating||!own()?.active)return;
+ if(s.phase==='fridge'&&!model.basket&&!model.help&&!st?.ready)moveInput();
+ if(s.phase!=='kitchen')return;
+ const buttons=[...heldPointers.values()];
+ if(st?.stage==='blend'){
+  const active=keys.has('Space')||buttons.some(button=>button.hasAttribute('data-blend'));
+  if(active||blendHeld)wire({type:'chef-action',action:{type:'blend',active}});
+  blendHeld=active;
+  if(blendHeld)blendSound();else stopBlendSound();
+ }
+ if(st?.stage==='cook'){
+  const direction=keys.has('KeyA')?-1:keys.has('KeyD')?1:Number(buttons.find(button=>button.hasAttribute('data-heat'))?.dataset.heat||0);
+  if(direction||lastHeat)wire({type:'chef-action',action:{type:'heat',direction}});
+  lastHeat=direction;
+ }
+}
+function stopInput(sendRelease=true){
+ if(sendRelease===true&&own()?.active&&!model.episode?.spectating){
+  if(blendHeld)wire({type:'chef-action',action:{type:'blend',active:false}});
+  if(lastHeat)wire({type:'chef-action',action:{type:'heat',direction:0}});
+  if(lastMoveWire&&lastMoveWire!=='0:0')wire({type:'chef-action',action:{type:'move',x:0,y:0}});
+ }
+ keys.clear();heldPointers.clear();blendHeld=false;lastHeat=0;lastMoveWire='0:0';stopBlendSound();
+}
 function editing(e:KeyboardEvent){return (e.target as HTMLElement).matches('input,textarea,select,[contenteditable="true"]')||pendingCancel;}
 document.addEventListener('keydown',e=>{if(editing(e))return;if(sceneKey()==='FarewellScene'){if(e.code==='Enter')send({type:'returnHome'});return;}if(e.code==='KeyT'&&!e.repeat){e.preventDefault();toggleChat();return;}if(e.code==='Escape'){model.help=false;model.basket=false;$('#chat').hidden=true;$('#comm').hidden=true;$('#staff').hidden=true;renderUI(true);return;}if(model.help||model.episode?.spectating)return;
  const s=model.episode;if(!s||s.paused||!own()?.active)return;if(['Space','Enter','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();keys.add(e.code);if(e.repeat)return;
  if(s.phase==='tutorial'&&e.code==='Enter')send({type:'ready'});
- if(s.phase==='fridge'){if(e.code==='KeyE')basket();if(model.basket){const buttons=[...document.querySelectorAll<HTMLButtonElement>('[data-pick]')];let index=buttons.findIndex(b=>b===document.activeElement);if(e.code.startsWith('Arrow')){const available=buttons.filter(b=>!b.disabled&&!b.classList.contains('filtered'));const current=available.includes(document.activeElement as HTMLButtonElement)?document.activeElement as HTMLButtonElement:available[0];if(current){const a=current.getBoundingClientRect(),cx=a.left+a.width/2,cy=a.top+a.height/2,dx=e.code==='ArrowLeft'?-1:e.code==='ArrowRight'?1:0,dy=e.code==='ArrowUp'?-1:e.code==='ArrowDown'?1:0;const next=available.filter(b=>b!==current).map(b=>{const r=b.getBoundingClientRect(),x=r.left+r.width/2-cx,y=r.top+r.height/2-cy;return {b,along:x*dx+y*dy,across:Math.abs(dx?y:x)};}).filter(a=>a.along>2).sort((a,b)=>(a.along+a.across*4)-(b.along+b.across*4))[0]?.b; (next||current).focus();}}if(e.code==='Space'&&index>=0)buttons[index]?.click();if(e.code==='KeyX'&&s.station.inventory.length)send({type:'drop',id:s.station.inventory.at(-1)});if(e.code==='Enter'){send({type:'confirm'});model.basket=false;renderUI(true);}}}
- if(s.phase==='kitchen'){if(s.station?.stage==='blend'&&e.code==='Space'){blendHeld=true;send({type:'blend',active:true});}if(s.station?.stage==='prep'&&e.code==='Space')send({type:'cut'});if(s.station?.stage==='cook'){if(e.code==='KeyS'||e.code==='KeyE')send({type:'stir'});if(e.code==='KeyA'||e.code==='KeyD')send({type:'heat',direction:e.code==='KeyA'?-1:1});}if(s.station?.stage==='plate'&&(e.code==='Enter'||e.code==='Space'))send({type:'serve'});}
+ if(s.phase==='fridge'){if(!model.basket&&!s.station?.ready)moveInput();if(e.code==='KeyE')basket();if(model.basket){const buttons=[...document.querySelectorAll<HTMLButtonElement>('[data-pick]')];let index=buttons.findIndex(b=>b===document.activeElement);if(e.code.startsWith('Arrow')){const available=buttons.filter(b=>!b.disabled&&!b.classList.contains('filtered'));const current=available.includes(document.activeElement as HTMLButtonElement)?document.activeElement as HTMLButtonElement:available[0];if(current){const a=current.getBoundingClientRect(),cx=a.left+a.width/2,cy=a.top+a.height/2,dx=e.code==='ArrowLeft'?-1:e.code==='ArrowRight'?1:0,dy=e.code==='ArrowUp'?-1:e.code==='ArrowDown'?1:0;const next=available.filter(b=>b!==current).map(b=>{const r=b.getBoundingClientRect(),x=r.left+r.width/2-cx,y=r.top+r.height/2-cy;return {b,along:x*dx+y*dy,across:Math.abs(dx?y:x)};}).filter(a=>a.along>2).sort((a,b)=>(a.along+a.across*4)-(b.along+b.across*4))[0]?.b; (next||current).focus();}}if(e.code==='Space'&&index>=0)buttons[index]?.click();if(e.code==='KeyX'&&s.station.inventory.length)send({type:'drop',id:s.station.inventory.at(-1)});if(e.code==='Enter'){send({type:'confirm'});model.basket=false;renderUI(true);}}}
+ if(s.phase==='kitchen'){if(s.station?.stage==='blend'&&e.code==='Space'){syncHeldControls();}if(s.station?.stage==='prep'&&e.code==='Space')send({type:'cut'});if(s.station?.stage==='cook'){if(e.code==='KeyS'||e.code==='KeyE')send({type:'stir'});if(e.code==='KeyA'||e.code==='KeyD')syncHeldControls();}if(s.station?.stage==='plate'&&(e.code==='Enter'||e.code==='Space'))send({type:'serve'});}
 });
-document.addEventListener('keyup',e=>{keys.delete(e.code);if(e.code==='Space'){blendHeld=false;stopBlendSound();wire({type:'chef-action',action:{type:'blend',active:false}});}if(e.code==='KeyA'||e.code==='KeyD')wire({type:'chef-action',action:{type:'heat',direction:keys.has('KeyA')?-1:keys.has('KeyD')?1:0}});});
-window.addEventListener('blur',stopInput);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopInput();});
-document.addEventListener('pointerdown',e=>{const b=(e.target as Element).closest<HTMLElement>('[data-dir],[data-heat],[data-blend]');if(!b||(b as HTMLButtonElement).disabled||model.episode?.spectating)return;b.setPointerCapture?.(e.pointerId);if(b.dataset.blend){blendHeld=true;send({type:'blend',active:true});}if(b.dataset.dir){touch=({up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}} as any)[b.dataset.dir];}if(b.dataset.heat)send({type:'heat',direction:Number(b.dataset.heat)});});
-document.addEventListener('pointerup',e=>{blendHeld=false;stopBlendSound();wire({type:'chef-action',action:{type:'blend',active:false}});touch={x:0,y:0};const b=(e.target as Element).closest<HTMLElement>('[data-heat]');if(b)wire({type:'chef-action',action:{type:'heat',direction:0}});const plate=(e.target as Element).closest<HTMLElement>('.plate-target');if(plate&&model.selected){const rect=plate.getBoundingClientRect();send({type:'place',id:model.selected,x:(e.clientX-rect.left)/rect.width,y:(e.clientY-rect.top)/rect.height});model.selected=null;}});
-document.addEventListener('pointercancel',stopInput);
+document.addEventListener('keyup',e=>{
+ if(keys.delete(e.code))syncHeldControls();
+});
+window.addEventListener('blur',()=>stopInput());
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopInput();});
+document.addEventListener('pointerdown',e=>{
+ const button=(e.target as Element).closest<HTMLButtonElement>('[data-dir],[data-heat],[data-blend]');
+ if(!button||button.disabled||model.episode?.spectating||model.episode?.paused)return;
+ button.setPointerCapture?.(e.pointerId);
+ heldPointers.set(e.pointerId,button);
+ syncHeldControls();
+});
+function releasePointer(e:PointerEvent){
+ if(heldPointers.delete(e.pointerId))syncHeldControls();
+}
+document.addEventListener('pointerup',e=>{
+ releasePointer(e);
+ const plate=(e.target as Element).closest<HTMLElement>('.plate-target');
+ if(plate&&model.selected){
+  const rect=plate.getBoundingClientRect();
+  send({type:'place',id:model.selected,x:(e.clientX-rect.left)/rect.width,y:(e.clientY-rect.top)/rect.height});
+  model.selected=null;
+ }
+});
+document.addEventListener('pointercancel',releasePointer);
+document.addEventListener('lostpointercapture',releasePointer);
 document.addEventListener('dragstart',(e:DragEvent)=>{const b=(e.target as Element).closest<HTMLElement>('[data-plate-id]');if(b){model.selected=b.dataset.plateId;e.dataTransfer?.setData('text/plain',model.selected);}});
 document.addEventListener('dragover',(e:DragEvent)=>{if((e.target as Element).closest('.plate-target'))e.preventDefault();});document.addEventListener('drop',(e:DragEvent)=>{const p=(e.target as Element).closest<HTMLElement>('.plate-target');if(p&&model.selected){e.preventDefault();const rect=p.getBoundingClientRect();send({type:'place',id:model.selected,x:(e.clientX-rect.left)/rect.width,y:(e.clientY-rect.top)/rect.height});model.selected=null;}});
 events.on('review-state',receive);
 events.on('loaded',()=>{loaded=true;renderUI(true);});
 await readyFonts;
 const game=new Phaser.Game({type:Phaser.AUTO,parent:'game',width:1920,height:1080,backgroundColor:'#25130d',transparent:false,antialias:true,roundPixels:false,render:{powerPreference:'default'},fps:{target:60,forceSetTimeOut:false,smoothStep:true},audio:{noAudio:true},input:{keyboard:false},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},scene:scenes});
-function frame(t:number){if(disposed)return;updateClock();if(loaded&&t-lastUI>100){lastUI=t;renderUI();}if(model.connected&&t-lastMove>100){lastMove=t;const s=model.episode;if(s?.phase==='kitchen'&&s.station?.stage==='blend'&&blendHeld&&!s.paused&&!s.spectating){wire({type:'chef-action',action:{type:'blend',active:true}});blendSound();}else stopBlendSound();if(s?.phase==='fridge'&&!model.basket&&!model.help&&own()?.active){const x=touch.x+(keys.has('KeyD')?1:0)-(keys.has('KeyA')?1:0),y=touch.y+(keys.has('KeyS')?1:0)-(keys.has('KeyW')?1:0),v=x+':'+y;if(v!==lastMoveWire||x||y){lastMoveWire=v;wire({type:'chef-action',action:{type:'move',x,y}});}}if(t-lastPing>3000){lastPing=t;wire({type:'chef-ping',sent:t});}}requestAnimationFrame(frame);}requestAnimationFrame(frame);
+function frame(t:number){if(disposed)return;updateClock();if(loaded&&t-lastUI>100){lastUI=t;renderUI();}if(model.connected&&t-lastMove>100){lastMove=t;syncHeldControls();if(t-lastPing>3000){lastPing=t;wire({type:'chef-ping',sent:t});}}requestAnimationFrame(frame);}requestAnimationFrame(frame);
 window.addEventListener('pagehide',()=>{disposed=true;clearTimeout(reconnect);stopInput();socket?.close();announcer.destroy();game.destroy(true);});
 if(document.body.dataset.review==='true'){await import('./review-v3');$('#connection').textContent='REVISIÓN LOCAL';}else await connect();
-
-document.addEventListener('pointercancel',()=>{blendHeld=false;stopBlendSound();wire({type:'chef-action',action:{type:'blend',active:false}});});

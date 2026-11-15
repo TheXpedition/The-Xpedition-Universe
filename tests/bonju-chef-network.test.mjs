@@ -1,5 +1,7 @@
+import {SHELTERS} from '../public/juegos/world-shelters.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';
 import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
+import {CONTESTANTS} from '../public/juegos/bonju-chef/data.mjs';
 import {createChef,chefAction} from '../public/juegos/bonju-chef/engine.mjs';
 
 test('a finished Chef episode can be reopened without returning lobby visitors or reusing its old roster',async()=>{
@@ -15,7 +17,7 @@ test('farewell returns both a real participant and staff to World with the same 
  const f=await liveFixture('chef-return',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:400,y:700},{id:'chef-return-human',character:'arisantana',zone:'base',x:500,y:700}],{setup:async db=>{await db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?','arisantana','chef-return-human');await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)','arisantana','chef-return-human',Date.now());await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','bonju-chef',JSON.stringify(saved),Date.now());}});
  try{const peers=[await f.connect(STAFF_ID),await f.connect('chef-return-human',{claim:false})],ids=[STAFF_ID,'chef-return-human'];
   const before=await Promise.all(ids.map(id=>f.call('/api/world/bootstrap',id)));
-  for(const [i,p]of peers.entries()){f.send(p,{type:'chef-subscribe'});await f.until(()=>p.messages.some(m=>m.type==='chef-state'));f.send(p,{type:'chef-action',action:{type:'returnHome'}});await f.until(()=>p.messages.some(m=>m.type==='chef-return'));const returned=p.messages.find(m=>m.type==='chef-return');assert.equal(returned.url,'/juegos/?view=play');const boot=await f.call('/api/world/bootstrap',ids[i]);assert.equal(boot.profile.lastZone,'base');assert.equal(boot.profile.characterId,before[i].profile.characterId);assert.deepEqual(boot.shop.inventory,before[i].shop.inventory);assert.deepEqual(boot.shop.wallet,before[i].shop.wallet);assert.equal(boot.body.life.status,'alive');const state=await f.call('/api/world/bonju-chef',ids[i]);assert.equal(state.episode.returned,true);assert.equal(state.episode.engaged,false);assert(!p.messages.some(m=>m.type==='error'));}
+  for(const [i,p]of peers.entries()){f.send(p,{type:'chef-subscribe'});await f.until(()=>p.messages.some(m=>m.type==='chef-state'));f.send(p,{type:'chef-action',action:{type:'returnHome'}});await f.until(()=>p.messages.some(m=>m.type==='chef-return'));const returned=p.messages.find(m=>m.type==='chef-return');assert.equal(returned.url,'/juegos/?view=play');const boot=await f.call('/api/world/bootstrap',ids[i]);const homes=before[i].shelters,shelter=SHELTERS.find(h=>h.id===homes.home),built=homes.shelters.find(h=>h.id===homes.home)?.built;assert.equal(boot.profile.lastZone,shelter?(built?shelter.inside:shelter.outside):SHELTERS[0].outside);assert.equal(boot.profile.characterId,before[i].profile.characterId);assert.deepEqual(boot.shop.inventory,before[i].shop.inventory);assert.deepEqual(boot.shop.wallet,before[i].shop.wallet);assert.equal(boot.body.life.status,'alive');const state=await f.call('/api/world/bonju-chef',ids[i]);assert.equal(state.episode.returned,true);assert.equal(state.episode.engaged,false);assert(!p.messages.some(m=>m.type==='error'));}
   assert.equal((await f.call('/api/world/bonju-chef',STAFF_ID)).episode.phase,'finished','the next lobby unlocks as soon as all viewers have returned');
  }finally{await f.close();}
 });
@@ -42,5 +44,42 @@ test('Bonju Chef enrolls real users, isolates kitchens, protects staff actions a
   for(const url of ['/juegos/bonju-chef/','/juegos/bonju-chef/client/app.js','/juegos/bonju-chef/client/style.css','/juegos/bonju-chef/art/stage-pantry-v3.webp','/juegos/bonju-chef/art/stage-jury-v3.webp','/juegos/bonju-chef/art/ingredients-v3.webp','/juegos/bonju-chef/art/plates-v3/sushi-excellent.webp','/juegos/bonju-chef/art/walk-v3/arisantana.webp','/juegos/bonju-chef/review.html']){const r=await fetch(f.base+url,{headers:{Cookie:'xp_world_session='+STAFF_ID}});assert.equal(r.status,200,url);if(/\.(js|css)$/.test(url))assert.match(r.headers.get('cache-control'),/no-cache/);await r.arrayBuffer();}
   const denied=await fetch(f.base+'/juegos/bonju-chef/review.html',{headers:{Cookie:'xp_world_session=chef-human'}});assert.equal(denied.status,403);
   act(staff,{type:'open'});await f.until(()=>latest()?.phase==='lobby');assert.equal(latest().roster.length,0);
+ }finally{await f.close();}
+});
+
+test('all eighteen connected participants control their own station and can plate and serve', {timeout:60000},async()=>{
+ const players=CONTESTANTS.slice(0,18).map(({id:character},i)=>({id:'real-chef-'+i,character,zone:'base',x:500+i*30,y:700}));
+ assert.equal(players.length,18);
+ const staff={id:STAFF_ID,character:'maria-villegas',zone:'base',x:400,y:700};
+ const saved=createChef({id:'chef-all-stations',now:Date.now()});
+ chefAction(saved,{type:'open'},{staff:true});
+ for(const p of players)chefAction(saved,{type:'join'},{actor:{id:p.id,name:p.id,characterId:p.character}});
+ chefAction(saved,{type:'start'},{staff:true});
+ saved.phase='kitchen';saved.phaseAt=saved.clock;
+ for(const st of Object.values(saved.stations))Object.assign(st,{inventory:['meat'],mixed:['meat'],stage:'plate'});
+ const f=await liveFixture('chef-all-stations',[staff,...players],{setup:async db=>{
+  for(const actor of [staff,...players]){
+   await db.run('UPDATE world_preferences SET character_id=? WHERE user_id=?',actor.character,actor.id);
+   await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',actor.character,actor.id,Date.now());
+  }
+  await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','bonju-chef',JSON.stringify(saved),Date.now());
+ }});
+ try{
+  const peers=await Promise.all([staff,...players].map(p=>f.connect(p.id,{claim:false})));
+  for(const peer of peers)f.send(peer,{type:'chef-subscribe'});
+  const latest=peer=>peer.messages.filter(m=>m.type==='chef-state').at(-1)?.episode;
+  await f.until(()=>peers.every(peer=>latest(peer)?.phase==='kitchen'));
+  assert.equal(latest(peers[0]).station,null);
+  for(const [i,peer]of peers.slice(1).entries()){
+   assert.equal(latest(peer).selfId,players[i].id);
+   assert.deepEqual(latest(peer).station.inventory,['meat']);
+  }
+  f.send(peers[0],{type:'chef-action',action:{type:'resume'}});
+  await f.until(()=>!latest(peers[0])?.paused);
+  for(const peer of peers.slice(1))f.send(peer,{type:'chef-action',action:{type:'place',id:'meat',x:.5,y:.5}});
+  await f.until(()=>peers.slice(1).every(peer=>latest(peer)?.station?.placed.length===1));
+  for(const peer of peers.slice(1))f.send(peer,{type:'chef-action',action:{type:'serve'}});
+  await f.until(()=>peers.slice(1).every(peer=>latest(peer)?.station?.served||latest(peer)?.phase==='judging'));
+  assert(peers.slice(1).every(peer=>!peer.messages.some(m=>m.type==='error')));
  }finally{await f.close();}
 });

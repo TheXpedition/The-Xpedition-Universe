@@ -15,7 +15,7 @@ const scoreStars=(n:number)=>`<span class="rating-stars" aria-label="${n} de die
 const keyHint=(key:string,label:string)=>model.coarse?label:`<kbd>${key}</kbd> ${label}`;
 
 function tutorial(s:any,p:any){const steps=[
- ['BUSCAR',`<img src="${ART}fridge-closed-v3.webp" alt="Nevera cerrada">`,`${model.coarse?'Usa las flechas y toca ABRIR':'Camina con WASD y pulsa E'} junto a la nevera. Elige hasta <b>${s.basketLimit||8} ingredientes</b>. Los demás compiten por las mismas unidades.`],
+ ['BUSCAR',`<img src="${ART}fridge-closed-v3.webp" alt="Nevera cerrada">`,`${model.coarse?'Usa las flechas y toca ABRIR':'Camina con WASD o las flechas y pulsa E'} junto a la nevera. Elige hasta <b>${s.basketLimit||8} ingredientes</b>. Los demás compiten por las mismas unidades.`],
  ['CORTAR',`<div class="cut-demo">${icon('carrot')}<i class="demo-knife"></i></div><div class="mini-timing"><i></i></div>`,`${model.coarse?'Toca CORTAR':'Pulsa ESPACIO'} cuando la línea cruce la zona verde. Completa <b>8 cortes de cada ingrediente que lo requiera</b>. Después licúa las mezclas que lo necesiten.`],
  ['COCINAR',`<img src="${ART}station-v2.webp" alt="Olla sobre la cocina">`,`${model.coarse?'Mantén − / + y toca REMOVER':'Mantén A / D y pulsa S para remover'}. Conserva el indicador en la zona verde. También hay recetas frías y de aliño.`],
  ['SERVIR',`<img src="${food('burger')}" alt="Plato terminado">`,`Integra los ingredientes y distribúyelos en el plato. ${model.coarse?'Toca SERVIR':'Pulsa ENTER o SERVIR'} antes del límite. El jurado valora <b>sabor, presentación y creatividad</b>.`]

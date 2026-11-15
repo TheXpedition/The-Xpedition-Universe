@@ -31,3 +31,12 @@ test('all contestants receive only their own simultaneous judging and cooking en
 test('sleep, hunger, energy, health and stress change the physical preparation difficulty within a small bounded range',()=>{
  const rested={vitals:{energy:100,sleep:100,hunger:100,health:100,stress:0}},s=setup(7);assert.equal(fatigueOf(rested),0);for(const vital of ['energy','sleep','hunger','health']){const tired={vitals:{...rested.vitals,[vital]:20}};assert(fatigueOf(tired)>0);assert(fatigueOf(tired)<=.24);assert(prepPeriod(s,tired)<prepPeriod(s,rested));}assert(fatigueOf({vitals:{stress:90}})>0);
 });
+
+test('a disconnected cook does not keep changing the heat after the last held input expires',()=>{
+ const s=setup(7),p=s.roster[0],station=s.stations[p.id];
+ s.phase='kitchen';station.stage='cook';
+ chefAction(s,{type:'heat',direction:1},{actor:p});tickChef(s,200);
+ assert.equal(station.heatInput,1);
+ tickChef(s,450);
+ assert.equal(station.heatInput,0);
+});
