@@ -1,8 +1,12 @@
 import {SEAT_CONTACTS} from './seat-contacts.mjs';
+import {thermalOutfit} from './world-thermal-outfits.mjs';
 import {spriteMirror} from './world-cast-proportions.mjs';
-export const SEATED_ART={"sallua":{"width":394,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/sallua.webp"},"carmine":{"width":401,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/carmine.webp"},"bruno":{"width":403,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/bruno.webp"},"daelly":{"width":366,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/daelly.webp"},"bayron":{"width":399,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/bayron.webp"},"arisantana":{"width":414,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/arisantana.webp"},"marianito":{"width":401,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/marianito.webp"},"leandro":{"width":409,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/leandro.webp"},"vitany":{"width":389,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/vitany.webp"},"kareli":{"width":381,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/kareli.webp"},"vita":{"width":373,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/vita.webp"},"eduard":{"width":474,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/eduard.webp"},"joseserna":{"width":444,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/joseserna.webp"},"guillermo":{"width":387,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/guillermo.webp"},"peggy":{"width":414,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/peggy.webp"},"andromeda":{"width":319,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/andromeda.webp"},"ivy":{"width":405,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/ivy.webp"},"roger":{"width":392,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/roger.webp"},"alice":{"width":519,"height":720,"hip":{"x":0.68,"y":0.57},"image":"/juegos/seated-world/alice.webp"},"gabrielsab":{"width":485,"height":720,"hip":{"x":0.68,"y":0.57},"image":"/juegos/seated-world/gabrielsab.webp"}};
+export const SEATED_ART={
+ "maria-villegas":{"width":379,"height":720,"hip":{"x":0.29,"y":0.646},"image":"/juegos/seated-world/maria-villegas.webp"},
+ "sallua":{"width":394,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/sallua.webp"},"carmine":{"width":401,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/carmine.webp"},"bruno":{"width":403,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/bruno.webp"},"daelly":{"width":366,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/daelly.webp"},"bayron":{"width":399,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/bayron.webp"},"arisantana":{"width":414,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/arisantana.webp"},"marianito":{"width":401,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/marianito.webp"},"leandro":{"width":409,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/leandro.webp"},"vitany":{"width":389,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/vitany.webp"},"kareli":{"width":381,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/kareli.webp"},"vita":{"width":373,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/vita.webp"},"eduard":{"width":474,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/eduard.webp"},"joseserna":{"width":444,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/joseserna.webp"},"guillermo":{"width":387,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/guillermo.webp"},"peggy":{"width":414,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/peggy.webp"},"andromeda":{"width":319,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/andromeda.webp"},"ivy":{"width":405,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/ivy.webp"},"roger":{"width":392,"height":720,"hip":{"x":0.32,"y":0.54},"image":"/juegos/seated-world/roger.webp"},"alice":{"width":519,"height":720,"hip":{"x":0.68,"y":0.57},"image":"/juegos/seated-world/alice.webp"},"gabrielsab":{"width":485,"height":720,"hip":{"x":0.68,"y":0.57},"image":"/juegos/seated-world/gabrielsab.webp"}};
 export function seatedPoseBounds(p,height,meta=SEATED_ART[p.characterId]){if(!meta)return null;const facing=p.facing===-1?-1:1,contact=SEAT_CONTACTS[p.characterId]||{x:0,y:.37},h=height*.72,w=h*meta.width/meta.height,hipX=p.x-facing*contact.x*height,hipY=p.y*.62-contact.y*height;return {x:hipX-facing*(meta.hip.x-.5)*w,y:hipY+(1-meta.hip.y)*h,width:w,height:h,facing,hipX,hipY};}
-// Hip locations in the seated frames of the normal-outfit atlases.
+export function usesSeatedArt(player){return !!SEATED_ART[player.characterId]&&player.clothing!=='pajamas'&&!thermalOutfit(player.characterId,player.clothing);}
+// Hip locations in the default seated animation frames.
 const ATLAS_SEATED_HIPS={
  'maria-villegas':[.45,.715],
  dani:[.46,.72],
@@ -10,9 +14,8 @@ const ATLAS_SEATED_HIPS={
  isabel:[.49,.675]
 };
 export function seatedAtlasOrigin(p,height,frameWidth,frameHeight){
- const hip=ATLAS_SEATED_HIPS[p.characterId];
- if(!hip)return null;
- const facing=p.facing===-1?-1:1,contact=SEAT_CONTACTS[p.characterId];
+ const coat=thermalOutfit(p.characterId,p.clothing),hip=coat?[.47,.79]:(ATLAS_SEATED_HIPS[p.characterId]||[.48,.71]);
+ const facing=p.facing===-1?-1:1,contact=SEAT_CONTACTS[p.characterId]||SEAT_CONTACTS.dani;
  const scale=height/180;
  return {
   x:p.x-facing*contact.x*height-spriteMirror(facing)*(hip[0]-.5)*200*frameWidth/frameHeight*scale,
@@ -20,10 +23,9 @@ export function seatedAtlasOrigin(p,height,frameWidth,frameHeight){
  };
 }
 export function seatedNameTop(p,height){
- const bounds=seatedPoseBounds(p,height);
+ const bounds=usesSeatedArt(p)?seatedPoseBounds(p,height):null;
  if(bounds)return bounds.y-bounds.height-30;
- // The first opaque pixels of the normal seated atlas frames start around 14% down.
- const origin=seatedAtlasOrigin(p,height,1,1);
- return origin?origin.y-(194-200*.14)*height/180-30:null;
+ const origin=seatedAtlasOrigin(p,height,1,1),top=thermalOutfit(p.characterId,p.clothing)?.22:.14;
+ return origin.y-(194-200*top)*height/180-30;
 }
 export function paintSeatedPose(c,p,height,image,time=0,reduced=false){const b=seatedPoseBounds(p,height);if(!b)return false;c.save();c.translate(b.x,b.y);c.scale(b.facing,1);const breath=reduced?0:Math.sin(time*1.3)*height*.003;c.drawImage(image,-b.width/2,-b.height+breath,b.width,b.height-breath);c.restore();return true;}

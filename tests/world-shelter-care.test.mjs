@@ -39,7 +39,7 @@ test('both workshops have a reachable enlarged chest and the patio replaces its 
  buildSurvivalProps(maps,{fires:[active]});
  for(const id of [1,2]){
   const workshop=maps['taller-refugio-'+id],chest=workshop.props.find(p=>p.survival?.kind==='chest');
-  assert.equal(chest.w,490);
+  assert.equal(chest.w,345);
   assert(chest.y<chest.approach.y);
   assert(clearPoint(workshop,chest.approach.x,chest.approach.y));
  }

@@ -87,6 +87,8 @@ export function drawSurvivalProp(c,p,time,{shared,labels=true,reducedMotion=fals
   if(ready(im)){
    const height=b.w*im.height/im.width;
    if(kind==='chest'){
+    const base=b.y-height*.093;
+    c.fillStyle='#21150dad';c.beginPath();c.ellipse(b.x+4,base-1,b.w*.45,b.w*.035,0,0,Math.PI*2);c.fill();
     c.save();
     c.translate(b.x,0);
     c.scale(-1,1);

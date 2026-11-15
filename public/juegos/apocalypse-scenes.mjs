@@ -200,11 +200,11 @@ export function buildApocalypseMaps(){
  for(const {rooms} of SHELTERS){
   for(const [name,x] of [['left',.23],['right',.78]]){
    const table=seating(rooms.patio,'patio-table-'+name,'bench',[[x-.034,.874,1],[x+.034,.874,-1]]);
-   Object.assign(table,coord(rooms.patio,x,.929),{painted:false,shelterFurniture:true,normalSeatPose:true,artWidth:340,w:340,imageUrl:'/assets/maps/apocalypse/refugios/mesa.webp'});
+   Object.assign(table,coord(rooms.patio,x,.929),{painted:false,shelterFurniture:true,alignSeatPose:true,artWidth:340,w:340,imageUrl:'/assets/maps/apocalypse/refugios/mesa.webp'});
    table.approaches=table.seats.map(seat=>({x:seat.x,y:maps[rooms.patio].height*.939}));
   }
   const diningBench=seating(rooms.cocina,'refuge-table','bench',Array.from({length:9},(_,i)=>[.575+i*.046,.619,1]));
-  diningBench.normalSeatPose=true;
+  diningBench.alignSeatPose=true;
   obj(rooms.cocina,'kitchen-fridge','fridge',.235,.767,{label:'Nevera del refugio',approach:coord(rooms.cocina,.235,.823),contextAnchor:coord(rooms.cocina,.235,.65)});
   const lockerX=rooms.dormitorio==='refugio-1'?.90:.865;
   obj(rooms.dormitorio,'refuge-lockers','locker',lockerX,.748,{personalLocker:true,approach:coord(rooms.dormitorio,lockerX,.803),contextAnchor:coord(rooms.dormitorio,lockerX,.64),description:'Aquí se guardan los efectos personales del dormitorio.'});
