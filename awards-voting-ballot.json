@@ -14,7 +14,7 @@
               "id": "kim-camila",
               "name": "Kim Camila",
               "details": "",
-              "image": "/awards/vote-portraits/14.webp"
+              "image": "/awards/vote-portraits/36.webp"
             },
             {
               "id": "ivy-pierce",
@@ -63,7 +63,7 @@
               "id": "lucas-mendez",
               "name": "Lucas Mendez",
               "details": "",
-              "image": "/awards/vote-portraits/9.webp"
+              "image": "/awards/vote-portraits/37.webp"
             },
             {
               "id": "leandro-lynx",
@@ -81,13 +81,13 @@
               "id": "alexandro-martin",
               "name": "Alexandro Martin",
               "details": "",
-              "image": "/personajes/alexandro.png"
+              "image": "/awards/vote-portraits/41.webp"
             },
             {
               "id": "carlos-harrington",
               "name": "Carlos Harrington",
               "details": "",
-              "image": "/personajes/carlosharrington.png"
+              "image": "/awards/vote-portraits/39.webp"
             }
           ]
         },
@@ -222,7 +222,7 @@
               "id": "coronel-sanders-showdown-2",
               "name": "Coronel Sanders",
               "details": "Showdown 2",
-              "image": "/awards/vote-portraits/13.webp"
+              "image": "/awards/vote-portraits/40.webp"
             },
             {
               "id": "dani-jara-the-traitor-2",
@@ -247,7 +247,7 @@
               "id": "lucas-mendez",
               "name": "Lucas Mendez",
               "details": "",
-              "image": "/awards/vote-portraits/9.webp"
+              "image": "/awards/vote-portraits/37.webp"
             },
             {
               "id": "andromeda-sc",
@@ -265,19 +265,19 @@
               "id": "ari-salgado",
               "name": "Ari Salgado",
               "details": "",
-              "image": "/awards/vote-portraits/12.webp"
+              "image": "/awards/vote-portraits/38.webp"
             },
             {
               "id": "carlos-harrington",
               "name": "Carlos Harrington",
               "details": "",
-              "image": "/personajes/carlosharrington.png"
+              "image": "/awards/vote-portraits/39.webp"
             },
             {
               "id": "coronel-sanders",
               "name": "Coronel Sanders",
               "details": "",
-              "image": "/awards/vote-portraits/13.webp"
+              "image": "/awards/vote-portraits/40.webp"
             }
           ]
         },
@@ -594,7 +594,7 @@
               "people": [
                 {
                   "name": "Lucas Mendez",
-                  "image": "/awards/vote-portraits/9.webp"
+                  "image": "/awards/vote-portraits/37.webp"
                 },
                 {
                   "name": "Adriana Pereira",
@@ -609,11 +609,11 @@
               "people": [
                 {
                   "name": "Alexandro",
-                  "image": "/personajes/alexandro.png"
+                  "image": "/awards/vote-portraits/41.webp"
                 },
                 {
                   "name": "Ari Salgado",
-                  "image": "/awards/vote-portraits/12.webp"
+                  "image": "/awards/vote-portraits/38.webp"
                 }
               ]
             },
@@ -632,7 +632,7 @@
                 },
                 {
                   "name": "Carlos Harrington",
-                  "image": "/personajes/carlosharrington.png"
+                  "image": "/awards/vote-portraits/39.webp"
                 },
                 {
                   "name": "Eduard",
@@ -673,7 +673,7 @@
               "people": [
                 {
                   "name": "Lucas Mendez",
-                  "image": "/awards/vote-portraits/9.webp"
+                  "image": "/awards/vote-portraits/37.webp"
                 },
                 {
                   "name": "Bruno Macri",
@@ -689,7 +689,7 @@
                 },
                 {
                   "name": "Alexandro",
-                  "image": "/personajes/alexandro.png"
+                  "image": "/awards/vote-portraits/41.webp"
                 },
                 {
                   "name": "Mary Hao",
@@ -716,7 +716,7 @@
               "people": [
                 {
                   "name": "Kim Camila",
-                  "image": "/awards/vote-portraits/14.webp"
+                  "image": "/awards/vote-portraits/36.webp"
                 },
                 {
                   "name": "Lalamila",
@@ -735,7 +735,7 @@
               "people": [
                 {
                   "name": "Carlos Harrington",
-                  "image": "/personajes/carlosharrington.png"
+                  "image": "/awards/vote-portraits/39.webp"
                 },
                 {
                   "name": "Sal Lua",
@@ -771,7 +771,7 @@
                 },
                 {
                   "name": "Kim Camila",
-                  "image": "/awards/vote-portraits/14.webp"
+                  "image": "/awards/vote-portraits/36.webp"
                 },
                 {
                   "name": "Renzo",
@@ -884,7 +884,7 @@
               "id": "coronel-sanders-global-war",
               "name": "Coronel Sanders",
               "details": "Global War",
-              "image": "/awards/vote-portraits/13.webp"
+              "image": "/awards/vote-portraits/40.webp"
             }
           ]
         },
@@ -934,7 +934,7 @@
               "id": "ari-salgado",
               "name": "Ari Salgado",
               "details": "",
-              "image": "/awards/vote-portraits/12.webp"
+              "image": "/awards/vote-portraits/38.webp"
             },
             {
               "id": "ian-san-martin",
@@ -1039,59 +1039,6 @@
           ]
         },
         {
-          "id": "mejor-temporada",
-          "name": "Mejor Temporada",
-          "description": "",
-          "nominees": [
-            {
-              "id": "the-traitor-2",
-              "name": "The Traitor 2",
-              "details": "",
-              "image": "/assets/x-critics/the-traitor-2.webp",
-              "isShow": true
-            },
-            {
-              "id": "showdown-2",
-              "name": "Showdown 2",
-              "details": "",
-              "image": "/assets/x-critics/showdown-2.webp",
-              "isShow": true
-            },
-            {
-              "id": "apocalypse-2",
-              "name": "Apocalypse 2",
-              "details": "",
-              "image": "/seasons/campria/apocalypse-ii/cover-world.webp",
-              "isShow": true
-            }
-          ]
-        },
-        {
-          "id": "mejor-cancion",
-          "name": "Mejor Canción",
-          "description": "",
-          "nominees": [
-            {
-              "id": "marcos-marcostoso",
-              "name": "Marcos",
-              "details": "Marcostoso",
-              "image": "/personajes/marcos.png"
-            },
-            {
-              "id": "eduard-mis-lechosas",
-              "name": "Eduard",
-              "details": "Mis Lechosas",
-              "image": "/awards/vote-portraits/31.webp"
-            },
-            {
-              "id": "felix-el-rap-del-abuelo",
-              "name": "Felix",
-              "details": "El Rap del Abuelo",
-              "image": "/awards/vote-portraits/35.webp"
-            }
-          ]
-        },
-        {
           "id": "mejor-presentacion-jurado",
           "name": "Mejor Presentación/Jurado",
           "description": "",
@@ -1131,6 +1078,99 @@
               "name": "Heidi Cum",
               "details": "Project Runway",
               "image": "/personajes/heidicum.png"
+            }
+          ]
+        },
+        {
+          "id": "peor-competencia-virtual",
+          "name": "Peor Competencia Virtual",
+          "description": "",
+          "nominees": [
+            {
+              "id": "turn-it-up-7-jackpot",
+              "name": "Turn It Up 7: Jackpot!",
+              "details": "Eduard Salerno",
+              "image": "/awards/vote-portraits/31.webp"
+            },
+            {
+              "id": "turn-it-up-7-y2k-version",
+              "name": "Turn It Up 7: Y2K Version",
+              "details": "Eduard Salerno",
+              "image": "/awards/vote-portraits/31.webp"
+            },
+            {
+              "id": "discord-total",
+              "name": "Discord Total",
+              "details": "Pier, Matías Aliaga",
+              "people": [
+                {
+                  "name": "Pier",
+                  "image": "/personajes/pier.png"
+                },
+                {
+                  "name": "Matías Aliaga"
+                }
+              ]
+            },
+            {
+              "id": "un-camp-ahi-caribbean-vacation",
+              "name": "Un Camp Ahi: Caribbean Vacation",
+              "details": "Sal Lua",
+              "image": "/awards/vote-portraits/34.webp"
+            },
+            {
+              "id": "el-bucle",
+              "name": "El Bucle",
+              "details": "Yeiner Mena"
+            },
+            {
+              "id": "el-archipielago",
+              "name": "El Archipiélago",
+              "details": "Marianito Moya",
+              "image": "/personajes/marianito.png"
+            }
+          ]
+        },
+        {
+          "id": "peor-participacion-en-competencia-externa",
+          "name": "Peor Participación en Competencia Externa",
+          "description": "",
+          "nominees": [
+            {
+              "id": "marianito-moya",
+              "name": "Marianito Moya",
+              "details": "Un Camp Ahí",
+              "image": "/personajes/marianito.png"
+            },
+            {
+              "id": "luciano-funes",
+              "name": "Luciano Funes",
+              "details": "Global War",
+              "image": "/personajes/luciano.png"
+            },
+            {
+              "id": "peggy-marianne",
+              "name": "Peggy Marianne",
+              "details": "Turn It Up",
+              "image": "/awards/vote-portraits/18.webp"
+            },
+            {
+              "id": "eris-midnight",
+              "name": "Eris Midnight",
+              "details": "El Bucle",
+              "image": "/personajes/erismidnight.png"
+            },
+            {
+              "id": "isabel-vilches",
+              "name": "Isabel Vilches",
+              "details": "Subele Ya!",
+              "image": "/personajes/isabel.png"
+            },
+            {
+              "id": "okami-yami",
+              "name": "Okami Yami",
+              "details": "El Archipiélago",
+              "image": "/personajes/okami.png"
             }
           ]
         }

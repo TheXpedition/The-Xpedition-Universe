@@ -16,8 +16,14 @@ test('la papeleta usa IDs únicos, trae los nominados pedidos y apunta a arte qu
  assert.equal(requested,15);
  assert.equal(categories.length,25);
  assert.deepEqual(ballot.sections[1].categories.slice(0,5).map(category=>category.id),['estratega-del-ano','mayor-amenaza','participante-mas-gracioso','mejor-evolucion','traidor']);
- assert(!categories.some(category=>['Mejor Duelo','Mejor Episodio','Mejor Diseño & Vestuario'].includes(category.name)));
- const jury=categories.find(category=>category.id==='mejor-presentacion-jurado');
+ assert(!categories.some(category=>['Mejor Duelo','Mejor Episodio','Mejor Diseño & Vestuario','Mejor Temporada','Mejor Canción'].includes(category.name)));
+ const [jury,competition,external]=ballot.sections[2].categories.slice(-3);
+ assert.deepEqual([jury.id,competition.id,external.id],['mejor-presentacion-jurado','peor-competencia-virtual','peor-participacion-en-competencia-externa']);
+ assert.equal(competition.nominees.length,6);
+ assert.equal(external.nominees.length,6);
+ assert.deepEqual(competition.nominees.slice(0,3).map(({name,details})=>[name,details]),[
+  ['Turn It Up 7: Jackpot!','Eduard Salerno'],['Turn It Up 7: Y2K Version','Eduard Salerno'],['Discord Total','Pier, Matías Aliaga']
+ ]);
  assert.deepEqual(jury.nominees.slice(3,4).map(({name,details})=>[name,details]),[['Bryan Montalvo','Celebrity Stars']]);
  const poop=categories.find(category=>category.id==='poop-of-the-year');
  assert.equal(poop.nominees.length,8);

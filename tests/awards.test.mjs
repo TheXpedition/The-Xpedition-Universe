@@ -107,14 +107,14 @@ test('la tercera edición muestra sus 20 categorías y nominados anunciados',()=
  assert(!categories(edition).some(category=>category.name==='Mejor Duelo'));
  assert.equal(edition.groups.find(g=>g.id==='personalidad').categories.at(-1).name,'Mejor Momento');
  assert.deepEqual(edition.groups.find(g=>g.id==='produccion').categories.map(c=>c.name),[
-  'Mejor Temporada','Mejor Canción',
-  'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
+  'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado',
+  'Peor Competencia Virtual','Peor Participación en Competencia Externa'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
   'principales-1':4,'principales-2':3,'principales-3':4,'principales-4':6,
   'estrategia-1':3,'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,
   'personalidad-1':5,'personalidad-2':4,'personalidad-3':12,'personalidad-4':4,'personalidad-5':3,
-  'personalidad-6':4,'produccion-2':3,'produccion-4':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
+  'personalidad-6':4,'produccion-5':6,'produccion-6':6,'produccion-7':6,'peor-competencia-virtual':6,'peor-participacion-en-competencia-externa':6
  });
  const jury=categories(edition).find(c=>c.id==='produccion-7');
  assert.deepEqual(jury.nominees.map(n=>[n.title,n.description]),[["Dua Lingo","Showdown II"],["Isabel","TOS All Stars 2"],["Ian Esteban","Global War"],["Bryan Montalvo","Celebrity Stars"],["Marcos","Turn It Up"],["Heidi Cum","Project Runway"]]);
@@ -130,8 +130,8 @@ test('la tercera edición muestra sus 20 categorías y nominados anunciados',()=
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
  assert(html.includes('Las 20 categorías'));
- assert(html.includes('93 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,93);
+ assert(html.includes('99 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,99);
  for(const category of edition.groups[0].categories){
   const card=c.awardMainCategory(category,0,catalog.content.awards[2],true);
   assert(card.includes('Ganador por anunciar'));
@@ -169,7 +169,7 @@ test('Eris sustituye a Angel en el dúo y los cinco integrantes reciben la nomin
 
 test('los perfiles cuentan cada nominación individual, repetida, de grupo y de dúo sin deduplicar categorías',()=>{
  const {context:c}=context(),totals=c.awardProfileTotals(archive);
- for(const [name,nominations,awards] of [['Eris Midnight',11,2],['Dani',7,1],['Vita',5,0],['Emanuel',9,2],['Bayron',12,1],['Ximena',8,3],['Iñaella Rose',12,3]]){
+ for(const [name,nominations,awards] of [['Eris Midnight',12,2],['Dani',7,1],['Vita',5,0],['Emanuel',9,2],['Bayron',12,1],['Ximena',8,3],['Iñaella Rose',12,3]]){
   const actual=totals.get(castKey(name));assert.equal(actual.nominations,nominations,name);assert.equal(actual.awards,awards,name);
  }
 });

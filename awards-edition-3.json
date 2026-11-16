@@ -622,59 +622,6 @@
       "name": "Premios de Producción",
       "categories": [
         {
-          "id": "produccion-2",
-          "name": "Mejor Temporada",
-          "nominees": [
-            {
-              "title": "The Traitor 2",
-              "people": [],
-              "description": "",
-              "show": "traitor2"
-            },
-            {
-              "title": "Showdown 2",
-              "people": [],
-              "description": "",
-              "show": "traitor-showdown"
-            },
-            {
-              "title": "Apocalypse 2",
-              "people": [],
-              "description": "",
-              "show": "apocalypse-ii"
-            }
-          ],
-          "production": false
-        },
-        {
-          "id": "produccion-4",
-          "name": "Mejor Canción",
-          "nominees": [
-            {
-              "title": "Marcos",
-              "people": [
-                "Marcos"
-              ],
-              "description": "Marcostoso"
-            },
-            {
-              "title": "Eduard",
-              "people": [
-                "Eduard"
-              ],
-              "description": "Mis Lechosas"
-            },
-            {
-              "title": "Felix",
-              "people": [
-                "Felix"
-              ],
-              "description": "El Rap del Abuelo"
-            }
-          ],
-          "production": false
-        },
-        {
           "id": "produccion-5",
           "name": "Mejor Proyecto Independiente",
           "nominees": [
@@ -817,6 +764,105 @@
                 "Heidi Cum"
               ],
               "description": "Project Runway"
+            }
+          ],
+          "production": false
+        },
+        {
+          "id": "peor-competencia-virtual",
+          "name": "Peor Competencia Virtual",
+          "nominees": [
+            {
+              "title": "Turn It Up 7: Jackpot!",
+              "people": [
+                "Eduard"
+              ],
+              "description": "Eduard Salerno"
+            },
+            {
+              "title": "Turn It Up 7: Y2K Version",
+              "people": [
+                "Eduard"
+              ],
+              "description": "Eduard Salerno"
+            },
+            {
+              "title": "Discord Total",
+              "people": [
+                "Pier",
+                "Matías Aliaga"
+              ],
+              "description": "Pier, Matías Aliaga"
+            },
+            {
+              "title": "Un Camp Ahi: Caribbean Vacation",
+              "people": [
+                "Sal Lua"
+              ],
+              "description": "Sal Lua"
+            },
+            {
+              "title": "El Bucle",
+              "people": [
+                "Yeiner Mena"
+              ],
+              "description": "Yeiner Mena"
+            },
+            {
+              "title": "El Archipiélago",
+              "people": [
+                "Marianito"
+              ],
+              "description": "Marianito Moya"
+            }
+          ],
+          "production": false
+        },
+        {
+          "id": "peor-participacion-en-competencia-externa",
+          "name": "Peor Participación en Competencia Externa",
+          "nominees": [
+            {
+              "title": "Marianito Moya",
+              "people": [
+                "Marianito"
+              ],
+              "description": "Un Camp Ahí"
+            },
+            {
+              "title": "Luciano Funes",
+              "people": [
+                "Luciano"
+              ],
+              "description": "Global War"
+            },
+            {
+              "title": "Peggy Marianne",
+              "people": [
+                "Peggy"
+              ],
+              "description": "Turn It Up"
+            },
+            {
+              "title": "Eris Midnight",
+              "people": [
+                "Eris Midnight"
+              ],
+              "description": "El Bucle"
+            },
+            {
+              "title": "Isabel Vilches",
+              "people": [
+                "Isabel"
+              ],
+              "description": "Subele Ya!"
+            },
+            {
+              "title": "Okami Yami",
+              "people": [
+                "Okami"
+              ],
+              "description": "El Archipiélago"
             }
           ],
           "production": false
