@@ -44,7 +44,7 @@
               "id": "sal-lua",
               "name": "Sal Lua",
               "details": "",
-              "image": "/personajes/sallua.png"
+              "image": "/awards/vote-portraits/34.webp"
             }
           ]
         },
@@ -198,7 +198,7 @@
               "id": "sal-lua-the-traitor-2",
               "name": "Sal Lua",
               "details": "The Traitor 2",
-              "image": "/personajes/sallua.png"
+              "image": "/awards/vote-portraits/34.webp"
             },
             {
               "id": "gabriel-sab-showdown-2",
@@ -499,7 +499,7 @@
               "id": "sal-lua",
               "name": "Sal Lua",
               "details": "",
-              "image": "/personajes/sallua.png"
+              "image": "/awards/vote-portraits/34.webp"
             },
             {
               "id": "eduard-salerno",
@@ -511,7 +511,7 @@
               "id": "vita-molotov",
               "name": "Vita Molotov",
               "details": "",
-              "image": "/seasons/campria/apocalypse-ii/portraits/vita-face.webp"
+              "image": "/awards/vote-portraits/33.webp"
             },
             {
               "id": "marianito-moya",
@@ -542,7 +542,7 @@
               "id": "vita-the-traitor-2",
               "name": "Vita",
               "details": "The Traitor 2",
-              "image": "/personajes/vita-20261021.png"
+              "image": "/awards/vote-portraits/33.webp"
             },
             {
               "id": "doppel-camper-the-traitor-2",
@@ -582,7 +582,7 @@
               "people": [
                 {
                   "name": "Sal Lua",
-                  "image": "/personajes/sallua.png"
+                  "image": "/awards/vote-portraits/34.webp"
                 },
                 {
                   "name": "Luciano",
@@ -661,7 +661,7 @@
               "people": [
                 {
                   "name": "Sal Lua",
-                  "image": "/personajes/sallua.png"
+                  "image": "/awards/vote-portraits/34.webp"
                 },
                 {
                   "name": "Peggy",
@@ -749,7 +749,7 @@
                 },
                 {
                   "name": "Sal Lua",
-                  "image": "/personajes/sallua.png"
+                  "image": "/awards/vote-portraits/34.webp"
                 },
                 {
                   "name": "Peggy",
@@ -845,7 +845,7 @@
               "id": "sal-lua-un-camp-ahi",
               "name": "Sal Lua",
               "details": "Un Camp Ahí",
-              "image": "/personajes/sallua.png"
+              "image": "/awards/vote-portraits/34.webp"
             },
             {
               "id": "heidi-cum-project-runway-dti",
