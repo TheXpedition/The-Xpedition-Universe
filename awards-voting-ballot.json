@@ -20,19 +20,19 @@
               "id": "ivy-pierce",
               "name": "Ivy Pierce",
               "details": "",
-              "image": "/awards/vote-portraits/16.webp"
+              "image": "/awards/vote-portraits/27.webp"
             },
             {
               "id": "alice-torrico",
               "name": "Alice Torrico",
               "details": "",
-              "image": "/awards/vote-portraits/3.webp"
+              "image": "/awards/vote-portraits/26.webp"
             },
             {
               "id": "bruno-macri",
               "name": "Bruno Macri",
               "details": "",
-              "image": "/awards/vote-portraits/10.webp"
+              "image": "/awards/vote-portraits/29.webp"
             },
             {
               "id": "daelly-bonbom",
@@ -57,7 +57,7 @@
               "id": "andromeda-sc",
               "name": "Andromeda SC",
               "details": "",
-              "image": "/awards/vote-portraits/1.webp"
+              "image": "/awards/vote-portraits/24.webp"
             },
             {
               "id": "lucas-mendez",
@@ -69,7 +69,7 @@
               "id": "leandro-lynx",
               "name": "Leandro Lynx",
               "details": "",
-              "image": "/personajes/leandro.png"
+              "image": "/awards/vote-portraits/28.webp"
             },
             {
               "id": "ignacio-vila",
@@ -100,7 +100,7 @@
               "id": "alice-torrico",
               "name": "Alice Torrico",
               "details": "",
-              "image": "/awards/vote-portraits/3.webp"
+              "image": "/awards/vote-portraits/26.webp"
             },
             {
               "id": "luciano-funes",
@@ -112,13 +112,13 @@
               "id": "ivy-pierce",
               "name": "Ivy Pierce",
               "details": "",
-              "image": "/awards/vote-portraits/16.webp"
+              "image": "/awards/vote-portraits/27.webp"
             },
             {
               "id": "bruno-macri",
               "name": "Bruno Macri",
               "details": "",
-              "image": "/awards/vote-portraits/10.webp"
+              "image": "/awards/vote-portraits/29.webp"
             },
             {
               "id": "beto-trujillo",
@@ -143,13 +143,13 @@
               "id": "ari-santana",
               "name": "Ari Santana",
               "details": "",
-              "image": "/personajes/ari-santana.png"
+              "image": "/awards/vote-portraits/25.webp"
             },
             {
               "id": "guillermo-coronado",
               "name": "Guillermo Coronado",
               "details": "",
-              "image": "/personajes/guillermo.png"
+              "image": "/awards/vote-portraits/22.webp"
             },
             {
               "id": "roger-lida",
@@ -160,7 +160,8 @@
             {
               "id": "xavier-gaxiola",
               "name": "Xavier Gaxiola",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/21.webp"
             },
             {
               "id": "paula-garcia",
@@ -234,7 +235,7 @@
               "id": "andromeda-sc-grupo-corazon",
               "name": "Andrómeda SC",
               "details": "Grupo Corazón",
-              "image": "/awards/vote-portraits/1.webp"
+              "image": "/awards/vote-portraits/24.webp"
             },
             {
               "id": "daelly-bonbom-grupo-espada",
@@ -246,7 +247,7 @@
               "id": "alice-torrico-the-traitor-2-grupo-diamante",
               "name": "Alice Torrico",
               "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/3.webp"
+              "image": "/awards/vote-portraits/26.webp"
             },
             {
               "id": "lalamila-the-traitor-2-grupo-diamante",
@@ -295,7 +296,7 @@
               "id": "bruno-macri-the-traitor-2-grupo-trebol",
               "name": "Bruno Macri",
               "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/10.webp"
+              "image": "/awards/vote-portraits/29.webp"
             },
             {
               "id": "nahuee-the-traitor-2-grupo-trebol",
@@ -338,7 +339,7 @@
               "id": "ivy-pierce-grupo-trebol",
               "name": "Ivy Pierce",
               "details": "Grupo Trébol",
-              "image": "/awards/vote-portraits/16.webp"
+              "image": "/awards/vote-portraits/27.webp"
             },
             {
               "id": "ari-salgado-grupo-joker",
@@ -412,13 +413,13 @@
               "id": "andromeda-sc",
               "name": "Andromeda SC",
               "details": "",
-              "image": "/awards/vote-portraits/1.webp"
+              "image": "/awards/vote-portraits/24.webp"
             },
             {
               "id": "leandro-lynx",
               "name": "Leandro Lynx",
               "details": "",
-              "image": "/personajes/leandro.png"
+              "image": "/awards/vote-portraits/28.webp"
             },
             {
               "id": "ari-salgado",
@@ -454,7 +455,8 @@
             {
               "id": "xavier-gaxiola",
               "name": "Xavier Gaxiola",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/21.webp"
             },
             {
               "id": "felix-gagenze",
@@ -466,7 +468,7 @@
               "id": "alice-torrico",
               "name": "Alice Torrico",
               "details": "",
-              "image": "/awards/vote-portraits/3.webp"
+              "image": "/awards/vote-portraits/26.webp"
             },
             {
               "id": "luciano-funes",
@@ -478,7 +480,7 @@
               "id": "bruno-macri",
               "name": "Bruno Macri",
               "details": "",
-              "image": "/awards/vote-portraits/10.webp"
+              "image": "/awards/vote-portraits/29.webp"
             }
           ]
         },
@@ -534,13 +536,12 @@
               "id": "ivy-pierce-the-traitor-2",
               "name": "Ivy Pierce",
               "details": "The Traitor 2",
-              "image": "/awards/vote-portraits/16.webp"
+              "image": "/awards/vote-portraits/27.webp"
             },
             {
               "id": "vita-the-traitor-2",
               "name": "Vita",
               "details": "The Traitor 2",
-              "image": "/seasons/campria/apocalypse-ii/portraits/vita-face.webp",
               "image": "/personajes/vita-20261021.png"
             },
             {
@@ -633,11 +634,11 @@
               "people": [
                 {
                   "name": "Alice",
-                  "image": "/awards/vote-portraits/3.webp"
+                  "image": "/awards/vote-portraits/26.webp"
                 },
                 {
                   "name": "Bayron",
-                  "image": "/personajes/bayron.png"
+                  "image": "/awards/vote-portraits/23.webp"
                 },
                 {
                   "name": "Carlos Harrington",
@@ -686,11 +687,11 @@
                 },
                 {
                   "name": "Bruno Macri",
-                  "image": "/awards/vote-portraits/10.webp"
+                  "image": "/awards/vote-portraits/29.webp"
                 },
                 {
                   "name": "Bayron",
-                  "image": "/personajes/bayron.png"
+                  "image": "/awards/vote-portraits/23.webp"
                 },
                 {
                   "name": "Adriana Pereira",
@@ -714,7 +715,7 @@
                 },
                 {
                   "name": "Alice",
-                  "image": "/awards/vote-portraits/3.webp"
+                  "image": "/awards/vote-portraits/26.webp"
                 }
               ]
             },
@@ -767,7 +768,7 @@
               "id": "andromeda-andromeda-traiciona-a-peggy-en-the-traitor-2",
               "name": "Andromeda",
               "details": "Andromeda traiciona a Peggy en The Traitor 2",
-              "image": "/personajes/andromeda.png"
+              "image": "/awards/vote-portraits/24.webp"
             },
             {
               "id": "alice-kim-camila-renzo-lalamila",
@@ -776,7 +777,7 @@
               "people": [
                 {
                   "name": "Alice",
-                  "image": "/awards/vote-portraits/3.webp"
+                  "image": "/awards/vote-portraits/26.webp"
                 },
                 {
                   "name": "Kim Camila",
@@ -796,13 +797,13 @@
               "id": "leandro",
               "name": "Leandro",
               "details": "Leandro logra pasar de los últimos lugares al segundo con más estrellas y clasifica a la final de Showdown 2.",
-              "image": "/personajes/leandro.png"
+              "image": "/awards/vote-portraits/28.webp"
             },
             {
               "id": "ari-santana",
               "name": "Ari Santana",
               "details": "Ari Santana queda fuera de la Final del primer reto en Apocalypse II antes de haber comenzado.",
-              "image": "/personajes/ari-santana.png"
+              "image": "/awards/vote-portraits/25.webp"
             }
           ]
         }
@@ -863,7 +864,7 @@
               "id": "ivy-pierce-subele-ya",
               "name": "Ivy Pierce",
               "details": "Súbele Ya",
-              "image": "/awards/vote-portraits/16.webp"
+              "image": "/awards/vote-portraits/27.webp"
             },
             {
               "id": "luciano-funes-un-camp-ahi",
