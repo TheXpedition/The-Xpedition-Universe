@@ -18,6 +18,7 @@ const criticsSuits=[
  ['trebol','Trébol','♣','clubs'], ['joker','Joker','🃏','joker'], ['final','Final','♛','final']
 ];
 const criticsArt=season=>'/assets/x-critics/'+season.id+'.webp';
+const criticsSeriesArt=series=>'/assets/x-critics/'+series+'-poster.webp';
 const criticsLink=(...parts)=>'#x-critics'+(parts.length?'/'+parts.join('/'):'');
 const criticsNumber=new Intl.NumberFormat('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1});
 const criticsStar='<svg class="critics-star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 3 6.3 7 .9-5 5 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5-5 7-.9z"/></svg>';
@@ -44,12 +45,13 @@ function criticsTabs(castPage=false){
  return `<nav class="critics-tabs" aria-label="Secciones de X Critics"><a href="${criticsLink()}" ${castPage?'':'aria-current="page"'}>Temporadas</a><a href="${criticsLink('elenco','the-xpedition')}" ${castPage?'aria-current="page"':''}>Elenco</a></nav>`;
 }
 
-function criticsCard(season,data,index){
+function criticsCard(season,data){
  const suit=season.id==='the-traitor-2';
  const score=criticsAverage(suit?criticsSuits.map(([id])=>data.ratings[season.id]?.[id]?.score):criticsRatings(season,data));
- return `<a class="critics-season-card" href="${criticsLink(season.id)}">
-  <div class="critics-card-art ${season.series==='showdown'?'critics-card-showdown':''}"><img src="${criticsArt(season)}" alt="" loading="${index<4?'eager':'lazy'}" decoding="async"></div>
-  <div class="critics-card-content"><div><span class="critics-meta">${season.years} · ${season.count} episodios</span><h3>${esc(season.title)}</h3>${suit?'<p>Notas por grupo</p>':''}</div>${Number.isFinite(score)?criticsScore(score):icon('arrow')}</div>
+ const title=season.series==='the-xpedition'?season.title.replace(/^The Xpedition /,''):season.title;
+ return `<a class="critics-season-card" href="${criticsLink(season.id)}" data-critics-match="${esc(norm(season.title+' '+criticsSeries[season.series]+' '+season.years))}">
+  <span><strong>${esc(title)}</strong><small>${season.count} episodios${suit?' · Notas por grupo':''}</small></span>
+  ${Number.isFinite(score)?criticsScore(score):icon('arrow')}
  </a>`;
 }
 
@@ -58,12 +60,23 @@ function criticsRatings(season,data){
 }
 
 function criticsOverview(data){
- const feature=criticsSeasons.find(season=>season.id==='showdown-2');
- const score=criticsAverage(criticsRatings(feature,data));
- return `<section class="critics-page" aria-labelledby="critics-title">
-  <header class="critics-hero critics-overview-hero"><img class="critics-hero-art" src="${criticsArt(feature)}" alt="" fetchpriority="high"><div class="critics-hero-copy"><h1 id="critics-title">X Critics</h1><p>Las calificaciones del universo The Xpedition, episodio a episodio.</p><div class="critics-hero-actions"><a class="btn primary" href="${criticsLink(feature.id)}">Ver Showdown 2 ${icon('arrow')}</a>${criticsScore(score)}</div></div></header>
-  ${criticsTabs()}
-  <section class="critics-catalog" aria-labelledby="critics-catalog-title"><h2 id="critics-catalog-title">Todas las temporadas</h2><div class="critics-catalog-grid">${criticsSeasons.map((season,index)=>criticsCard(season,data,index)).join('')}</div></section>
+ const latest=criticsSeasons.find(season=>season.id==='apocalypse-ii');
+ return `<section class="critics-page critics-index" aria-labelledby="critics-title">
+  <header class="critics-index-head"><div><h1 id="critics-title">X Critics</h1><p>Calificaciones y elenco de The Xpedition Universe.</p></div>
+   <label class="critics-search">${icon('search')}<input type="search" data-critics-search placeholder="Buscar temporada o saga" aria-label="Buscar temporada o saga"></label>
+  </header>${criticsTabs()}
+  <div class="critics-index-layout"><section class="critics-catalog" aria-labelledby="critics-catalog-title"><h2 id="critics-catalog-title">Explorar sagas</h2>
+   <div class="critics-catalog-grid">${Object.entries(criticsSeries).map(([series,label])=>`<article class="critics-franchise">
+    <div class="critics-franchise-poster"><img src="${criticsSeriesArt(series)}" alt="" decoding="async"><h3>${esc(label)}</h3></div>
+    ${criticsSeasons.filter(season=>season.series===series).map(season=>criticsCard(season,data)).join('')}
+    <a class="critics-franchise-cast" href="${criticsLink('elenco',series)}">${icon('users')} Elenco ${icon('arrow')}</a>
+   </article>`).join('')}</div><p class="critics-search-empty" hidden>Sin temporadas que coincidan con la búsqueda.</p>
+  </section>
+  <aside class="critics-index-aside" aria-labelledby="critics-feature-title"><h2 id="critics-feature-title">Temporada en curso</h2><article class="critics-feature">
+   <a href="${criticsLink(latest.id)}" class="critics-feature-art"><img src="${criticsArt(latest)}" alt="" fetchpriority="high"><span><small>CAMPRIA · ${latest.years}</small><strong>${latest.title}</strong></span></a>
+   <div class="critics-feature-episodes">${criticsEpisodes(latest,data).map(episode=>`<a href="${criticsLink(latest.id,episode.id)}"><span>${episode.title==='Episodio '+episode.number?'':'<b>E'+episode.number+'</b>'}${esc(episode.title)}</span>${criticsScore(episode.score)}</a>`).join('')}</div>
+   <a class="critics-feature-open" href="${criticsLink(latest.id)}">Ver Apocalypse II ${icon('arrow')}</a>
+  </article></aside></div>
  </section>`;
 }
 
@@ -85,11 +98,15 @@ function criticsStages(tournament,episodes){
  return groups;
 }
 
-function criticsEpisodeGuide(episodes,requested,link){
+function criticsEpisodeGuide(season,episodes,requested,link){
  const current=episodes.find(episode=>episode.id===requested)||episodes[0];
- return `<div class="critics-guide"><div class="critics-guide-index">
-  <nav class="critics-episode-grid" aria-label="Episodios">${episodes.map(episode=>`<a href="${link(episode.id)}" ${current.id===episode.id?'aria-current="page"':''} aria-label="Episodio ${episode.number}, ${criticsScoreText(episode.score)}"><span>E${episode.number}</span><b>${Number.isFinite(episode.score)?criticsScoreText(episode.score):'—'}</b>${Number.isFinite(episode.score)?'<span class="critics-episode-meter" aria-hidden="true" style="--episode-score:'+episode.score*10+'%"></span>':''}</a>`).join('')}</nav>
-  </div><article class="critics-current"><div><span class="critics-meta">Episodio ${current.number}</span><h3>${esc(current.title==='Episodio '+current.number?'Calificación':current.title)}</h3>${current.summary?`<p>${esc(current.summary)}</p>`:''}</div>${criticsScore(current.score)}</article></div>`;
+ const showChart=episodes.some(episode=>Number.isFinite(episode.score));
+ const still=season.id==='showdown-2'&&current.number<=17?`/assets/x-critics/showdown-2-e${current.number}.webp`:null;
+ return `<div class="critics-guide"><nav class="critics-episode-grid ${showChart?'critics-chart':''}" aria-label="Episodios">${episodes.map(episode=>{
+  const rated=Number.isFinite(episode.score);
+  return `<a href="${link(episode.id)}" ${current.id===episode.id?'aria-current="page"':''} aria-label="Episodio ${episode.number}, ${criticsScoreText(episode.score)}"><b>${rated?criticsScoreText(episode.score):'—'}</b>${showChart?`<span class="critics-episode-meter" aria-hidden="true" style="--episode-score:${rated?episode.score*10:0}%"></span>`:''}<span>E${episode.number}</span></a>`;
+ }).join('')}</nav>
+ <article class="critics-current ${still?'has-episode-art':''}">${still?`<figure><img src="${still}" alt="" decoding="async"></figure>`:''}<div class="critics-current-copy"><span class="critics-meta">Episodio ${current.number}</span><h3>${esc(current.title==='Episodio '+current.number?season.title:current.title)}</h3>${current.summary?`<p>${esc(current.summary)}</p>`:''}</div><div class="critics-current-rating"><span>Nota de X Critics</span>${criticsScore(current.score)}</div></article></div>`;
 }
 
 function criticsGroupGuide(season,data,requested){
@@ -109,11 +126,15 @@ function criticsSeasonPage(season,data,tournament,stageId,episodeId){
   <h2 id="critics-section-title">${group?'Fases del torneo':'Episodios'}</h2>
   ${group?`<nav class="critics-stage-links" aria-label="Fases de ${esc(season.title)}">${groups.map(part=>`<a href="${criticsLink(season.id,part.id)}" ${part.id===group.id?'aria-current="page"':''}>${esc(part.title)}</a>`).join('')}</nav>
   <header class="critics-stage-heading"><div><h3>${esc(group.title)}</h3><p>Promedio de los episodios de esta fase</p></div>${criticsScore(criticsAverage(group.episodes.map(episode=>episode.score)))}</header>`:''}
-  ${criticsEpisodeGuide(group?.episodes||episodes,group?episodeId:stageId,id=>group?criticsLink(season.id,group.id,id):criticsLink(season.id,id))}
+  ${criticsEpisodeGuide(season,group?.episodes||episodes,group?episodeId:stageId,id=>group?criticsLink(season.id,group.id,id):criticsLink(season.id,id))}
  </section>`;
  return `<section class="critics-page critics-detail-page" data-critics-season="${season.id}" aria-labelledby="critics-title">
   <a class="critics-back" href="${criticsLink()}">${icon('back')} X Critics</a>
-  <header class="critics-hero critics-detail-hero"><img class="critics-hero-art" src="${criticsArt(season)}" alt="" fetchpriority="high"><div class="critics-hero-copy"><span class="critics-meta">${criticsSeries[season.series]} · ${season.years}</span><h1 id="critics-title">${esc(season.title)}</h1><p>${season.count} episodios${suit?' · Calificación por grupo':''}</p><a class="critics-cast-link" href="${criticsLink('elenco',season.series)}">Ver elenco de ${criticsSeries[season.series]} ${icon('arrow')}</a>${item?.url?`<a class="critics-cast-link" href="${esc(item.url)}">Ir a la temporada ${icon('arrow')}</a>`:''}</div><div class="critics-hero-rating"><span>Promedio de ${suit?'grupos':'episodios'}</span>${criticsScore(score)}<small>${rated} de ${numbers.length} con nota</small></div></header>
+  <header class="critics-title-sheet"><div class="critics-season-cover"><img src="${season.id==='apocalypse-ii'?'/seasons/campria/apocalypse-ii/poster.webp':criticsArt(season)}" alt="" fetchpriority="high"></div>
+  <div class="critics-title-copy"><span class="critics-meta">${criticsSeries[season.series]}</span><h1 id="critics-title">${esc(season.title)}</h1><p class="critics-title-meta">${season.years} <span>·</span> ${season.count} episodios${suit?' <span>·</span> Notas por grupo':''}</p>
+    ${item?.desc?`<p class="critics-description">${esc(item.desc)}</p>`:''}
+    <div class="critics-title-actions"><a class="critics-cast-link" href="${criticsLink('elenco',season.series)}">${icon('users')} Elenco</a>${item?.url&&season.id!=='apocalypse-ii'?`<a class="critics-cast-link" href="${esc(item.url)}">Ir a la temporada ${icon('arrow')}</a>`:''}</div></div>
+  <div class="critics-hero-rating"><span>Promedio de X Critics</span>${criticsScore(score)}<small>${rated} de ${numbers.length} ${suit?'grupos':'episodios'} con nota</small></div></header>
   ${block}
  </section>`;
 }
@@ -134,7 +155,7 @@ function criticsCastCard(person){
  const normalized=norm(person.name),profileName=norm(criticsCastAliases[normalized]||person.name);
  const profile=state.catalog.characters.find(c=>norm(c.name)===profileName);
  const initials=person.name.split(/\s+/).slice(0,2).map(part=>part[0]).join('');
- return `<article class="critics-cast-card">${profile?`<img src="${esc(profile.image)}" alt="" loading="lazy" decoding="async">`:`<span class="critics-cast-initials" aria-hidden="true">${esc(initials)}</span>`}<div><h3>${esc(person.name)}</h3><p>${esc(person.role)}</p><span>${person.episodes} episodios · ${esc(person.years.replace('-', '–'))}</span></div></article>`;
+ return `<article class="critics-cast-card">${profile?`<img src="${esc(profile.image)}" alt="" loading="lazy" decoding="async">`:`<span class="critics-cast-initials" aria-hidden="true">${esc(initials)}</span>`}<div><h3>${esc(person.name)}</h3><p>${esc(person.role)}</p></div><div class="critics-cast-credits"><b>${person.episodes} episodios</b><span>${esc(person.years.replace('-', '–'))}</span></div></article>`;
 }
 
 function criticsCastPage(data,requested){
@@ -154,6 +175,17 @@ async function renderXCritics(seasonId,stageId,episodeId){
   const [data,archive]=await Promise.all([loadCriticsData(),season?.series==='showdown'?loadSpinoffArchive():null]);
   if(state.route!=='x-critics'||turn!==criticsRequest)return;
   main.innerHTML=season?criticsSeasonPage(season,data,archive?.seasons[season.catalog].tournament,stageId,episodeId):seasonId==='elenco'?criticsCastPage(data,stageId):criticsOverview(data);
+  const search=main.querySelector('[data-critics-search]');
+  search?.addEventListener('input',()=>{
+   const query=norm(search.value.trim());
+   const franchises=[...main.querySelectorAll('.critics-franchise')];
+   for(const franchise of franchises){
+    const seasons=[...franchise.querySelectorAll('[data-critics-match]')];
+    for(const card of seasons)card.hidden=!card.dataset.criticsMatch.includes(query);
+    franchise.hidden=seasons.every(card=>card.hidden);
+   }
+   main.querySelector('.critics-search-empty').hidden=franchises.some(card=>!card.hidden);
+  });
   if(focus)[...main.querySelectorAll('a')].find(link=>link.getAttribute('href')===focus)?.focus({preventScroll:true});
  }catch{
   if(state.route!=='x-critics'||turn!==criticsRequest)return;
