@@ -5061,6 +5061,25 @@
           "image": "personajes/javi.png"
         }
       ]
+    },
+    "apocalypse-ii": {
+      "id": "apocalypse-ii",
+      "number": 13,
+      "description": "Cinco años después de Apocalypse, Maria Villegas, Bonju y Dua Lingo regresan a un mundo en ruinas. Los participantes exploran el mapa de World, reúnen recursos y se organizan en refugios. Los desafíos ponen a prueba sus alianzas y The X Protocol reúne a la expedición para decidir quién sigue en la competencia.",
+      "stats": {
+        "Año": "2026",
+        "Franquicia": "Campria",
+        "Formato": "Supervivencia",
+        "Estado": "En curso"
+      },
+      "protagonists": [],
+      "poster": "seasons/campria/apocalypse-ii/cover-world.webp",
+      "images": {
+        "Maria Villegas": "personajes/maria.png"
+      },
+      "mainCast": [],
+      "participants": [],
+      "liveArchive": true
     }
   }
 }

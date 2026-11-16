@@ -99,11 +99,12 @@ function searchResults(q){const profiles=state.profiles.filter(p=>norm(p.name).i
 function route(){
   if(!state.catalog)return;cancelRecording();
   if(location.hash==='#noticias')history.replaceState(history.state,'','#x-critics');
+  if(/^#audicion(?:\/apocalypse-ii)?\/?$/.test(location.hash))history.replaceState(history.state,'','#temporada/apocalypse-ii');
   const [view,id,entry,episode]=location.hash.slice(1).split('/');
   const keepCriticsScroll=view==='x-critics'&&id&&$('#main .critics-detail-page')?.dataset.criticsSeason===id;
   state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
-  const routes={inicio:renderHome,world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),audicion:()=>renderCasting(),showdown:()=>renderShowdownSimulator(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  const routes={inicio:renderHome,world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),showdown:()=>renderShowdownSimulator(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   if(state.route==='mensajes'&&id)state.active=decodeURIComponent(id);
   (routes[state.route]||renderHome)();if(!keepCriticsScroll)window.scrollTo({top:0,behavior:'instant'});
 }

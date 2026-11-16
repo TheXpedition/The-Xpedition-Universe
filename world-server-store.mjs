@@ -23,6 +23,19 @@ export async function readRoomProtocol(base,id){
  return row?JSON.parse(row.state):null;
 }
 
+// The season archive reads completed results without starting a World room.
+export async function roomArchiveReader(base,id){
+ const prefix=serverTablePrefix(id);
+ const schemaPrefix=base.kind==='postgres'?'xpedition.':'';
+ const name=prefix+'world_environment';
+ const exists=base.kind==='postgres'
+  ?(await base.one('SELECT to_regclass(?) AS relation',schemaPrefix+name))?.relation
+  :await base.one("SELECT name FROM sqlite_master WHERE type='table' AND name=?",name);
+ if(!exists)return null;
+ const scoped=sql=>sql.replace(/\b(world_environment|world_seasons|world_contestants)\b/g,name=>schemaPrefix+prefix+name);
+ return {one:(sql,...args)=>base.one(scoped(sql),...args),all:(sql,...args)=>base.all(scoped(sql),...args)};
+}
+
 // Use inside the same transaction that writes the initial ceremony state.
 export async function lockRoomStatus(db,id){
  return db.one('SELECT enabled,settings FROM world_servers WHERE id=?'+(db.kind==='postgres'?' FOR UPDATE':''),id);

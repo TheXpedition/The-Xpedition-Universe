@@ -51,8 +51,8 @@ function renderContext(){
 }
 
 test('las doce temporadas de Campria se abren dentro de la web y tienen su archivo completo',()=>{
- assert.deepEqual(catalog.content.campria.filter(x=>!x.upcoming).map(x=>x.id),ids);
- assert.deepEqual(Object.keys(archive.seasons),ids);
+ assert.deepEqual(catalog.content.campria.map(x=>x.id),[...ids,'apocalypse-ii']);
+ assert.deepEqual(Object.keys(archive.seasons),[...ids,'apocalypse-ii']);
  for(const [i,id] of ids.entries()){
   const item=catalog.content.campria[i],season=archive.seasons[id];
   assert.equal(item.url,'#temporada/'+id);
@@ -64,8 +64,8 @@ test('las doce temporadas de Campria se abren dentro de la web y tienen su archi
 });
 
 test('las notas publicadas de The X Critics coinciden con las doce notas proporcionadas',()=>{
- assert.deepEqual(catalog.content.campria.filter(x=>!x.upcoming).map(x=>x.critics.score),[7.2,7.5,8.6,8.2,5.7,8.9,7.4,8.5,9.3,7.8,6.9,5.4]);
- for(const item of catalog.content.campria.filter(x=>!x.upcoming)){assert.equal(item.critics.source,'The X Critics');assert.equal(item.critics.outOf,10);}
+ assert.deepEqual(catalog.content.campria.filter(x=>ids.includes(x.id)).map(x=>x.critics.score),[7.2,7.5,8.6,8.2,5.7,8.9,7.4,8.5,9.3,7.8,6.9,5.4]);
+ for(const item of catalog.content.campria.filter(x=>ids.includes(x.id))){assert.equal(item.critics.source,'The X Critics');assert.equal(item.critics.outOf,10);}
 });
 
 test('todos los retratos, pósteres y track records existen con rutas válidas también en Linux',()=>{
@@ -77,8 +77,9 @@ test('todos los retratos, pósteres y track records existen con rutas válidas t
  }
  for(const season of Object.values(archive.seasons)){
   asset(season.poster);
-  const track=asset(season.track.src);
-  assert.equal(track.readUInt32BE(16),season.track.width);assert.equal(track.readUInt32BE(20),season.track.height);
+  if(season.track){const track=asset(season.track.src);
+   assert.equal(track.readUInt32BE(16),season.track.width);assert.equal(track.readUInt32BE(20),season.track.height);
+  }else assert.equal(season.liveArchive,true);
   for(const image of Object.values(season.images))if(image!==null)asset(image);
   for(const person of season.protagonists){assert(person.name&&person.place);asset(person.image);}
   for(const person of [...season.mainCast,...season.participants]){
@@ -108,7 +109,7 @@ test('New Era y Empire of Blood conservan sus treinta Versus y los episodios de 
 test('las tarjetas recuperan la ficha completa antes de abrir la temporada dentro de la web',()=>{
  const context=renderContext();
  vm.runInContext(streaming.slice(streaming.indexOf('function relatedContent('),streaming.indexOf("document.addEventListener('click'",streaming.indexOf('contentModal=function'))),context);
- for(const item of catalog.content.campria.filter(x=>!x.upcoming)){
+ for(const item of catalog.content.campria.filter(x=>ids.includes(x.id))){
   let html;
   context.modal=body=>{html=body;};context.contentModal(item.id);
   assert(html.includes('data-content-id="'+item.id+'"'));
@@ -201,4 +202,14 @@ test('All Stars muestra ambas filas y respeta renuncias, empates y eliminaciones
   assert(html.includes('data-result-type="winner"')&&html.includes('data-result-type="eliminated"'));
   assert.equal((html.match(/class="ch-choice"/g)||[]).length,r.competitors.filter(p=>p.choice).length);
  }
+});
+
+test('Apocalypse II abre su ficha y conserva los recursos del elenco en el archivo en vivo',()=>{
+ const item=catalog.content.campria.at(-1),record=archive.seasons[item.id];
+ assert.equal(item.url,'#temporada/apocalypse-ii');
+ assert(!item.upcoming);
+ assert(record.liveArchive);
+ assert.equal(record.poster,item.art.poster);
+ assert.equal(item.art.logo.height,552);
+ for(const file of [item.art.poster,item.art.logo.src])assert(fs.statSync(path.join(root,file)).size>100);
 });

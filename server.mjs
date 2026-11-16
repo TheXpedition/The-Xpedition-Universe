@@ -7,6 +7,7 @@ import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adju
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration} from './community-moderation.mjs';
 import {createCasting} from './casting.mjs';
+import {readApocalypseSeason} from './apocalypse-season.mjs';
 import {createShowdownGame} from './showdown-game.mjs';
 import {createArcade} from './arcade.mjs';
 import {createXMillion} from './x-million.mjs';
@@ -267,10 +268,10 @@ async function body(req) {
     fail(400, 'Solicitud inválida.');
   }
 }
-function json(res, value, code = 200) {
+function json(res, value, code = 200, cacheControl = 'no-store') {
   res.writeHead(code, {
     'Content-Type': 'application/json; charset=utf-8',
-    'Cache-Control': 'no-store'
+    'Cache-Control': cacheControl
   });
   res.end(JSON.stringify(value));
 }
@@ -324,6 +325,10 @@ async function api(req, res, url) {
     const expected = publicUrl || `http://${req.headers.host}`;
     if (origin && origin !== expected) fail(403, 'Origen no autorizado.');
     if (!req.headers['content-type']?.startsWith('application/json')) fail(415, 'Usa contenido JSON.');
+  }
+  if (p === '/api/seasons/apocalypse-ii' && method === 'GET') {
+    const archive = await readApocalypseSeason(db);
+    return json(res, archive, 200, 'public, max-age=30');
   }
   const u = await getSession(req);
   if(await world.handle(req,res,url,u))return;

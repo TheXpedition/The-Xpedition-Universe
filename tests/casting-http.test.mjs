@@ -6,6 +6,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {openDatabase} from '../database.mjs';
+import {serverDatabase} from '../world-server-store.mjs';
 const project=fileURLToPath(new URL('..',import.meta.url));
 const dataDir=fs.mkdtempSync(path.join(os.tmpdir(),'xp-casting-http-'));
 let child,base;
@@ -16,11 +17,28 @@ async function request(client,path,method='GET',payload){const res=await fetch(b
 
 test('el sitio sirve la sexta previa, el módulo y el casting real; tickets, acceso y elenco sobreviven al reinicio',async()=>{
  await start();
+ const season=await request(null,'/seasons/apocalypse-ii');
+ assert.equal(season.status,200);
+ assert.equal(season.episodes[0].episode,1);
+ assert(season.cast.length>0);
+ assert(season.cast.every(person=>person.characterId&&person.results.length===season.episodes.length&&!('userName' in person)&&!('profileId' in person)));
  const config=await fetch(base+'/casting-config.mjs');assert.equal(config.status,200);assert(config.headers.get('content-type').includes('javascript'));
  for(const suffix of ['','-mobile']){const response=await fetch(base+'/media/apocalypse-ii-preview'+suffix+'.mp4',{headers:{range:'bytes=0-131071'}});assert.equal(response.status,206);assert.equal(response.headers.get('content-type'),'video/mp4');const bytes=Buffer.from(await response.arrayBuffer());assert(bytes.indexOf('moov')>0);assert(bytes.indexOf('moov')<bytes.indexOf('mdat'));}
  const c={},registration=await request(c,'/auth/register','POST',{name:'Casting HTTP QA',email:'casting-http@example.invalid',password:'SoloUnaPrueba-2026'});assert.equal(registration.status,201);
  const observer={},second=await request(observer,'/auth/register','POST',{name:'Casting HTTP Observer',email:'casting-observer@example.invalid',password:'SoloUnaPrueba-2026'});assert.equal(second.status,201);
- const db=await openDatabase(dataDir);await db.run('UPDATE user_progression SET tickets=800 WHERE user_id=?',registration.user.id);await db.close();
+ const db=await openDatabase(dataDir);
+ await db.run('UPDATE user_progression SET tickets=800 WHERE user_id=?',registration.user.id);
+ const id='71d75654-571b-4d10-9db3-65dbc747d781';
+ await db.run('INSERT INTO world_servers(id,name,creator,settings,created,updated) VALUES(?,?,?,?,?,?)',id,'Apocalypse II',registration.user.id,'{}',1,1);
+ const room=await serverDatabase(db,id);
+ const completed={id:'qa-episode',episode:1,challenge:'Bonju Chef',cast:[{id:registration.user.id,characterId:'vitany',name:'Vitany',userName:'Cuenta privada',result:'WIN'}]};
+ await room.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','x-protocol:public:qa-episode',JSON.stringify(completed),2);
+ const published=await request(null,'/seasons/apocalypse-ii');
+ assert.deepEqual(published.episodes.map(episode=>episode.episode),[1,2]);
+ assert.equal(published.cast.find(person=>person.characterId==='vitany').results[1],'WIN');
+ assert(!JSON.stringify(published).includes(registration.user.id));
+ assert(!JSON.stringify(published).includes('Cuenta privada'));
+ await db.close();
  const p='/casting/apocalypse-ii',purchase=await request(c,p+'/purchase','POST',{kind:'audition',acceptNoRefund:true});assert.equal(purchase.status,200);assert.equal(purchase.wallet.tickets,700);assert.equal(purchase.entry.started,0);
  assert.equal((await request(c,p+'/purchase','POST',{kind:'audition',acceptNoRefund:true})).wallet.tickets,700);
  const started=await request(c,p+'/start','POST',{});assert.equal(started.entry.state,'running');
