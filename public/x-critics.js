@@ -60,22 +60,17 @@ function criticsRatings(season,data){
 }
 
 function criticsOverview(data){
- const latest=criticsSeasons.find(season=>season.id==='apocalypse-ii');
  return `<section class="critics-page critics-index" aria-labelledby="critics-title">
   <header class="critics-index-head"><div><h1 id="critics-title">X Critics</h1><p>Calificaciones y elenco de The Xpedition Universe.</p></div>
    <label class="critics-search">${icon('search')}<input type="search" data-critics-search placeholder="Buscar temporada o saga" aria-label="Buscar temporada o saga"></label>
   </header>${criticsTabs()}
-  <div class="critics-index-layout"><aside class="critics-index-aside" aria-labelledby="critics-feature-title"><h2 id="critics-feature-title">Temporada en curso</h2>
-   <article class="critics-feature"><a href="${criticsLink(latest.id)}" class="critics-feature-art"><img src="${criticsArt(latest)}" alt="" decoding="async"><span><strong>${latest.title}</strong><small>Campria · ${latest.years}</small></span>${icon('arrow')}</a>
-   <div class="critics-feature-episodes">${criticsEpisodes(latest,data).map(episode=>`<a href="${criticsLink(latest.id,episode.id)}"><span>${esc(episode.title)}</span>${criticsScore(episode.score)}</a>`).join('')}</div></article>
-  </aside>
   <section class="critics-catalog" aria-labelledby="critics-catalog-title"><h2 id="critics-catalog-title">Explorar sagas</h2>
    <div class="critics-catalog-grid">${Object.entries(criticsSeries).map(([series,label])=>`<article class="critics-franchise">
     <div class="critics-franchise-poster"><img src="${criticsSeriesArt(series)}" alt="" decoding="async"><h3>${esc(label)}</h3></div>
     ${criticsSeasons.filter(season=>season.series===series).map(season=>criticsCard(season,data)).join('')}
     <a class="critics-franchise-cast" href="${criticsLink('elenco',series)}">${icon('users')} Elenco ${icon('arrow')}</a>
    </article>`).join('')}</div><p class="critics-search-empty" hidden>Sin temporadas que coincidan con la búsqueda.</p>
-  </section></div>
+  </section>
  </section>`;
 }
 

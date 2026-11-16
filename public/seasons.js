@@ -79,10 +79,9 @@ function renderLiveSeasonPanel(){
   if(!r.ok)throw Error('No se pudo abrir el archivo.');
   return r.json();
  });
- const labels=isTrack?import('/juegos/protocol-history-ui.mjs').then(module=>module.TRACK_LABELS):null;
- Promise.all([response,labels]).then(([{episodes,cast,hasFinal},statusLabels])=>{
+ response.then(({episodes,cast,hasFinal,statusLabels})=>{
   if(!target.isConnected)return;
-  const assets='/juegos/x-protocol/art/portraits/';
+  const assets='/seasons/campria/apocalypse-ii/portraits/';
   if(!isTrack){
    target.insertAdjacentHTML('beforeend',cast.map(person=>seasonParticipantCard({
     name:person.name,place:'Participante',image:assets+person.characterId+'-face.webp',grayscale:person.grayscale

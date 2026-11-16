@@ -21,6 +21,10 @@ test('el sitio sirve la sexta previa, el módulo y el casting real; tickets, acc
  assert.equal(season.status,200);
  assert.equal(season.episodes[0].episode,1);
  assert(season.cast.length>0);
+ assert.equal(season.statusLabels.WIN[0],'WIN');
+ const portrait=await fetch(base+'/seasons/campria/apocalypse-ii/portraits/vitany-face.webp',{method:'HEAD',redirect:'manual'});
+ assert.equal(portrait.status,200);
+ assert.equal(portrait.headers.get('content-type'),'image/webp');
  assert(season.cast.every(person=>person.characterId&&person.results.length===season.episodes.length&&!('userName' in person)&&!('profileId' in person)));
  const config=await fetch(base+'/casting-config.mjs');assert.equal(config.status,200);assert(config.headers.get('content-type').includes('javascript'));
  for(const suffix of ['','-mobile']){const response=await fetch(base+'/media/apocalypse-ii-preview'+suffix+'.mp4',{headers:{range:'bytes=0-131071'}});assert.equal(response.status,206);assert.equal(response.headers.get('content-type'),'video/mp4');const bytes=Buffer.from(await response.arrayBuffer());assert(bytes.indexOf('moov')>0);assert(bytes.indexOf('moov')<bytes.indexOf('mdat'));}

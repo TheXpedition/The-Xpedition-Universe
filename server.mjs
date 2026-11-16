@@ -889,7 +889,9 @@ const server = http.createServer(async (req, res) => {
     if(/^\/juegos(?:\/|$)/i.test(decodeURIComponent(url.pathname)))return await world.launch(req,res);
     const relative = decodeURIComponent(url.pathname === '/' ? '/index.html' : url.pathname==='/showdown/solo'||url.pathname==='/showdown/solo/'?'/showdown/solo/index.html':url.pathname==='/simulator'||url.pathname==='/simulator/'?'/simulator/index.html':url.pathname==='/simulator/ice-breaker'||url.pathname==='/simulator/ice-breaker/'?'/simulator/ice-breaker/index.html':url.pathname==='/simulator/x-million'||url.pathname==='/simulator/x-million/'?'/simulator/x-million/index.html':/^\/simulator\/(game|traitor|house)\/$/.test(url.pathname)?url.pathname+'index.html':url.pathname);
     const introAliases={'/world-intro-player.mjs':'/world-intro-player.mjs','/world-intro-player.css':'/world-intro-player.css','/world-intro-video.mp4':'/juegos/media/the-x-world-intro.mp4','/world-intro-video-mobile.mp4':'/juegos/media/the-x-world-intro-mobile.mp4'};
-    const filename = path.resolve(publicDir, '.' + (introAliases[url.pathname]||relative));
+    const seasonPortrait=/^\/seasons\/campria\/apocalypse-ii\/portraits\/([a-z0-9][a-z0-9-]*-face\.webp)$/.exec(relative);
+    const portraitAsset=seasonPortrait?'/juegos/x-protocol/art/portraits/'+seasonPortrait[1]:null;
+    const filename = path.resolve(publicDir, '.' + (portraitAsset||introAliases[url.pathname]||relative));
     if (!filename.startsWith(publicDir + path.sep) || !fs.existsSync(filename) || !fs.statSync(filename).isFile()) fail(404, 'Página no encontrada.');
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.

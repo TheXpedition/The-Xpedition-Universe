@@ -1,6 +1,7 @@
 import {createProtocolHistory} from './world-protocol-history.mjs';
 import {roomArchiveReader} from './world-server-store.mjs';
 import {orderTrackCast} from './public/juegos/protocol-track.mjs';
+import {TRACK_LABELS} from './public/juegos/protocol-history-ui.mjs';
 
 export async function readApocalypseSeason(db){
  const rooms=await db.all('SELECT id,settings FROM world_servers ORDER BY created,id');
@@ -16,5 +17,5 @@ export async function readApocalypseSeason(db){
   results:history.episodes.map(episode=>episode.cast.find(person=>person.characterId===characterId)?.result??null),
   final:history.final?.winner===characterId?'Winner':history.final?.runners.includes(characterId)?'Runner-up':null
  }));
- return {episodes,cast,hasFinal:!!history.final};
+ return {episodes,cast,hasFinal:!!history.final,statusLabels:TRACK_LABELS};
 }
