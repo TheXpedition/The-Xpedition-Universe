@@ -17,12 +17,35 @@ function competitor(s,id){const p=s.roster.find(p=>p.id===id);if(!p?.active)erro
 function accessible(s,p){return Math.hypot(p.x-490,p.y-690)<285;}
 export function skipStatus(s,selfId){const active=s.roster.filter(p=>p.active),votes=s.skipVotes||[];return {count:active.filter(p=>votes.includes(p.id)).length,total:active.length,voted:votes.includes(selfId),canVote:s.phase==='kitchen'&&active.some(p=>p.id===selfId)};}
 function endKitchen(s){const active=s.roster.filter(p=>p.active);s.roundResults=active.map(p=>({id:p.id,characterId:p.characterId,name:p.name,...s.stations[p.id].result,servedAt:s.stations[p.id].servedAt})).sort((a,b)=>b.total-a.total||a.servedAt-b.servedAt||a.characterId.localeCompare(b.characterId));s.roundResults.forEach((r,i)=>r.rank=i+1);s.judgingIndex=0;s.judgingSegments=judgingSchedule(s);phase(s,'judging');}
-function finishRanking(s){const survivors=s.roster.filter(p=>p.active),alive=survivors.map(p=>s.roundResults.find(r=>r.id===p.id)).filter(Boolean).sort((a,b)=>b.total-a.total),out=s.history.slice().reverse().flatMap(h=>h.results.filter(r=>h.eliminated.includes(r.id))),seen=new Set(),highRound=Math.max(1,(s.history.at(-1)?.round||s.round)-1),high=new Set(s.history.filter(h=>h.round>=highRound).flatMap(h=>h.results.map(r=>r.id)));s.ranking=[...alive,...out].filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true;}).map((r,i)=>({rank:i+1,sourceActorId:r.id,characterId:r.characterId,name:r.name,score:r.total,challengeHigh:high.has(r.id)}));}
+function finishRanking(s){const survivors=s.roster.filter(p=>p.active),alive=survivors.map(p=>s.roundResults.find(r=>r.id===p.id)).filter(Boolean).sort((a,b)=>b.total-a.total),rosterIds=new Set(s.roster.map(p=>p.id)),out=s.history.slice().reverse().flatMap(h=>h.results.filter(r=>rosterIds.has(r.id)&&h.eliminated.includes(r.id))),seen=new Set(),highRound=Math.max(1,(s.history.at(-1)?.round||s.round)-1),high=new Set(s.history.filter(h=>h.round>=highRound).flatMap(h=>h.results.map(r=>r.id)));s.ranking=[...alive,...out].filter(r=>{if(seen.has(r.id))return false;seen.add(r.id);return true;}).map((r,i)=>({rank:i+1,sourceActorId:r.id,characterId:r.characterId,name:r.name,score:r.total,challengeHigh:high.has(r.id)}));}
 function adaptRemainingRounds(s){const left=s.roster.filter(p=>p.active).length;if(left<2){s.noWinner=left===0;s.winner=left===1?s.roster.find(p=>p.active).id:null;s.finishAfterElimination=left?'winner':'farewell';finishRanking(s);return;}const target=Math.min(s.finalistCount,left),qualifiers=Math.min(Math.max(0,s.totalRounds-s.round-1),left-target),final=s.rounds.at(-1),future=s.rounds.slice(s.round,s.round+qualifiers);s.finalistCount=target;s.rounds=[...s.rounds.slice(0,s.round),...future,final];s.totalRounds=s.round+qualifiers+1;const count=left-target,base=qualifiers?Math.floor(count/qualifiers):0,extra=qualifiers?count%qualifiers:0;s.plan=[...s.plan.slice(0,s.round),...Array.from({length:qualifiers},(_,i)=>base+(i<extra?1:0))];}
+export function withdrawChefBots(s){
+ if(s.completedAt||!chefActive(s)||['winner','farewell'].includes(s.phase)||s.finishAfterElimination)return false;
+ const bots=new Set(s.roster.filter(p=>p.bot).map(p=>p.id));
+ const humans=s.roster.filter(p=>!p.bot);
+ if(!bots.size||humans.filter(p=>p.active).length<2)return false;
+ if(!['elimination','between'].includes(s.phase)&&!isFinal(s)){
+  const withdrawing=s.roster.filter(p=>p.bot&&p.active).length;
+  s.plan[s.round-1]=Math.max(0,(s.plan[s.round-1]||0)-withdrawing);
+ }
+ for(const id of bots){
+  if(s.phase==='fridge')for(const ingredient of s.stations[id]?.inventory||[])s.stock[ingredient]++;
+  delete s.stations[id];
+ }
+ s.roster=humans;
+ s.skipVotes=(s.skipVotes||[]).filter(id=>!bots.has(id));
+ s.eliminated=(s.eliminated||[]).filter(id=>!bots.has(id));
+ s.roundResults=s.roundResults.filter(r=>!bots.has(r.id));
+ s.roundResults.forEach((r,i)=>{r.rank=i+1;});
+ if(['between','elimination'].includes(s.phase))adaptRemainingRounds(s);
+ s.usersOnly=true;
+ s.revision++;
+ return true;
+}
 export function chefAction(s,a,{actor,staff=false,random=Math.random}={}){
  if(!a||typeof a.type!=='string')error('Acción inválida.');
  const admin=['open','fillBots','start','pause','resume','cancel','next','finish','remove'];if(admin.includes(a.type)&&!staff)error('Solo Dirección puede realizar esta acción.');
- if(a.type==='open'){if(chefActive(s))error('Termina el reto actual antes de abrir otro.');const next=createChef({id:a.id||s.id,now:s.at});Object.assign(s,next);phase(s,'lobby');return;}
+ if(a.type==='open'){if(chefActive(s))error('Termina el reto actual antes de abrir otro.');const next=createChef({id:a.id||s.id,now:s.at});Object.assign(s,next,{usersOnly:false});phase(s,'lobby');return;}
  if(a.type==='cancel'){if(s.phase==='finished'||s.phase==='cancelled')return;phase(s,'cancelled');s.paused=false;return;}
  if(a.type==='pause'||a.type==='resume'){if(!chefActive(s))error('No hay una ronda en curso.');s.paused=a.type==='pause';for(const p of s.roster)p.input=null;s.revision++;return;}
  if(a.type==='fillBots'){if(s.phase!=='lobby')error('Completa las plazas antes de iniciar.');const count=clamp(Math.trunc(a.count||18),7,18);s.roster=s.roster.filter(p=>!p.bot||CONTESTANTS.some(c=>c.id===p.characterId)&&!a.excluded?.includes(p.characterId));for(const c of CONTESTANTS){if(s.roster.length>=count)break;if(s.roster.some(p=>p.characterId===c.id)||a.excluded?.includes(c.id))continue;s.roster.push({...c,id:'chef-bot:'+c.id,characterId:c.id,bot:true,active:true,connected:true,skill:.73+random()*.1,seed:random(),vitals:{energy:100,hunger:100,stress:0}});}s.revision++;return;}
@@ -79,7 +102,7 @@ export function tickChef(s,time,{random=Math.random,durations=DURATIONS}={}){
  else if(s.phase==='fridge'&&(elapsed>=(durations.fridge===DURATIONS.fridge?fridgeLimit(s):durations.fridge)||active.every(p=>s.stations[p.id].ready))){phase(s,'kitchen');for(const p of active){const st=s.stations[p.id];st.stageAt=s.clock;st.recipeId=roundMode(s)==='improv'?inferRecipe(st.inventory)?.recipe.id:recipeFor(s).id;st.prepPeriod=prepPeriod(s,p);if(!prepProgress(st).total)beginCooking(st,s.clock,stationRecipe(s,st));p.input=null;}}
  else if(s.phase==='kitchen'&&active.every(p=>s.stations[p.id].served))endKitchen(s);
  else if(s.phase==='judging'&&elapsed>=(durations.judging===DURATIONS.judging?(s.judgingSegments||[6500,6500,6500]).reduce((a,b)=>a+b,0):durations.judging))phase(s,'results');
- else if(s.phase==='results'&&elapsed>=durations.results){const final=isFinal(s),planned=final?s.roundResults.slice(1):s.roundResults.slice(-s.plan[s.round-1]),out=[...new Set([...planned.map(r=>r.id),...s.roundResults.filter(r=>r.total===0).map(r=>r.id)])];s.eliminated=out;for(const p of s.roster)if(out.includes(p.id))p.active=false;s.history.push({round:s.round,recipeId:recipeFor(s).id,mode:roundMode(s),results:structuredClone(s.roundResults),eliminated:[...out]});if(final){s.winner=s.roundResults.find(r=>r.total>0)?.id||null;s.noWinner=!s.winner;finishRanking(s);if(s.noWinner){s.finishAfterElimination='farewell';phase(s,'elimination');}else phase(s,'winner');}else{adaptRemainingRounds(s);phase(s,'elimination');}}
+ else if(s.phase==='results'&&elapsed>=durations.results){const final=isFinal(s),count=Math.max(0,Math.min(s.plan[s.round-1]||0,s.roundResults.length-s.finalistCount)),planned=final?s.roundResults.slice(1):s.roundResults.slice(s.roundResults.length-count),out=[...new Set([...planned.map(r=>r.id),...s.roundResults.filter(r=>r.total===0).map(r=>r.id)])];s.eliminated=out;for(const p of s.roster)if(out.includes(p.id))p.active=false;s.history.push({round:s.round,recipeId:recipeFor(s).id,mode:roundMode(s),results:structuredClone(s.roundResults),eliminated:[...out]});if(final){s.winner=s.roundResults.find(r=>r.total>0)?.id||null;s.noWinner=!s.winner;finishRanking(s);if(s.noWinner){s.finishAfterElimination='farewell';phase(s,'elimination');}else phase(s,'winner');}else{adaptRemainingRounds(s);phase(s,'elimination');}}
  else if(s.phase==='elimination'&&elapsed>=durations.elimination*Math.max(1,s.eliminated.length))phase(s,s.finishAfterElimination||'between');
  return true;
 }

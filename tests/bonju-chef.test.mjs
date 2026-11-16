@@ -1,11 +1,44 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createChef,chefAction,tickChef,chefView} from '../public/juegos/bonju-chef/engine.mjs';
+import {createBonjuChef} from '../world-bonju-chef-service.mjs';
+import {CONTESTANTS} from '../public/juegos/bonju-chef/data.mjs';
 import {eliminationPlan,RECIPES,DURATIONS} from '../public/juegos/bonju-chef/data.mjs';
 import {cutIngredients} from '../public/juegos/bonju-chef/preparation.mjs';
 import {scoreDish} from '../public/juegos/bonju-chef/score-rules.mjs';
 const rng=()=>.43,staff={staff:true,random:rng};
 function episode(n=18){const s=createChef({id:'qa',now:0});chefAction(s,{type:'open'},staff);chefAction(s,{type:'fillBots',count:n},staff);chefAction(s,{type:'start'},staff);return s;}
+test('Completar con usuarios removes lobby bots and starts without automatic replacements',async()=>{
+ const director={user:{id:'staff'},direct:true,zone:{id:'base'},p:{}};
+ const players=CONTESTANTS.slice(0,15).map(({id})=>({user:{id},characterId:id,wellness:{life:{status:'alive'}},zone:{id:'base'},p:{}}));
+ const service=createBonjuChef({db:{one:async()=>null,run:async()=>{}},clients:new Map([director,...players].map(c=>[c.user.id,c])),send(){},can:async user=>user.id==='staff',canParticipate:async()=>true,autoBots:true});
+ const action=type=>service.handle(director,{type:'chef-action',action:{type}});
+ try{
+  await action('open');await action('fillBots');await action('fillUsers');
+  assert.equal((await service.status(director.user)).roster.length,15);
+  await action('start');
+  const state=await service.status(director.user);
+  assert.equal(state.phase,'tutorial');
+  assert.equal(state.roster.length,15);
+  assert(state.roster.every(p=>!p.bot));
+ }finally{await service.close();}
+});
+test('restarting an explicitly selected active episode withdraws bots and preserves human stations and elapsed time',async()=>{
+ const s=episode(18);s.phase='kitchen';s.paused=true;s.clock=1234;s.phaseAt=876;
+ for(const [i,p] of s.roster.entries())if(i<15){p.bot=false;s.stations[p.id].inventory=['meat'];}
+ let saved;
+ const db={one:async(_sql,id)=>id==='bonju-chef'?{state:JSON.stringify(s)}:{state:s.id},run:async(_sql,_key,state)=>{saved=JSON.parse(state);}};
+ const service=createBonjuChef({db,clients:new Map(),send(){},can:async()=>true,now:()=>5000});
+ try{
+  const result=await service.status({id:s.roster[0].id});
+  assert.equal(result.roster.length,15);
+  assert(result.roster.every(p=>!p.bot));
+  assert.deepEqual(result.station.inventory,['meat']);
+  assert.equal(result.clock,1234);
+  assert.equal(result.paused,true);
+  assert.equal(saved.roster.length,15);
+ }finally{await service.close();}
+});
 test('Bonju Chef reaches two finalists, or three for casts of seventeen or eighteen for every supported cast size',()=>{
  for(let n=7;n<=18;n++){const plan=eliminationPlan(n);assert.equal(plan.length,n>=17?7:5);assert.equal(plan.reduce((a,b)=>a+b,0),n-(n>=17?3:2));assert(plan.every(x=>x>=1&&x<=4));}
 });
