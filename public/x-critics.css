@@ -1,0 +1,140 @@
+.topbar #navigation{min-width:0;overflow-x:auto;scrollbar-width:none}
+.topbar #navigation .nav-link{flex:none}
+.topbar #navigation .nav-bookmark{display:flex;align-items:center;justify-content:center;min-width:27px}
+.topbar #navigation .nav-bookmark svg{display:block;width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6}
+.topbar #navigation a:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;border-radius:4px}
+
+.critics-page,.critics-home-link{
+ --critic-ink:#f5f3fb;
+ --critic-muted:#ada8bd;
+ --critic-line:#a59abc2b;
+ --critic-panel:#15141f;
+ --critic-gold:#ffd080;
+ color:var(--critic-ink);
+}
+.critics-page{width:min(100%,1440px);margin-inline:auto}
+.critics-home-link{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:24px 4vw 42px;padding:25px 30px;border:1px solid var(--critic-line);border-radius:12px;background:linear-gradient(115deg,#211833,var(--critic-panel) 55%)}
+.critics-home-link h2{margin:0 0 5px;font-size:22px}
+.critics-home-link p{margin:0;color:var(--critic-muted);font-size:13px}
+.critics-home-link .btn{flex:none}
+
+.critics-hero{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;min-height:310px;padding:clamp(26px,5vw,68px);border:1px solid var(--critic-line);border-radius:16px;background:#16121d}
+.critics-overview-hero{min-height:375px}
+.critics-hero-art{position:absolute;z-index:-2;inset:0 0 0 auto;width:64%;height:100%;object-fit:cover;object-position:center 33%;mask-image:linear-gradient(to right,transparent,#000 29%);pointer-events:none}
+.critics-hero::after{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,#14111e 2%,#151221 30%,#14111ec2 49%,#14111e16 85%),linear-gradient(0deg,#0b0a13df,transparent 70%);pointer-events:none}
+.critics-hero-copy{max-width:640px}
+.critics-page h1{font-family:'Space Grotesk',Manrope,sans-serif;font-size:clamp(32px,5.25vw,77px);line-height:1;letter-spacing:-.05em;margin:0;text-wrap:balance}
+.critics-overview-hero h1{font-size:clamp(50px,7.2vw,104px)}
+.critics-hero-copy>p{margin:14px 0 0;color:#d0cadd;max-width:37ch;font-size:clamp(13px,1.4vw,17px);line-height:1.65}
+.critics-hero-actions{display:flex;align-items:center;gap:24px;margin-top:22px}
+.critics-hero-actions .btn{background:#f2eafb;color:#171122}
+.critics-hero-actions .btn:hover{background:#d9ccff}
+.critics-meta{display:block;color:var(--critic-muted);font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.5}
+.critics-detail-hero .critics-meta{margin-bottom:9px;color:#d0c6e3;font-size:13px}
+.critics-hero-rating{align-self:flex-end;display:grid;gap:8px;min-width:max-content;padding:16px 20px;border:1px solid #bdb0d542;border-radius:11px;background:#100d19ed;font-size:12px;color:#ded5f0}
+.critics-hero-rating>small{color:var(--critic-muted);font-size:11px}
+.critics-hero-rating .critics-score b{font-size:29px}
+.critics-back,.critics-cast-link{display:inline-flex;align-items:center;gap:8px;color:#d6c8f3;font-size:13px;font-weight:700;text-decoration:none}
+.critics-back{margin-bottom:16px}
+.critics-cast-link{margin:15px 16px 0 0}
+.critics-back svg,.critics-cast-link svg{width:17px;height:17px}
+.critics-back:hover,.critics-cast-link:hover{text-decoration:underline;text-underline-offset:4px}
+.critics-score{display:inline-flex;align-items:center;gap:5px;color:var(--critic-gold);white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.12}
+.critics-score b{font-weight:800;font-size:17px}
+.critics-score small{color:var(--critic-muted);font-size:10px}
+.critics-score.is-unrated{color:var(--critic-muted);font-size:12px;font-weight:700}
+.critics-star{width:17px;height:17px;fill:currentColor;stroke:none;flex:none}
+
+.critics-tabs{display:flex;gap:26px;border-bottom:1px solid var(--critic-line);margin:18px 0 25px}
+.critics-tabs a{display:block;position:relative;padding:13px 2px;color:var(--critic-muted);font-size:14px;font-weight:700}
+.critics-tabs a[aria-current]{color:#faf7ff}
+.critics-tabs a[aria-current]::after{content:'';position:absolute;inset:auto 0 -1px;height:2px;border-radius:4px;background:#cab3ff}
+.critics-page h2{font-size:clamp(20px,2.5vw,28px);letter-spacing:-.04em;margin:0 0 17px}
+.critics-catalog-grid,.critics-cast-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.5vw,22px)}
+.critics-season-card{min-width:0;overflow:hidden;border:1px solid var(--critic-line);border-radius:12px;background:var(--critic-panel);transition:border-color .18s,background .18s}
+.critics-season-card:hover{border-color:#c7b5f488;background:#1c182a}
+.critics-card-art{aspect-ratio:1.8;overflow:hidden;background:#231a30}
+.critics-card-art img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 33%;transition:transform .2s}
+.critics-card-showdown img{object-position:center 26%}
+.critics-season-card:hover .critics-card-art img{transform:scale(1.035)}
+.critics-card-content{display:flex;align-items:center;justify-content:space-between;gap:9px;padding:13px 15px 16px}
+.critics-card-content h3{margin:4px 0 0;font-size:clamp(13px,1.24vw,17px);line-height:1.25;letter-spacing:-.025em}
+.critics-card-content p{margin:5px 0 0;font-size:11px;color:var(--critic-muted)}
+.critics-card-content>svg{width:16px;height:16px;flex:none;color:#cab6f9}
+.critics-card-content .critics-score b{font-size:14px}
+
+.critics-section{margin-top:29px}
+.critics-stage-links{display:flex;align-items:stretch;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.critics-stage-links a{min-height:40px;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;border:1px solid var(--critic-line);border-radius:7px;background:var(--critic-panel);color:#c3bdd2;font-size:12px;font-weight:700;line-height:1.25}
+.critics-stage-links a:hover,.critics-stage-links a[aria-current]{color:#f8f4ff;border-color:#ab90e6;background:#2a2040}
+.critics-suit-links a{min-width:104px}
+.critics-suit span{color:var(--suit-color,#c8a5ff);font-size:21px;line-height:1}
+.critics-suit.hearts,.critics-suit.diamonds{--suit-color:#ff7095}
+.critics-suit.spades,.critics-suit.clubs{--suit-color:#bba5ff}
+.critics-suit.final{--suit-color:var(--critic-gold)}
+.critics-stage-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 0 12px}
+.critics-stage-heading h3{font-size:18px;margin:0}
+.critics-stage-heading p{font-size:12px;margin:5px 0 0;color:var(--critic-muted)}
+.critics-guide{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(220px,.75fr);align-items:start;gap:15px}
+.critics-episode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:7px}
+.critics-episode-grid a{min-width:0;min-height:53px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;border:1px solid var(--critic-line);border-radius:7px;background:var(--critic-panel);font-variant-numeric:tabular-nums}
+.critics-episode-grid a span{color:var(--critic-muted);font-size:10px;font-weight:700}
+.critics-episode-grid a b{font-size:13px;color:#e9def9}
+.critics-episode-meter{width:62%;height:3px;flex:none;border-radius:4px;background:linear-gradient(to right,#d8b7f2 var(--episode-score),#3d3249 var(--episode-score))}
+.critics-episode-grid a:hover,.critics-episode-grid a[aria-current]{border-color:#ad94df;background:#2a2040}
+.critics-episode-grid a[aria-current] b{color:#fff}
+.critics-current{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:90px;padding:18px;border:1px solid var(--critic-line);border-radius:9px;background:linear-gradient(115deg,#1e182e,var(--critic-panel))}
+.critics-current h3{margin:5px 0 0;font-size:clamp(16px,2.1vw,22px);overflow-wrap:anywhere;line-height:1.2}
+.critics-current p{color:var(--critic-muted);margin:8px 0 0;font-size:12px;line-height:1.55}
+.critics-current-group .critics-suit{display:flex;gap:12px;align-items:center}
+.critics-current-group h3{margin-top:0}
+
+.critics-cast-page h1{margin:4px 0 18px;font-size:clamp(35px,5vw,63px)}
+.critics-cast-page .critics-stage-links{margin-bottom:23px}
+.critics-cast-card{display:flex;align-items:center;gap:12px;min-width:0;padding:12px;border:1px solid var(--critic-line);border-radius:9px;background:var(--critic-panel)}
+.critics-cast-card img,.critics-cast-initials{display:grid;place-items:center;width:52px;height:59px;flex:none;object-fit:cover;object-position:center top;border-radius:6px;background:#302443;color:#d8c7fa;font-weight:800}
+.critics-cast-card div{min-width:0;overflow-wrap:anywhere}
+.critics-cast-card h3{margin:0;font-size:14px;line-height:1.2}
+.critics-cast-card p,.critics-cast-card div span{font-size:11px;line-height:1.4;color:var(--critic-muted);margin:3px 0}
+.critics-cast-card div span{font-variant-numeric:tabular-nums;color:#d9c9ed}
+.critics-page a:focus-visible{outline:2px solid #d3bcff;outline-offset:2px}
+
+@media(max-width:1050px){.critics-cast-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:750px){
+ .topbar #navigation{gap:clamp(7px,2.05vw,16px)}
+ .critics-home-link{flex-wrap:wrap;margin-inline:5vw;padding:18px 20px;gap:14px}
+ .critics-home-link .btn{padding:9px 12px}
+ .critics-hero{min-height:240px;padding:20px;gap:16px;border-radius:12px}
+ .critics-overview-hero{min-height:260px}
+ .critics-hero-art{width:80%;object-position:center 26%}
+ .critics-hero::after{background:linear-gradient(90deg,#151221 5%,#151221c2 38%,#15122125 94%),linear-gradient(0deg,#0b0a13ee,transparent 79%)}
+ .critics-hero-rating{padding:11px 12px;gap:6px}
+ .critics-hero-rating .critics-score b{font-size:23px}
+ .critics-hero-copy>p{margin-top:8px}
+ .critics-hero-actions{margin-top:16px;gap:14px}
+ .critics-hero-actions .btn{padding:9px 12px}
+ .critics-tabs{margin:12px 0 19px}
+ .critics-catalog-grid,.critics-cast-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .critics-card-content{padding:9px 10px 11px}
+ .critics-section{margin-top:21px}
+ .critics-guide{grid-template-columns:1fr}
+ .critics-guide-index{order:2}
+ .critics-current{min-height:68px;padding:13px}
+ .critics-stage-links a{padding:7px 10px;min-height:36px}
+ .critics-episode-grid{grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px}
+ .critics-episode-grid a{min-height:45px}
+}
+@media(max-width:490px){
+ .critics-detail-hero{align-items:flex-start;flex-direction:column;justify-content:flex-end;gap:11px}
+ .critics-hero-rating{align-self:stretch;min-width:0;grid-template-columns:1fr auto;align-items:center}
+ .critics-hero-rating>small{grid-column:1/-1}
+ .critics-detail-hero .critics-meta{font-size:11px}
+ .critics-cast-link{font-size:11px;margin:9px 10px 0 0}
+ .critics-card-content .critics-score small{display:none}
+ .critics-card-content .critics-meta{font-size:10px}
+ .critics-cast-card{padding:8px;gap:8px;align-items:flex-start}
+ .critics-cast-card img,.critics-cast-initials{width:37px;height:43px}
+ .critics-cast-card h3{font-size:12px}
+ .critics-cast-card p,.critics-cast-card div span{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.critics-season-card,.critics-card-art img{transition:none}}

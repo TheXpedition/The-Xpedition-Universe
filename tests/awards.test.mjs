@@ -23,7 +23,7 @@ function context(){
   allContent:()=>Object.values(catalog.content).flat(),contentArt:item=>item.art?.background||'backdrops/'+item.id+'.jpg',
   document:{addEventListener(){}},$:selector=>selector==='#main'?main:{focus(){}},
   contentCard:item=>`<article>${item.name}</article>`,castNames:names=>names.join(', '),
-  catalogRail:()=>'',rankRow:list=>`<!--${list.title}-->`,featureHero:()=>'',newsCard:()=>'',
+  catalogRail:()=>'',rankRow:list=>`<!--${list.title}-->`,featureHero:()=>'',
   go:()=>{throw new Error('No debe salir de la ficha antes de pulsar Ver la edición');}
  });
  vm.runInContext(script,context);return {context,main};
@@ -40,6 +40,7 @@ test('las tres ediciones tienen páginas internas y los años 2022, 2025 y 2026'
 
 test('Inicio sitúa los tres banners justo después de TOP 10 Ganadores',()=>{
  const {context:c,main}=context();
+ vm.runInContext(read('x-critics.js'),c);
  vm.runInContext(streaming.slice(streaming.indexOf('renderHome=function(){'),streaming.indexOf('const sagaSections=')),c);
  c.renderHome();assert(main.innerHTML.includes('<!--TOP 10 Ganadores--><section class="catalog-row awards-row"'));
  for(const item of catalog.content.awards)assert(main.innerHTML.includes(item.banner));
