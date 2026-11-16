@@ -18,3 +18,4 @@ body.is-playing .wood-nav .world-icon{width:19px;height:19px}body.is-playing .wo
 #staff-toggle{width:36px!important;min-width:36px!important;padding:7px!important;justify-content:center}#staff-toggle .world-icon{width:21px;height:21px}
 
 #world-roster-strip{height:34px;gap:3px}.roster-strip-person{flex-basis:24px;width:24px;height:28px;border:2px solid #ae7c45;border-radius:4px;box-shadow:0 1px 4px #0008,inset 0 0 0 1px #2a180d}.roster-strip-person img{display:block;border:0}.roster-strip-person.online:after{width:4px;height:4px}@media(max-width:600px){.roster-strip-person{flex-basis:22px;width:22px;height:26px}#world-roster-strip{height:31px}}
+#world-roster-strip img[src*="/gabrielsab-portrait.webp"]{filter:grayscale(1)}
