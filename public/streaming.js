@@ -13,7 +13,7 @@ renderChrome=function(){
   const navigation=$('#navigation'),navScroll=navigation.scrollLeft;
   navigation.innerHTML=visibleNavItems().map(([route,ico,label])=>{
     const bookmark=route==='guardados',href=route==='explorar'?'#explorar/tops':'#'+route;
-    return `<a href="${href}" class="nav-link ${route===activeRoute?'active':''}${bookmark?' nav-bookmark':''}" ${activeRoute===route?'aria-current="page"':''} ${bookmark?'aria-label="Mi lista" title="Mi lista"':''}>${bookmark?icon(ico):'<span>'+label+'</span>'}</a>`;
+    return `<a href="${href}" class="nav-link ${route===activeRoute?'active':''}${bookmark?' nav-bookmark':route==='votacion'?' nav-awards-vote':''}" ${activeRoute===route?'aria-current="page"':''} ${bookmark?'aria-label="Mi lista" title="Mi lista"':''}>${bookmark?icon(ico):'<span>'+label+'</span>'}</a>`;
   }).join('');
   navigation.scrollLeft=navScroll;
   $('#accountActions').innerHTML=state.user?`<button class="icon-button" data-action="go-messages" aria-label="Ver mensajes${unread?', '+unread+' sin leer':''}" style="position:relative">${icon('chat')}${unread?`<span style="position:absolute;right:-2px;top:-2px;background:#9570cd;color:white;font-size:8px;border-radius:4px;padding:0 4px">${unread}</span>`:''}</button><button data-action="account-menu" aria-label="Opciones de ${esc(state.user.name)}" aria-expanded="false">${avatar(state.user)}</button>`:`<button class="link-button" data-action="login">Iniciar sesión</button><button class="btn primary small" data-action="register">Regístrate</button>`;

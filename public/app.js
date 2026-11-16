@@ -39,7 +39,7 @@ async function api(url, options={}) {
 }
 function setConnection(online){const el=$('#connection');el.classList.toggle('offline',!online);el.innerHTML=`<i></i><span>${online?'En línea':'Sin conexión'}</span>`;}
 function errorView(error){$('#main').innerHTML=`<div class="error-panel"><div class="eyebrow" style="justify-content:center">THE XPEDITION</div><h1 style="margin-top:20px">Conectemos tu universo.</h1><p>${esc(error.message)}</p><button class="btn primary" data-action="retry">Volver a intentar</button><p>Abre la web con <strong>ABRIR XPEDITION.cmd</strong> para iniciar el servidor y guardar los datos.</p></div>`;}
-const navItems=[['inicio','home','Inicio'],['world','compass','World'],['comunidad','users','Comunidad'],['simuladores','game','Simuladores'],['explorar','compass','Tops'],['x-critics','news','X Critics'],['universo','info','Staff'],['guardados','bookmark','Mi lista']];
+const navItems=[['inicio','home','Inicio'],['votacion','awards','Awards'],['world','compass','World'],['comunidad','users','Comunidad'],['simuladores','game','Simuladores'],['explorar','compass','Tops'],['x-critics','news','X Critics'],['universo','info','Staff'],['guardados','bookmark','Mi lista']];
 const visibleNavItems=()=>navItems.filter(([route])=>route!=='x-critics'||state.user?.staff);
 function renderChrome(){
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);
@@ -105,7 +105,7 @@ function route(){
   const keepCriticsScroll=view==='x-critics'&&id&&$('#main .critics-detail-page')?.dataset.criticsSeason===id;
   state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
-  const routes={inicio:renderHome,world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),showdown:()=>renderShowdownSimulator(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  const routes={inicio:renderHome,votacion:()=>renderAwardsVoting(id,entry),world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),showdown:()=>renderShowdownSimulator(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   if(state.route==='mensajes'&&id)state.active=decodeURIComponent(id);
   (routes[state.route]||renderHome)();if(!keepCriticsScroll)window.scrollTo({top:0,behavior:'instant'});
 }

@@ -38,9 +38,10 @@ async function loadModerationBody(){
    root.innerHTML=`<div class="mod-section-title"><div><h2>${tab==='members'?'Quienes se unen al universo.':'Cada perfil, en detalle.'}</h2><p>${result.total} cuentas · Las más recientes primero.</p></div></div><form class="mod-search" id="moderationSearch"><label><span class="sr-only">Buscar perfiles</span><input name="query" type="search" placeholder="Buscar un nombre…" maxlength="80" value="${esc(moderationView.query)}"></label><button class="btn secondary small">Buscar</button></form><div class="mod-profile-grid"><section class="mod-profile-list" aria-label="Cuentas registradas">${result.profiles.map(p=>moderationPerson(p)).join('')||'<div class="mod-panel">No encontramos perfiles.</div>'}${moderationPager(result.hasMore,25)}</section><section id="moderationProfile" class="mod-panel mod-profile-detail" aria-label="Revisión del perfil"><div class="mod-empty"><span>✦</span><h3>Selecciona una cuenta.</h3><p>Revisa su perfil, administra su verificación o entrega monedas y tickets.</p></div></section></div>`;
    if(moderationView.selected)await showModerationProfile(moderationView.selected,false);
   }else if(tab==='awards'){
-   const result=await api('/moderation/awards/edicion-3');if(serial!==moderationView.serial)return;
+   const [result,results]=await Promise.all([api('/moderation/awards/edicion-3'),api('/moderation/awards/votes')]);if(serial!==moderationView.serial)return;
+   moderationView.awardsResults=results;
    state.config.awardsThirdPublic=result.publicEnabled;
-   root.innerHTML=`<section class="mod-panel"><h2>The Xpedition Awards · 3.ª edición</h2><p>${result.publicEnabled?'Publicada para todo el público.':'Cerrada al público. Solo el Staff puede ver la edición.'}</p><div class="moderation-actions"><a class="btn secondary" href="#premios/edicion-3">Ver edición</a><button class="btn ${result.publicEnabled?'secondary':'primary'}" data-mod="publish-awards" data-public="${!result.publicEnabled}">${result.publicEnabled?'Cerrar al público':'Abrir al público'}</button></div></section>`;
+   root.innerHTML=`<section class="mod-panel"><h2>The Xpedition Awards · 3.ª edición</h2><p>${result.publicEnabled?'Publicada para todo el público.':'Cerrada al público. Solo el Staff puede ver la edición.'}</p><div class="moderation-actions"><a class="btn secondary" href="#premios/edicion-3">Ver edición</a><button class="btn ${result.publicEnabled?'secondary':'primary'}" data-mod="publish-awards" data-public="${!result.publicEnabled}">${result.publicEnabled?'Cerrar al público':'Abrir al público'}</button></div></section><section class="mod-panel mod-award-tally">${moderationAwardTally(results)}</section>`;
   }else if(tab==='posts'){
    const result=await api('/moderation/posts?'+new URLSearchParams({query:moderationView.query,status:moderationView.status,offset:moderationView.offset}));if(serial!==moderationView.serial)return;
    root.innerHTML=`<form class="mod-search" id="moderationSearch"><label><span class="sr-only">Buscar publicaciones</span><input name="query" type="search" placeholder="Buscar texto o autor…" value="${esc(moderationView.query)}" maxlength="100"></label><select id="moderationPostStatus" aria-label="Estado de las publicaciones">${[['active','Activas'],['removed','Retiradas'],['archived','Archivadas'],['all','Todas']].map(([value,label])=>`<option value="${value}" ${moderationView.status===value?'selected':''}>${label}</option>`).join('')}</select><button class="btn secondary small">Buscar</button></form><div class="mod-posts">${result.posts.map(post=>`<article class="mod-panel mod-post" data-mod-post="${esc(post.id)}"><header><a href="#perfil/${encodeURIComponent(post.author.id)}">${avatar(post.author)}<span><strong>${esc(post.author.name)}${verifiedBadge(post.author)}</strong><small>${date(post.created)} · ${time(post.created)}</small></span></a><span class="mod-status ${post.removed?'removed':''}">${post.removed?'Retirada':post.archived?'Archivada':'Activa'}</span></header>${post.text?`<p class="mod-post-text">${esc(post.text)}</p>`:''}${post.image?`<a href="${esc(post.image)}" target="_blank" rel="noopener" class="mod-post-image"><img src="${esc(post.image)}" alt="Imagen de la publicación" loading="lazy"></a>`:''}${post.sticker?'<p class="mod-media-note">Incluye un sticker.</p>':''}<div class="mod-post-tools"><button class="btn secondary small" data-mod="comments" data-id="${esc(post.id)}">Revisar comentarios</button><button class="btn ${post.removed?'secondary':'danger'} small" data-moderation="${post.removed?'restore':'remove'}" data-kind="post" data-id="${esc(post.id)}">${post.removed?'Restaurar':'Retirar publicación'}</button></div><div class="mod-comments" id="mod-comments-${esc(post.id)}" hidden></div></article>`).join('')||'<div class="mod-panel mod-empty"><h3>No hay publicaciones con este filtro.</h3></div>'}</div>${moderationPager(result.hasMore,20)}`;
@@ -50,6 +51,25 @@ async function loadModerationBody(){
   }
  }catch(error){if(serial===moderationView.serial)root.innerHTML=`<div class="mod-panel"><p class="form-error">${esc(error.message)}</p><button class="btn secondary" data-mod="retry">Volver a intentar</button></div>`;}
 }
+const awardsVoteNumber=new Intl.NumberFormat('es-CO');
+function moderationAwardTally(results){
+ const groups=results.sections;
+ const category=groups.flatMap(group=>group.categories).find(entry=>entry.id===moderationView.awardsCategory)||groups[0].categories[0];
+ moderationView.awardsCategory=category.id;
+ const options=groups.map(group=>`<optgroup label="${esc(group.name)}">${group.categories.map(entry=>`<option value="${esc(entry.id)}" ${entry.id===category.id?'selected':''}>${esc(entry.name)}</option>`).join('')}</optgroup>`).join('');
+ return `<div class="mod-section-title"><div><h2>Votos de la audiencia</h2><p>${awardsVoteNumber.format(results.dailyCount)} de ${awardsVoteNumber.format(results.dailyLimit)} registros hoy · Hora de Colombia</p></div><button class="btn secondary small" data-mod="awards-refresh">Actualizar conteo</button></div><label><span>Categoría</span><select id="moderationAwardCategory">${options}</select></label><div id="moderationAwardVotes">${moderationAwardVotes(category)}</div>`;
+}
+function moderationAwardVotes(category){
+ const nominees=[...category.nominees].sort((a,b)=>b.votes-a.votes);
+ if(!nominees.length)return '<p>Esta categoría todavía no tiene nominados.</p>';
+ const total=nominees.reduce((sum,nominee)=>sum+nominee.votes,0);
+ return `<table class="mod-award-results"><thead><tr><th scope="col">Nominado</th><th scope="col">Votos</th></tr></thead><tbody>${nominees.map(nominee=>`<tr><th scope="row">${esc(nominee.name)}${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</th><td>${awardsVoteNumber.format(nominee.votes)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total de la categoría</th><td>${awardsVoteNumber.format(total)}</td></tr></tfoot></table>`;
+}
+document.addEventListener('change',event=>{
+ if(event.target.id!=='moderationAwardCategory'||!state.user?.staff)return;
+ const category=moderationView.awardsResults?.sections.flatMap(group=>group.categories).find(entry=>entry.id===event.target.value);
+ if(category){moderationView.awardsCategory=category.id;$('#moderationAwardVotes').innerHTML=moderationAwardVotes(category);}
+});
 function moderationHistory(actions){const labels={'publish-awards':'Edición de Awards publicada','unpublish-awards':'Edición de Awards cerrada','open-game':'Juego abierto al público','close-game':'Juego cerrado al público',verify:'Verificación concedida',unverify:'Verificación retirada',grant:'Monedas o tickets entregados','remove-post':'Publicación retirada','restore-post':'Publicación restaurada','remove-comment':'Comentario retirado','restore-comment':'Comentario restaurado'};return actions.length?`<div class="mod-history">${actions.map(action=>`<article><span class="mod-history-dot" aria-hidden="true">${action.action==='grant'?'✦':'·'}</span><div><strong>${esc(labels[action.action]||action.action)}</strong><p>${esc(action.details.name||action.details.text||'Contenido de la comunidad')}${action.action==='grant'?` · +${action.details.coins} monedas · +${action.details.tickets} tickets`:''}</p>${action.details.reason?`<p>${esc(action.details.reason)}</p>`:''}<small>${esc(action.moderator_name)} · ${date(action.created)} · ${time(action.created)}</small></div></article>`).join('')}</div>`:'<p class="mod-empty-copy">Aquí aparecerán las próximas decisiones del Staff.</p>';}
 async function showModerationProfile(id,scroll=true){
  moderationView.selected=id;const root=$('#moderationProfile');if(!root)return;
@@ -79,7 +99,7 @@ document.addEventListener('click',async event=>{
   const action=b.dataset.mod;
   if(action==='tab'){moderationView.tab=b.dataset.id;moderationView.offset=0;moderationView.query='';renderModeration();}
   if(action==='previous'||action==='next'){moderationView.offset=Math.max(0,moderationView.offset+(action==='next'?1:-1)*Number(b.dataset.size));await loadModerationBody();}
-  if(action==='retry')await loadModerationBody();
+  if(action==='retry'||action==='awards-refresh')await loadModerationBody();
   if(action==='publish-awards'){
    b.disabled=true;
    const result=await api('/moderation/awards/edicion-3',{method:'PUT',body:{publicEnabled:b.dataset.public==='true'}});

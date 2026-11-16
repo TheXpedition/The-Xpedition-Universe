@@ -1,0 +1,1161 @@
+{
+  "edition": 3,
+  "sections": [
+    {
+      "id": "principales",
+      "name": "Categorías principales",
+      "categories": [
+        {
+          "id": "fan-favorite",
+          "name": "Fan Favorite",
+          "description": "Elige al favorito del público.",
+          "nominees": [
+            {
+              "id": "kim-camila",
+              "name": "Kim Camila",
+              "details": "",
+              "image": "/awards/vote-portraits/14.webp"
+            },
+            {
+              "id": "ivy-pierce",
+              "name": "Ivy Pierce",
+              "details": "",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "alice-torrico",
+              "name": "Alice Torrico",
+              "details": "",
+              "image": "/awards/vote-portraits/3.webp"
+            },
+            {
+              "id": "bruno-macri",
+              "name": "Bruno Macri",
+              "details": "",
+              "image": "/awards/vote-portraits/10.webp"
+            },
+            {
+              "id": "daelly-bonbom",
+              "name": "Daelly BonBom",
+              "details": "",
+              "image": "/awards/vote-portraits/2.webp"
+            },
+            {
+              "id": "sal-lua",
+              "name": "Sal Lua",
+              "details": "",
+              "image": "/personajes/sallua.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-villano",
+          "name": "Mejor Villano",
+          "description": "",
+          "nominees": [
+            {
+              "id": "andromeda-sc",
+              "name": "Andromeda SC",
+              "details": "",
+              "image": "/awards/vote-portraits/1.webp"
+            },
+            {
+              "id": "lucas-mendez",
+              "name": "Lucas Mendez",
+              "details": "",
+              "image": "/awards/vote-portraits/9.webp"
+            },
+            {
+              "id": "leandro-lynx",
+              "name": "Leandro Lynx",
+              "details": "",
+              "image": "/personajes/leandro.png"
+            },
+            {
+              "id": "ignacio-vila",
+              "name": "Ignacio Vila",
+              "details": "",
+              "image": "/personajes/nacho.png"
+            },
+            {
+              "id": "alexandro-martin",
+              "name": "Alexandro Martin",
+              "details": "",
+              "image": "/personajes/alexandro.png"
+            },
+            {
+              "id": "carlos-harrington",
+              "name": "Carlos Harrington",
+              "details": "",
+              "image": "/personajes/carlosharrington.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-competidor",
+          "name": "Mejor Competidor",
+          "description": "",
+          "nominees": [
+            {
+              "id": "alice-torrico",
+              "name": "Alice Torrico",
+              "details": "",
+              "image": "/awards/vote-portraits/3.webp"
+            },
+            {
+              "id": "luciano-funes",
+              "name": "Luciano Funes",
+              "details": "",
+              "image": "/personajes/luciano.png"
+            },
+            {
+              "id": "ivy-pierce",
+              "name": "Ivy Pierce",
+              "details": "",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "bruno-macri",
+              "name": "Bruno Macri",
+              "details": "",
+              "image": "/awards/vote-portraits/10.webp"
+            },
+            {
+              "id": "beto-trujillo",
+              "name": "Beto Trujillo",
+              "details": "",
+              "image": "/personajes/beto.png"
+            },
+            {
+              "id": "mary-hao",
+              "name": "Mary Hao",
+              "details": "",
+              "image": "/awards/vote-portraits/17.webp"
+            }
+          ]
+        },
+        {
+          "id": "mejor-participante-revelacion",
+          "name": "Mejor Participante Revelación",
+          "description": "",
+          "nominees": [
+            {
+              "id": "ari-santana",
+              "name": "Ari Santana",
+              "details": "",
+              "image": "/personajes/ari-santana.png"
+            },
+            {
+              "id": "guillermo-coronado",
+              "name": "Guillermo Coronado",
+              "details": "",
+              "image": "/personajes/guillermo.png"
+            },
+            {
+              "id": "roger-lida",
+              "name": "Roger Lida",
+              "details": "",
+              "image": "/personajes/roger.png"
+            },
+            {
+              "id": "xavier-gaxiola",
+              "name": "Xavier Gaxiola",
+              "details": ""
+            },
+            {
+              "id": "paula-garcia",
+              "name": "Paula García",
+              "details": "",
+              "image": "/personajes/paulagarcia.png"
+            },
+            {
+              "id": "doppel-camper",
+              "name": "Doppel Camper",
+              "details": "",
+              "image": "/personajes/doppel.png"
+            }
+          ]
+        },
+        {
+          "id": "poop-of-the-year",
+          "name": "Poop Of The Year",
+          "description": "",
+          "nominees": [
+            {
+              "id": "eris-midnight-the-traitor-2",
+              "name": "Eris Midnight",
+              "details": "The Traitor 2",
+              "image": "/personajes/erismidnight.png"
+            },
+            {
+              "id": "peggy-marianne-apocalypse-2",
+              "name": "Peggy Marianne",
+              "details": "Apocalypse 2",
+              "image": "/awards/vote-portraits/18.webp"
+            },
+            {
+              "id": "sal-lua-the-traitor-2",
+              "name": "Sal Lua",
+              "details": "The Traitor 2",
+              "image": "/personajes/sallua.png"
+            },
+            {
+              "id": "gabriel-sab-showdown-2",
+              "name": "Gabriel Sab",
+              "details": "Showdown 2",
+              "image": "/personajes/gabrielsab.png"
+            },
+            {
+              "id": "eduard-salerno-apocalypse-2",
+              "name": "Eduard Salerno",
+              "details": "Apocalypse 2",
+              "image": "/personajes/eduard.png"
+            },
+            {
+              "id": "julian-sanchez-showdown-2",
+              "name": "Julián Sanchez",
+              "details": "Showdown 2",
+              "image": "/personajes/julian.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "generales",
+      "name": "Categorías generales",
+      "categories": [
+        {
+          "id": "traidor",
+          "name": "Mejor Traidor",
+          "description": "Nominados por su desempeño como Traidores en The Traitor 2.",
+          "nominees": [
+            {
+              "id": "andromeda-sc-grupo-corazon",
+              "name": "Andrómeda SC",
+              "details": "Grupo Corazón",
+              "image": "/awards/vote-portraits/1.webp"
+            },
+            {
+              "id": "daelly-bonbom-grupo-espada",
+              "name": "Daelly BonBom",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/2.webp"
+            },
+            {
+              "id": "alice-torrico-the-traitor-2-grupo-diamante",
+              "name": "Alice Torrico",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/3.webp"
+            },
+            {
+              "id": "lalamila-the-traitor-2-grupo-diamante",
+              "name": "Lalamila",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/4.webp"
+            },
+            {
+              "id": "renzo-rodriguez-the-traitor-2-grupo-diamante",
+              "name": "Renzo Rodriguez",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/5.webp"
+            },
+            {
+              "id": "azael-eli-the-traitor-2-grupo-trebol",
+              "name": "Azael Eli",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/6.webp"
+            }
+          ]
+        },
+        {
+          "id": "inocente",
+          "name": "Mejor Inocente",
+          "description": "Nominados por su desempeño como Inocentes en The Traitor 2.",
+          "nominees": [
+            {
+              "id": "renata-the-traitor-2-grupo-corazon",
+              "name": "Renata",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/7.webp"
+            },
+            {
+              "id": "isabel-the-traitor-2-grupo-corazon",
+              "name": "Isabel",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/8.webp"
+            },
+            {
+              "id": "lucas-mendez-the-traitor-2-grupo-espada",
+              "name": "Lucas Mendez",
+              "details": "The Traitor 2 · Grupo Espada",
+              "image": "/awards/vote-portraits/9.webp"
+            },
+            {
+              "id": "bruno-macri-the-traitor-2-grupo-trebol",
+              "name": "Bruno Macri",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/10.webp"
+            },
+            {
+              "id": "nahuee-the-traitor-2-grupo-trebol",
+              "name": "Nahuee",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/11.webp"
+            },
+            {
+              "id": "ari-salgado-the-traitor-2-grupo-trebol",
+              "name": "Ari Salgado",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/12.webp"
+            }
+          ]
+        },
+        {
+          "id": "sobreviviente",
+          "name": "Mejor Sobreviviente",
+          "description": "Nominados por sobrevivir hasta el final en los grupos de The Traitor 2.",
+          "nominees": [
+            {
+              "id": "coronel-sanders-grupo-espada",
+              "name": "Coronel Sanders",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/13.webp"
+            },
+            {
+              "id": "kim-camila-grupo-espada",
+              "name": "Kim Camila",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/14.webp"
+            },
+            {
+              "id": "greg-rep-grupo-trebol",
+              "name": "Greg Rep",
+              "details": "Grupo Trébol",
+              "image": "/awards/vote-portraits/15.webp"
+            },
+            {
+              "id": "ivy-pierce-grupo-trebol",
+              "name": "Ivy Pierce",
+              "details": "Grupo Trébol",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "ari-salgado-grupo-joker",
+              "name": "Ari Salgado",
+              "details": "Grupo Joker",
+              "image": "/awards/vote-portraits/12.webp"
+            },
+            {
+              "id": "mary-hao-grupo-joker",
+              "name": "Mary Hao",
+              "details": "Grupo Joker",
+              "image": "/awards/vote-portraits/17.webp"
+            }
+          ]
+        },
+        {
+          "id": "detective",
+          "name": "Mejor Detective",
+          "description": "Nominados por su labor de investigación en The Traitor 2.",
+          "nominees": [
+            {
+              "id": "renata-the-traitor-2-grupo-corazon",
+              "name": "Renata",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/7.webp"
+            },
+            {
+              "id": "peggy-the-traitor-2-grupo-corazon",
+              "name": "Peggy",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/18.webp"
+            },
+            {
+              "id": "isabel-the-traitor-2-grupo-corazon",
+              "name": "Isabel",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/8.webp"
+            },
+            {
+              "id": "esteban-cooper-the-traitor-2-grupo-diamante",
+              "name": "Esteban Cooper",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/personajes/esteban.png"
+            },
+            {
+              "id": "sophia-asdero-the-traitor-2-grupo-trebol",
+              "name": "Sophia Asdero",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/20.webp"
+            },
+            {
+              "id": "nahuee-the-traitor-2-grupo-trebol",
+              "name": "Nahuee",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/11.webp"
+            }
+          ]
+        },
+        {
+          "id": "estratega-del-ano",
+          "name": "Estratega del Año",
+          "description": "",
+          "nominees": [
+            {
+              "id": "lucas-mendez",
+              "name": "Lucas Mendez",
+              "details": "",
+              "image": "/awards/vote-portraits/9.webp"
+            },
+            {
+              "id": "andromeda-sc",
+              "name": "Andromeda SC",
+              "details": "",
+              "image": "/awards/vote-portraits/1.webp"
+            },
+            {
+              "id": "leandro-lynx",
+              "name": "Leandro Lynx",
+              "details": "",
+              "image": "/personajes/leandro.png"
+            },
+            {
+              "id": "ari-salgado",
+              "name": "Ari Salgado",
+              "details": "",
+              "image": "/awards/vote-portraits/12.webp"
+            },
+            {
+              "id": "carlos-harrington",
+              "name": "Carlos Harrington",
+              "details": "",
+              "image": "/personajes/carlosharrington.png"
+            },
+            {
+              "id": "coronel-sanders",
+              "name": "Coronel Sanders",
+              "details": "",
+              "image": "/awards/vote-portraits/13.webp"
+            }
+          ]
+        },
+        {
+          "id": "mayor-amenaza",
+          "name": "Mayor Amenaza",
+          "description": "",
+          "nominees": [
+            {
+              "id": "beto-trujillo",
+              "name": "Beto Trujillo",
+              "details": "",
+              "image": "/personajes/beto.png"
+            },
+            {
+              "id": "xavier-gaxiola",
+              "name": "Xavier Gaxiola",
+              "details": ""
+            },
+            {
+              "id": "felix-gagenze",
+              "name": "Felix Gagenze",
+              "details": "",
+              "image": "/personajes/felix.png"
+            },
+            {
+              "id": "alice-torrico",
+              "name": "Alice Torrico",
+              "details": "",
+              "image": "/awards/vote-portraits/3.webp"
+            },
+            {
+              "id": "luciano-funes",
+              "name": "Luciano Funes",
+              "details": "",
+              "image": "/personajes/luciano.png"
+            },
+            {
+              "id": "bruno-macri",
+              "name": "Bruno Macri",
+              "details": "",
+              "image": "/awards/vote-portraits/10.webp"
+            }
+          ]
+        },
+        {
+          "id": "participante-mas-gracioso",
+          "name": "Participante más Gracioso",
+          "description": "",
+          "nominees": [
+            {
+              "id": "gabriel-sab",
+              "name": "Gabriel Sab",
+              "details": "",
+              "image": "/personajes/gabrielsab.png"
+            },
+            {
+              "id": "sal-lua",
+              "name": "Sal Lua",
+              "details": "",
+              "image": "/personajes/sallua.png"
+            },
+            {
+              "id": "eduard-salerno",
+              "name": "Eduard Salerno",
+              "details": "",
+              "image": "/personajes/eduard.png"
+            },
+            {
+              "id": "vita-molotov",
+              "name": "Vita Molotov",
+              "details": "",
+              "image": "/seasons/campria/apocalypse-ii/portraits/vita-face.webp"
+            },
+            {
+              "id": "marianito-moya",
+              "name": "Marianito Moya",
+              "details": "",
+              "image": "/personajes/marianito.png"
+            },
+            {
+              "id": "roger-lida",
+              "name": "Roger Lida",
+              "details": "",
+              "image": "/personajes/roger.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-evolucion",
+          "name": "Mejor Evolución",
+          "description": "",
+          "nominees": [
+            {
+              "id": "ivy-pierce-the-traitor-2",
+              "name": "Ivy Pierce",
+              "details": "The Traitor 2",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "vita-the-traitor-2",
+              "name": "Vita",
+              "details": "The Traitor 2",
+              "image": "/seasons/campria/apocalypse-ii/portraits/vita-face.webp",
+              "image": "/personajes/vita-20261021.png"
+            },
+            {
+              "id": "doppel-camper-the-traitor-2",
+              "name": "Doppel Camper",
+              "details": "The Traitor 2",
+              "image": "/personajes/doppel.png"
+            },
+            {
+              "id": "marianito-moya-showdown-2",
+              "name": "Marianito Moya",
+              "details": "Showdown 2",
+              "image": "/personajes/marianito.png"
+            },
+            {
+              "id": "marcos-jc-showdown-2",
+              "name": "Marcos JC",
+              "details": "Showdown 2",
+              "image": "/personajes/marcos.png"
+            },
+            {
+              "id": "christopher-gonzalez-showdown-2",
+              "name": "Christopher Gonzalez",
+              "details": "Showdown 2",
+              "image": "/personajes/christopher.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-duelo",
+          "name": "Mejor Duelo",
+          "description": "",
+          "nominees": [
+            {
+              "id": "sal-lua-vs-luciano-showdown-ii",
+              "name": "Sal Lua vs Luciano",
+              "details": "Showdown II",
+              "people": [
+                {
+                  "name": "Sal Lua",
+                  "image": "/personajes/sallua.png"
+                },
+                {
+                  "name": "Luciano",
+                  "image": "/personajes/luciano.png"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "amistad-de-la-temporada",
+          "name": "Amistad de la Temporada",
+          "description": "",
+          "nominees": [
+            {
+              "id": "lucas-mendez-adriana-pereira-the-traitor-2",
+              "name": "Lucas Mendez, Adriana Pereira",
+              "details": "The Traitor 2",
+              "people": [
+                {
+                  "name": "Lucas Mendez",
+                  "image": "/awards/vote-portraits/9.webp"
+                },
+                {
+                  "name": "Adriana Pereira",
+                  "image": "/personajes/adrianapereira.png"
+                }
+              ]
+            },
+            {
+              "id": "alexandro-ari-salgado-the-traitor-2",
+              "name": "Alexandro, Ari Salgado",
+              "details": "The Traitor 2",
+              "people": [
+                {
+                  "name": "Alexandro",
+                  "image": "/personajes/alexandro.png"
+                },
+                {
+                  "name": "Ari Salgado",
+                  "image": "/awards/vote-portraits/12.webp"
+                }
+              ]
+            },
+            {
+              "id": "alice-bayron-carlos-harrington-eduard-luciano-showdown-2",
+              "name": "Alice, Bayron, Carlos Harrington, Eduard, Luciano",
+              "details": "Showdown 2",
+              "people": [
+                {
+                  "name": "Alice",
+                  "image": "/awards/vote-portraits/3.webp"
+                },
+                {
+                  "name": "Bayron",
+                  "image": "/personajes/bayron.png"
+                },
+                {
+                  "name": "Carlos Harrington",
+                  "image": "/personajes/carlosharrington.png"
+                },
+                {
+                  "name": "Eduard",
+                  "image": "/personajes/eduard.png"
+                },
+                {
+                  "name": "Luciano",
+                  "image": "/personajes/luciano.png"
+                }
+              ]
+            },
+            {
+              "id": "sal-lua-peggy-showdown-2",
+              "name": "Sal Lua, Peggy",
+              "details": "Showdown 2",
+              "people": [
+                {
+                  "name": "Sal Lua",
+                  "image": "/personajes/sallua.png"
+                },
+                {
+                  "name": "Peggy",
+                  "image": "/awards/vote-portraits/18.webp"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "rivalidad-de-la-temporada",
+          "name": "Rivalidad de la Temporada",
+          "description": "",
+          "nominees": [
+            {
+              "id": "lucas-mendez-vs-bruno-macri-bayron-adriana-pereira-alexandro-mary-hao-daelly-christopher-alice",
+              "name": "Lucas Mendez vs Bruno Macri, Bayron, Adriana Pereira, Alexandro, Mary Hao, Daelly, Christopher, Alice",
+              "details": "The Traitor 2",
+              "people": [
+                {
+                  "name": "Lucas Mendez",
+                  "image": "/awards/vote-portraits/9.webp"
+                },
+                {
+                  "name": "Bruno Macri",
+                  "image": "/awards/vote-portraits/10.webp"
+                },
+                {
+                  "name": "Bayron",
+                  "image": "/personajes/bayron.png"
+                },
+                {
+                  "name": "Adriana Pereira",
+                  "image": "/personajes/adrianapereira.png"
+                },
+                {
+                  "name": "Alexandro",
+                  "image": "/personajes/alexandro.png"
+                },
+                {
+                  "name": "Mary Hao",
+                  "image": "/awards/vote-portraits/17.webp"
+                },
+                {
+                  "name": "Daelly",
+                  "image": "/personajes/daelly.png"
+                },
+                {
+                  "name": "Christopher",
+                  "image": "/personajes/christopher.png"
+                },
+                {
+                  "name": "Alice",
+                  "image": "/awards/vote-portraits/3.webp"
+                }
+              ]
+            },
+            {
+              "id": "kim-camila-y-lalamila-vs-pier-the-traitor-2",
+              "name": "Kim Camila y Lalamila vs Pier",
+              "details": "The Traitor 2",
+              "people": [
+                {
+                  "name": "Kim Camila",
+                  "image": "/awards/vote-portraits/14.webp"
+                },
+                {
+                  "name": "Lalamila",
+                  "image": "/awards/vote-portraits/4.webp"
+                },
+                {
+                  "name": "Pier",
+                  "image": "/personajes/pier.png"
+                }
+              ]
+            },
+            {
+              "id": "carlos-harrington-vs-sal-lua-y-peggy-showdown-2",
+              "name": "Carlos Harrington vs Sal Lua y Peggy",
+              "details": "Showdown 2",
+              "people": [
+                {
+                  "name": "Carlos Harrington",
+                  "image": "/personajes/carlosharrington.png"
+                },
+                {
+                  "name": "Sal Lua",
+                  "image": "/personajes/sallua.png"
+                },
+                {
+                  "name": "Peggy",
+                  "image": "/awards/vote-portraits/18.webp"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mejor-momento",
+          "name": "Mejor Momento",
+          "description": "",
+          "nominees": [
+            {
+              "id": "andromeda-andromeda-traiciona-a-peggy-en-the-traitor-2",
+              "name": "Andromeda",
+              "details": "Andromeda traiciona a Peggy en The Traitor 2",
+              "image": "/personajes/andromeda.png"
+            },
+            {
+              "id": "alice-kim-camila-renzo-lalamila",
+              "name": "Alice, Kim Camila, Renzo, Lalamila",
+              "details": "Alice, Kim Camila, Renzo, Pier y Lalamila enloquecen pensando que hay un infiltrado entre los traidores y se empiezan a eliminar.",
+              "people": [
+                {
+                  "name": "Alice",
+                  "image": "/awards/vote-portraits/3.webp"
+                },
+                {
+                  "name": "Kim Camila",
+                  "image": "/awards/vote-portraits/14.webp"
+                },
+                {
+                  "name": "Renzo",
+                  "image": "/awards/vote-portraits/5.webp"
+                },
+                {
+                  "name": "Lalamila",
+                  "image": "/awards/vote-portraits/4.webp"
+                }
+              ]
+            },
+            {
+              "id": "leandro",
+              "name": "Leandro",
+              "details": "Leandro logra pasar de los últimos lugares al segundo con más estrellas y clasifica a la final de Showdown 2.",
+              "image": "/personajes/leandro.png"
+            },
+            {
+              "id": "ari-santana",
+              "name": "Ari Santana",
+              "details": "Ari Santana queda fuera de la Final del primer reto en Apocalypse II antes de haber comenzado.",
+              "image": "/personajes/ari-santana.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "otras",
+      "name": "Otras categorías",
+      "categories": [
+        {
+          "id": "mejor-proyecto-independiente",
+          "name": "Mejor Proyecto Independiente",
+          "description": "",
+          "nominees": [
+            {
+              "id": "greg-rep-the-idol",
+              "name": "Greg Rep",
+              "details": "The Idol",
+              "image": "/awards/vote-portraits/15.webp"
+            },
+            {
+              "id": "yeiner-mena-el-bucle",
+              "name": "Yeiner Mena",
+              "details": "El Bucle"
+            },
+            {
+              "id": "renzo-rodriguez-isla-de-naufragos",
+              "name": "Renzo Rodriguez",
+              "details": "Isla de Náufragos",
+              "image": "/awards/vote-portraits/5.webp"
+            },
+            {
+              "id": "ignacio-vila-subele-ya",
+              "name": "Ignacio Vila",
+              "details": "Súbele Ya",
+              "image": "/personajes/nacho.png"
+            },
+            {
+              "id": "sal-lua-un-camp-ahi",
+              "name": "Sal Lua",
+              "details": "Un Camp Ahí",
+              "image": "/personajes/sallua.png"
+            },
+            {
+              "id": "heidi-cum-project-runway-dti",
+              "name": "Heidi Cum",
+              "details": "Project Runway DTI",
+              "image": "/personajes/heidicum.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-participacion-externa",
+          "name": "Mejor Participación Externa",
+          "description": "",
+          "nominees": [
+            {
+              "id": "ivy-pierce-subele-ya",
+              "name": "Ivy Pierce",
+              "details": "Súbele Ya",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "luciano-funes-un-camp-ahi",
+              "name": "Luciano Funes",
+              "details": "Un Camp Ahí",
+              "image": "/personajes/luciano.png"
+            },
+            {
+              "id": "mary-hao-isla-de-naufragos",
+              "name": "Mary Hao",
+              "details": "Isla de Náufragos",
+              "image": "/awards/vote-portraits/17.webp"
+            },
+            {
+              "id": "renzo-rodriguez-el-bucle",
+              "name": "Renzo Rodriguez",
+              "details": "El Bucle",
+              "image": "/awards/vote-portraits/5.webp"
+            },
+            {
+              "id": "elian-tosero-mamodo-s-destroy-game",
+              "name": "Elian Tosero",
+              "details": "Mamodo's Destroy Game",
+              "image": "/personajes/elian.png"
+            },
+            {
+              "id": "coronel-sanders-global-war",
+              "name": "Coronel Sanders",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/13.webp"
+            }
+          ]
+        },
+        {
+          "id": "mejor-survivor-show-virtual",
+          "name": "Mejor Survivor/Show Virtual",
+          "description": "",
+          "nominees": [
+            {
+              "id": "survivor-battle-of-sagas-jeff-flipper",
+              "name": "Survivor Battle Of Sagas",
+              "details": "Jeff Flipper"
+            },
+            {
+              "id": "survivor-transilvania-fans-vs-favorites-alejandro-lukini-sg",
+              "name": "Survivor Transilvania Fans vs Favorites",
+              "details": "Alejandro Lukini SG"
+            },
+            {
+              "id": "amistad-a-prueba-2-john-mol",
+              "name": "Amistad a Prueba 2",
+              "details": "John Mol"
+            },
+            {
+              "id": "survivor-destiny-of-fire-the-rise-of-the-dragon-jeff-uravi",
+              "name": "Survivor Destiny of Fire: The Rise of The Dragon",
+              "details": "Jeff Uravi"
+            },
+            {
+              "id": "survivor-el-eden-roto-jeff-mon-vg",
+              "name": "Survivor El Edén Roto",
+              "details": "Jeff Mon VG"
+            },
+            {
+              "id": "total-drama-second-chance-chris-mclean-potenza",
+              "name": "Total Drama Second Chance",
+              "details": "Chris Mclean Potenza"
+            }
+          ]
+        },
+        {
+          "id": "mejor-participante-de-survivors",
+          "name": "Mejor Participante de Survivors",
+          "description": "",
+          "nominees": [
+            {
+              "id": "ari-salgado",
+              "name": "Ari Salgado",
+              "details": "",
+              "image": "/awards/vote-portraits/12.webp"
+            },
+            {
+              "id": "ian-san-martin",
+              "name": "Ian San Martin",
+              "details": ""
+            },
+            {
+              "id": "eli-navarrete",
+              "name": "Eli Navarrete",
+              "details": ""
+            },
+            {
+              "id": "montse-cruz",
+              "name": "Montse Cruz",
+              "details": ""
+            },
+            {
+              "id": "christian-galindo",
+              "name": "Christian Galindo",
+              "details": ""
+            },
+            {
+              "id": "alondra-salazar",
+              "name": "Alondra Salazar",
+              "details": ""
+            }
+          ]
+        },
+        {
+          "id": "mejor-drag-virtual",
+          "name": "Mejor Drag Virtual",
+          "description": "",
+          "nominees": [
+            {
+              "id": "victoria-blade",
+              "name": "Victoria Blade",
+              "details": ""
+            },
+            {
+              "id": "carmine",
+              "name": "Carmine",
+              "details": "",
+              "image": "/personajes/carmine.png"
+            },
+            {
+              "id": "miranda-torres",
+              "name": "Miranda Torres",
+              "details": ""
+            },
+            {
+              "id": "bettie-bambola",
+              "name": "Bettie Bambola",
+              "details": ""
+            },
+            {
+              "id": "sasori-yume",
+              "name": "Sasori Yume",
+              "details": ""
+            },
+            {
+              "id": "scarlet-fever",
+              "name": "Scarlet Fever",
+              "details": ""
+            }
+          ]
+        },
+        {
+          "id": "personalidad-de-internet",
+          "name": "Personalidad de Internet",
+          "description": "",
+          "nominees": [
+            {
+              "id": "tripona-poc",
+              "name": "Tripona Poc",
+              "details": ""
+            },
+            {
+              "id": "zinnia-woormwood",
+              "name": "Zinnia Woormwood",
+              "details": ""
+            },
+            {
+              "id": "bewitched-jimenez",
+              "name": "Bewitched Jimenez",
+              "details": ""
+            },
+            {
+              "id": "rol-pop",
+              "name": "Rol Pop",
+              "details": ""
+            },
+            {
+              "id": "christina-rg",
+              "name": "Christina RG",
+              "details": ""
+            },
+            {
+              "id": "gleam-radianthe",
+              "name": "Gleam Radianthe",
+              "details": ""
+            }
+          ]
+        },
+        {
+          "id": "mejor-episodio",
+          "name": "Mejor Episodio",
+          "description": "",
+          "nominees": []
+        },
+        {
+          "id": "mejor-temporada",
+          "name": "Mejor Temporada",
+          "description": "",
+          "nominees": [
+            {
+              "id": "the-traitor-2",
+              "name": "The Traitor 2",
+              "details": "",
+              "image": "/assets/x-critics/the-traitor-2.webp",
+              "isShow": true
+            },
+            {
+              "id": "showdown-2",
+              "name": "Showdown 2",
+              "details": "",
+              "image": "/assets/x-critics/showdown-2.webp",
+              "isShow": true
+            },
+            {
+              "id": "apocalypse-2",
+              "name": "Apocalypse 2",
+              "details": "",
+              "image": "/seasons/campria/apocalypse-ii/cover-world.webp",
+              "isShow": true
+            }
+          ]
+        },
+        {
+          "id": "mejor-diseno-vestuario",
+          "name": "Mejor Diseño & Vestuario",
+          "description": "",
+          "nominees": []
+        },
+        {
+          "id": "mejor-cancion",
+          "name": "Mejor Canción",
+          "description": "",
+          "nominees": [
+            {
+              "id": "marcos-marcostoso",
+              "name": "Marcos",
+              "details": "Marcostoso",
+              "image": "/personajes/marcos.png"
+            },
+            {
+              "id": "eduard-mis-lechosas",
+              "name": "Eduard",
+              "details": "Mis Lechosas",
+              "image": "/personajes/eduard.png"
+            },
+            {
+              "id": "felix-el-rap-del-abuelo",
+              "name": "Felix",
+              "details": "El Rap del Abuelo",
+              "image": "/personajes/felix.png"
+            }
+          ]
+        },
+        {
+          "id": "mejor-presentacion-jurado",
+          "name": "Mejor Presentación/Jurado",
+          "description": "",
+          "nominees": [
+            {
+              "id": "dua-lingo-showdown-ii",
+              "name": "Dua Lingo",
+              "details": "Showdown II",
+              "image": "/personajes/dualingo.png"
+            },
+            {
+              "id": "isabel-tos-all-stars-2",
+              "name": "Isabel",
+              "details": "TOS All Stars 2",
+              "image": "/awards/vote-portraits/8.webp"
+            },
+            {
+              "id": "ian-esteban-global-war",
+              "name": "Ian Esteban",
+              "details": "Global War",
+              "image": "/personajes/ianesteban.png"
+            },
+            {
+              "id": "lucas-mendez-global-war",
+              "name": "Lucas Mendez",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/9.webp"
+            },
+            {
+              "id": "marcos-turn-it-up",
+              "name": "Marcos",
+              "details": "Turn It Up",
+              "image": "/personajes/marcos.png"
+            },
+            {
+              "id": "heidi-cum-project-runway",
+              "name": "Heidi Cum",
+              "details": "Project Runway",
+              "image": "/personajes/heidicum.png"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

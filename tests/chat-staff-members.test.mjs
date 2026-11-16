@@ -131,3 +131,25 @@ test('la tercera edición está cerrada por defecto y solo el Staff puede abrirl
  assert(history.actions.some(action=>action.action==='publish-awards'));
  assert(history.actions.some(action=>action.action==='unpublish-awards'));
 });
+
+test('la audiencia y el Staff pueden votar, y solo el Staff recibe los conteos',async()=>{
+ const votePath='/api/awards/voting',tallyPath='/api/moderation/awards/votes';
+ const request=(actor,pathname,body)=>fetch(base+pathname,{method:body?'PUT':'GET',headers:{'content-type':'application/json',...(actor?{cookie:'xp_session='+token(actor)}:{})},body:body&&JSON.stringify(body)});
+ assert.equal((await request(null,votePath)).status,401);
+ assert.equal((await request(null,tallyPath)).status,401);
+ assert.equal((await request(ordinary,tallyPath)).status,403);
+ const initial=await request(ordinary,votePath).then(response=>response.json());
+ assert.deepEqual(Object.keys(initial).sort(),['ballot','votes']);
+ const fan=initial.ballot.sections[0].categories[0],first={category:fan.id,nominee:fan.nominees[0].id},second={category:fan.id,nominee:fan.nominees[1].id};
+ assert.equal((await request(ordinary,votePath,{...first,nominee:'inventado'})).status,400);
+ assert.equal((await request(ordinary,votePath,first)).status,200);
+ assert.equal((await request(ordinary,votePath,first)).status,200);
+ assert.equal((await request(staff,votePath,first)).status,200);
+ assert.equal((await request(ordinary,votePath,second)).status,200);
+ const results=await request(staff,tallyPath).then(response=>response.json());
+ assert.equal(results.dailyCount,3);
+ assert.equal(results.dailyLimit,10000);
+ assert.deepEqual(results.sections[0].categories[0].nominees.map(n=>n.votes),[1,1,0,0,0,0]);
+ assert.deepEqual((await request(ordinary,votePath).then(r=>r.json())).votes,{[fan.id]:second.nominee});
+ assert.deepEqual((await request(staff,votePath).then(r=>r.json())).votes,{[fan.id]:first.nominee});
+});

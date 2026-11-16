@@ -6,6 +6,7 @@ import {createProgression,levelFor} from './progression.mjs';
 import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
 import {createModeration,thirdAwardsPublic} from './community-moderation.mjs';
+import {createAwardsVoting} from './awards-voting.mjs';
 import {createCasting} from './casting.mjs';
 import {readApocalypseSeason} from './apocalypse-season.mjs';
 import {createShowdownGame} from './showdown-game.mjs';
@@ -26,6 +27,7 @@ import {fileURLToPath} from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(root, 'public');
 const awardsThirdEdition = JSON.parse(fs.readFileSync(path.join(root, 'awards-edition-3.json'), 'utf8'));
+const awardsBallot = JSON.parse(fs.readFileSync(path.join(root, 'awards-voting-ballot.json'), 'utf8'));
 const criticsData = JSON.parse(fs.readFileSync(path.join(root, 'x-critics-data.json'), 'utf8'));
 const monetization=monetizationConfig();
 const dataDir = path.resolve(process.env.DATA_DIR || path.join(root, 'data'));
@@ -333,6 +335,8 @@ async function api(req, res, url) {
     return json(res, archive, 200, 'public, max-age=30');
   }
   const u = await getSession(req);
+  if (p === '/api/awards/voting') return awardsVoting.vote(req,res,u);
+  if (p === '/api/moderation/awards/votes') return awardsVoting.results(req,res,u);
   if (p === '/api/x-critics' && method === 'GET') {
     if (!u) fail(401, 'Inicia sesión para entrar a X Critics.');
     if (!accountRole(u.id).staff) fail(403, 'X Critics está reservado al Staff.');
@@ -852,6 +856,7 @@ if(await applyRequestedAccountAdjustment(db))console.info('Ajuste de cuenta soli
 if(await applyRequestedAccountAdjustment(db,requestedCoinBonus))console.info('Bono adicional solicitado aplicado una sola vez: 5000 monedas.');
 await db.run("UPDATE game_runs SET status='expired' WHERE status='archived' AND updated<=?",Date.now()-86400000);
 const interactions=createInteractions({db,storage,userFields,safeUser,body,json,fail,checkRate,serialize,everyone,reactionEmojis,progression});
+const awardsVoting=createAwardsVoting({db,json,fail,body,ballot:awardsBallot});
 const moderation=createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify,userFields,setApocalypseStyleOverride});
 const casting=createCasting({db,json,fail,checkRate,body,progression,catalog,onParticipantChange:setApocalypseParticipant,isParticipant:isApocalypseParticipant});
 function showdownInvitation(value){try{const data=JSON.parse(value);return /^[a-f0-9-]{36}$/.test(data.room)&&/^[A-Za-z0-9_-]{32}$/.test(data.token)?data:null;}catch{return null;}}
@@ -862,7 +867,7 @@ const xMillion=createXMillion({db,json,fail,body,checkRate,access:arcade.access,
 const social=createSocial({db,storage,characters,details:JSON.parse(fs.readFileSync(path.join(publicDir,'content-details.json'),'utf8')),stickers:stickerCatalog,userFields,body,json,fail,checkRate,serialize,everyone,interactions,progression});
 async function dispatchApi(req,res,url){
   if(url.pathname==='/api/auth/forgot-password')return api(req,res,url);
-  if(url.pathname.startsWith('/api/showdown'))return api(req,res,url);
+  if(url.pathname.startsWith('/api/showdown')||url.pathname==='/api/awards/voting')return api(req,res,url);
   if(url.pathname.startsWith('/api/x-million'))return serialize(()=>api(req,res,url));
   // Casting reads can advance expired questions. Serialize them with other writes.
   if(url.pathname.startsWith('/api/casting/')||url.pathname.startsWith('/api/moderation/auditions'))return serialize(()=>api(req,res,url));
@@ -909,11 +914,14 @@ const server = http.createServer(async (req, res) => {
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
     const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
+    const privateVotingPortrait=/^awards\/vote-portraits\/\d+\.webp$/i.test(arcadePath);
     const privateAwardsArt=/^awards\/edition-3-(?:logo|poster|stage|(?:poop-)?trophy)\.(?:webp|png)$/i.test(arcadePath);
-    if(privateAwardsArt){
+    if(privateVotingPortrait||privateAwardsArt){
       res.setHeader('Cache-Control','private, no-store');
       res.setHeader('Vary','Cookie');
-      if(!await thirdAwardsPublic(db)&&!accountRole((await getSession(req))?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
+      const viewer=await getSession(req);
+      if(privateVotingPortrait&&!viewer)fail(401,'Inicia sesión para acceder a las nominaciones.');
+      if(privateAwardsArt&&!await thirdAwardsPublic(db)&&!accountRole(viewer?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
     }
     const arcadeFile=/^simulator\/(?:ice-breaker|x-million)(?:\/|$)/i.test(arcadePath);
     if(arcadeFile){
@@ -936,11 +944,11 @@ const server = http.createServer(async (req, res) => {
     const fileStat = fs.statSync(filename), size = fileStat.size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': arcadeFile||soloFile||privateAwardsArt?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': arcadeFile||soloFile||privateAwardsArt||privateVotingPortrait?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
-    if(!arcadeFile&&!soloFile&&!privateAwardsArt){
+    if(!arcadeFile&&!soloFile&&!privateAwardsArt&&!privateVotingPortrait){
       const etag='W/"'+size.toString(16)+'-'+fileStat.mtimeMs.toString(16)+'"';
       headers.ETag=etag;headers['Last-Modified']=fileStat.mtime.toUTCString();
       const condition=req.headers['if-none-match'];
