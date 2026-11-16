@@ -11,7 +11,7 @@ renderChrome=function(){
   const activeRoute=['temporada','premios'].includes(state.route)?'explorar':state.route;
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);document.body.dataset.view=state.route;
   const navigation=$('#navigation'),navScroll=navigation.scrollLeft;
-  navigation.innerHTML=navItems.map(([route,ico,label])=>{
+  navigation.innerHTML=visibleNavItems().map(([route,ico,label])=>{
     const bookmark=route==='guardados',href=route==='explorar'?'#explorar/tops':'#'+route;
     return `<a href="${href}" class="nav-link ${route===activeRoute?'active':''}${bookmark?' nav-bookmark':''}" ${activeRoute===route?'aria-current="page"':''} ${bookmark?'aria-label="Mi lista" title="Mi lista"':''}>${bookmark?icon(ico):'<span>'+label+'</span>'}</a>`;
   }).join('');

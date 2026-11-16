@@ -25,6 +25,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(root, 'public');
+const criticsData = JSON.parse(fs.readFileSync(path.join(root, 'x-critics-data.json'), 'utf8'));
 const monetization=monetizationConfig();
 const dataDir = path.resolve(process.env.DATA_DIR || path.join(root, 'data'));
 const db = await openDatabase(dataDir);
@@ -331,6 +332,11 @@ async function api(req, res, url) {
     return json(res, archive, 200, 'public, max-age=30');
   }
   const u = await getSession(req);
+  if (p === '/api/x-critics' && method === 'GET') {
+    if (!u) fail(401, 'Inicia sesión para entrar a X Critics.');
+    if (!accountRole(u.id).staff) fail(403, 'X Critics está reservado al Staff.');
+    return json(res, criticsData);
+  }
   if(await world.handle(req,res,url,u))return;
   if (p === '/api/config' && method === 'GET') return json(res, {
     firebase: firebaseConfig,

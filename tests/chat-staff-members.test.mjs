@@ -86,3 +86,15 @@ test('el permiso del staff valida cuentas reales y conserva los chats directos y
  const dm=await request(staff,'','POST',{type:'dm',members:[people[0]]});assert.equal(dm.status,201);
  assert.equal((await request(staff,'/'+encodeURIComponent(dm.conversation.id)+'/members','POST',{members:[people[1]]})).status,403);
 });
+
+test('X Critics exige una sesión de Staff y el archivo anterior deja de ser público',async()=>{
+ const get=(actor,pathname='/api/x-critics')=>fetch(base+pathname,{headers:actor?{cookie:'xp_session='+token(actor)}:{}});
+ assert.equal((await get(null)).status,401);
+ assert.equal((await get(ordinary)).status,403);
+ assert.equal((await get(staff,'/x-critics-data.json')).status,404);
+ const response=await get(staff);
+ assert.equal(response.status,200);
+ assert.equal(response.headers.get('cache-control'),'no-store');
+ const data=await response.json();
+ assert.equal(data.showdownRatings['showdown-2'][0],7.3);
+});

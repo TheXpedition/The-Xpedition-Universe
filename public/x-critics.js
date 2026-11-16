@@ -27,13 +27,10 @@ const criticsAverage=ratings=>{
  return values.length?values.reduce((sum,score)=>sum+score,0)/values.length:null;
 };
 const criticsScoreText=value=>Number.isFinite(value)?criticsNumber.format(value):'Sin nota';
-let criticsDataPromise=null,criticsRequest=0;
-const loadCriticsData=()=>criticsDataPromise??=fetch('/x-critics-data.json').then(response=>{
- if(!response.ok)throw Error('No se pudieron cargar las calificaciones.');
- return response.json();
-}).catch(error=>{criticsDataPromise=null;throw error;});
+let criticsRequest=0;
 
 function criticsHomeLink(){
+ if(!state.user?.staff)return '';
  return `<section class="critics-home-link"><div><h2>X Critics</h2><p>Notas por episodio, grupo y fase. Consulta también el elenco de cada saga.</p></div><a class="btn secondary" href="${criticsLink()}">Abrir X Critics ${icon('arrow')}</a></section>`;
 }
 
@@ -178,12 +175,17 @@ function criticsCastPage(data,requested){
 
 async function renderXCritics(seasonId,stageId,episodeId){
  const turn=++criticsRequest, main=$('#main'), focus=main.contains(document.activeElement)?document.activeElement.getAttribute('href'):null;
+ const showRestricted=()=>{
+  main.innerHTML=heading('Un espacio del Staff.','X Critics está reservado al equipo de The Xpedition.')+'<a class="btn secondary" href="#inicio">Volver al universo</a>';
+ };
+ if(!state.user?.staff){showRestricted();return;}
  const season=criticsSeasons.find(entry=>entry.id===seasonId);
  document.title='X Critics · The Xpedition';
  if(!main.querySelector('.critics-page'))main.innerHTML='<div class="loading-screen"><span class="spinner"></span> Abriendo X Critics…</div>';
  try{
-  const [data,archive]=await Promise.all([loadCriticsData(),season?.series==='showdown'?loadSpinoffArchive():null]);
+  const [data,archive]=await Promise.all([api('/x-critics'),season?.series==='showdown'?loadSpinoffArchive():null]);
   if(state.route!=='x-critics'||turn!==criticsRequest)return;
+  if(!state.user?.staff){showRestricted();return;}
   main.innerHTML=season?criticsSeasonPage(season,data,archive?.seasons[season.catalog].tournament,stageId,episodeId):seasonId==='elenco'?criticsCastPage(data,stageId):criticsOverview(data);
   const search=main.querySelector('[data-critics-search]');
   search?.addEventListener('input',()=>{
@@ -229,8 +231,9 @@ async function renderXCritics(seasonId,stageId,episodeId){
    paint();
   }
   if(focus)[...main.querySelectorAll('a')].find(link=>link.getAttribute('href')===focus)?.focus({preventScroll:true});
- }catch{
+ }catch(error){
   if(state.route!=='x-critics'||turn!==criticsRequest)return;
+  if(!state.user?.staff||error.status===401||error.status===403){showRestricted();return;}
   main.innerHTML='<div class="error-panel"><h1>X Critics</h1><p>No se pudieron cargar las calificaciones.</p><button type="button" class="btn primary">Volver a intentar</button></div>';
   main.querySelector('button').addEventListener('click',()=>renderXCritics(seasonId,stageId,episodeId),{once:true});
  }
