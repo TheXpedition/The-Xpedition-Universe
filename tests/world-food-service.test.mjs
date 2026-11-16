@@ -85,7 +85,7 @@ test('food effects scale from fresh to rotten and rancid illness is probabilisti
  assert.equal(freshnessRecovery(food,'fresh').hunger,7);
  assert.equal(freshnessRecovery(food,'acceptable').hunger,4);
  assert.equal(freshnessRecovery(food,'stale',()=>0).spoilage,'stale');
- assert.equal(freshnessRecovery(food,'stale',()=>1).spoilage,undefined);
+ assert.equal(freshnessRecovery(food,'stale',()=>.2).spoilage,undefined);
  assert(freshnessRecovery(food,'rotten').health<0);
  assert.equal(freshnessFor('dry-beans',1000*3600000),null);
 });

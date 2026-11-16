@@ -13,7 +13,7 @@ export function freshnessFor(foodId,age){
 }
 export function freshnessRecovery(food,grade,random=Math.random){
  if(grade==='rotten')return {health:-9,hunger:0,energy:-4,spoilage:'rotten'};
- const illness=grade==='stale'&&random()<.32;
+ const illness=grade==='stale'&&random()<.16;
  const factor=grade==='acceptable'?.65:grade==='stale'?.40:1;
  return {
   health:food.raw?-6:illness?-5:grade==='stale'?0:food.health,

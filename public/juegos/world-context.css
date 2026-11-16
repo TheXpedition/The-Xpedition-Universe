@@ -1,3 +1,14 @@
+body.is-playing :is(.stage-wrap, .world-top button, .wood-nav, .play-bottom) {
+ -webkit-user-select:none;
+ user-select:none;
+ -webkit-touch-callout:none;
+}
+body.is-playing :is(.stage-wrap, .play-bottom) :is(input, textarea, [contenteditable]) {
+ -webkit-user-select:text;
+ user-select:text;
+ -webkit-touch-callout:default;
+}
+
 /* Small world-anchored action label. Coordinates come from the actual camera. */
 .is-playing #portal{
  position:absolute;left:0;top:0;right:auto;bottom:auto;z-index:5;

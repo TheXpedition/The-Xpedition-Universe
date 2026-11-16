@@ -28,3 +28,12 @@ test('the latest episode determines each row; season winner and finalists lead t
  assert.deepEqual(orderTrackCast({cast,episodes:[first,latest]}).map(p=>p.id),['b','c','a']);
  assert.deepEqual(orderTrackCast({cast,episodes:[first,latest],final:{winner:'c',runners:['a']}}).map(p=>p.id),['c','a','b']);
 });
+
+test('later eliminations stay above the fixed five exits in their specified order',()=>{
+ const bottom=['gabrielsab','bayron','eduard','peggy','joseserna'];
+ const first={cast:[person('joseserna','OUT'),person('peggy','OUT')]};
+ const next={cast:[person('eduard','DISQ'),person('bayron','DISQ'),person('gabrielsab','ELIM')],displayOverrides:{bottom}};
+ const later={cast:[person('alice','ELIM'),person('roger','WIN')]};
+ const cast=[...first.cast,...next.cast,...later.cast];
+ assert.deepEqual(orderTrackCast({cast,episodes:[first,next,later]}).map(p=>p.id),['roger','alice',...bottom]);
+});

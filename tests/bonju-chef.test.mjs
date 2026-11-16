@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createChef,chefAction,tickChef,chefView} from '../public/juegos/bonju-chef/engine.mjs';
+import {createChef,chefAction,tickChef,chefView,nearChefFridge} from '../public/juegos/bonju-chef/engine.mjs';
 import {createBonjuChef} from '../world-bonju-chef-service.mjs';
 import {CONTESTANTS} from '../public/juegos/bonju-chef/data.mjs';
 import {eliminationPlan,RECIPES,DURATIONS} from '../public/juegos/bonju-chef/data.mjs';
@@ -145,4 +145,28 @@ test('filling a saved kitchen lobby adds Alice and Gabriel in the old bot slots'
  assert.equal(s.roster.length,18);
  assert.deepEqual(s.roster.slice(0,16),retained);
  assert.deepEqual(s.roster.slice(16).map(p=>p.characterId).sort(),['alice','gabrielsab']);
+});
+
+test('a single approach request walks all eighteen human cooks into fridge range',()=>{
+ const s=episode(18);
+ s.phase='fridge';
+ const stock={...s.stock};
+ for(const p of s.roster){
+  p.bot=false;
+  chefAction(s,{type:'approachFridge'},{actor:p});
+ }
+ const last=s.roster.at(-1);
+ assert(chefView(s,{selfId:last.id}).approachingFridge);
+ for(let time=50;time<=6500;time+=50)tickChef(s,time);
+ assert(s.roster.every(p=>nearChefFridge(p)&&!p.input));
+ assert(!chefView(s,{selfId:last.id}).approachingFridge);
+ assert.deepEqual(s.stock,stock);
+ chefAction(s,{type:'take',id:'meat'},{actor:last});
+ assert.deepEqual(s.stations[last.id].inventory,['meat']);
+ last.x=1500;
+ chefAction(s,{type:'approachFridge'},{actor:last});
+ chefAction(s,{type:'move',x:1,y:0},{actor:last});
+ assert(!chefView(s,{selfId:last.id}).approachingFridge);
+ tickChef(s,6550);
+ assert(last.x>1500);
 });

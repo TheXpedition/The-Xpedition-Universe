@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import {chefLobby} from '../../public/juegos/bonju-chef/lifecycle.mjs';
-export const model:any={episode:null,boot:null,connected:false,coarse:matchMedia('(pointer:coarse)').matches,muted:false,uiKey:'',category:'all',basket:false,guidePage:0,selected:null,help:false,overview:false};
+export const model:any={episode:null,boot:null,connected:false,coarse:matchMedia('(any-pointer: coarse)').matches,muted:false,uiKey:'',category:'all',basket:false,guidePage:0,selected:null,help:false,overview:false};
 export const events=new Phaser.Events.EventEmitter();
 export const esc=(s:any)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 export const $=<T extends HTMLElement=HTMLElement>(s:string)=>document.querySelector(s) as T;

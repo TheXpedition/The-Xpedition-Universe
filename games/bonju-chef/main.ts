@@ -1,4 +1,5 @@
 import {deliverPacket} from './transport';
+import {nearChefFridge} from '../../public/juegos/bonju-chef/engine.mjs';
 import {chefLobby,returnedDuringVisit} from '../../public/juegos/bonju-chef/lifecycle.mjs';
 import {worldIcon,mountWorldIcons} from '../../public/juegos/world-icons.mjs';
 import Phaser from 'phaser';
@@ -36,7 +37,19 @@ $('#audio').onclick=()=>{model.muted=!model.muted;announcer.setEnabled(!model.mu
 $('#direction').onclick=()=>{$('#staff').hidden=!$('#staff').hidden;};$('#help').onclick=()=>{model.help=true;model.basket=false;renderUI(true);};$('#chat-toggle').onclick=()=>toggleChat();$('#comm-toggle').onclick=()=>{$('#comm').hidden=!$('#comm').hidden;if(!$('#comm').hidden)$('#comm-input').focus();};
 function toggleChat(){const open=$('#chat').hidden;$('#chat').hidden=!open;if(open){stopInput();$('#chat-input').focus();}else $('#chat-input').blur();}
 function chatForm(id:string,input:string){$(id).addEventListener('submit',e=>{e.preventDefault();const el=$<HTMLInputElement>(input),text=el.value.trim();if(!text)return;if(wire({type:'chef-chat',text}))el.value='';else notify('El chat está reconectando. Tu mensaje sigue escrito.');});}chatForm('#chat-form','#chat-input');chatForm('#comm-form','#comm-input');
-function basket(){const s=model.episode,p=own();if(!p?.active||s.phase!=='fridge'||s.station?.ready)return;if(Math.hypot(p.x-490,p.y-690)>=285)return notify('Acércate a la nevera.');model.basket=true;stopInput();renderUI(true);}
+function basket(){
+ const s=model.episode,p=own();
+ if(!p?.active||s.phase!=='fridge'||s.paused||s.spectating||s.station?.ready||model.basket)return;
+ if(!nearChefFridge(p)){
+  if(s.approachingFridge)return;
+  stopInput();
+  send({type:'approachFridge'});
+  return;
+ }
+ model.basket=true;
+ stopInput();
+ renderUI(true);
+}
 document.addEventListener('click',e=>{const b=(e.target as Element).closest<HTMLButtonElement>('button');if(!b||b.disabled)return;
  if(b.dataset.remove)send({type:'remove',id:b.dataset.remove});
  if(b.dataset.watch){send({type:'watch',id:b.dataset.watch});}

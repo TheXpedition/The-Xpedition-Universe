@@ -16,3 +16,20 @@ test('episode history appears at confirmed elimination, updates answers and surv
  const reserved=episode(first.id);reserved.effects.elimination=true;
  assert.equal(await history.record(reserved),false);
  const s=episode();assert.equal(await history.record(s),false);s.effects.elimination=true;assert(await history.record(s));assert.equal(await history.record(s),false);s.interview={step:1,lastWords:'Gracias',reply:null};assert(await history.record(s));history=createProtocolHistory({db,now:()=>6000});let data=await history.list();assert.equal(data.episodes.length,2);assert.equal(data.episodes[1].duel.interviews[0].lastWords,'Gracias');const next=episode('two');next.effects.elimination=true;await history.record(next);data=await history.list();assert.deepEqual(data.episodes.map(e=>e.episode),[1,2,3]);assert.deepEqual(data.episodes[0],first);}finally{await db.close();const target=path.resolve(folder);assert(target.startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(target,{recursive:true,force:true});}});
+
+test('archived profiles resolve first-episode guests and preserve actor ids for later rounds',async()=>{
+ const archive={id:'chef',episode:1,cast:[{id:'bot:arisantana',characterId:'arisantana',name:'Ari Santana',userName:'Bot',bot:true,result:'SAFE'}],
+  displayOverrides:{results:{arisantana:'HIGH'},profiles:{
+   arisantana:{profileId:'ari-account',userName:'Ari Santana'},
+   peggy:{profileId:'peggy-account',userName:'Peggy Diosa'}
+  }}};
+ const later={id:'later',episode:2,cast:[{id:'later-ari',characterId:'arisantana',name:'Ari Santana',userName:'Bot',bot:true,result:'LOW'}]};
+ const db={all:async sql=>sql.includes('world_environment')?[archive,later].map(e=>({state:JSON.stringify(e)})):[],one:async()=>null};
+ const data=await createProtocolHistory({db}).list();
+ assert.equal(data.episodes[0].cast.find(p=>p.characterId==='peggy').userName,'Peggy Diosa');
+ assert.equal(data.episodes[1].cast[0].id,'bot:arisantana');
+ assert.equal(data.episodes[1].cast[0].result,'HIGH');
+ assert.deepEqual(data.cast.find(p=>p.characterId==='arisantana'),{
+  id:'later-ari',characterId:'arisantana',name:'Ari Santana',userName:'Ari Santana',bot:false,result:'LOW',profileId:'ari-account'
+ });
+});

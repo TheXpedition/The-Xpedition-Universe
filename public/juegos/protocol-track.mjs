@@ -17,5 +17,8 @@ export function orderTrackCast({cast=[],episodes=[],final=null}){
   const first=ordered.findIndex(person=>before.includes(person.characterId));
   if(first>=0&&at>first)ordered.splice(first,0,...ordered.splice(at,1));
  }
- return ordered;
+ const bottom=episodes.findLast(e=>Array.isArray(e.displayOverrides?.bottom))?.displayOverrides.bottom||[];
+ if(!bottom.length)return ordered;
+ const ids=new Set(bottom),people=new Map(ordered.map(p=>[p.characterId,p]));
+ return [...ordered.filter(p=>!ids.has(p.characterId)),...[...ids].map(id=>people.get(id)).filter(Boolean)];
 }

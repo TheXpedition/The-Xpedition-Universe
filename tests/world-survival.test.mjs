@@ -39,8 +39,14 @@ test('the fictional clock takes sixty real minutes per day and staff changes pre
 test('exposure is gradual, climate clothing matters and protected interiors do not receive precipitation exposure',()=>{
  assert.equal(outdoorExposure('cocina'),0);assert.equal(outdoorExposure('hospital-interior'),0);assert.equal(outdoorExposure('tren-pasajeros'),0);assert.equal(outdoorExposure('base'),1);
  const instant=simulate(1,{}, {environment:weather('snow')});assert.equal(instant.body.conditions.length,0);assert.equal(instant.vitals.health,100);
- const light=simulate(180,{clothing:'heat'},{environment:weather('snow')});
- const warm=simulate(180,{clothing:'cold'},{environment:weather('snow')});
+ const shortTrip=simulate(180,{clothing:'heat'},{environment:weather('snow')});
+ assert(shortTrip.body.exposure.cold>0);
+ assert.equal(shortTrip.body.conditions.length,0);
+ const shortHeat=simulate(60,{clothing:'cold'},{environment:{...weather('clear'),temperature:31}});
+ assert(shortHeat.body.exposure.heat>0);
+ assert.equal(shortHeat.body.conditions.length,0);
+ const light=simulate(480,{clothing:'heat'},{environment:weather('snow')});
+ const warm=simulate(480,{clothing:'cold'},{environment:weather('snow')});
  assert(light.body.exposure.cold>warm.body.exposure.cold);assert(light.body.conditions.some(c=>c.id==='chill'));assert.equal(warm.body.conditions.length,0);assert(light.vitals.stress>warm.vitals.stress);
  const hotLight=simulate(180,{clothing:'heat'},{environment:weather('clear',15)}),hotCoat=simulate(180,{clothing:'cold'},{environment:weather('clear',15)});
  assert(hotCoat.body.exposure.heat>hotLight.body.exposure.heat);assert(hotCoat.vitals.stress>hotLight.vitals.stress);
