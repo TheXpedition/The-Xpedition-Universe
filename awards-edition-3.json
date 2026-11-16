@@ -326,20 +326,6 @@
               "description": "Showdown II"
             }
           ]
-        },
-        {
-          "id": "estrategia-6",
-          "name": "Mejor Duelo",
-          "nominees": [
-            {
-              "title": "Sal Lua vs Luciano",
-              "people": [
-                "Sal Lua",
-                "Luciano"
-              ],
-              "description": "Showdown II"
-            }
-          ]
         }
       ]
     },
@@ -636,12 +622,6 @@
       "name": "Premios de Producción",
       "categories": [
         {
-          "id": "produccion-1",
-          "name": "Mejor Episodio",
-          "nominees": [],
-          "production": true
-        },
-        {
           "id": "produccion-2",
           "name": "Mejor Temporada",
           "nominees": [
@@ -665,12 +645,6 @@
             }
           ],
           "production": false
-        },
-        {
-          "id": "produccion-3",
-          "name": "Mejor Diseño & Vestuario",
-          "nominees": [],
-          "production": true
         },
         {
           "id": "produccion-4",
@@ -824,11 +798,11 @@
               "description": "Global War"
             },
             {
-              "title": "Lucas Mendez",
+              "title": "Bryan Montalvo",
               "people": [
-                "Lucas Mendez"
+                "Bryan Montalvo"
               ],
-              "description": "Global War"
+              "description": "Celebrity Stars"
             },
             {
               "title": "Marcos",

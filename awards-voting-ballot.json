@@ -217,6 +217,18 @@
               "name": "Julián Sanchez",
               "details": "Showdown 2",
               "image": "/personajes/julian.png"
+            },
+            {
+              "id": "coronel-sanders-showdown-2",
+              "name": "Coronel Sanders",
+              "details": "Showdown 2",
+              "image": "/awards/vote-portraits/13.webp"
+            },
+            {
+              "id": "dani-jara-the-traitor-2",
+              "name": "Dani Jara",
+              "details": "The Traitor 2",
+              "image": "/personajes/dani.png"
             }
           ]
         }
@@ -226,178 +238,6 @@
       "id": "generales",
       "name": "Categorías generales",
       "categories": [
-        {
-          "id": "traidor",
-          "name": "Mejor Traidor",
-          "description": "Nominados por su desempeño como Traidores en The Traitor 2.",
-          "nominees": [
-            {
-              "id": "andromeda-sc-grupo-corazon",
-              "name": "Andrómeda SC",
-              "details": "Grupo Corazón",
-              "image": "/awards/vote-portraits/1.webp"
-            },
-            {
-              "id": "daelly-bonbom-grupo-espada",
-              "name": "Daelly BonBom",
-              "details": "Grupo Espada",
-              "image": "/awards/vote-portraits/2.webp"
-            },
-            {
-              "id": "alice-torrico-the-traitor-2-grupo-diamante",
-              "name": "Alice Torrico",
-              "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/3.webp"
-            },
-            {
-              "id": "lalamila-the-traitor-2-grupo-diamante",
-              "name": "Lalamila",
-              "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/4.webp"
-            },
-            {
-              "id": "renzo-rodriguez-the-traitor-2-grupo-diamante",
-              "name": "Renzo Rodriguez",
-              "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/5.webp"
-            },
-            {
-              "id": "azael-eli-the-traitor-2-grupo-trebol",
-              "name": "Azael Eli",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/6.webp"
-            }
-          ]
-        },
-        {
-          "id": "inocente",
-          "name": "Mejor Inocente",
-          "description": "Nominados por su desempeño como Inocentes en The Traitor 2.",
-          "nominees": [
-            {
-              "id": "renata-the-traitor-2-grupo-corazon",
-              "name": "Renata",
-              "details": "The Traitor 2 · Grupo Corazón",
-              "image": "/awards/vote-portraits/7.webp"
-            },
-            {
-              "id": "isabel-the-traitor-2-grupo-corazon",
-              "name": "Isabel",
-              "details": "The Traitor 2 · Grupo Corazón",
-              "image": "/awards/vote-portraits/8.webp"
-            },
-            {
-              "id": "lucas-mendez-the-traitor-2-grupo-espada",
-              "name": "Lucas Mendez",
-              "details": "The Traitor 2 · Grupo Espada",
-              "image": "/awards/vote-portraits/9.webp"
-            },
-            {
-              "id": "bruno-macri-the-traitor-2-grupo-trebol",
-              "name": "Bruno Macri",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/10.webp"
-            },
-            {
-              "id": "nahuee-the-traitor-2-grupo-trebol",
-              "name": "Nahuee",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/11.webp"
-            },
-            {
-              "id": "ari-salgado-the-traitor-2-grupo-trebol",
-              "name": "Ari Salgado",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/12.webp"
-            }
-          ]
-        },
-        {
-          "id": "sobreviviente",
-          "name": "Mejor Sobreviviente",
-          "description": "Nominados por sobrevivir hasta el final en los grupos de The Traitor 2.",
-          "nominees": [
-            {
-              "id": "coronel-sanders-grupo-espada",
-              "name": "Coronel Sanders",
-              "details": "Grupo Espada",
-              "image": "/awards/vote-portraits/13.webp"
-            },
-            {
-              "id": "kim-camila-grupo-espada",
-              "name": "Kim Camila",
-              "details": "Grupo Espada",
-              "image": "/awards/vote-portraits/14.webp"
-            },
-            {
-              "id": "greg-rep-grupo-trebol",
-              "name": "Greg Rep",
-              "details": "Grupo Trébol",
-              "image": "/awards/vote-portraits/15.webp"
-            },
-            {
-              "id": "ivy-pierce-grupo-trebol",
-              "name": "Ivy Pierce",
-              "details": "Grupo Trébol",
-              "image": "/awards/vote-portraits/16.webp"
-            },
-            {
-              "id": "ari-salgado-grupo-joker",
-              "name": "Ari Salgado",
-              "details": "Grupo Joker",
-              "image": "/awards/vote-portraits/12.webp"
-            },
-            {
-              "id": "mary-hao-grupo-joker",
-              "name": "Mary Hao",
-              "details": "Grupo Joker",
-              "image": "/awards/vote-portraits/17.webp"
-            }
-          ]
-        },
-        {
-          "id": "detective",
-          "name": "Mejor Detective",
-          "description": "Nominados por su labor de investigación en The Traitor 2.",
-          "nominees": [
-            {
-              "id": "renata-the-traitor-2-grupo-corazon",
-              "name": "Renata",
-              "details": "The Traitor 2 · Grupo Corazón",
-              "image": "/awards/vote-portraits/7.webp"
-            },
-            {
-              "id": "peggy-the-traitor-2-grupo-corazon",
-              "name": "Peggy",
-              "details": "The Traitor 2 · Grupo Corazón",
-              "image": "/awards/vote-portraits/18.webp"
-            },
-            {
-              "id": "isabel-the-traitor-2-grupo-corazon",
-              "name": "Isabel",
-              "details": "The Traitor 2 · Grupo Corazón",
-              "image": "/awards/vote-portraits/8.webp"
-            },
-            {
-              "id": "esteban-cooper-the-traitor-2-grupo-diamante",
-              "name": "Esteban Cooper",
-              "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/19.webp"
-            },
-            {
-              "id": "sophia-asdero-the-traitor-2-grupo-trebol",
-              "name": "Sophia Asdero",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/20.webp"
-            },
-            {
-              "id": "nahuee-the-traitor-2-grupo-trebol",
-              "name": "Nahuee",
-              "details": "The Traitor 2 · Grupo Trébol",
-              "image": "/awards/vote-portraits/11.webp"
-            }
-          ]
-        },
         {
           "id": "estratega-del-ano",
           "name": "Estratega del Año",
@@ -571,24 +411,174 @@
           ]
         },
         {
-          "id": "mejor-duelo",
-          "name": "Mejor Duelo",
-          "description": "",
+          "id": "traidor",
+          "name": "Mejor Traidor",
+          "description": "Nominados por su desempeño como Traidores en The Traitor 2.",
           "nominees": [
             {
-              "id": "sal-lua-vs-luciano-showdown-ii",
-              "name": "Sal Lua vs Luciano",
-              "details": "Showdown II",
-              "people": [
-                {
-                  "name": "Sal Lua",
-                  "image": "/awards/vote-portraits/34.webp"
-                },
-                {
-                  "name": "Luciano",
-                  "image": "/personajes/luciano.png"
-                }
-              ]
+              "id": "andromeda-sc-grupo-corazon",
+              "name": "Andrómeda SC",
+              "details": "Grupo Corazón",
+              "image": "/awards/vote-portraits/1.webp"
+            },
+            {
+              "id": "daelly-bonbom-grupo-espada",
+              "name": "Daelly BonBom",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/2.webp"
+            },
+            {
+              "id": "alice-torrico-the-traitor-2-grupo-diamante",
+              "name": "Alice Torrico",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/3.webp"
+            },
+            {
+              "id": "lalamila-the-traitor-2-grupo-diamante",
+              "name": "Lalamila",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/4.webp"
+            },
+            {
+              "id": "renzo-rodriguez-the-traitor-2-grupo-diamante",
+              "name": "Renzo Rodriguez",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/5.webp"
+            },
+            {
+              "id": "azael-eli-the-traitor-2-grupo-trebol",
+              "name": "Azael Eli",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/6.webp"
+            }
+          ]
+        },
+        {
+          "id": "inocente",
+          "name": "Mejor Inocente",
+          "description": "Nominados por su desempeño como Inocentes en The Traitor 2.",
+          "nominees": [
+            {
+              "id": "renata-the-traitor-2-grupo-corazon",
+              "name": "Renata",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/7.webp"
+            },
+            {
+              "id": "isabel-the-traitor-2-grupo-corazon",
+              "name": "Isabel",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/8.webp"
+            },
+            {
+              "id": "lucas-mendez-the-traitor-2-grupo-espada",
+              "name": "Lucas Mendez",
+              "details": "The Traitor 2 · Grupo Espada",
+              "image": "/awards/vote-portraits/9.webp"
+            },
+            {
+              "id": "bruno-macri-the-traitor-2-grupo-trebol",
+              "name": "Bruno Macri",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/10.webp"
+            },
+            {
+              "id": "nahuee-the-traitor-2-grupo-trebol",
+              "name": "Nahuee",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/11.webp"
+            },
+            {
+              "id": "ari-salgado-the-traitor-2-grupo-trebol",
+              "name": "Ari Salgado",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/12.webp"
+            }
+          ]
+        },
+        {
+          "id": "sobreviviente",
+          "name": "Mejor Sobreviviente",
+          "description": "Nominados por sobrevivir hasta el final en los grupos de The Traitor 2.",
+          "nominees": [
+            {
+              "id": "coronel-sanders-grupo-espada",
+              "name": "Coronel Sanders",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/13.webp"
+            },
+            {
+              "id": "kim-camila-grupo-espada",
+              "name": "Kim Camila",
+              "details": "Grupo Espada",
+              "image": "/awards/vote-portraits/14.webp"
+            },
+            {
+              "id": "greg-rep-grupo-trebol",
+              "name": "Greg Rep",
+              "details": "Grupo Trébol",
+              "image": "/awards/vote-portraits/15.webp"
+            },
+            {
+              "id": "ivy-pierce-grupo-trebol",
+              "name": "Ivy Pierce",
+              "details": "Grupo Trébol",
+              "image": "/awards/vote-portraits/16.webp"
+            },
+            {
+              "id": "ari-salgado-grupo-joker",
+              "name": "Ari Salgado",
+              "details": "Grupo Joker",
+              "image": "/awards/vote-portraits/12.webp"
+            },
+            {
+              "id": "mary-hao-grupo-joker",
+              "name": "Mary Hao",
+              "details": "Grupo Joker",
+              "image": "/awards/vote-portraits/17.webp"
+            }
+          ]
+        },
+        {
+          "id": "detective",
+          "name": "Mejor Detective",
+          "description": "Nominados por su labor de investigación en The Traitor 2.",
+          "nominees": [
+            {
+              "id": "renata-the-traitor-2-grupo-corazon",
+              "name": "Renata",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/7.webp"
+            },
+            {
+              "id": "peggy-the-traitor-2-grupo-corazon",
+              "name": "Peggy",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/18.webp"
+            },
+            {
+              "id": "isabel-the-traitor-2-grupo-corazon",
+              "name": "Isabel",
+              "details": "The Traitor 2 · Grupo Corazón",
+              "image": "/awards/vote-portraits/8.webp"
+            },
+            {
+              "id": "esteban-cooper-the-traitor-2-grupo-diamante",
+              "name": "Esteban Cooper",
+              "details": "The Traitor 2 · Grupo Diamante",
+              "image": "/awards/vote-portraits/19.webp"
+            },
+            {
+              "id": "sophia-asdero-the-traitor-2-grupo-trebol",
+              "name": "Sophia Asdero",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/20.webp"
+            },
+            {
+              "id": "nahuee-the-traitor-2-grupo-trebol",
+              "name": "Nahuee",
+              "details": "The Traitor 2 · Grupo Trébol",
+              "image": "/awards/vote-portraits/11.webp"
             }
           ]
         },
@@ -1049,12 +1039,6 @@
           ]
         },
         {
-          "id": "mejor-episodio",
-          "name": "Mejor Episodio",
-          "description": "",
-          "nominees": []
-        },
-        {
           "id": "mejor-temporada",
           "name": "Mejor Temporada",
           "description": "",
@@ -1081,12 +1065,6 @@
               "isShow": true
             }
           ]
-        },
-        {
-          "id": "mejor-diseno-vestuario",
-          "name": "Mejor Diseño & Vestuario",
-          "description": "",
-          "nominees": []
         },
         {
           "id": "mejor-cancion",
@@ -1137,10 +1115,10 @@
               "image": "/personajes/ianesteban.png"
             },
             {
-              "id": "lucas-mendez-global-war",
-              "name": "Lucas Mendez",
-              "details": "Global War",
-              "image": "/awards/vote-portraits/9.webp"
+              "id": "bryan-montalvo-celebrity-stars",
+              "name": "Bryan Montalvo",
+              "details": "Celebrity Stars",
+              "image": "/personajes/bryanmontalvo.png"
             },
             {
               "id": "marcos-turn-it-up",

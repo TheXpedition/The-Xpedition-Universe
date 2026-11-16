@@ -58,11 +58,13 @@ function votingPortrait(nominee){
  return face(nominee);
 }
 
+const votingCountLabel=votes=>votes+(votes===1?' voto':' votos');
+
 function votingCard(nominee,category,index){
- const checked=votingChoices[category.id]===nominee.id;
+ const votes=votingChoices[category.id]?.[nominee.id]||0;
  return `<article class="vote-nominee" style="--vote-card-index:${index}">
-   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" aria-pressed="${checked}">
-    <span class="vote-portrait">${votingPortrait(nominee)}<span class="vote-card-action" aria-hidden="true">${icon('check')} <span>${checked?'Tu voto':'Elegir'}</span></span></span>
+   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" data-personal-votes="${votes}"${votes?` aria-description="${votingCountLabel(votes)} registrado${votes===1?'':'s'} por ti"`:''}>
+    <span class="vote-portrait">${votingPortrait(nominee)}<span class="vote-card-action" aria-hidden="true">${icon('check')} <span>${votes?votingCountLabel(votes):'Elegir'}</span></span></span>
     <span class="vote-card-text"><strong>${esc(nominee.name)}</strong>${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</span>
    </button>
  </article>`;
@@ -72,20 +74,20 @@ function renderVotingBallot(section,category){
  const root=$('#main'),ordered=votingBallot.sections.flatMap(group=>group.categories.map(entry=>({group,entry})));
  const index=ordered.findIndex(item=>item.entry===category);
  const direction=(item,label,arrow)=>item?`<a class="vote-step-button" href="${votingHref(item.group.id,item.entry.id)}" aria-label="${label}, ${esc(item.entry.name)}">${icon(arrow)} <span>${label}</span></a>`:'<span></span>';
- root.innerHTML=`<div class="vote-page" data-voting-section="${section.id}" data-voting-category="${category.id}">
-  <header class="vote-heading"><div><p>THE XPEDITION AWARDS <span>·</span> 3.ª EDICIÓN</p><h1>Votación<span>.</span></h1></div><div class="vote-progress" data-vote-progress role="status"></div></header>
+ root.innerHTML=`<div class="vote-page" data-nominee-count="${category.nominees.length}" data-voting-section="${section.id}" data-voting-category="${category.id}">
+  <header class="vote-heading"><div><p>THE XPEDITION AWARDS <span>·</span> 3.ª EDICIÓN</p><h1>Votación<span>.</span></h1></div><div class="vote-heading-actions"><div class="vote-progress" data-vote-progress role="status"></div><button class="vote-replay" type="button" data-vote="intro" aria-label="Repetir presentación" title="Repetir presentación">${icon('play')}</button></div></header>
   <nav class="vote-tabs" aria-label="Grupos de categorías">${votingBallot.sections.map(group=>`<a href="${votingHref(group.id)}" ${section.id===group.id?'aria-current="page"':''}>${esc(group.name)}</a>`).join('')}</nav>
   <div class="vote-layout"><aside class="vote-category-list"><div class="vote-category-title"><h2>Categorías</h2><small data-vote-group-progress></small></div>
     <nav aria-label="Categorías de la sección">${section.categories.map(entry=>`<a href="${votingHref(section.id,entry.id)}" data-vote-category="${entry.id}" ${entry.id===category.id?'aria-current="page"':''}><span>${esc(entry.name)}</span><span data-vote-mark>${votingCategoryMark(entry)}</span></a>`).join('')}</nav>
     <label class="vote-category-select"><span>Categoría</span><select data-vote-select>${section.categories.map(entry=>`<option value="${entry.id}" ${entry.id===category.id?'selected':''}>${esc(entry.name)}${votingChoices[entry.id]?' · Votaste':''}</option>`).join('')}</select></label>
    </aside>
    <section class="vote-stage" aria-labelledby="vote-stage-title">
-    <header class="vote-stage-head"><div><p>${esc(section.name)}</p><h2 id="vote-stage-title">${esc(category.name)}</h2>${category.description?`<p class="vote-description">${esc(category.description)}</p>`:''}</div><figure class="vote-stage-decoration"><img src="${votingTrophy}" alt="" class="vote-stage-trophy" width="186" height="400"><img class="vote-stage-brand" src="/awards/voting-logo.webp" alt=""></figure></header>
+    <header class="vote-stage-head"><div><h2 id="vote-stage-title">${esc(category.name)}</h2>${category.description?`<p class="vote-description">${esc(category.description)}</p>`:''}</div><figure class="vote-stage-decoration"><img src="${votingTrophy}" alt="" class="vote-stage-trophy" width="186" height="400"><img class="vote-stage-brand" src="/awards/voting-logo.webp" alt=""></figure></header>
     <div class="vote-line" aria-hidden="true"></div>
-    ${category.nominees.length?`<div class="vote-nominees">${category.nominees.map((nominee,i)=>votingCard(nominee,category,i)).join('')}</div>`:'<p class="vote-pending">Los nominados de esta categoría se anunciarán próximamente.</p>'}
+    ${category.nominees.length?`<div class="vote-nominees" style="--vote-columns:${category.nominees.length}">${category.nominees.map((nominee,i)=>votingCard(nominee,category,i)).join('')}</div>`:'<p class="vote-pending">Los nominados de esta categoría se anunciarán próximamente.</p>'}
     <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(ordered[index-1],'Anterior','back')}<span>${index+1} / ${ordered.length}</span>${direction(ordered[index+1],'Siguiente','arrow')}</nav>
    </section>
-  </div><footer class="vote-footer"><span>Un voto por categoría. Los resultados son visibles solo para el Staff.</span><button type="button" data-vote="intro">Repetir presentación</button></footer>
+  </div>
   <dialog class="vote-dialog" id="votingDialog" aria-labelledby="vote-dialog-name"></dialog>
  </div>`;
  updateVotingProgress(root,section);
@@ -115,15 +117,14 @@ function openVotingNominee(nomineeId){
  const category=section.categories.find(entry=>entry.id===root.dataset.votingCategory);
  const nominee=category.nominees.find(entry=>entry.id===nomineeId);
  if(!nominee)return;
- const dialog=$('#votingDialog'),current=category.nominees.find(entry=>entry.id===votingChoices[category.id]);
- const saved=current?.id===nominee.id;
- votingModal={category,nominee};
+ const dialog=$('#votingDialog'),votes=votingChoices[category.id]?.[nominee.id]||0;
+ votingModal={category,nominee,requestId:null};
  dialog.classList.remove('vote-confirmed');
  dialog.innerHTML=`<div class="vote-dialog-shell"><button class="vote-dialog-close" type="button" aria-label="Cerrar" data-vote="close">${icon('close')}</button>
   <div class="vote-dialog-portrait">${votingPortrait(nominee)}</div><div class="vote-dialog-copy"><span>${esc(category.name)}</span><h2 id="vote-dialog-name">${esc(nominee.name)}</h2>
   ${nominee.details?`<p class="vote-dialog-detail">${esc(nominee.details)}</p>`:''}
-  <p data-vote-message aria-live="polite">${saved?'Tu voto ya está guardado.':current?'Tu voto actual es para '+esc(current.name)+'.':'Confirma tu voto para esta categoría.'}</p>
-  <button type="button" class="vote-gold-button" data-vote="${saved?'close':'confirm'}">${saved?'Volver a la papeleta':current?'Cambiar mi voto':'Confirmar voto'} ${icon(saved?'back':'check')}</button></div></div>`;
+  <p data-vote-message aria-live="polite">${votes?'Ya registraste '+votingCountLabel(votes)+' para este nominado.':'Confirma tu voto para esta categoría.'}</p>
+  <div class="vote-dialog-actions"><button type="button" class="vote-gold-button" data-vote="confirm">${votes?'Votar otra vez':'Confirmar voto'} ${icon('check')}</button><button type="button" class="btn secondary" data-vote="close">Volver a la papeleta</button></div></div></div>`;
  dialog.showModal();
 }
 
@@ -132,24 +133,28 @@ async function confirmAwardsVote(button){
  if(!selection||button.disabled||!state.user||votingSaving)return;
  const {category,nominee}=selection,member=state.user.id;
  votingSaving=true;button.disabled=true;
+ dialog.classList.remove('vote-confirmed');
+ selection.requestId??=crypto.randomUUID();
  $('[data-vote-message]',dialog).textContent='Guardando tu voto…';
  try{
-  const vote=await api('/awards/voting',{method:'PUT',body:{category:category.id,nominee:nominee.id}});
+  const vote=await api('/awards/voting',{method:'POST',body:{category:category.id,nominee:nominee.id,requestId:selection.requestId}});
   if(state.user?.id!==member||votingMember!==member)return;
-  votingChoices[vote.category]=vote.nominee;
+  (votingChoices[vote.category]??={})[vote.nominee]=vote.votes;
+  selection.requestId=null;
   const root=$('.vote-page');
   if(!root?.isConnected)return;
   const visibleSection=votingBallot.sections.find(group=>group.id===root.dataset.votingSection);
   updateVotingProgress(root,visibleSection);
-  if(root.dataset.votingCategory===vote.category)for(const card of $$('[data-vote-nominee]',root)){
-   const selected=card.dataset.voteNominee===vote.nominee;
-   card.setAttribute('aria-pressed',String(selected));$('.vote-card-action span',card).textContent=selected?'Tu voto':'Elegir';
+  if(root.dataset.votingCategory===vote.category){
+   const card=$('[data-vote-nominee="'+vote.nominee+'"]',root);
+   card.dataset.personalVotes=vote.votes;
+   card.setAttribute('aria-description',votingCountLabel(vote.votes)+' registrado'+(vote.votes===1?'':'s')+' por ti');
+   $('.vote-card-action span',card).textContent=votingCountLabel(vote.votes);
   }
   if(!dialog.open||votingModal!==selection)return;
   dialog.classList.add('vote-confirmed');
   $('[data-vote-message]',dialog).textContent='Voto guardado.';
-  button.dataset.vote='close';
-  button.innerHTML='Volver a la papeleta '+icon('check');
+  button.innerHTML='Votar otra vez '+icon('check');
   button.disabled=false;
  }catch(error){
   if(!dialog?.open||votingModal!==selection)return;

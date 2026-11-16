@@ -100,24 +100,24 @@ test('las fichas de Awards abren la edición en la misma página, incluida la pr
  }
 });
 
-test('la tercera edición muestra sus 23 categorías anunciadas y los nominados pendientes',()=>{
+test('la tercera edición muestra sus 20 categorías y nominados anunciados',()=>{
  const edition=archive.editions['edicion-3'];assert.equal(edition.status,'upcoming');
  assert.deepEqual(edition.groups.map(g=>g.name),['Categorías Principales','Estrategia y Competencia','Personalidad','Premios de Producción']);
- assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,6,6,7]);
- assert.equal(edition.groups.find(g=>g.id==='estrategia').categories.at(-1).name,'Mejor Duelo');
+ assert.deepEqual(edition.groups.map(g=>g.categories.length),[4,5,6,5]);
+ assert(!categories(edition).some(category=>category.name==='Mejor Duelo'));
  assert.equal(edition.groups.find(g=>g.id==='personalidad').categories.at(-1).name,'Mejor Momento');
  assert.deepEqual(edition.groups.find(g=>g.id==='produccion').categories.map(c=>c.name),[
-  'Mejor Episodio','Mejor Temporada','Mejor Diseño & Vestuario','Mejor Canción',
+  'Mejor Temporada','Mejor Canción',
   'Mejor Proyecto Independiente','Mejor Participación Externa','Mejor Presentación/Jurado'
  ]);
  assert.deepEqual(Object.fromEntries(categories(edition).filter(c=>c.nominees.length).map(c=>[c.id,c.nominees.length])),{
   'principales-1':4,'principales-2':3,'principales-3':4,'principales-4':6,
-  'estrategia-1':3,'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,'estrategia-6':1,
+  'estrategia-1':3,'estrategia-2':5,'estrategia-3':5,'estrategia-4':4,'estrategia-5':3,
   'personalidad-1':5,'personalidad-2':4,'personalidad-3':12,'personalidad-4':4,'personalidad-5':3,
   'personalidad-6':4,'produccion-2':3,'produccion-4':3,'produccion-5':6,'produccion-6':6,'produccion-7':6
  });
  const jury=categories(edition).find(c=>c.id==='produccion-7');
- assert.deepEqual(jury.nominees.map(n=>[n.title,n.description]),[["Dua Lingo","Showdown II"],["Isabel","TOS All Stars 2"],["Ian Esteban","Global War"],["Lucas Mendez","Global War"],["Marcos","Turn It Up"],["Heidi Cum","Project Runway"]]);
+ assert.deepEqual(jury.nominees.map(n=>[n.title,n.description]),[["Dua Lingo","Showdown II"],["Isabel","TOS All Stars 2"],["Ian Esteban","Global War"],["Bryan Montalvo","Celebrity Stars"],["Marcos","Turn It Up"],["Heidi Cum","Project Runway"]]);
  const revelation=categories(edition).find(c=>c.id==='personalidad-3');
  assert.deepEqual(revelation.nominees.map(n=>n.title),[
   'Ari Santana','Guillermo','Roger','Carmine','Leandro','Bruno Macri','Mary Hao','Alice','Paula García','Christopher Gonzales',
@@ -129,9 +129,9 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
  assert.deepEqual(edition.groups[0].categories.map(c=>c.name),['Fan Favorite','Mejor Villano','Mejor Competidor','Poop of the Year']);
  const {context:c}=context(),html=c.awardUpcoming(catalog.content.awards[2],edition);
  for(const category of categories(edition))assert(html.includes(category.name.replaceAll('&','&amp;')));
- assert(html.includes('Las 23 categorías'));
- assert(html.includes('94 nominaciones anunciadas'));
- assert.equal((html.match(/data-winner="false"/g)||[]).length,94);
+ assert(html.includes('Las 20 categorías'));
+ assert(html.includes('93 nominaciones anunciadas'));
+ assert.equal((html.match(/data-winner="false"/g)||[]).length,93);
  for(const category of edition.groups[0].categories){
   const card=c.awardMainCategory(category,0,catalog.content.awards[2],true);
   assert(card.includes('Ganador por anunciar'));
@@ -144,12 +144,12 @@ test('la tercera edición muestra sus 23 categorías anunciadas y los nominados 
   assert(html.includes('<h4>'+nominee.title+'</h4>'));
   if(nominee.description)assert(html.includes('<p>'+nominee.description+'</p>'));
  }
- assert(html.includes('Nominados por anunciar'));assert(!html.includes('is-award-winner'));
+ assert(!html.includes('Nominados por anunciar'));assert(!html.includes('is-award-winner'));
  const totals=c.awardProfileTotals(archive);
  const pastTotals=c.awardProfileTotals({...archive,editions:{...archive.editions,'edicion-3':{groups:[]}}});
  assert.equal(totals.get('ivy').nominations,(pastTotals.get('ivy')?.nominations||0)+7);
  assert.equal(totals.get('bonju').nominations,pastTotals.get('bonju').nominations);
- assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+7);
+ assert.equal(totals.get('lucasmendez').nominations,(pastTotals.get('lucasmendez')?.nominations||0)+6);
 });
 
 test('los retratos de Andrómeda se enlazan al personaje correcto sin confundir nombres',()=>{
