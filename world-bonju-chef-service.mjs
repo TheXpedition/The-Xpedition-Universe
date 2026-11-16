@@ -5,6 +5,7 @@ import {CONTESTANTS,RECIPES} from './public/juegos/bonju-chef/data.mjs';
 import {recipeFor,roundMode,isFinal,MODES} from './public/juegos/bonju-chef/round-rules.mjs';
 import {worldCharacter} from './public/juegos/world-characters.mjs';
 const fail=(code,text)=>{throw Object.assign(Error(text),{status:code});};
+const usersOnlyGuests=new Set(['peggy','joseserna']);
 export function createBonjuChef({db,clients,send,can,now=Date.now,stop=()=>{},canParticipate=async()=>false,getEnvironment=()=>null,beforeStart=async()=>{},onAftermath=async()=>{},onSpeech=()=>{},onReturn=async()=>{},canSpeak=()=>true,autoBots=false,entryBlock=()=>null,onPrivateSpeech=()=>{},prepareSpeech=()=>{}}){
  let state=createChef({id:randomUUID(),now:now()}),queue=Promise.resolve(),closed=false,tickQueued=false,dirty=false,lastSave=0,lastWire=0,voiceKey='';const warmed=new Set();const subscribers=new Set(),pendingReturns=new Set();
  const serial=fn=>{const r=queue.then(fn);queue=r.catch(()=>{});return r;};
@@ -22,8 +23,16 @@ export function createBonjuChef({db,clients,send,can,now=Date.now,stop=()=>{},ca
  async function save(){await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated','bonju-chef',JSON.stringify(state),now());lastSave=now();dirty=false;}
  function publish(){for(const c of clients.values())if(subscribers.has(c.user.id)||engaged(c.user.id))send(c,{type:'chef-state',episode:view(c)});lastWire=now();}
  async function exclusions(){const row=await db.one('SELECT state FROM world_environment WHERE id=?','x-protocol-exclusions');return row?JSON.parse(row.state):[];}
- async function enroll(c,excluded){if(c.direct||!await canParticipate(c.user)||c.wellness?.life?.status!=='alive'||!CONTESTANTS.some(p=>p.id===c.characterId)||excluded.includes(c.characterId))return false;chefAction(state,{type:'join'},{actor:actor(c)});return true;}
- async function fillUsers(){const excluded=await exclusions();for(const c of clients.values())await enroll(c,excluded);}
+ const allowedCharacter=id=>CONTESTANTS.some(p=>p.id===id)||(state.usersOnly&&usersOnlyGuests.has(id));
+ async function enroll(c,excluded){if(c.direct||!allowedCharacter(c.characterId)||excluded.includes(c.characterId)||c.wellness?.life?.status!=='alive'||!await canParticipate(c.user))return false;chefAction(state,{type:'join'},{actor:actor(c)});return true;}
+ async function fillUsers(){
+  const excluded=await exclusions();
+  for(const c of clients.values()){
+   if(state.roster.length>=18&&!state.roster.some(p=>p.bot))break;
+   if(state.roster.some(p=>!p.bot&&p.characterId===c.characterId))continue;
+   await enroll(c,excluded);
+  }
+ }
  function announce(){const key=state.id+':'+state.round+':'+state.phase+':'+(state.phase==='judging'?state.judgingIndex+':'+judgingStep(state).slot:state.phase==='elimination'?Math.floor((state.clock-state.phaseAt)/12000):'');if(key===voiceKey)return;voiceKey=key;const recipe=recipeFor(state),mode=roundMode(state);let text='';if(state.phase==='intro')text=isFinal(state)?'Bienvenidos a la final de Bonju Chef. '+state.finalistCount+' cocineros, una última receta.':'Bienvenidos a Bonju Chef. Aquí el ingenio y la precisión también son supervivencia.';if(state.phase==='recipe')text=mode==='blind'?'Ronda a ciegas. Los ingredientes requeridos se revelarán después de cocinar.':mode==='improv'?'Ronda de improvisación. Elige tus ingredientes y crea un plato con sentido.':'Bonju presenta '+recipe.name+'. '+MODES[mode].description;if(state.phase==='fridge')text='La nevera está abierta. Busquen sus ingredientes y confirmen su cesta.';if(state.phase==='judging'){const step=judgingStep(state);for(const live of clients.values()){if(!subscribers.has(live.user.id)&&!engaged(live.user.id))continue;const p=state.roster.find(p=>p.id===live.user.id&&p.active),r=state.roundResults.find(r=>r.id===(p?.id||watchedBy(live)))||(!p?state.roundResults[0]:null);if(!r)continue;const c=critique(r,step.judge,state.id+':'+state.round+':'+r.id);try{onPrivateSpeech(live,{id:randomUUID(),profile:step.judge,speaker:c.name,text:c.text==='*Vomitar*'?'¡Puaj!':c.text,userId:live.user.id,created:now(),eventId:key});}catch{}}return;}if(state.phase==='elimination'){const index=Math.min(state.eliminated.length-1,Math.floor((state.clock-state.phaseAt)/12000)),p=state.roster.find(p=>p.id===state.eliminated[index]),r=state.roundResults.find(r=>r.id===p?.id);if(!p||!r)return;text=p.name+'. Con una nota de '+r.note+' sobre diez, tu participación en Bonju Chef termina aquí. Puedes seguir acompañando el reto como espectador.';}if(state.phase==='farewell')text=state.noWinner?'Ningún plato obtuvo una puntuación superior a cero. Bonju Chef termina sin un ganador. Es momento de regresar a sus refugios.':'Gracias por jugar Bonju Chef. Descansen y recuperen fuerzas. Es momento de volver a sus refugios.';if(state.phase==='winner')text='¡'+state.roundResults[0].name+' gana Bonju Chef! El resultado queda guardado para la ceremonia.';if(!text)return;const m={id:randomUUID(),text,name:'María Villegas',userId:'maria-villegas',announcement:true,custom:false,created:now()};state.announcement=m;try{onSpeech(m);}catch{} }
  function prepareReviews(){for(const p of state.roster){if(p.bot||!state.stations[p.id]?.result)continue;const r={id:p.id,...state.stations[p.id].result},key=state.id+':'+state.round+':'+p.id;if(warmed.has(key))continue;warmed.add(key);for(const profile of ['bonju','dua','maria']){const c=critique(r,profile,key);void Promise.resolve(prepareSpeech(c.text==='*Vomitar*'?'¡Puaj!':c.text,{profile})).catch(()=>{});}}}
  async function record(){
@@ -35,18 +44,23 @@ export function createBonjuChef({db,clients,send,can,now=Date.now,stop=()=>{},ca
  async function begin(c){if(state.phase!=='lobby')fail(409,'El reto ya está en curso.');await beforeStart(c);await fillUsers();if(autoBots&&!state.usersOnly)chefAction(state,{type:'fillBots',excluded:await exclusions()},{staff:true});if(state.roster.length<7)fail(409,'Necesitas al menos 7 participantes para iniciar Bonju Chef.');for(const p of state.roster){const live=[...clients.values()].find(c=>c.user.id===p.id);if(live){p.vitals={...live.vitals};p.connected=true;stop(live);}}chefAction(state,{type:'start'},{staff:true,actor:actor(c)});state.autoStartAt=null;for(const live of clients.values())if(engaged(live.user.id))send(live,{type:'chef-start',url:'/juegos/bonju-chef/'});dirty=true;}
  async function returnUser(c){state.returnedUsers||=[];if(state.returnedUsers.includes(c.user.id))return;await onReturn(c);state.returnedUsers.push(c.user.id);const p=state.roster.find(p=>p.id===c.user.id);if(p)p.returned=true;if(state.phase==='farewell'&&state.completedAt&&[...clients.values()].filter(live=>subscribers.has(live.user.id)||state.roster.some(p=>p.id===live.user.id&&!p.bot)).every(live=>state.returnedUsers.includes(live.user.id))){state.phase='finished';state.phaseAt=state.clock;state.paused=false;state.recovering=false;state.revision++;}dirty=true;send(c,{type:'chef-return',url:'/juegos/?view=play'});}
  async function action(c,a){await ready;return serial(async()=>{const staff=await can(c.user,'direct');if(!a||typeof a.type!=='string')fail(400,'Acción inválida.');await record();if(a.type==='watch'){if(state.phase!=='kitchen')fail(409,'Las cocinas no están abiertas.');if(a.id&&state.roster.some(p=>p.id===c.user.id&&p.active)&&!state.stations[c.user.id]?.served)fail(409,'Termina tu plato antes de ver otra cocina.');if(a.id&&!state.roster.some(p=>p.id===a.id&&p.active))fail(409,'Esa cocina ya no está activa.');c.chefWatch=a.id?{episode:state.id,round:state.round,id:a.id}:null;send(c,{type:'chef-state',episode:view(c)});return;}if(a.type==='returnHome'){if(!['farewell','finished'].includes(state.phase))fail(409,'La despedida aún no ha comenzado.');await returnUser(c);await save();return;}if(a.type==='play'){
-   if(c.direct||!await canParticipate(c.user)||!CONTESTANTS.some(p=>p.id===c.characterId)||c.wellness?.life?.status!=='alive'||(await exclusions()).includes(c.characterId))fail(403,'Solo los participantes confirmados y activos pueden jugar.');
+   if(c.direct||!await canParticipate(c.user)||!allowedCharacter(c.characterId)||c.wellness?.life?.status!=='alive'||(await exclusions()).includes(c.characterId))fail(403,'Solo los participantes confirmados y activos pueden jugar.');
    if(!['closed','lobby','finished','cancelled'].includes(state.phase))fail(409,'Ya hay una competencia en curso. Puedes verla como espectador.');await beforeStart(c);if(state.phase!=='lobby'){pendingReturns.clear();chefAction(state,{type:'open',id:randomUUID()},{staff:true});}await enroll(c,await exclusions());state.revision++;
   }else if(a.type==='join'){if(!await enroll(c,await exclusions()))fail(403,'Solo los participantes confirmados y activos pueden competir.');}
   else if(a.type==='fillUsers'){
    if(!staff||state.phase!=='lobby')fail(403,'Completa los usuarios desde Dirección antes de iniciar.');
-   await fillUsers();
    state.roster=state.roster.filter(p=>!p.bot);
    state.usersOnly=true;state.autoStartAt=null;state.revision++;
+   await fillUsers();
   }
   else{if(a.type==='start'){if(!staff)fail(403,'Solo Dirección puede iniciar manualmente.');await begin(c);a={type:'started'};}
    if(['pause','resume','cancel'].includes(a.type)){state.recovering=false;state.resumeAt=null;}
-   if(a.type==='open'){pendingReturns.clear();a={...a,id:randomUUID()};}if(a.type==='fillBots')a={...a,excluded:await exclusions()};
+   if(a.type==='open'){pendingReturns.clear();a={...a,id:randomUUID()};}
+   if(a.type==='fillBots'){
+    if(!staff||state.phase!=='lobby')fail(403,'Solo Dirección puede añadir bots desde el lobby.');
+    a={...a,excluded:await exclusions()};
+    state.roster=state.roster.filter(p=>!usersOnlyGuests.has(p.characterId));
+   }
    if(a.type==='take'||a.type==='drop'){if(now()-(c.lastChefPick||0)<100)fail(429,'Espera un instante antes de elegir otro ingrediente.');c.lastChefPick=now();}
    if(a.type!=='started')chefAction(state,a,{actor:actor(c),staff});
    if(a.type==='fillBots')state.usersOnly=false;

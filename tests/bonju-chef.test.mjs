@@ -10,17 +10,21 @@ const rng=()=>.43,staff={staff:true,random:rng};
 function episode(n=18){const s=createChef({id:'qa',now:0});chefAction(s,{type:'open'},staff);chefAction(s,{type:'fillBots',count:n},staff);chefAction(s,{type:'start'},staff);return s;}
 test('Completar con usuarios removes lobby bots and starts without automatic replacements',async()=>{
  const director={user:{id:'staff'},direct:true,zone:{id:'base'},p:{}};
- const players=CONTESTANTS.slice(0,15).map(({id})=>({user:{id},characterId:id,wellness:{life:{status:'alive'}},zone:{id:'base'},p:{}}));
+ const players=[...CONTESTANTS.slice(0,13).map(({id})=>id),'peggy','joseserna'].map(id=>({user:{id},characterId:id,wellness:{life:{status:'alive'}},zone:{id:'base'},p:{}}));
  const service=createBonjuChef({db:{one:async()=>null,run:async()=>{}},clients:new Map([director,...players].map(c=>[c.user.id,c])),send(){},can:async user=>user.id==='staff',canParticipate:async()=>true,autoBots:true});
  const action=type=>service.handle(director,{type:'chef-action',action:{type}});
  try{
-  await action('open');await action('fillBots');await action('fillUsers');
+  await action('open');await action('fillBots');
+  for(const guest of players.slice(-2))await service.handle(guest,{type:'chef-subscribe'});
+  assert((await service.status(director.user)).roster.every(p=>!['peggy','joseserna'].includes(p.characterId)));
+  await action('fillUsers');
   assert.equal((await service.status(director.user)).roster.length,15);
   await action('start');
   const state=await service.status(director.user);
   assert.equal(state.phase,'tutorial');
   assert.equal(state.roster.length,15);
   assert(state.roster.every(p=>!p.bot));
+  for(const id of ['peggy','joseserna'])assert((await service.status({id})).station);
  }finally{await service.close();}
 });
 test('restarting an explicitly selected active episode withdraws bots and preserves human stations and elapsed time',async()=>{
