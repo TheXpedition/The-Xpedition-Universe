@@ -148,6 +148,7 @@ function relatedContent(item){
 }
 contentModal=function(id,kind){
  const item=allContent().find(c=>c.id===id&&(!kind||c.kind===kind));if(!item)return;
+ if(item.kind==='Awards'&&awardEditionLocked(item)&&!state.user?.staff){closeModal();go(item.url.slice(1));return;}
  const detail=state.catalog.details[item.id]||{},simulator=item.kind==='Simulador',japan=item.id==='japan';
  const hasCast=!simulator&&detail.cast?.length;
  const moreCast=hasCast&&detail.cast.length>detail.previewCast.length;

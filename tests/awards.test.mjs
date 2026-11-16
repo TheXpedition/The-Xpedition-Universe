@@ -9,7 +9,9 @@ import sharp from 'sharp';
 const root=fileURLToPath(new URL('../public/',import.meta.url));
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 const catalog=JSON.parse(read('catalog.json')),details=JSON.parse(read('content-details.json'));
-const archive=JSON.parse(read('awards/editions.json'));
+const publicArchive=JSON.parse(read('awards/editions.json'));
+const third=JSON.parse(fs.readFileSync(new URL('../awards-edition-3.json',import.meta.url),'utf8'));
+const archive={...publicArchive,editions:{...publicArchive.editions,'edicion-3':third}};
 const script=read('awards.js'),streaming=read('streaming.js');
 const categories=edition=>edition.groups.flatMap(group=>group.categories);
 const norm=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
@@ -84,8 +86,9 @@ test('Poop of the Year usa su propio trofeo y los demás premios el de la edici�
  }
 });
 
-test('las fichas de Awards abren la edición en la misma página, incluida la próxima edición',()=>{
+test('las fichas de Awards abren la edición en la misma página, incluida la próxima edición cuando se publica',()=>{
  const {context:c}=context();
+ c.state.config={awardsThirdPublic:true};
  vm.runInContext(streaming.slice(streaming.indexOf('function relatedContent('),streaming.indexOf("document.addEventListener('click'",streaming.indexOf('contentModal=function'))),c);
  for(const item of catalog.content.awards){
   let html;c.modal=body=>{html=body;};c.contentModal(item.id);
@@ -221,4 +224,13 @@ test('banners, imágenes altas, logos y seis trofeos existen con transparencia e
   const logo=await sharp(path.join(root,item.art.logo.src)).metadata();
   assert.equal(logo.width,item.art.logo.width);assert.equal(logo.height,item.art.logo.height);
  }
+});
+
+test('la tercera edición cerrada conserva su banner y queda fuera del archivo público',()=>{
+ const {context:c}=context(),item=catalog.content.awards[2];
+ assert(!Object.hasOwn(publicArchive.editions,'edicion-3'));
+ const html=c.awardBannerCard(item);
+ assert(html.includes(item.banner)&&html.includes('aw-lock-label'));
+ assert(!html.includes(item.art.background));
+ assert(!c.awardBannerCard(catalog.content.awards[1]).includes('aw-lock-label'));
 });

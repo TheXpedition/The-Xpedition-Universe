@@ -2,6 +2,11 @@ import { randomUUID } from 'node:crypto';
 import { isStaff, accountRole, setAccountVerification } from './account-roles.mjs';
 import { levelFor } from './progression.mjs';
 
+export async function thirdAwardsPublic(db){
+ const row=await db.one('SELECT public_enabled FROM award_edition_access WHERE edition=?','edicion-3');
+ return Number(row?.public_enabled)===1;
+}
+
 export function createModeration({db,json,fail,checkRate,everyone,body,storage,progression,notify=()=>{},userFields,setApocalypseStyleOverride=()=>{}}){
  const profileRow='SELECT u.*,COALESCE(pr.tickets,0) AS tickets,COALESCE(pr.coins,0) AS coins,COALESCE(pr.xp,0) AS public_xp FROM users u LEFT JOIN user_progression pr ON pr.user_id=u.id';
  const profile=u=>({...(userFields?userFields(u):{id:u.id,name:u.name,avatar:u.avatar,bio:u.bio,created:u.created}),...accountRole(u.id),level:levelFor(Number(u.public_xp||0)),coins:Number(u.coins||0),tickets:Number(u.tickets||0)});
@@ -13,6 +18,18 @@ export function createModeration({db,json,fail,checkRate,everyone,body,storage,p
   if(!path.startsWith('/api/moderation')&&!(removal&&method==='DELETE'))return false;
   if(!user)fail(401,'Inicia sesión.');
   if(!isStaff(user.id))fail(403,'Solo el Staff de The Xpedition puede moderar la comunidad.');
+  if(path==='/api/moderation/awards/edicion-3'){
+   if(method==='GET'){json(res,{publicEnabled:await thirdAwardsPublic(db)});return true;}
+   if(method!=='PUT')fail(405,'Método no permitido.');
+   checkRate(req,'awards-publication',30,3600000);
+   const input=await body(req);
+   if(typeof input?.publicEnabled!=='boolean')fail(400,'Indica si la tercera edición debe ser pública.');
+   await db.transaction(async()=>{
+    const changed=await db.run('INSERT INTO award_edition_access(edition,public_enabled,updated_by,updated) VALUES(?,?,?,?) ON CONFLICT(edition) DO UPDATE SET public_enabled=excluded.public_enabled,updated_by=excluded.updated_by,updated=excluded.updated WHERE award_edition_access.public_enabled<>excluded.public_enabled','edicion-3',input.publicEnabled?1:0,user.id,Date.now());
+    if(changed.changes)await audit(user,input.publicEnabled?'publish-awards':'unpublish-awards','edicion-3',{name:'The Xpedition Awards · 3.ª edición'});
+   });
+   json(res,{publicEnabled:input.publicEnabled});return true;
+  }
   if(list&&method==='GET'){
    const rows=await db.all("SELECT r.kind,r.item_id AS id,r.created,COALESCE(p.text,c.text,'') AS text,COALESCE(p.author,c.author) AS author_id FROM community_removals r LEFT JOIN posts p ON r.kind='post' AND p.id=r.item_id LEFT JOIN post_comments c ON r.kind='comment' AND c.id=r.item_id ORDER BY r.created DESC,r.item_id DESC LIMIT 50");
    json(res,{removals:rows.map(r=>({...r,text:r.text.slice(0,300)}))});return true;

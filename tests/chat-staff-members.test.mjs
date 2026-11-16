@@ -98,3 +98,36 @@ test('X Critics exige una sesión de Staff y el archivo anterior deja de ser pú
  const data=await response.json();
  assert.equal(data.showdownRatings['showdown-2'][0],7.3);
 });
+
+test('la tercera edición está cerrada por defecto y solo el Staff puede abrirla y volverla a cerrar',async()=>{
+ const route='/api/awards/edicion-3',moderation='/api/moderation/awards/edicion-3';
+ const banner='/awards/edition-3-banner.webp',art='/awards/edition-3-poster.webp';
+ const get=(pathname,actor,options={})=>fetch(base+pathname,{...options,headers:actor?{cookie:'xp_session='+token(actor)}:{}});
+ const publish=(actor,publicEnabled)=>fetch(base+moderation,{method:'PUT',headers:{'content-type':'application/json',...(actor?{cookie:'xp_session='+token(actor)}:{})},body:JSON.stringify({publicEnabled})});
+ assert.equal((await get('/api/config').then(response=>response.json())).awardsThirdPublic,false);
+ assert.equal((await get(route)).status,403);
+ assert.equal((await get(route,ordinary)).status,403);
+ assert.equal((await get(route,staff)).status,200);
+ assert.equal((await get(moderation)).status,401);
+ assert.equal((await publish(ordinary,true)).status,403);
+ assert.equal((await publish(staff,'true')).status,400);
+ assert.equal((await get(banner,null,{method:'HEAD'})).status,200);
+ assert.equal((await get(art,null,{method:'HEAD'})).status,403);
+ assert.equal((await get(art,staff,{method:'HEAD'})).status,200);
+ const historical=await get('/awards/editions.json').then(response=>response.json());
+ assert.deepEqual(Object.keys(historical.editions),['edicion-1','edicion-2']);
+ assert.equal((await publish(staff,true)).status,200);
+ await stop();await start();
+ assert.equal((await get('/api/config').then(response=>response.json())).awardsThirdPublic,true);
+ const live=await get(route);
+ assert.equal(live.status,200);
+ assert.equal(live.headers.get('cache-control'),'no-store');
+ assert.equal((await live.json()).record.edition,3);
+ assert.equal((await get(art,null,{method:'HEAD'})).status,200);
+ assert.equal((await publish(staff,false)).status,200);
+ assert.equal((await get(route)).status,403);
+ assert.equal((await get(art,null,{method:'HEAD'})).status,403);
+ const history=await get('/api/moderation/history',staff).then(response=>response.json());
+ assert(history.actions.some(action=>action.action==='publish-awards'));
+ assert(history.actions.some(action=>action.action==='unpublish-awards'));
+});

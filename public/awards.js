@@ -1,6 +1,6 @@
 'use strict';
 
-let awardsArchivePromise=null;
+let awardsArchivePromise=null, awardsRequest=0;
 const awardsView={record:null,item:null,winnersOnly:false};
 const awardProfileAliases={'andromeda':'Andromeda','alexandromartin':'Alexandro','juliansanchez':'Julián','coronelsanders':'Coronel','mariavillegas':'Maria'};
 const awardIdentity=name=>awardProfileAliases[castKey(name)]||name;
@@ -8,8 +8,15 @@ const awardCategories=record=>record.groups.flatMap(group=>group.categories);
 const awardCount=record=>awardCategories(record).reduce((n,category)=>n+category.nominees.length,0);
 const awardInitials=name=>name.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase();
 
+const awardEditionLocked=item=>item.edition===3&&state.config?.awardsThirdPublic!==true;
+const awardLockBadge=()=>`<span class="aw-lock-label">${icon('lock')} Próximamente</span>`;
+function awardEditionTabs(item){
+ return `<nav class="aw-editions" aria-label="Ediciones de The Xpedition Awards">${state.catalog.content.awards.map(edition=>`<a href="${esc(edition.url)}" ${edition.id===item.id?'aria-current="page"':''}><span>${edition.edition}.ª edición</span><strong>${edition.year}</strong>${awardEditionLocked(edition)?`<small class="aw-lock-indicator">${icon('lock')} Cerrada</small>`:edition.upcoming?'<small>Próximamente</small>':''}</a>`).join('')}</nav>`;
+}
+
 function awardBannerCard(item){
- return `<article class="season-card award-banner-card" data-content-id="${esc(item.id)}"><button class="season-art" data-action="content" data-id="${esc(item.id)}" data-kind="Awards" aria-label="Ver ${esc(item.name)}"><img class="season-background" src="${esc(item.banner)}" alt="${esc(item.name)}" loading="lazy" decoding="async">${item.upcoming?'<span class="aw-coming-label">Próximamente</span>':''}<span class="card-reveal" aria-hidden="true">${icon('info')}</span></button><button class="save-button ${saved(item.id)?'saved':''}" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}" aria-pressed="${!!saved(item.id)}">${icon(saved(item.id)?'check':'plus')}</button><div class="season-info"><h3>${['Primera','Segunda','Tercera'][item.edition-1]} edición</h3><p>${item.year} <span aria-hidden="true">·</span> ${item.upcoming?'La próxima gran noche':'Nominados y ganadores'}</p></div></article>`;
+ const locked=awardEditionLocked(item);
+ return `<article class="season-card award-banner-card" data-content-id="${esc(item.id)}"><button class="season-art" data-action="content" data-id="${esc(item.id)}" data-kind="Awards" aria-label="Ver ${esc(item.name)}${locked?', próximamente':''}"><img class="season-background" src="${esc(item.banner)}" alt="${esc(item.name)}" loading="lazy" decoding="async">${locked?awardLockBadge():item.upcoming?'<span class="aw-coming-label">Próximamente</span>':''}<span class="card-reveal" aria-hidden="true">${icon('info')}</span></button><button class="save-button ${saved(item.id)?'saved':''}" data-action="save" data-id="${esc(item.id)}" aria-label="${saved(item.id)?'Quitar de':'Añadir a'} mi lista: ${esc(item.name)}" aria-pressed="${!!saved(item.id)}">${icon(saved(item.id)?'check':'plus')}</button><div class="season-info"><h3>${['Primera','Segunda','Tercera'][item.edition-1]} edición</h3><p>${item.year} <span aria-hidden="true">·</span> ${item.upcoming?'La próxima gran noche':'Nominados y ganadores'}</p></div></article>`;
 }
 function awardsRail(){
  const title='The Xpedition Awards';
@@ -19,27 +26,42 @@ function awardPoster(item){
  return `<div class="aw-poster"><img src="${esc(contentArt(item))}" alt="Arte de la ${item.edition}.ª edición de The Xpedition Awards" loading="eager">${brandArt(item,'aw-poster-logo')}</div>`;
 }
 async function loadAwardsArchive(){
- if(!awardsArchivePromise)awardsArchivePromise=fetch('awards/editions.json?v=2').then(response=>{if(!response.ok)throw new Error('No se pudo cargar la edición.');return response.json();}).catch(error=>{awardsArchivePromise=null;throw error;});
+ if(!awardsArchivePromise)awardsArchivePromise=fetch('awards/editions.json?v=3').then(response=>{if(!response.ok)throw new Error('No se pudo cargar la edición.');return response.json();}).catch(error=>{awardsArchivePromise=null;throw error;});
  return awardsArchivePromise;
 }
 async function renderAwardsPage(id){
+ const request=++awardsRequest;
  if($('#modal').open)closeModal();
+ awardsView.record=null;awardsView.item=null;
  const item=state.catalog.content.awards.find(entry=>entry.url==='#premios/'+id);
  if(!item){$('#main').innerHTML='<div class="empty-state"><h1>Esta edición no está disponible.</h1><a class="btn primary" href="#explorar/awards">Ver ediciones</a></div>';return;}
  $('#main').innerHTML='<div class="loading-screen"><span class="spinner"></span> Preparando la noche de premios…</div>';
  try{
-  const archive=await loadAwardsArchive();
-  if(state.route!=='premios'||decodeURIComponent(location.hash.split('/')[1]||'')!==id)return;
-  const record=archive.editions[id];if(!record)throw new Error('Edición no disponible');
+  const third=item.edition===3;
+  const result=await (third?api('/awards/edicion-3'):loadAwardsArchive());
+  if(request!==awardsRequest||state.route!=='premios'||decodeURIComponent(location.hash.split('/')[1]||'')!==id)return;
+  if(third)state.config.awardsThirdPublic=result.publicEnabled;
+  const record=third?result.record:result.editions[id];if(!record)throw new Error('Edición no disponible');
   awardsView.record=record;awardsView.item=item;awardsView.winnersOnly=false;
   document.title=`The Xpedition Awards ${item.year} | ${item.edition}.ª edición`;
   const categories=awardCategories(record),upcoming=record.status==='upcoming';
   $('#main').innerHTML=`<div class="aw-page" data-award-theme="${esc(item.theme)}"><nav class="ch-breadcrumb" aria-label="Ruta de la edición"><a href="#explorar/awards">${icon('back')} The Xpedition Awards</a><span aria-hidden="true">/</span><span>${item.edition}.ª edición · ${item.year}</span></nav>
-   <nav class="aw-editions" aria-label="Ediciones de The Xpedition Awards">${state.catalog.content.awards.map(edition=>`<a href="${esc(edition.url)}" ${edition.id===item.id?'aria-current="page"':''}><span>${edition.edition}.ª edición</span><strong>${edition.year}</strong>${edition.upcoming?'<small>Próximamente</small>':''}</a>`).join('')}</nav>
+   ${awardEditionTabs(item)}
    <section class="aw-hero" aria-labelledby="awardsPageTitle"><img class="aw-atmosphere" src="${esc(item.banner)}" alt=""><div class="aw-hero-copy"><div class="eyebrow">LA GRAN NOCHE DEL UNIVERSO <span aria-hidden="true">/</span> ${item.year}</div><h1 id="awardsPageTitle" class="sr-only">The Xpedition Awards · ${item.edition}.ª edición · ${item.year}</h1>${brandArt(item,'aw-hero-logo')}<p>${esc(item.desc)}</p><div class="aw-hero-facts"><span><strong>${item.edition}.ª</strong> edición</span>${upcoming?'<span><strong>'+categories.length+'</strong> categorías</span><span class="aw-release"><i aria-hidden="true"></i> Próximamente · 2026</span>':`<span><strong>${categories.length}</strong> categorías</span><span><strong>${awardCount(record)}</strong> nominaciones</span>`}</div>${'<button class="btn primary aw-hero-cta" data-award-action="jump" data-target="awards-principales">'+(upcoming?'Ver las categorías':'Explorar los premios')+' '+icon('arrow')+'</button>'}</div>${awardPoster(item)}</section>
    ${upcoming?awardUpcoming(item,record):`<div class="aw-tools"><div class="aw-group-links" aria-label="Grupos de categorías">${record.groups.map(group=>`<button data-award-action="jump" data-target="awards-${esc(group.id)}">${esc(group.name.replace('Categorías ',''))}</button>`).join('')}</div><div class="aw-search-tools"><label class="search-field aw-search">${icon('search')}<input id="awardsSearch" type="search" aria-label="Buscar categoría o nominado" placeholder="Buscar categoría o nominado…"></label><button class="aw-winners-toggle" data-award-action="winners" aria-pressed="false">Solo ganadores ${icon('check')}</button></div></div><div id="awardsCategories">${record.groups.map((group,index)=>awardGroup(group,index,item)).join('')}</div><p class="aw-empty" id="awardsEmpty" hidden>No encontramos premios con esa búsqueda.</p>`}
    <section class="aw-other-editions" aria-labelledby="otherAwardsTitle"><div class="section-head"><div><div class="eyebrow">LA HISTORIA DE LOS PREMIOS</div><h2 id="otherAwardsTitle">Otras ediciones</h2></div><a class="link-button" href="#explorar/awards">Ver todas ${icon('arrow')}</a></div><div class="aw-other-grid">${state.catalog.content.awards.filter(edition=>edition.id!==item.id).map(awardBannerCard).join('')}</div></section></div>`;
- }catch(error){if(state.route==='premios'&&decodeURIComponent(location.hash.split('/')[1]||'')===id)$('#main').innerHTML='<div class="empty-state"><h1>No pudimos abrir esta edición.</h1><p>Revisa tu conexión y vuelve a intentarlo.</p><button class="btn primary" data-award-action="retry" data-id="'+esc(id)+'">Volver a intentar</button><a class="btn secondary" href="#explorar/awards">Ver ediciones</a></div>';}
+ }catch(error){
+  if(request!==awardsRequest||state.route!=='premios'||decodeURIComponent(location.hash.split('/')[1]||'')!==id)return;
+  if(item.edition===3&&(error.status===401||error.status===403||state.publicOnly)){
+   state.config.awardsThirdPublic=false;
+   document.title=`The Xpedition Awards ${item.year}`;
+   $('#main').innerHTML=`<div class="aw-page" data-award-theme="${esc(item.theme)}"><nav class="ch-breadcrumb" aria-label="Ruta de la edición"><a href="#explorar/awards">${icon('back')} The Xpedition Awards</a><span aria-hidden="true">/</span><span>3.ª edición · ${item.year}</span></nav>
+    ${awardEditionTabs(item)}
+    <section class="aw-locked-edition" aria-labelledby="awardsLockedTitle"><figure><img src="${esc(item.banner)}" alt="Banner de la tercera edición"><figcaption>${awardLockBadge()}</figcaption></figure><h1 id="awardsLockedTitle">The Xpedition Awards · 3.ª edición</h1><p>La edición se abrirá cuando el Staff la publique.</p><a class="btn secondary" href="#explorar/awards">Ver ediciones</a></section></div>`;
+   return;
+  }
+  $('#main').innerHTML='<div class="empty-state"><h1>No pudimos abrir esta edición.</h1><p>Revisa tu conexión y vuelve a intentarlo.</p><button class="btn primary" data-award-action="retry" data-id="'+esc(id)+'">Volver a intentar</button><a class="btn secondary" href="#explorar/awards">Ver ediciones</a></div>';
+ }
 }
 function awardUpcoming(item,record){
  const categories=awardCategories(record),nominations=awardCount(record);
@@ -139,7 +161,15 @@ async function loadProfileAwards(profile){
  try{
   const archive=await loadAwardsArchive();
   if(!target.isConnected||target.dataset.awardsProfile!==profile.id)return;
-  const totals=awardProfileTotals(archive).get(castKey(awardIdentity(profile.name)))||{nominations:0,awards:0};
+  let editions=archive.editions;
+  if(state.config?.awardsThirdPublic){
+   try{
+    const {record,publicEnabled}=await api('/awards/edicion-3');
+    if(publicEnabled)editions={...editions,'edicion-3':record};
+   }catch(error){if(error.status!==403)throw error;}
+  }
+  if(!target.isConnected||target.dataset.awardsProfile!==profile.id)return;
+  const totals=awardProfileTotals({...archive,editions}).get(castKey(awardIdentity(profile.name)))||{nominations:0,awards:0};
   target.outerHTML=awardProfileSummary(profile,totals);
  }catch{
   if(target.isConnected){target.setAttribute('aria-busy','false');target.insertAdjacentHTML('beforeend','<button class="link-button" data-award-action="retry-profile" data-id="'+esc(profile.id)+'">Volver a cargar premios</button>');}

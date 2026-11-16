@@ -5,7 +5,7 @@ import {createSocial,identityValues} from './social.mjs';
 import {createProgression,levelFor} from './progression.mjs';
 import {applyRequestedAccountAdjustment,requestedCoinBonus} from './account-adjustments.mjs';
 import {accountRole,loadAccountVerifications} from './account-roles.mjs';
-import {createModeration} from './community-moderation.mjs';
+import {createModeration,thirdAwardsPublic} from './community-moderation.mjs';
 import {createCasting} from './casting.mjs';
 import {readApocalypseSeason} from './apocalypse-season.mjs';
 import {createShowdownGame} from './showdown-game.mjs';
@@ -25,6 +25,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.join(root, 'public');
+const awardsThirdEdition = JSON.parse(fs.readFileSync(path.join(root, 'awards-edition-3.json'), 'utf8'));
 const criticsData = JSON.parse(fs.readFileSync(path.join(root, 'x-critics-data.json'), 'utf8'));
 const monetization=monetizationConfig();
 const dataDir = path.resolve(process.env.DATA_DIR || path.join(root, 'data'));
@@ -337,11 +338,17 @@ async function api(req, res, url) {
     if (!accountRole(u.id).staff) fail(403, 'X Critics está reservado al Staff.');
     return json(res, criticsData);
   }
+  if (p === '/api/awards/edicion-3' && method === 'GET') {
+    const publicEnabled = await thirdAwardsPublic(db);
+    if (!publicEnabled && !accountRole(u?.id).staff) fail(403, 'La tercera edición todavía está cerrada.');
+    return json(res, {record:awardsThirdEdition,publicEnabled});
+  }
   if(await world.handle(req,res,url,u))return;
   if (p === '/api/config' && method === 'GET') return json(res, {
     firebase: firebaseConfig,
     google: googleInfo,
-    monetization
+    monetization,
+    awardsThirdPublic:await thirdAwardsPublic(db)
   });
   if (p === '/api/health' && method === 'GET') {
     await one('SELECT 1 AS n');
@@ -902,6 +909,12 @@ const server = http.createServer(async (req, res) => {
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
     const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
+    const privateAwardsArt=/^awards\/edition-3-(?:logo|poster|stage|(?:poop-)?trophy)\.(?:webp|png)$/i.test(arcadePath);
+    if(privateAwardsArt){
+      res.setHeader('Cache-Control','private, no-store');
+      res.setHeader('Vary','Cookie');
+      if(!await thirdAwardsPublic(db)&&!accountRole((await getSession(req))?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
+    }
     const arcadeFile=/^simulator\/(?:ice-breaker|x-million)(?:\/|$)/i.test(arcadePath);
     if(arcadeFile){
       res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');
@@ -923,11 +936,11 @@ const server = http.createServer(async (req, res) => {
     const fileStat = fs.statSync(filename), size = fileStat.size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': arcadeFile||soloFile?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': arcadeFile||soloFile||privateAwardsArt?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
-    if(!arcadeFile&&!soloFile){
+    if(!arcadeFile&&!soloFile&&!privateAwardsArt){
       const etag='W/"'+size.toString(16)+'-'+fileStat.mtimeMs.toString(16)+'"';
       headers.ETag=etag;headers['Last-Modified']=fileStat.mtime.toUTCString();
       const condition=req.headers['if-none-match'];
