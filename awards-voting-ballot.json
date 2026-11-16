@@ -38,7 +38,7 @@
               "id": "daelly-bonbom",
               "name": "Daelly BonBom",
               "details": "",
-              "image": "/awards/vote-portraits/2.webp"
+              "image": "/awards/vote-portraits/30.webp"
             },
             {
               "id": "sal-lua",
@@ -241,7 +241,7 @@
               "id": "daelly-bonbom-grupo-espada",
               "name": "Daelly BonBom",
               "details": "Grupo Espada",
-              "image": "/awards/vote-portraits/2.webp"
+              "image": "/awards/vote-portraits/30.webp"
             },
             {
               "id": "alice-torrico-the-traitor-2-grupo-diamante",
@@ -707,7 +707,7 @@
                 },
                 {
                   "name": "Daelly",
-                  "image": "/personajes/daelly.png"
+                  "image": "/awards/vote-portraits/30.webp"
                 },
                 {
                   "name": "Christopher",
