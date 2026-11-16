@@ -39,6 +39,37 @@ test('restarting an explicitly selected active episode withdraws bots and preser
   assert.equal(saved.roster.length,15);
  }finally{await service.close();}
 });
+test('eligible visitors keep their lobby seat across a reconnect and only staff can start',async()=>{
+ const s=createChef({id:'manual-start',now:1000});
+ chefAction(s,{type:'open'},staff);s.autoStartAt=1200;
+ const director={user:{id:'staff'},direct:true,zone:{id:'base'},p:{}};
+ const participants=CONTESTANTS.slice(0,7).map(({id})=>({user:{id},characterId:id,zone:{id:'base'},p:{},wellness:{life:{status:'alive'}}}));
+ const db={one:async(_sql,id)=>id==='bonju-chef'?{state:JSON.stringify(s)}:null,run:async()=>{}};
+ const clients=new Map([director,...participants].map(c=>[c.user.id,c]));
+ const service=createBonjuChef({db,clients,send(){},can:async user=>user.id==='staff',canParticipate:async()=>true,autoBots:true,now:()=>5000});
+ const action=(c,type)=>service.handle(c,{type:'chef-action',action:{type}});
+ try{
+  await Promise.all(participants.map(c=>service.handle(c,{type:'chef-subscribe'})));
+  await new Promise(resolve=>setTimeout(resolve,120));
+  assert.equal((await service.status(director.user)).phase,'lobby');
+  assert.equal((await service.status(director.user)).roster.length,7);
+  await assert.rejects(action(participants[0],'start'),/Solo Dirección/);
+  await action(director,'fillUsers');await action(director,'start');
+  service.disconnect(participants[0]);await service.attach(participants[0]);
+  const result=await service.status(participants[0].user);
+  assert.equal(result.phase,'tutorial');
+  assert(result.engaged);
+  assert(result.station);
+  assert(result.roster.every(p=>!p.bot));
+ }finally{await service.close();}
+});
+test('a live cook cannot show another kitchen while their own station is still open',()=>{
+ const s=episode(7);s.phase='kitchen';
+ const [cook,target]=s.roster;
+ assert.equal(chefView(s,{selfId:cook.id,watchId:target.id}).spectating,null);
+ s.stations[cook.id].served=true;
+ assert.equal(chefView(s,{selfId:cook.id,watchId:target.id}).spectating.id,target.id);
+});
 test('Bonju Chef reaches two finalists, or three for casts of seventeen or eighteen for every supported cast size',()=>{
  for(let n=7;n<=18;n++){const plan=eliminationPlan(n);assert.equal(plan.length,n>=17?7:5);assert.equal(plan.reduce((a,b)=>a+b,0),n-(n>=17?3:2));assert(plan.every(x=>x>=1&&x<=4));}
 });
