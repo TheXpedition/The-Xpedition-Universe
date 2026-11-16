@@ -61,7 +61,12 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  }
  function view(s,user,person,staff=false,excluded=new Set()){
   const id=person.characterId,bound=owned(s,user,id),home=person.active?homeFor(s,id):null,eligible=person.active&&bound&&!!home;
-  const shelters=SHELTERS.map(def=>({...def,...progress(s,def.id),required:SHELTER_SIZE,members:members(s,def.id).map(characterId=>({characterId,name:characterName(characterId),active:!excluded.has(characterId),occupied:!!s.owners[characterId]}))}));
+  const shelters=SHELTERS.map(def=>{
+   const roster=members(s,def.id).map(characterId=>({characterId,name:characterName(characterId),active:!excluded.has(characterId),occupied:!!s.owners[characterId]}));
+   const gabriel='gabrielsab';
+   const formerPortrait=!homeFor(s,gabriel)&&s.removedContributionHomes?.[def.id]?.includes(gabriel)?{characterId:gabriel,name:characterName(gabriel)}:null;
+   return {...def,...progress(s,def.id),required:SHELTER_SIZE,members:roster,formerPortrait};
+  });
   return {revision:s.revision,eligible,home,stock:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,18-SHELTER_PARTICIPANTS.filter(c=>s.collected[c]?.[m.id]).length])),available:eligible?SHELTER_MATERIALS.filter(m=>!s.collected[id]?.[m.id]).map(m=>m.id):[],inventory:bound?SHELTER_MATERIALS.filter(m=>s.collected[id]?.[m.id]&&!s.delivered[id]?.[m.id]).map(m=>m.id):[],delivered:bound?Object.keys(s.delivered[id]||{}):[],shelters,...(staff?{housing:SHELTER_PARTICIPANTS.map(characterId=>({characterId,name:characterName(characterId),home:homeFor(s,characterId)})),race:shelters[0].percent===shelters[1].percent?'Empate':shelters.find(s=>s.percent===Math.max(...shelters.map(t=>t.percent))).name+' va adelante'}:{})};
  }
  const mutate=fn=>{const task=tail.then(async()=>{await ready;let next;const result=await db.transaction(async()=>{next=decode(await db.one('SELECT state FROM world_environment WHERE id=?'+(db.kind==='postgres'?' FOR UPDATE':''),'shelters'));const result=await fn(next);next.revision++;await db.run('UPDATE world_environment SET state=?,updated=? WHERE id=?',JSON.stringify(next),now(),'shelters');return result;});state=next;return result;});tail=task.catch(()=>{});return task;};
