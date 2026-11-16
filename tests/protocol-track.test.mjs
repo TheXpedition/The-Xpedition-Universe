@@ -2,6 +2,14 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {orderTrackCast} from '../public/juegos/protocol-track.mjs';
 const person=(id,result)=>({id,characterId:id,result});
 
+test('an archived display order can put an eliminated player above selected exits',()=>{
+ const first=[person('joseserna','OUT'),person('peggy','OUT')];
+ const next=[person('vita','HIGH'),person('eduard','DISQ'),person('bayron','DISQ'),person('gabrielsab','ELIM')];
+ const order=[{characterId:'gabrielsab',before:['joseserna','peggy','eduard','bayron']}];
+ const result=orderTrackCast({cast:[...first,...next],episodes:[{cast:first},{cast:next,displayOverrides:{order}}]});
+ assert.deepEqual(result.map(p=>p.id),['vita','gabrielsab','eduard','bayron','joseserna','peggy']);
+});
+
 test('track record rows follow WIN, HIGH, SAFE, LOW, BTM2 and ELIM regardless of original seating order',()=>{
  const cast=[person('eliminated','ELIM'),person('safe','SAFE'),person('bottom','BTM2'),person('high-three','HIGH'),person('low','LOW'),person('win','WIN'),person('high-two','HIGH')];
  const ranking=['win','high-two','high-three','safe','low','bottom','eliminated'].map((id,i)=>({id,rank:i+1}));

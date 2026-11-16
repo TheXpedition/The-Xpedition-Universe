@@ -11,5 +11,11 @@ export function orderTrackCast({cast=[],episodes=[],final=null}){
   const rank=episode?.ranking?.find(r=>r.id===entry?.id)?.rank??Number.MAX_SAFE_INTEGER;
   return {person,index,order,rank,episodeIndex};
  });
- return rows.sort((a,b)=>a.order-b.order||(a.order>=5?b.episodeIndex-a.episodeIndex:0)||a.rank-b.rank||a.index-b.index).map(row=>row.person);
+ const ordered=rows.sort((a,b)=>a.order-b.order||(a.order>=5?b.episodeIndex-a.episodeIndex:0)||a.rank-b.rank||a.index-b.index).map(row=>row.person);
+ for(const episode of episodes)for(const {characterId,before} of episode.displayOverrides?.order||[]){
+  const at=ordered.findIndex(person=>person.characterId===characterId);
+  const first=ordered.findIndex(person=>before.includes(person.characterId));
+  if(first>=0&&at>first)ordered.splice(first,0,...ordered.splice(at,1));
+ }
+ return ordered;
 }

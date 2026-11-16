@@ -8,6 +8,21 @@ import {createVitalsStore} from '../world-vitals-service.mjs';import {createHeal
 const atMaterial=m=>({...shelterSupplyProp(m,WORLD_MAPS[m.zone]),zone:m.zone,alive:true});
 const atDoor=home=>{const s=SHELTERS.find(s=>s.id===home);return {...WORLD_MAPS[s.outside].props.find(p=>p.portal?.zone===s.entry).portal,zone:s.outside,alive:true};};
 async function fixture(){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'world-shelters-')),db=await openDatabase(dir),ids=[...SHELTER_PARTICIPANTS,'maria-villegas','isabel','dani','dua-lingo'];for(const id of ids){await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,id,id,id+'@example.invalid','Dani',1000);await db.run('INSERT INTO world_preferences(user_id,character_id,updated) VALUES(?,?,?)',id,id,1000);await db.run('INSERT INTO world_character_reservations(character_id,user_id,updated) VALUES(?,?,?)',id,id,1000);}const s=createShelterService({db,now:()=>1000});await s.ready;return {dir,db,s,async close(){await s.close();await db.close();const absolute=path.resolve(dir);assert(absolute.startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(absolute,{recursive:true,force:true});}};}
+test('removed refuge members and their credited deliveries are excluded only in that refuge',async()=>{
+ const f=await fixture();
+ try{
+  const read=async()=>JSON.parse((await f.db.one('SELECT state FROM world_environment WHERE id=?','shelters')).state);
+  const state=await read(),keys=SHELTER_MATERIALS.map(m=>m.id),deliveries=Object.fromEntries(keys.map(id=>[id,{at:100,home:'right'}]));
+  state.delivered={eduard:deliveries,kareli:deliveries};
+  state.housingOverrides={eduard:null};
+  state.removedContributionHomes={right:['eduard']};
+  await f.db.run('UPDATE world_environment SET state=?,updated=? WHERE id=?',JSON.stringify(state),100,'shelters');
+  const view=await f.s.snapshot({id:'kareli'});
+  assert.equal(view.shelters[1].percent,11);
+  assert(!view.shelters[1].members.some(p=>p.characterId==='eduard'));
+  assert.deepEqual((await read()).delivered.eduard,deliveries);
+ }finally{await f.close();}
+});
 test('the replacement cast recovers legacy deliveries once and preserves both original shelters',async()=>{
  const f=await fixture();let restored,restarted;
  try{

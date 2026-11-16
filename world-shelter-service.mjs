@@ -28,6 +28,7 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  const deliveryHome=(id,delivery)=>typeof delivery==='number'?shelterForCharacter(id):delivery.home;
  function deliveries(s,home,material){
   return SHELTER_PARTICIPANTS.filter(id=>{
+   if(s.removedContributionHomes?.[home]?.includes(id))return false;
    const delivery=s.delivered[id]?.[material];
    return delivery&&(deliveryHome(id,delivery)===home||delivery.restoredCredit?.home===home);
   });
