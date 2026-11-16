@@ -28,6 +28,20 @@ test('la papeleta usa IDs únicos, trae los 90 nominados pedidos y apunta a arte
  }
 });
 
+test('las cuatro categorías de The Traitor conservan sus retratos del HTML de referencia',()=>{
+ const originals={
+  traidor:[1,2,3,4,5,6],
+  inocente:[7,8,9,10,11,12],
+  sobreviviente:[13,14,15,16,12,17],
+  detective:[7,18,8,19,20,11]
+ };
+ const categories=ballot.sections.find(section=>section.id==='generales').categories;
+ for(const [id,portraits] of Object.entries(originals)){
+  const category=categories.find(entry=>entry.id===id);
+  assert.deepEqual(category.nominees.map(nominee=>nominee.image),portraits.map(number=>'/awards/vote-portraits/'+number+'.webp'));
+ }
+});
+
 test('a 9999 votos acepta solo una de dos solicitudes y abre una cuota nueva a medianoche en Colombia',async()=>{
  const db=await openDatabase(await mkdtemp(path.join(tmpdir(),'xp-awards-quota-')));
  const account={id:'vote-test'};
