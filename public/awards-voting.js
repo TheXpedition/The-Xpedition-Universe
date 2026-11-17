@@ -109,11 +109,6 @@ function renderVotingBallot(section,category){
   <dialog class="vote-dialog vote-info-dialog" id="votingInfo" aria-labelledby="vote-info-name"></dialog>
  </div>`;
  updateVotingProgress(root);
- // Never leave the sidebar without an expanded category group.
- const groups=Array.from(root.querySelectorAll('.vote-group'));
- groups.forEach(group=>group.addEventListener('toggle',()=>{
-  if(!group.open&&!groups.some(entry=>entry.open))group.open=true;
- }));
  const dialog=$('#votingDialog');
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
  dialog.addEventListener('close',()=>{if(!dialog.open)votingModal=null;});
@@ -216,6 +211,9 @@ async function confirmAwardsVote(button){
 
 document.addEventListener('click',event=>{
  if(state.route!=='votacion')return;
+ // Prevent closing the last expanded category group; no toggle event loop.
+ const summary=event.target.closest('.vote-group > summary');
+ if(summary?.parentElement?.open){event.preventDefault();return;}
  const menu=$('.vote-menu-toggle');
  if(menu?.getAttribute('aria-expanded')==='true'&&!event.target.closest('.vote-sidebar,dialog'))toggleVotingMenu(menu,false);
  const button=event.target.closest('[data-vote],[data-vote-nominee]');
