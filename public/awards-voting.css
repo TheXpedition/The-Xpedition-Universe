@@ -612,3 +612,32 @@ body[data-view="votacion"]>.shell:has(.vote-page) .site-footer{display:none}
 @media (prefers-reduced-motion:reduce){
  .vote-card,.vote-card-action,.vote-menu-tools button[data-vote="ballot"]::after{transition:none}
 }
+/* Readable nominees with secondary details; do not cover the voting controls. */
+@media (min-width:831px) and (min-height:601px){
+ .vote-card{
+  background:
+   radial-gradient(ellipse at 85% 25%,#791b2975,transparent 65%),
+   linear-gradient(110deg,#311019,#4b1120 70%,#301017);
+ }
+ .vote-card:has(.vote-card-text small) .vote-card-text{
+  top:15%;max-width:55%;
+ }
+ .vote-card:has(.vote-card-text small) .vote-card-text strong{
+  font-size:clamp(15px,1.37vw,23px);line-height:1.04;
+ }
+ .vote-card:has(.vote-card-text small) .vote-card-text small{
+  font-size:11px;line-height:1.2;max-width:100%;
+ }
+ .vote-page[data-nominee-count="8"] .vote-card:has(.vote-card-text small) .vote-card-text{
+  top:13%;max-width:59%;
+ }
+}
+@media (min-width:831px) and (max-height:800px) and (min-height:601px){
+ .vote-card:has(.vote-card-text small) .vote-card-text{
+  top:11%;
+ }
+ .vote-card:has(.vote-card-text small) .vote-card-text strong{
+  font-size:clamp(14px,1.25vw,19px);
+ }
+ .vote-card:has(.vote-card-text small) .vote-card-text small{font-size:10px}
+}
