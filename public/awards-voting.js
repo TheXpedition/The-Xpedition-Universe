@@ -74,6 +74,7 @@ function votingCard(nominee,category,index){
 function renderVotingBallot(section,category){
  const root=$('#main'),ordered=votingBallot.sections.flatMap(group=>group.categories.map(entry=>({group,entry})));
  const index=ordered.findIndex(item=>item.entry===category);
+ const previous=index===0?{group:section,entry:section.categories[section.categories.length-1]}:ordered[index-1];
  const direction=(item,label,arrow)=>item?`<a class="vote-step-button" href="${votingHref(item.group.id,item.entry.id)}" aria-label="${label}, ${esc(item.entry.name)}">${icon(arrow)} <span><small>${label}</small><strong>${esc(item.entry.name)}</strong></span></a>`:'<span></span>';
  root.innerHTML=`<div class="vote-page" data-nominee-count="${category.nominees.length}" data-voting-section="${section.id}" data-voting-category="${category.id}">
   <header class="vote-toolbar">
@@ -86,7 +87,7 @@ function renderVotingBallot(section,category){
      ${icon('compass')} <strong>Menú de votación</strong><span>${esc(section.name)}</span>${icon('arrow')}
     </button>
     <nav class="vote-menu" id="vote-navigation" aria-label="Navegación de Awards">
-     <h2>${icon('compass')} Categorías</h2>
+     <h2>Categorías</h2>
      <div class="vote-menu-groups">${votingBallot.sections.map(group=>`
       <details class="vote-group" name="vote-groups" ${group.id===section.id?'open':''}>
        <summary ${group.id===section.id?'data-current-section':''}>${icon(votingGroupIcons[group.id])}<span>${esc(group.name)}</span>${icon('arrow')}</summary>
@@ -101,13 +102,18 @@ function renderVotingBallot(section,category){
    <section class="vote-stage" aria-labelledby="vote-stage-title">
     <header class="vote-stage-head"><div><h2 id="vote-stage-title">${esc(category.name)}</h2>${category.description?`<p class="vote-description">${esc(category.description)}</p>`:''}</div></header>
     ${category.nominees.length?`<div class="vote-nominees" style="--vote-columns:${category.nominees.length}">${category.nominees.map((nominee,i)=>votingCard(nominee,category,i)).join('')}</div>`:'<p class="vote-pending">Los nominados de esta categoría se anunciarán próximamente.</p>'}
-    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(ordered[(index-1+ordered.length)%ordered.length],'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[(index+1)%ordered.length],'Siguiente','arrow')}</nav>
+    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(previous,'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[(index+1)%ordered.length],'Siguiente','arrow')}</nav>
    </section>
   </div>
   <dialog class="vote-dialog" id="votingDialog" aria-labelledby="vote-dialog-name"></dialog>
   <dialog class="vote-dialog vote-info-dialog" id="votingInfo" aria-labelledby="vote-info-name"></dialog>
  </div>`;
  updateVotingProgress(root);
+ // Never leave the sidebar without an expanded category group.
+ const groups=Array.from(root.querySelectorAll('.vote-group'));
+ groups.forEach(group=>group.addEventListener('toggle',()=>{
+  if(!group.open&&!groups.some(entry=>entry.open))group.open=true;
+ }));
  const dialog=$('#votingDialog');
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
  dialog.addEventListener('close',()=>{if(!dialog.open)votingModal=null;});
