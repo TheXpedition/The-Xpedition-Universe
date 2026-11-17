@@ -53,7 +53,7 @@ async function renderAwardsVoting(sectionId,categoryId){
 }
 
 function votingPortrait(nominee){
- const face=person=>person.image?`<img src="${esc(person.image)}" alt="" loading="lazy" decoding="async">`:`<span class="vote-monogram" aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase())}</span>`;
+ const face=person=>person.image?`<img src="${esc(person.image)}" alt="" loading="eager" decoding="async">`:`<span class="vote-monogram" aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase())}</span>`;
  if(nominee.people?.length)return `<span class="vote-ensemble">${nominee.people.slice(0,6).map(face).join('')}</span>`;
  return face(nominee);
 }
@@ -74,10 +74,11 @@ function votingCard(nominee,category,index){
 function renderVotingBallot(section,category){
  const root=$('#main'),ordered=votingBallot.sections.flatMap(group=>group.categories.map(entry=>({group,entry})));
  const index=ordered.findIndex(item=>item.entry===category);
+ const previous=index===0?{group:section,entry:section.categories[section.categories.length-1]}:ordered[index-1];
  const direction=(item,label,arrow)=>item?`<a class="vote-step-button" href="${votingHref(item.group.id,item.entry.id)}" aria-label="${label}, ${esc(item.entry.name)}">${icon(arrow)} <span><small>${label}</small><strong>${esc(item.entry.name)}</strong></span></a>`:'<span></span>';
  root.innerHTML=`<div class="vote-page" data-nominee-count="${category.nominees.length}" data-voting-section="${section.id}" data-voting-category="${category.id}">
   <header class="vote-toolbar">
-   <h1 class="vote-brand"><img src="/awards/voting-logo.webp" alt="The Xpedition Awards"><span>Votación</span></h1>
+   <h1 class="vote-brand"><img src="/awards/voting-logo.webp" alt="The Xpedition Awards"><span>Votación</span><small class="vote-edition">${esc(String(votingBallot.edition))}.ª Edición</small></h1>
    <button class="vote-replay" type="button" data-vote="intro" aria-label="Repetir presentación" title="Repetir presentación">${icon('play')}</button>
   </header>
   <div class="vote-layout">
@@ -86,7 +87,7 @@ function renderVotingBallot(section,category){
      ${icon('compass')} <strong>Menú de votación</strong><span>${esc(section.name)}</span>${icon('arrow')}
     </button>
     <nav class="vote-menu" id="vote-navigation" aria-label="Navegación de Awards">
-     <h2>${icon('compass')} Categorías</h2>
+     <h2>Categorías</h2>
      <div class="vote-menu-groups">${votingBallot.sections.map(group=>`
       <details class="vote-group" name="vote-groups" ${group.id===section.id?'open':''}>
        <summary ${group.id===section.id?'data-current-section':''}>${icon(votingGroupIcons[group.id])}<span>${esc(group.name)}</span>${icon('arrow')}</summary>
@@ -101,7 +102,7 @@ function renderVotingBallot(section,category){
    <section class="vote-stage" aria-labelledby="vote-stage-title">
     <header class="vote-stage-head"><div><h2 id="vote-stage-title">${esc(category.name)}</h2>${category.description?`<p class="vote-description">${esc(category.description)}</p>`:''}</div></header>
     ${category.nominees.length?`<div class="vote-nominees" style="--vote-columns:${category.nominees.length}">${category.nominees.map((nominee,i)=>votingCard(nominee,category,i)).join('')}</div>`:'<p class="vote-pending">Los nominados de esta categoría se anunciarán próximamente.</p>'}
-    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(ordered[index-1],'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[index+1],'Siguiente','arrow')}</nav>
+    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(previous,'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[(index+1)%ordered.length],'Siguiente','arrow')}</nav>
    </section>
   </div>
   <dialog class="vote-dialog" id="votingDialog" aria-labelledby="vote-dialog-name"></dialog>
@@ -125,6 +126,7 @@ function updateVotingProgress(root){
  const badge=$('[data-vote-progress]',root);
  badge.textContent=count+'/'+all.length;
  badge.setAttribute('aria-label',count+' de '+all.length+' categorías con votos');
+  badge.closest('[data-vote="ballot"]')?.style.setProperty('--vote-fraction',all.length?String(count/all.length):'0');
  for(const category of all){
   const mark=$('[data-vote-category="'+category.id+'"] [data-vote-mark]',root);
   if(mark)mark.innerHTML=votingCategoryMark(category);
@@ -209,6 +211,8 @@ async function confirmAwardsVote(button){
 
 document.addEventListener('click',event=>{
  if(state.route!=='votacion')return;
+ const summary=event.target.closest('.vote-group > summary');
+ if(summary?.parentElement?.open){event.preventDefault();return;}
  const menu=$('.vote-menu-toggle');
  if(menu?.getAttribute('aria-expanded')==='true'&&!event.target.closest('.vote-sidebar,dialog'))toggleVotingMenu(menu,false);
  const button=event.target.closest('[data-vote],[data-vote-nominee]');
