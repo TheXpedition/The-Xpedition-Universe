@@ -59,7 +59,7 @@ test('las cuatro categorías de The Traitor conservan sus retratos del HTML de r
 
 test('a 9999 votos acepta solo una de dos solicitudes y abre una cuota nueva a medianoche en Colombia',async()=>{
  const db=await openDatabase(await mkdtemp(path.join(tmpdir(),'xp-awards-quota-')));
- const account={id:'vote-test'};
+ const account={id:'92354719-8816-4e25-9199-0dc9a99f7da1'};
  try{
   await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',account.id,'QA','qa','vote@example.invalid','Dani',0);
   let timestamp=Date.parse('2026-11-17T04:59:59.900Z');

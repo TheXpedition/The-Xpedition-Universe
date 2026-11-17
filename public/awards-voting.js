@@ -7,7 +7,7 @@ const votingIntroKey='xp:awards:3:intro';
 let votingBallot=null,votingChoices={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false;
 const votingHref=(section,category)=>votingBase+(section?'/'+section+(category?'/'+category:''):'');
 const votingCategories=()=>votingBallot.sections.flatMap(section=>section.categories);
-const votingSignIn=()=>`<section class="vote-signin"><img src="${votingBanner}" alt="The Xpedition Awards · 3.ª edición"><div><h1>Vota en The Xpedition Awards</h1><p>Toda la audiencia con cuenta puede votar, incluido el Staff.</p><div><button class="vote-gold-button" data-action="login">Iniciar sesión</button><button class="btn secondary" data-action="register">Crear cuenta</button></div></div></section>`;
+const restrictedVoting=()=>`<section class="vote-signin"><div><h1>Acceso restringido</h1><a href="#inicio" class="btn secondary">Volver a Inicio</a></div></section>`;
 
 function renderVotingIntro(){
  const root=$('#main'),current=root.querySelector('.vote-page');
@@ -23,9 +23,9 @@ function renderVotingIntro(){
 
 async function renderAwardsVoting(sectionId,categoryId){
  const turn=++votingRequest,root=$('#main'),member=state.user?.id;
- if(!member){
+ if(!state.user?.staff){
   votingBallot=null;votingMember=null;votingChoices={};
-  root.innerHTML=votingSignIn();
+  root.innerHTML=restrictedVoting();
   return;
  }
  document.title='Votación · The Xpedition Awards';
@@ -38,7 +38,7 @@ async function renderAwardsVoting(sectionId,categoryId){
    votingBallot=ballot;votingChoices=votes;votingMember=member;
   }catch(error){
    if(turn!==votingRequest||state.route!=='votacion')return;
-   root.innerHTML=error.status===401||error.status===403?votingSignIn():'<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
+   root.innerHTML=error.status===401||error.status===403?restrictedVoting():'<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
    return;
   }
  }
@@ -144,7 +144,7 @@ function openVotingInfo(mode){
  dialog.innerHTML=`<div class="vote-info-content">
   <header><h2 id="vote-info-name">${ballot?'Tu papeleta':'Reglas de votación'}</h2><button type="button" class="vote-dialog-close" data-vote="close" aria-label="Cerrar">${icon('close')}</button></header>
   <div class="vote-info-body">${ballot?(summary||'<p>Aún no has registrado votos. Elige una categoría y toca un nominado para votar.</p>'):`<ul class="vote-rules-list">
-   <li>Toda la audiencia con cuenta puede votar, incluido el Staff.</li>
+   <li>Durante esta etapa, la votación está abierta solo al Staff.</li>
    <li>Puedes votar varias veces por el mismo nominado. Cada confirmación suma un voto.</li>
    <li>El límite global es de 10.000 votos diarios. Se renueva a medianoche, hora de Colombia.</li>
    <li>Solo el Staff puede consultar el conteo general.</li>

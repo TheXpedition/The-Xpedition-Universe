@@ -33,6 +33,7 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
  }
  async function vote(req,res,user){
   if(!user)fail(401,'Inicia sesión para votar.');
+  if(!isStaff(user.id))fail(403,'La votación está disponible solo para el Staff.');
   if(req.method==='GET'){
    const rows=await voteCounts(user.id),votes={};
    for(const row of rows)if(categories.has(row.category))(votes[row.category]??={})[row.nominee]=Number(row.votes);

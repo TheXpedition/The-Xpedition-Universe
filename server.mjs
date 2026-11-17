@@ -914,13 +914,14 @@ const server = http.createServer(async (req, res) => {
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
     const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
-    const privateVotingPortrait=/^awards\/vote-portraits\/\d+\.webp$/i.test(arcadePath);
+    const privateVotingArt=/^awards\/(?:vote-portraits\/\d+|voting-(?:logo|stage|trophy))\.webp$/i.test(arcadePath);
     const privateAwardsArt=/^awards\/edition-3-(?:logo|poster|stage|(?:poop-)?trophy)\.(?:webp|png)$/i.test(arcadePath);
-    if(privateVotingPortrait||privateAwardsArt){
+    if(privateVotingArt||privateAwardsArt){
       res.setHeader('Cache-Control','private, no-store');
       res.setHeader('Vary','Cookie');
       const viewer=await getSession(req);
-      if(privateVotingPortrait&&!viewer)fail(401,'Inicia sesión para acceder a las nominaciones.');
+      if(privateVotingArt&&!viewer)fail(401,'Inicia sesión para acceder a las nominaciones.');
+      if(privateVotingArt&&!accountRole(viewer.id).staff)fail(403,'La votación está disponible solo para el Staff.');
       if(privateAwardsArt&&!await thirdAwardsPublic(db)&&!accountRole(viewer?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
     }
     const arcadeFile=/^simulator\/(?:ice-breaker|x-million)(?:\/|$)/i.test(arcadePath);
@@ -944,11 +945,11 @@ const server = http.createServer(async (req, res) => {
     const fileStat = fs.statSync(filename), size = fileStat.size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': arcadeFile||soloFile||privateAwardsArt||privateVotingPortrait?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': arcadeFile||soloFile||privateAwardsArt||privateVotingArt?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
-    if(!arcadeFile&&!soloFile&&!privateAwardsArt&&!privateVotingPortrait){
+    if(!arcadeFile&&!soloFile&&!privateAwardsArt&&!privateVotingArt){
       const etag='W/"'+size.toString(16)+'-'+fileStat.mtimeMs.toString(16)+'"';
       headers.ETag=etag;headers['Last-Modified']=fileStat.mtime.toUTCString();
       const condition=req.headers['if-none-match'];

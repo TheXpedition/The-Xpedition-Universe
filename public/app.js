@@ -40,7 +40,7 @@ async function api(url, options={}) {
 function setConnection(online){const el=$('#connection');el.classList.toggle('offline',!online);el.innerHTML=`<i></i><span>${online?'En línea':'Sin conexión'}</span>`;}
 function errorView(error){$('#main').innerHTML=`<div class="error-panel"><div class="eyebrow" style="justify-content:center">THE XPEDITION</div><h1 style="margin-top:20px">Conectemos tu universo.</h1><p>${esc(error.message)}</p><button class="btn primary" data-action="retry">Volver a intentar</button><p>Abre la web con <strong>ABRIR XPEDITION.cmd</strong> para iniciar el servidor y guardar los datos.</p></div>`;}
 const navItems=[['inicio','home','Inicio'],['votacion','awards','Awards'],['world','compass','World'],['comunidad','users','Comunidad'],['simuladores','game','Simuladores'],['explorar','compass','Tops'],['x-critics','news','X Critics'],['universo','info','Staff'],['guardados','bookmark','Mi lista']];
-const visibleNavItems=()=>navItems.filter(([route])=>route!=='x-critics'||state.user?.staff);
+const visibleNavItems=()=>navItems.filter(([route])=>state.user?.staff||!['x-critics','votacion'].includes(route));
 function renderChrome(){
   const unread=state.conversations.reduce((n,c)=>n+c.unread,0);
   $('#navigation').innerHTML=visibleNavItems().map(([route,ico,label])=>`${route==='universo'?'<div class="nav-separator"></div>':''}<a href="#${route}" class="nav-link ${state.route===route?'active':''} ${route==='universo'||route==='guardados'||route==='x-critics'?'desktop-only':''}" ${state.route===route?'aria-current="page"':''}>${icon(ico)}<span>${label}</span>${route==='mensajes'&&unread?`<span class="count">${unread>99?'99+':unread}</span>`:''}</a>`).join('');
@@ -101,6 +101,7 @@ function route(){
   if(!state.catalog)return;cancelRecording();
   if(location.hash==='#noticias')history.replaceState(history.state,'',state.user?.staff?'#x-critics':'#inicio');
   if(/^#audicion(?:\/apocalypse-ii)?\/?$/.test(location.hash))history.replaceState(history.state,'','#temporada/apocalypse-ii');
+  if(!state.user?.staff&&/^#votacion(?:\/|$)/.test(location.hash))history.replaceState(history.state,'','#inicio');
   const [view,id,entry,episode]=location.hash.slice(1).split('/');
   const keepCriticsScroll=view==='x-critics'&&id&&$('#main .critics-detail-page')?.dataset.criticsSeason===id;
   state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();

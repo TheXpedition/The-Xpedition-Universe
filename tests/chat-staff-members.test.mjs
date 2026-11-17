@@ -132,30 +132,33 @@ test('la tercera edición está cerrada por defecto y solo el Staff puede abrirl
  assert(history.actions.some(action=>action.action==='unpublish-awards'));
 });
 
-test('la audiencia y el Staff pueden votar, y solo el Staff recibe los conteos',async()=>{
+test('la votación, sus retratos y el conteo de Awards requieren Staff',async()=>{
  const votePath='/api/awards/voting',tallyPath='/api/moderation/awards/votes';
  const request=(actor,pathname,body)=>fetch(base+pathname,{method:body?'POST':'GET',headers:{'content-type':'application/json',...(actor?{cookie:'xp_session='+token(actor)}:{})},body:body&&JSON.stringify(body)});
  assert.equal((await request(null,votePath)).status,401);
  assert.equal((await request(null,tallyPath)).status,401);
  assert.equal((await request(ordinary,tallyPath)).status,403);
- const initial=await request(ordinary,votePath).then(response=>response.json());
+ assert.equal((await request(ordinary,votePath)).status,403);
+ assert.equal((await request(null,'/awards/vote-portraits/1.webp')).status,401);
+ assert.equal((await request(ordinary,'/awards/vote-portraits/1.webp')).status,403);
+ assert.equal((await request(staff,'/awards/vote-portraits/1.webp')).status,200);
+ const initial=await request(staff,votePath).then(response=>response.json());
  assert.deepEqual(Object.keys(initial).sort(),['ballot','votes']);
  const fan=initial.ballot.sections[0].categories[0],first={category:fan.id,nominee:fan.nominees[0].id,requestId:randomUUID()},second={category:fan.id,nominee:fan.nominees[1].id,requestId:randomUUID()};
  const db=await openDatabase(data);
  try{
   await db.run('INSERT INTO award_votes(edition,category,voter_id,nominee,updated) VALUES(?,?,?,?,?)',3,fan.id,ordinary,first.nominee,Date.now());
  }finally{await db.close();}
- assert.equal((await request(ordinary,votePath,{...first,nominee:'inventado'})).status,400);
- assert.equal((await request(ordinary,votePath,first)).status,200);
- assert.equal((await request(ordinary,votePath,first)).status,200);
+ assert.equal((await request(ordinary,votePath,first)).status,403);
+ assert.equal((await request(staff,votePath,{...first,nominee:'inventado'})).status,400);
  assert.equal((await request(staff,votePath,first)).status,200);
- assert.equal((await request(ordinary,votePath,second)).status,200);
- assert.equal((await request(ordinary,votePath,{...first,requestId:randomUUID()})).status,200);
- assert.equal((await request(ordinary,votePath,{...second,requestId:first.requestId})).status,409);
+ assert.equal((await request(staff,votePath,first)).status,200);
+ assert.equal((await request(staff,votePath,second)).status,200);
+ assert.equal((await request(staff,votePath,{...first,requestId:randomUUID()})).status,200);
+ assert.equal((await request(staff,votePath,{...second,requestId:first.requestId})).status,409);
  const results=await request(staff,tallyPath).then(response=>response.json());
- assert.equal(results.dailyCount,4);
+ assert.equal(results.dailyCount,3);
  assert.equal(results.dailyLimit,10000);
- assert.deepEqual(results.sections[0].categories[0].nominees.map(n=>n.votes),[4,1,0,0,0,0]);
- assert.deepEqual((await request(ordinary,votePath).then(r=>r.json())).votes,{[fan.id]:{[first.nominee]:3,[second.nominee]:1}});
- assert.deepEqual((await request(staff,votePath).then(r=>r.json())).votes,{[fan.id]:{[first.nominee]:1}});
+ assert.deepEqual(results.sections[0].categories[0].nominees.map(n=>n.votes),[3,1,0,0,0,0]);
+ assert.deepEqual((await request(staff,votePath).then(r=>r.json())).votes,{[fan.id]:{[first.nominee]:2,[second.nominee]:1}});
 });
