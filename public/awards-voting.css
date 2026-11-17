@@ -641,3 +641,11 @@ body[data-view="votacion"]>.shell:has(.vote-page) .site-footer{display:none}
  }
  .vote-card:has(.vote-card-text small) .vote-card-text small{font-size:10px}
 }
+/* Align left edge with the supplied 1672-pixel reference without wasting
+   horizontal space on smaller desktops. Keep wider monitors centered. */
+@media (min-width:831px) and (max-width:1720px) and (min-height:601px){
+ .vote-page{margin-left:0;margin-right:auto}
+}
+@media (min-width:831px) and (min-height:801px){
+ body[data-view="votacion"]>.shell:has(.vote-page) #main{padding-top:16px}
+}
