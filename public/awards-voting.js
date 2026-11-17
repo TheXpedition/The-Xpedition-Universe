@@ -53,7 +53,7 @@ async function renderAwardsVoting(sectionId,categoryId){
 }
 
 function votingPortrait(nominee){
- const face=person=>person.image?`<img src="${esc(person.image)}" alt="" loading="lazy" decoding="async">`:`<span class="vote-monogram" aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase())}</span>`;
+ const face=person=>person.image?`<img src="${esc(person.image)}" alt="" loading="eager" decoding="async">`:`<span class="vote-monogram" aria-hidden="true">${esc(person.name.split(/\s+/).slice(0,2).map(word=>word[0]).join('').toUpperCase())}</span>`;
  if(nominee.people?.length)return `<span class="vote-ensemble">${nominee.people.slice(0,6).map(face).join('')}</span>`;
  return face(nominee);
 }
