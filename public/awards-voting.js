@@ -77,7 +77,7 @@ function renderVotingBallot(section,category){
  const direction=(item,label,arrow)=>item?`<a class="vote-step-button" href="${votingHref(item.group.id,item.entry.id)}" aria-label="${label}, ${esc(item.entry.name)}">${icon(arrow)} <span><small>${label}</small><strong>${esc(item.entry.name)}</strong></span></a>`:'<span></span>';
  root.innerHTML=`<div class="vote-page" data-nominee-count="${category.nominees.length}" data-voting-section="${section.id}" data-voting-category="${category.id}">
   <header class="vote-toolbar">
-   <h1 class="vote-brand"><img src="/awards/voting-logo.webp" alt="The Xpedition Awards"><span>Votación</span></h1>
+   <h1 class="vote-brand"><img src="/awards/voting-logo.webp" alt="The Xpedition Awards"><span>Votación</span><small class="vote-edition">${esc(String(votingBallot.edition))}.ª Edición</small></h1>
    <button class="vote-replay" type="button" data-vote="intro" aria-label="Repetir presentación" title="Repetir presentación">${icon('play')}</button>
   </header>
   <div class="vote-layout">
@@ -101,7 +101,7 @@ function renderVotingBallot(section,category){
    <section class="vote-stage" aria-labelledby="vote-stage-title">
     <header class="vote-stage-head"><div><h2 id="vote-stage-title">${esc(category.name)}</h2>${category.description?`<p class="vote-description">${esc(category.description)}</p>`:''}</div></header>
     ${category.nominees.length?`<div class="vote-nominees" style="--vote-columns:${category.nominees.length}">${category.nominees.map((nominee,i)=>votingCard(nominee,category,i)).join('')}</div>`:'<p class="vote-pending">Los nominados de esta categoría se anunciarán próximamente.</p>'}
-    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(ordered[index-1],'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[index+1],'Siguiente','arrow')}</nav>
+    <nav class="vote-stage-footer" aria-label="Navegar categorías">${direction(ordered[(index-1+ordered.length)%ordered.length],'Anterior','back')}<span class="vote-position"><span>Categoría</span> <strong>${index+1}</strong> de ${ordered.length}</span>${direction(ordered[(index+1)%ordered.length],'Siguiente','arrow')}</nav>
    </section>
   </div>
   <dialog class="vote-dialog" id="votingDialog" aria-labelledby="vote-dialog-name"></dialog>
@@ -125,6 +125,7 @@ function updateVotingProgress(root){
  const badge=$('[data-vote-progress]',root);
  badge.textContent=count+'/'+all.length;
  badge.setAttribute('aria-label',count+' de '+all.length+' categorías con votos');
+  badge.closest('[data-vote="ballot"]')?.style.setProperty('--vote-fraction',all.length?String(count/all.length):'0');
  for(const category of all){
   const mark=$('[data-vote-category="'+category.id+'"] [data-vote-mark]',root);
   if(mark)mark.innerHTML=votingCategoryMark(category);
