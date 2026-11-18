@@ -557,85 +557,40 @@
           "description": "",
           "nominees": [
             {
-              "id": "lucas-mendez-vs-bruno-macri-bayron-adriana-pereira-alexandro-mary-hao-daelly-christopher-alice",
-              "name": "Lucas Mendez vs Bruno Macri, Bayron, Adriana Pereira, Alexandro, Mary Hao, Daelly, Christopher, Alice",
-              "details": "The Traitor 2",
-              "people": [
-                {
-                  "name": "Lucas Mendez",
-                  "image": "/awards/vote-portraits/37.webp"
-                },
-                {
-                  "name": "Bruno Macri",
-                  "image": "/awards/vote-portraits/29.webp"
-                },
-                {
-                  "name": "Bayron",
-                  "image": "/awards/vote-portraits/23.webp"
-                },
-                {
-                  "name": "Adriana Pereira",
-                  "image": "/personajes/adrianapereira.png"
-                },
-                {
-                  "name": "Alexandro",
-                  "image": "/awards/vote-portraits/41.webp"
-                },
-                {
-                  "name": "Mary Hao",
-                  "image": "/awards/vote-portraits/gala-mary-hao.webp"
-                },
-                {
-                  "name": "Daelly",
-                  "image": "/awards/vote-portraits/30.webp"
-                },
-                {
-                  "name": "Christopher",
-                  "image": "/awards/vote-portraits/gala-christopher.webp"
-                },
-                {
-                  "name": "Alice",
-                  "image": "/awards/vote-portraits/26.webp"
-                }
-              ]
+              "id": "kim-camila-vs-eduard",
+              "name": "Kim Camila vs Eduard",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-kim-eduard.webp"
             },
             {
-              "id": "kim-camila-y-lalamila-vs-pier-the-traitor-2",
-              "name": "Kim Camila y Lalamila vs Pier",
-              "details": "The Traitor 2",
-              "people": [
-                {
-                  "name": "Kim Camila",
-                  "image": "/awards/vote-portraits/36.webp"
-                },
-                {
-                  "name": "Lalamila",
-                  "image": "/awards/vote-portraits/4.webp"
-                },
-                {
-                  "name": "Pier",
-                  "image": "/awards/vote-portraits/gala-pier.webp"
-                }
-              ]
+              "id": "alexandro-vs-luciano",
+              "name": "Alexandro vs Luciano",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-alexandro-luciano.webp"
             },
             {
-              "id": "carlos-harrington-vs-sal-lua-y-peggy-showdown-2",
-              "name": "Carlos Harrington vs Sal Lua y Peggy",
-              "details": "Showdown 2",
-              "people": [
-                {
-                  "name": "Carlos Harrington",
-                  "image": "/awards/vote-portraits/39.webp"
-                },
-                {
-                  "name": "Sal Lua",
-                  "image": "/awards/vote-portraits/34.webp"
-                },
-                {
-                  "name": "Peggy",
-                  "image": "/awards/vote-portraits/gala-peggy.webp"
-                }
-              ]
+              "id": "esteban-vs-renzo",
+              "name": "Esteban vs Renzo",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-esteban-renzo.webp"
+            },
+            {
+              "id": "lucas-mendez-vs-bayron",
+              "name": "Lucas Mendez vs Bayron",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-lucas-bayron.webp"
+            },
+            {
+              "id": "sal-lua-peggy-vs-carlos-harrington",
+              "name": "Sal Lua, Peggy vs Carlos Harrington",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-sal-peggy-carlos.webp"
+            },
+            {
+              "id": "guillermo-vs-roger",
+              "name": "Guillermo vs Roger",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-rivalidad-guillermo-roger.webp"
             }
           ]
         }
@@ -1078,13 +1033,13 @@
               "id": "alondra-salazar",
               "name": "Alondra Salazar",
               "details": "",
-              "image": "/awards/vote-portraits/gala-survivor-alondra-salazar.webp"
+              "image": "/awards/vote-portraits/gala-survivor-christina-rg.webp"
             },
             {
               "id": "christina-rg",
               "name": "Christina RG",
               "details": "",
-              "image": "/awards/vote-portraits/gala-survivor-christina-rg.webp"
+              "image": "/awards/vote-portraits/gala-survivor-alondra-salazar.webp"
             },
             {
               "id": "itzelth-hurtado",
