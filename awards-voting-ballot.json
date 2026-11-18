@@ -75,7 +75,7 @@
               "id": "esteban-cooper",
               "name": "Esteban Cooper",
               "details": "",
-              "image": "/personajes/esteban.png"
+              "image": "/awards/vote-portraits/gala-esteban-cooper.webp"
             },
             {
               "id": "alexandro-martin",
@@ -185,7 +185,7 @@
             {
               "id": "maria-villegas",
               "name": "Maria Villegas",
-              "image": "/personajes/maria.png",
+              "image": "/awards/vote-portraits/gala-maria-villegas.webp",
               "details": ""
             },
             {
@@ -467,86 +467,50 @@
         },
         {
           "id": "amistad-de-la-temporada",
-          "name": "Amistad de la Temporada",
+          "name": "Mejor Amistad",
           "description": "",
           "nominees": [
             {
-              "id": "lucas-mendez-adriana-pereira-the-traitor-2",
-              "name": "Lucas Mendez, Adriana Pereira",
-              "details": "The Traitor 2",
-              "people": [
-                {
-                  "name": "Lucas Mendez",
-                  "image": "/awards/vote-portraits/37.webp"
-                },
-                {
-                  "name": "Adriana Pereira",
-                  "image": "/personajes/adrianapereira.png"
-                }
-              ]
+              "id": "lucas-mendez-y-elias",
+              "name": "Lucas Mendez y Elias",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-amistad-lucas-elias.webp"
             },
             {
               "id": "alexandro-ari-salgado-the-traitor-2",
-              "name": "Alexandro, Ari Salgado",
-              "details": "The Traitor 2",
-              "people": [
-                {
-                  "name": "Alexandro",
-                  "image": "/awards/vote-portraits/41.webp"
-                },
-                {
-                  "name": "Ari Salgado",
-                  "image": "/awards/vote-portraits/38.webp"
-                }
-              ]
-            },
-            {
-              "id": "alice-bayron-carlos-harrington-eduard-luciano-showdown-2",
-              "name": "Alice, Bayron, Carlos Harrington, Eduard, Luciano",
-              "details": "Showdown 2",
-              "people": [
-                {
-                  "name": "Alice",
-                  "image": "/awards/vote-portraits/26.webp"
-                },
-                {
-                  "name": "Bayron",
-                  "image": "/awards/vote-portraits/23.webp"
-                },
-                {
-                  "name": "Carlos Harrington",
-                  "image": "/awards/vote-portraits/39.webp"
-                },
-                {
-                  "name": "Eduard",
-                  "image": "/awards/vote-portraits/31.webp"
-                },
-                {
-                  "name": "Luciano",
-                  "image": "/personajes/luciano.png"
-                }
-              ]
+              "name": "Alexandro y Ari Salgado",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-amistad-alexandro-ari.webp"
             },
             {
               "id": "sal-lua-peggy-showdown-2",
-              "name": "Sal Lua, Peggy",
-              "details": "Showdown 2",
-              "people": [
-                {
-                  "name": "Sal Lua",
-                  "image": "/awards/vote-portraits/34.webp"
-                },
-                {
-                  "name": "Peggy",
-                  "image": "/awards/vote-portraits/gala-peggy.webp"
-                }
-              ]
+              "name": "Sal Lua y Peggy Marianne",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-amistad-sal-peggy.webp"
+            },
+            {
+              "id": "carlos-harrington-y-felix",
+              "name": "Carlos Harrington y Felix",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-amistad-carlos-felix.webp"
+            },
+            {
+              "id": "bruno-macri-y-daelly-bonbom",
+              "name": "Bruno Macri y Daelly BonBom",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-amistad-bruno-daelly.webp"
+            },
+            {
+              "id": "alice-bayron-carlos-harrington-eduard-luciano-showdown-2",
+              "name": "Backyardigans",
+              "details": "Carlos, Luciano, Bayron, Eduard y Alice.",
+              "image": "/awards/vote-portraits/gala-amistad-backyardigans.webp"
             }
           ]
         },
         {
           "id": "rivalidad-de-la-temporada",
-          "name": "Rivalidad de la Temporada",
+          "name": "Mejor Rivalidad",
           "description": "",
           "nominees": [
             {
@@ -1018,49 +982,6 @@
               "id": "alondra-salazar",
               "name": "Alondra Salazar",
               "details": ""
-            }
-          ]
-        },
-        {
-          "id": "mejor-presentacion-jurado",
-          "name": "Mejor Jurado",
-          "description": "",
-          "nominees": [
-            {
-              "id": "dua-lingo-showdown-ii",
-              "name": "Dua Lingo",
-              "details": "Showdown II",
-              "image": "/awards/vote-portraits/gala-dua-lingo.webp"
-            },
-            {
-              "id": "isabel-tos-all-stars-2",
-              "name": "Isabel",
-              "details": "TOS All Stars 2",
-              "image": "/awards/vote-portraits/gala-isabel-vilches.webp"
-            },
-            {
-              "id": "ian-esteban-global-war",
-              "name": "Ian San Martin",
-              "details": "Global War",
-              "image": "/awards/vote-portraits/gala-ian-san-martin.webp"
-            },
-            {
-              "id": "bryan-montalvo-celebrity-stars",
-              "name": "Bryan Montalvo",
-              "details": "Celebrity Stars",
-              "image": "/awards/vote-portraits/gala-bryan.webp"
-            },
-            {
-              "id": "marcos-turn-it-up",
-              "name": "Marcos",
-              "details": "Turn It Up",
-              "image": "/awards/vote-portraits/gala-marcos.webp"
-            },
-            {
-              "id": "heidi-cum-project-runway",
-              "name": "Heidi Cum",
-              "details": "Project Runway",
-              "image": "/awards/vote-portraits/gala-heidi.webp"
             }
           ]
         },
