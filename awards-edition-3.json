@@ -104,6 +104,54 @@
           ]
         },
         {
+          "id": "mejor-host",
+          "name": "Mejor Host",
+          "nominees": [
+            {
+              "title": "Maria Villegas",
+              "people": [
+                "Maria Villegas"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Ignacio Vila",
+              "people": [
+                "Ignacio Vila"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Sal Lua",
+              "people": [
+                "Sal Lua"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Renzo Rodriguez",
+              "people": [
+                "Renzo Rodriguez"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Chris Mclean Potenza",
+              "people": [
+                "Chris Mclean Potenza"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Alejandro Lukini",
+              "people": [
+                "Alejandro Lukini"
+              ],
+              "description": ""
+            }
+          ]
+        },
+        {
           "id": "principales-4",
           "name": "Poop of the Year",
           "nominees": [
