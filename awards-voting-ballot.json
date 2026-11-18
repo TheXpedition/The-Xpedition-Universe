@@ -130,7 +130,7 @@
               "id": "mary-hao",
               "name": "Mary Hao",
               "details": "",
-              "image": "/awards/vote-portraits/17.webp"
+              "image": "/awards/vote-portraits/gala-mary-hao.webp"
             }
           ]
         },
@@ -155,7 +155,7 @@
               "id": "roger-lida",
               "name": "Roger Lida",
               "details": "",
-              "image": "/personajes/roger.png"
+              "image": "/awards/vote-portraits/gala-roger.webp"
             },
             {
               "id": "xavier-gaxiola",
@@ -167,7 +167,7 @@
               "id": "paula-garcia",
               "name": "Paula García",
               "details": "",
-              "image": "/personajes/paulagarcia.png"
+              "image": "/awards/vote-portraits/gala-paula-garcia.webp"
             },
             {
               "id": "doppel-camper",
@@ -186,7 +186,7 @@
               "id": "eris-midnight-the-traitor-2",
               "name": "Eris Midnight",
               "details": "The Traitor 2",
-              "image": "/personajes/erismidnight.png"
+              "image": "/awards/vote-portraits/gala-eris.webp"
             },
             {
               "id": "peggy-marianne-apocalypse-2",
@@ -216,7 +216,7 @@
               "id": "julian-sanchez-showdown-2",
               "name": "Julián Sanchez",
               "details": "Showdown 2",
-              "image": "/personajes/julian.png"
+              "image": "/awards/vote-portraits/gala-julian.webp"
             },
             {
               "id": "coronel-sanders-showdown-2",
@@ -357,13 +357,13 @@
               "id": "marianito-moya",
               "name": "Marianito Moya",
               "details": "",
-              "image": "/personajes/marianito.png"
+              "image": "/awards/vote-portraits/gala-marianito.webp"
             },
             {
               "id": "roger-lida",
               "name": "Roger Lida",
               "details": "",
-              "image": "/personajes/roger.png"
+              "image": "/awards/vote-portraits/gala-roger.webp"
             }
           ]
         },
@@ -394,19 +394,19 @@
               "id": "marianito-moya-showdown-2",
               "name": "Marianito Moya",
               "details": "Showdown 2",
-              "image": "/personajes/marianito.png"
+              "image": "/awards/vote-portraits/gala-marianito.webp"
             },
             {
               "id": "marcos-jc-showdown-2",
               "name": "Marcos JC",
               "details": "Showdown 2",
-              "image": "/personajes/marcos.png"
+              "image": "/awards/vote-portraits/gala-marcos.webp"
             },
             {
               "id": "christopher-gonzalez-showdown-2",
               "name": "Christopher Gonzalez",
               "details": "Showdown 2",
-              "image": "/personajes/christopher.png"
+              "image": "/awards/vote-portraits/gala-christopher.webp"
             }
           ]
         },
@@ -443,7 +443,7 @@
               "id": "renzo-rodriguez-the-traitor-2-grupo-diamante",
               "name": "Renzo Rodriguez",
               "details": "The Traitor 2 · Grupo Diamante",
-              "image": "/awards/vote-portraits/5.webp"
+              "image": "/awards/vote-portraits/gala-renzo.webp"
             },
             {
               "id": "azael-eli-the-traitor-2-grupo-trebol",
@@ -535,7 +535,7 @@
               "id": "mary-hao-grupo-joker",
               "name": "Mary Hao",
               "details": "Grupo Joker",
-              "image": "/awards/vote-portraits/17.webp"
+              "image": "/awards/vote-portraits/gala-mary-hao.webp"
             }
           ]
         },
@@ -693,7 +693,7 @@
                 },
                 {
                   "name": "Mary Hao",
-                  "image": "/awards/vote-portraits/17.webp"
+                  "image": "/awards/vote-portraits/gala-mary-hao.webp"
                 },
                 {
                   "name": "Daelly",
@@ -701,7 +701,7 @@
                 },
                 {
                   "name": "Christopher",
-                  "image": "/personajes/christopher.png"
+                  "image": "/awards/vote-portraits/gala-christopher.webp"
                 },
                 {
                   "name": "Alice",
@@ -775,7 +775,7 @@
                 },
                 {
                   "name": "Renzo",
-                  "image": "/awards/vote-portraits/5.webp"
+                  "image": "/awards/vote-portraits/gala-renzo.webp"
                 },
                 {
                   "name": "Lalamila",
@@ -823,7 +823,7 @@
               "id": "renzo-rodriguez-isla-de-naufragos",
               "name": "Renzo Rodriguez",
               "details": "Isla de Náufragos",
-              "image": "/awards/vote-portraits/5.webp"
+              "image": "/awards/vote-portraits/gala-renzo.webp"
             },
             {
               "id": "ignacio-vila-subele-ya",
@@ -866,13 +866,13 @@
               "id": "mary-hao-isla-de-naufragos",
               "name": "Mary Hao",
               "details": "Isla de Náufragos",
-              "image": "/awards/vote-portraits/17.webp"
+              "image": "/awards/vote-portraits/gala-mary-hao.webp"
             },
             {
               "id": "renzo-rodriguez-el-bucle",
               "name": "Renzo Rodriguez",
               "details": "El Bucle",
-              "image": "/awards/vote-portraits/5.webp"
+              "image": "/awards/vote-portraits/gala-renzo.webp"
             },
             {
               "id": "elian-tosero-mamodo-s-destroy-game",
@@ -1071,7 +1071,7 @@
               "id": "marcos-turn-it-up",
               "name": "Marcos",
               "details": "Turn It Up",
-              "image": "/personajes/marcos.png"
+              "image": "/awards/vote-portraits/gala-marcos.webp"
             },
             {
               "id": "heidi-cum-project-runway",
@@ -1140,7 +1140,7 @@
               "id": "marianito-moya",
               "name": "Marianito Moya",
               "details": "Un Camp Ahí",
-              "image": "/personajes/marianito.png"
+              "image": "/awards/vote-portraits/gala-marianito.webp"
             },
             {
               "id": "luciano-funes",
@@ -1158,7 +1158,7 @@
               "id": "eris-midnight",
               "name": "Eris Midnight",
               "details": "El Bucle",
-              "image": "/personajes/erismidnight.png"
+              "image": "/awards/vote-portraits/gala-eris.webp"
             },
             {
               "id": "isabel-vilches",
@@ -1170,7 +1170,7 @@
               "id": "okami-yami",
               "name": "Okami Yami",
               "details": "El Archipiélago",
-              "image": "/personajes/okami.png"
+              "image": "/awards/vote-portraits/gala-okami.webp"
             }
           ]
         }
