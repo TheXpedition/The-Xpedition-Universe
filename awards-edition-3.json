@@ -569,48 +569,64 @@
         },
         {
           "id": "personalidad-4",
-          "name": "Amistad de la Temporada",
+          "name": "Mejor Amistad",
           "nominees": [
             {
-              "title": "Lucas Mendez, Adriana Pereira",
+              "title": "Lucas Mendez y Elias",
               "people": [
                 "Lucas Mendez",
-                "Adriana Pereira"
+                "Elias"
               ],
-              "description": "The Traitor 2"
+              "description": ""
             },
             {
-              "title": "Alexandro, Ari Salgado",
+              "title": "Alexandro y Ari Salgado",
               "people": [
                 "Alexandro",
                 "Ari Salgado"
               ],
-              "description": "The Traitor 2"
+              "description": ""
             },
             {
-              "title": "Alice, Bayron, Carlos Harrington, Eduard, Luciano",
-              "people": [
-                "Alice",
-                "Bayron",
-                "Carlos Harrington",
-                "Eduard",
-                "Luciano"
-              ],
-              "description": "Showdown 2"
-            },
-            {
-              "title": "Sal Lua, Peggy",
+              "title": "Sal Lua y Peggy Marianne",
               "people": [
                 "Sal Lua",
-                "Peggy"
+                "Peggy Marianne"
               ],
-              "description": "Showdown 2"
+              "description": ""
+            },
+            {
+              "title": "Carlos Harrington y Felix",
+              "people": [
+                "Carlos Harrington",
+                "Felix"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Bruno Macri y Daelly BonBom",
+              "people": [
+                "Bruno Macri",
+                "Daelly BonBom"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Backyardigans",
+              "people": [
+                "Carlos",
+                "Luciano",
+                "Bayron",
+                "Eduard",
+                "Alice"
+              ],
+              "description": "Carlos, Luciano, Bayron, Eduard y Alice."
             }
           ]
         },
         {
           "id": "personalidad-5",
-          "name": "Rivalidad de la Temporada",
+          "name": "Mejor Rivalidad",
           "nominees": [
             {
               "title": "Lucas Mendez vs Bruno Macri, Bayron, Adriana Pereira, Alexandro, Mary Hao, Daelly, Christopher, Alice",
@@ -747,55 +763,6 @@
                 "Esteban"
               ],
               "description": "TOS All Stars 2"
-            }
-          ],
-          "production": false
-        },
-        {
-          "id": "produccion-7",
-          "name": "Mejor Jurado",
-          "nominees": [
-            {
-              "title": "Dua Lingo",
-              "people": [
-                "Dua Lingo"
-              ],
-              "description": "Showdown II"
-            },
-            {
-              "title": "Isabel",
-              "people": [
-                "Isabel"
-              ],
-              "description": "TOS All Stars 2"
-            },
-            {
-              "title": "Ian San Martin",
-              "people": [
-                "Ian San Martin"
-              ],
-              "description": "Global War"
-            },
-            {
-              "title": "Bryan Montalvo",
-              "people": [
-                "Bryan Montalvo"
-              ],
-              "description": "Celebrity Stars"
-            },
-            {
-              "title": "Marcos",
-              "people": [
-                "Marcos"
-              ],
-              "description": "Turn It Up"
-            },
-            {
-              "title": "Heidi Cum",
-              "people": [
-                "Heidi Cum"
-              ],
-              "description": "Project Runway"
             }
           ],
           "production": false
