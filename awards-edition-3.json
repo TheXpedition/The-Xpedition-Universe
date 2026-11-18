@@ -384,6 +384,40 @@
           ]
         },
         {
+          "id": "personalidad-2",
+          "name": "Mejor Evolución",
+          "nominees": [
+            {
+              "title": "Ivy",
+              "people": [
+                "Ivy"
+              ],
+              "description": "The Traitor 2"
+            },
+            {
+              "title": "Ivy",
+              "people": [
+                "Ivy"
+              ],
+              "description": "Showdown II"
+            },
+            {
+              "title": "Marianito",
+              "people": [
+                "Marianito"
+              ],
+              "description": "Showdown II"
+            },
+            {
+              "title": "Bodega Bodeguita",
+              "people": [
+                "Bodega Bodeguita"
+              ],
+              "description": "Showdown II"
+            }
+          ]
+        },
+        {
           "id": "estrategia-5",
           "name": "Mejor Superviviente",
           "nominees": [
@@ -458,36 +492,50 @@
           ]
         },
         {
-          "id": "personalidad-2",
-          "name": "Mejor Evolución",
+          "id": "participante-mas-colapsado",
+          "name": "Participante más Colapsado",
           "nominees": [
             {
-              "title": "Ivy",
+              "title": "Lucas Mendez",
               "people": [
-                "Ivy"
+                "Lucas Mendez"
               ],
-              "description": "The Traitor 2"
+              "description": ""
             },
             {
-              "title": "Ivy",
+              "title": "Leandro Lynx",
               "people": [
-                "Ivy"
+                "Leandro Lynx"
               ],
-              "description": "Showdown II"
+              "description": ""
             },
             {
-              "title": "Marianito",
+              "title": "Doppel Camper",
               "people": [
-                "Marianito"
+                "Doppel Camper"
               ],
-              "description": "Showdown II"
+              "description": ""
             },
             {
-              "title": "Bodega Bodeguita",
+              "title": "Luciano Funes",
               "people": [
-                "Bodega Bodeguita"
+                "Luciano Funes"
               ],
-              "description": "Showdown II"
+              "description": ""
+            },
+            {
+              "title": "Catalina Diaz",
+              "people": [
+                "Catalina Diaz"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Oscar Barajas",
+              "people": [
+                "Oscar Barajas"
+              ],
+              "description": ""
             }
           ]
         },
@@ -765,11 +813,11 @@
               "description": "The Idol"
             },
             {
-              "title": "Luciano",
+              "title": "Ivan Serrano",
               "people": [
-                "Luciano"
+                "Ivan Serrano"
               ],
-              "description": "Un Camp Ahí"
+              "description": "Celebrity Nights"
             },
             {
               "title": "Kim Camila",
