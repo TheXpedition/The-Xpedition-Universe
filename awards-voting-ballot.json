@@ -1090,6 +1090,12 @@
           "description": "",
           "nominees": [
             {
+              "id": "turn-it-up-6-timeline-wars",
+              "name": "Turn It Up 6: Timeline Wars",
+              "details": "Eduard Salerno",
+              "image": "/awards/vote-portraits/31.webp"
+            },
+            {
               "id": "turn-it-up-7-jackpot",
               "name": "Turn It Up 7: Jackpot!",
               "details": "Eduard Salerno",
@@ -1133,6 +1139,12 @@
               "name": "El Archipiélago",
               "details": "Marianito Moya",
               "image": "/awards/vote-portraits/gala-marianito.webp"
+            },
+            {
+              "id": "alexandro-martin-global-war",
+              "name": "Alexandro Martin",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/41.webp"
             }
           ]
         },
@@ -1176,6 +1188,18 @@
               "name": "Okami Yami",
               "details": "El Archipiélago",
               "image": "/awards/vote-portraits/gala-okami.webp"
+            },
+            {
+              "id": "eduard-salerno-juego-de-villanos",
+              "name": "Eduard Salerno",
+              "details": "Juego de Villanos",
+              "image": "/awards/vote-portraits/31.webp"
+            },
+            {
+              "id": "andromeda-sc-survivor-express-no-tan-express",
+              "name": "Andrómeda SC",
+              "details": "Survivor Express No Tan Express",
+              "image": "/awards/vote-portraits/24.webp"
             }
           ]
         }
