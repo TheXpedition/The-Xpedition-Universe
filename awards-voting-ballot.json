@@ -217,6 +217,18 @@
               "name": "Alejandro Lukini",
               "image": "/awards/vote-portraits/gala-alejandro-lukini.webp",
               "details": ""
+            },
+            {
+              "id": "bryan-montalvo",
+              "name": "Bryan Montalvo",
+              "image": "/awards/vote-portraits/gala-bryan.webp",
+              "details": ""
+            },
+            {
+              "id": "vianey-gonzalez",
+              "name": "Vianey Gonzalez",
+              "image": "/awards/vote-portraits/gala-vianey-gonzalez.webp",
+              "details": ""
             }
           ]
         },
