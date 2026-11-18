@@ -2,10 +2,11 @@
 
 const votingBanner='/awards/edition-3-banner.webp';
 const votingBase='#votacion';
-const votingGroupIcons={principales:'compass',generales:'bookmark',otras:'more'};
+const votingGroupIcons={principales:'compass',generales:'bookmark',especiales:'checks',otras:'more'};
 const votingIntroKey='xp:awards:3:intro';
 let votingBallot=null,votingChoices={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false;
-const votingHref=(section,category)=>votingBase+(section?'/'+section+(category?'/'+category:''):'');
+const votingLegacySpecialIds=new Set(['traidor','inocente','sobreviviente','detective']);
+const votingHref=(section,category)=>{const path=section==='especiales'&&votingLegacySpecialIds.has(category)?'generales':section;return votingBase+(path?'/'+path+(category?'/'+category:''):'');};
 const votingCategories=()=>votingBallot.sections.flatMap(section=>section.categories);
 const restrictedVoting=()=>`<section class="vote-signin"><div><h1>Acceso restringido</h1><a href="#inicio" class="btn secondary">Volver a Inicio</a></div></section>`;
 
@@ -48,7 +49,9 @@ async function renderAwardsVoting(sectionId,categoryId){
   renderVotingIntro();
   return;
  }
- const section=votingBallot.sections.find(section=>section.id===sectionId)||votingBallot.sections[0];
+ let section=votingBallot.sections.find(group=>group.id===sectionId)||votingBallot.sections[0];
+ // Four existing The Traitor bookmarks continue to work after moving them to Especiales.
+ if(sectionId==='generales'&&votingLegacySpecialIds.has(categoryId))section=votingBallot.sections.find(group=>group.id==='especiales')||section;
  renderVotingBallot(section,section.categories.find(category=>category.id===categoryId)||section.categories[0]);
 }
 
