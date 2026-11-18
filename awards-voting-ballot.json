@@ -984,42 +984,58 @@
             {
               "id": "survivor-battle-of-sagas-jeff-flipper",
               "name": "Survivor Battle Of Sagas",
-              "details": "Jeff Flipper"
+              "details": "Jeff Flipper",
+              "image": "/awards/vote-portraits/gala-show-survivor-battle-of-sagas.webp",
+              "isShow": true
             },
             {
               "id": "survivor-transilvania-fans-vs-favorites-alejandro-lukini-sg",
               "name": "Survivor Transilvania Fans vs Favorites",
-              "details": "Alejandro Lukini SG"
+              "details": "Alejandro Lukini SG",
+              "image": "/awards/vote-portraits/gala-show-survivor-transilvania.webp",
+              "isShow": true
             },
             {
               "id": "amistad-a-prueba-2-john-mol",
               "name": "Amistad a Prueba 2",
-              "details": "John Mol"
+              "details": "John Mol",
+              "image": "/awards/vote-portraits/gala-show-amistad-a-prueba-2.webp",
+              "isShow": true
             },
             {
               "id": "survivor-destiny-of-fire-the-rise-of-the-dragon-jeff-uravi",
               "name": "Survivor Destiny of Fire: The Rise of The Dragon",
-              "details": "Jeff Uravi"
+              "details": "Jeff Uravi",
+              "image": "/awards/vote-portraits/gala-show-survivor-destiny-of-fire.webp",
+              "isShow": true
             },
             {
               "id": "survivor-el-eden-roto-jeff-mon-vg",
               "name": "Survivor El Edén Roto",
-              "details": "Jeff Mon VG"
+              "details": "Jeff Mon VG",
+              "image": "/awards/vote-portraits/gala-show-survivor-eden-roto.webp",
+              "isShow": true
             },
             {
               "id": "total-drama-second-chance-chris-mclean-potenza",
               "name": "Total Drama Second Chance",
-              "details": "Chris Mclean Potenza"
+              "details": "Chris Mclean Potenza",
+              "image": "/awards/vote-portraits/gala-show-total-drama-second-chance.webp",
+              "isShow": true
             },
             {
               "id": "survivor-epxress-no-tan-express-christian-galindo",
               "name": "Survivor Express No Tan Express",
-              "details": "Jeff Sente"
+              "details": "Jeff Sente",
+              "image": "/awards/vote-portraits/gala-show-survivor-express.webp",
+              "isShow": true
             },
             {
               "id": "juego-de-villanos-jonathan-pl",
               "name": "Juego de Villanos",
-              "details": "Jonathan PL"
+              "details": "Jonathan PL",
+              "image": "/awards/vote-portraits/gala-show-juego-villanos.webp",
+              "isShow": true
             }
           ]
         },
@@ -1079,87 +1095,14 @@
             {
               "id": "amanda-cristina",
               "name": "Amanda Cristina",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-amanda-cristina.webp"
             },
             {
               "id": "omar-toyo",
               "name": "Omar Toyo",
-              "details": ""
-            }
-          ]
-        },
-        {
-          "id": "mejor-drag-virtual",
-          "name": "Mejor Drag Virtual",
-          "description": "",
-          "nominees": [
-            {
-              "id": "victoria-blade",
-              "name": "Victoria Blade",
-              "details": ""
-            },
-            {
-              "id": "carmine",
-              "name": "Carmine",
               "details": "",
-              "image": "/personajes/carmine.png"
-            },
-            {
-              "id": "miranda-torres",
-              "name": "Miranda Torres",
-              "details": ""
-            },
-            {
-              "id": "bettie-bambola",
-              "name": "Bettie Bambola",
-              "details": ""
-            },
-            {
-              "id": "sasori-yume",
-              "name": "Sasori Yume",
-              "details": ""
-            },
-            {
-              "id": "scarlet-fever",
-              "name": "Scarlet Fever",
-              "details": ""
-            }
-          ]
-        },
-        {
-          "id": "personalidad-de-internet",
-          "name": "Personalidad de Internet",
-          "description": "",
-          "nominees": [
-            {
-              "id": "tripona-poc",
-              "name": "Tripona Poc",
-              "details": ""
-            },
-            {
-              "id": "zinnia-woormwood",
-              "name": "Zinnia Woormwood",
-              "details": ""
-            },
-            {
-              "id": "bewitched-jimenez",
-              "name": "Bewitched Jimenez",
-              "details": ""
-            },
-            {
-              "id": "rol-pop",
-              "name": "Rol Pop",
-              "details": ""
-            },
-            {
-              "id": "christina-rg",
-              "name": "Christina RG",
-              "details": ""
-            },
-            {
-              "id": "gleam-radianthe",
-              "name": "Gleam Radianthe",
-              "details": ""
+              "image": "/awards/vote-portraits/gala-survivor-omar-toyo.webp"
             }
           ]
         },

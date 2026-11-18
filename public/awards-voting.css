@@ -687,3 +687,15 @@ body[data-view="votacion"]>.shell:has(.vote-page) .site-footer{display:none}
   font-size:10px;padding:5px 8px;
  }
 }
+
+/* Show nominations use supplied project-logo artwork, not character portraits.
+   Keep logos fully visible while preserving existing nominee card dimensions. */
+.vote-page[data-voting-category="mejor-survivor-show-virtual"] .vote-card.vote-show .vote-portrait{
+ width:70%;
+ -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 23%,#000 100%);
+ mask-image:linear-gradient(90deg,transparent 0%,#000 23%,#000 100%);
+}
+.vote-page[data-voting-category="mejor-survivor-show-virtual"] .vote-card.vote-show .vote-portrait>img{
+ object-fit:contain;
+ object-position:center;
+}
