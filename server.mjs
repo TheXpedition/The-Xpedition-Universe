@@ -916,13 +916,12 @@ const server = http.createServer(async (req, res) => {
     const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
     const privateVotingArt=/^awards\/(?:vote-portraits\/(?:\d+|gala-[a-z0-9-]+)|voting-(?:logo|stage|trophy))\.webp$/i.test(arcadePath);
     const privateAwardsArt=/^awards\/edition-3-(?:logo|poster|stage|(?:poop-)?trophy)\.(?:webp|png)$/i.test(arcadePath);
-    if(privateVotingArt||privateAwardsArt){
-      res.setHeader('Cache-Control',privateVotingArt?'private, max-age=120, must-revalidate':'private, no-store');
+    if(privateVotingArt)res.setHeader('Cache-Control','public, max-age=3600');
+    if(privateAwardsArt){
+      res.setHeader('Cache-Control','private, no-store');
       res.setHeader('Vary','Cookie');
       const viewer=await getSession(req);
-      if(privateVotingArt&&!viewer)fail(401,'Inicia sesión para acceder a las nominaciones.');
-      if(privateVotingArt&&!accountRole(viewer.id).staff)fail(403,'La votación está disponible solo para el Staff.');
-      if(privateAwardsArt&&!await thirdAwardsPublic(db)&&!accountRole(viewer?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
+      if(!await thirdAwardsPublic(db)&&!accountRole(viewer?.id).staff)fail(403,'La tercera edición todavía está cerrada.');
     }
     const arcadeFile=/^simulator\/(?:ice-breaker|x-million)(?:\/|$)/i.test(arcadePath);
     if(arcadeFile){

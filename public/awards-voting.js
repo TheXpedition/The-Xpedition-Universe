@@ -4,11 +4,11 @@ const votingBanner='/awards/edition-3-banner.webp';
 const votingBase='#votacion';
 const votingGroupIcons={principales:'compass',generales:'bookmark',especiales:'checks',otras:'more'};
 const votingIntroKey='xp:awards:3:intro';
-let votingBallot=null,votingChoices={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false;
+let votingBallot=null,votingChoices={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false,votingQuota=null;
 const votingLegacySpecialIds=new Set(['traidor','inocente','sobreviviente','detective']);
 const votingHref=(section,category)=>{const path=section==='especiales'&&votingLegacySpecialIds.has(category)?'generales':section;return votingBase+(path?'/'+path+(category?'/'+category:''):'');};
 const votingCategories=()=>votingBallot.sections.flatMap(section=>section.categories);
-const restrictedVoting=()=>`<section class="vote-signin"><div><h1>Acceso restringido</h1><a href="#inicio" class="btn secondary">Volver a Inicio</a></div></section>`;
+const restrictedVoting=()=>`<section class="vote-signin"><div><h1>Inicia sesión para votar</h1><p>Necesitas una cuenta de The Xpedition para participar en las votaciones.</p><button type="button" class="vote-gold-button" data-vote="login">Iniciar sesión</button></div></section>`;
 
 function renderVotingIntro(){
  const root=$('#main'),current=root.querySelector('.vote-page');
@@ -24,8 +24,8 @@ function renderVotingIntro(){
 
 async function renderAwardsVoting(sectionId,categoryId){
  const turn=++votingRequest,root=$('#main'),member=state.user?.id;
- if(!state.user?.staff){
-  votingBallot=null;votingMember=null;votingChoices={};
+ if(!state.user){
+  votingBallot=null;votingMember=null;votingChoices={};votingQuota=null;
   root.innerHTML=restrictedVoting();
   return;
  }
@@ -34,9 +34,9 @@ async function renderAwardsVoting(sectionId,categoryId){
  if(!reuse){
   root.innerHTML='<div class="loading-screen"><span class="spinner"></span> Preparando la papeleta…</div>';
   try{
-   const {ballot,votes}=await api('/awards/voting');
+   const {ballot,votes,quota}=await api('/awards/voting');
    if(turn!==votingRequest||state.route!=='votacion'||state.user?.id!==member)return;
-   votingBallot=ballot;votingChoices=votes;votingMember=member;
+   votingBallot=ballot;votingChoices=votes;votingQuota=quota;votingMember=member;
   }catch(error){
    if(turn!==votingRequest||state.route!=='votacion')return;
    root.innerHTML=error.status===401||error.status===403?restrictedVoting():'<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
@@ -65,11 +65,12 @@ const votingCountLabel=votes=>votes+(votes===1?' voto':' votos');
 
 function votingCard(nominee,category,index){
  const votes=votingChoices[category.id]?.[nominee.id]||0;
+ const selected=(votingQuota?.selected[category.id]||[]).includes(nominee.id);
  return `<article class="vote-nominee" style="--vote-card-index:${index}">
-   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" data-personal-votes="${votes}"${votes?` aria-description="${votingCountLabel(votes)} registrado${votes===1?'':'s'} por ti"`:''}>
+   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" data-personal-votes="${selected?votes:0}"${votes?` aria-description="${votingCountLabel(votes)} registrado${votes===1?'':'s'} por ti"`:''}>
     <span class="vote-portrait">${votingPortrait(nominee)}</span>
     <span class="vote-card-text"><strong>${esc(nominee.name)}</strong>${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</span>
-    <span class="vote-card-action" aria-hidden="true"><span>${votes?votingCountLabel(votes):'Votar'}</span>${icon(votes?'check':'arrow')}</span>
+    <span class="vote-card-action" aria-hidden="true"><span>${votes?votingCountLabel(votes):'Votar'}</span>${icon(selected?'check':'arrow')}</span>
    </button>
  </article>`;
 }
@@ -82,7 +83,7 @@ function renderVotingBallot(section,category){
  root.innerHTML=`<div class="vote-page" data-nominee-count="${category.nominees.length}" data-voting-section="${section.id}" data-voting-category="${category.id}">
   <header class="vote-toolbar">
    <h1 class="vote-brand"><img src="/awards/voting-logo.webp" alt="The Xpedition Awards"><span>Votación</span><small class="vote-edition">${esc(String(votingBallot.edition))}.ª Edición</small></h1>
-   <button class="vote-replay" type="button" data-vote="intro" aria-label="Repetir presentación" title="Repetir presentación">${icon('play')}</button>
+   <div class="vote-toolbar-actions"><div class="vote-credits" aria-live="polite"><small>Votos disponibles</small><strong data-vote-remaining></strong></div><button class="vote-replay" type="button" data-vote="intro" aria-label="Repetir presentación" title="Repetir presentación">${icon('play')}</button></div>
   </header>
   <div class="vote-layout">
    <aside class="vote-sidebar">
@@ -112,6 +113,7 @@ function renderVotingBallot(section,category){
   <dialog class="vote-dialog vote-info-dialog" id="votingInfo" aria-labelledby="vote-info-name"></dialog>
  </div>`;
  updateVotingProgress(root);
+ updateVotingQuota(root);
  const dialog=$('#votingDialog');
  dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
  dialog.addEventListener('close',()=>{if(!dialog.open)votingModal=null;});
@@ -119,6 +121,10 @@ function renderVotingBallot(section,category){
  info.addEventListener('click',event=>{if(event.target===info)info.close();});
 }
 
+function updateVotingQuota(root){
+ const remaining=root.querySelector('[data-vote-remaining]');
+ if(remaining){const n=votingQuota?.remaining??100000;remaining.textContent=n.toLocaleString('es-CO');remaining.parentElement.title='Saldo diario de votos. Se renueva a las 00:00, hora de Colombia.';}
+}
 function votingCategoryMark(category){
  return votingChoices[category.id]?icon('check'):category.nominees.length?icon('arrow'):icon('lock');
 }
@@ -149,10 +155,13 @@ function openVotingInfo(mode){
  dialog.innerHTML=`<div class="vote-info-content">
   <header><h2 id="vote-info-name">${ballot?'Tu papeleta':'Reglas de votación'}</h2><button type="button" class="vote-dialog-close" data-vote="close" aria-label="Cerrar">${icon('close')}</button></header>
   <div class="vote-info-body">${ballot?(summary||'<p>Aún no has registrado votos. Elige una categoría y toca un nominado para votar.</p>'):`<ul class="vote-rules-list">
-   <li>Durante esta etapa, la votación está abierta solo al Staff.</li>
-   <li>Puedes votar varias veces por el mismo nominado. Cada confirmación suma un voto.</li>
-   <li>El límite global es de 10.000 votos diarios. Se renueva a medianoche, hora de Colombia.</li>
-   <li>Solo el Staff puede consultar el conteo general.</li>
+   <li>Para votar debes iniciar sesión con tu cuenta de The Xpedition.</li>
+   <li>Cada cuenta dispone de 100.000 votos diarios. El saldo se restablece a medianoche, hora de Colombia.</li>
+   <li>En cada categoría puedes elegir un máximo de 2 nominados diferentes.</li>
+   <li>Puedes asignar hasta 10.000 votos por día al mismo nominado dentro de una categoría.</li>
+   <li>Reparte los votos restantes entre otros nominados y categorías; no es obligatorio gastarlos todos.</li>
+   <li>Cuando agotes tus 100.000 votos aparecerá el mensaje «Ya no tienes más votos disponibles por hoy.»</li>
+   <li>Solo el Staff puede consultar los resultados generales.</li>
   </ul>`}</div>
  </div>`;
  dialog.showModal();
@@ -168,13 +177,21 @@ function openVotingNominee(nomineeId){
  const nominee=category.nominees.find(entry=>entry.id===nomineeId);
  if(!nominee)return;
  const dialog=$('#votingDialog'),votes=votingChoices[category.id]?.[nominee.id]||0;
+ const used=votingQuota?.spentByNominee?.[category.id]?.[nominee.id]||0;
+ const remaining=votingQuota?.remaining??100000;
+ const selected=votingQuota?.selected?.[category.id]||[];
+ const choicesFull=selected.length>=2&&!selected.includes(nominee.id);
+ const allowance=Math.max(0,Math.min(10000-used,remaining));
+ const warning=choicesFull?'Solo puedes votar por un máximo de 2 nominados en la misma categoría.':!remaining?'Ya no tienes más votos disponibles por hoy.':!allowance?'Alcanzaste el máximo de 10.000 votos diarios para este nominado.':'Selecciona cuántos votos quieres otorgar.';
  votingModal={category,nominee,requestId:null};
  dialog.classList.remove('vote-confirmed');
  dialog.innerHTML=`<div class="vote-dialog-shell"><button class="vote-dialog-close" type="button" aria-label="Cerrar" data-vote="close">${icon('close')}</button>
   <div class="vote-dialog-portrait">${votingPortrait(nominee)}</div><div class="vote-dialog-copy"><span>${esc(category.name)}</span><h2 id="vote-dialog-name">${esc(nominee.name)}</h2>
   ${nominee.details?`<p class="vote-dialog-detail">${esc(nominee.details)}</p>`:''}
-  <p data-vote-message aria-live="polite">${votes?'Ya registraste '+votingCountLabel(votes)+' para este nominado.':'Confirma tu voto para esta categoría.'}</p>
-  <div class="vote-dialog-actions"><button type="button" class="vote-gold-button" data-vote="confirm">${votes?'Votar otra vez':'Confirmar voto'} ${icon('check')}</button><button type="button" class="btn secondary" data-vote="close">Volver a la papeleta</button></div></div></div>`;
+  <p class="vote-dialog-balance">Disponibles hoy: <strong>${remaining.toLocaleString('es-CO')}</strong> · Para este nominado: <strong>${allowance.toLocaleString('es-CO')}</strong></p>
+  <p data-vote-message aria-live="polite">${warning}</p>
+  <label class="vote-quantity" for="vote-quantity">Cantidad de votos<input id="vote-quantity" type="number" min="1" max="${allowance}" step="1" inputmode="numeric" value="1" ${choicesFull||!allowance?'disabled':''}></label>
+  <div class="vote-dialog-actions"><button type="button" class="vote-gold-button" data-vote="confirm" ${choicesFull||!allowance?'disabled':''}>Confirmar votos ${icon('check')}</button><button type="button" class="btn secondary" data-vote="close">Volver a la papeleta</button></div></div></div>`;
  dialog.showModal();
 }
 
@@ -182,18 +199,26 @@ async function confirmAwardsVote(button){
  const selection=votingModal,dialog=$('#votingDialog');
  if(!selection||button.disabled||!state.user||votingSaving)return;
  const {category,nominee}=selection,member=state.user.id;
+ const quantity=Number($('#vote-quantity',dialog)?.value);
+ const allowed=Math.max(0,Math.min(votingQuota?.remaining??0,10000-(votingQuota?.spentByNominee?.[category.id]?.[nominee.id]||0)));
+ if(!Number.isSafeInteger(quantity)||quantity<1||quantity>allowed){
+  $('[data-vote-message]',dialog).textContent=allowed?'Introduce entre 1 y '+allowed.toLocaleString('es-CO')+' votos.':'Ya no tienes más votos disponibles por hoy.';
+  return;
+ }
  votingSaving=true;button.disabled=true;
  dialog.classList.remove('vote-confirmed');
  selection.requestId??=crypto.randomUUID();
  $('[data-vote-message]',dialog).textContent='Guardando tu voto…';
  try{
-  const vote=await api('/awards/voting',{method:'POST',body:{category:category.id,nominee:nominee.id,requestId:selection.requestId}});
+  const vote=await api('/awards/voting',{method:'POST',body:{category:category.id,nominee:nominee.id,votes:quantity,requestId:selection.requestId}});
   if(state.user?.id!==member||votingMember!==member)return;
   (votingChoices[vote.category]??={})[vote.nominee]=vote.votes;
+  votingQuota=vote.quota;
   selection.requestId=null;
   const root=$('.vote-page');
   if(!root?.isConnected)return;
   updateVotingProgress(root);
+  updateVotingQuota(root);
   if(root.dataset.votingCategory===vote.category){
    const card=$('[data-vote-nominee="'+vote.nominee+'"]',root);
    card.dataset.personalVotes=vote.votes;
@@ -202,9 +227,12 @@ async function confirmAwardsVote(button){
   }
   if(!dialog.open||votingModal!==selection)return;
   dialog.classList.add('vote-confirmed');
-  $('[data-vote-message]',dialog).textContent='Voto guardado.';
+  $('[data-vote-message]',dialog).textContent=quantity.toLocaleString('es-CO')+' votos guardados correctamente.';
   button.innerHTML='Votar otra vez '+icon('check');
   button.disabled=false;
+  const input=$('#vote-quantity',dialog),canVote=Math.max(0,Math.min(votingQuota.remaining,10000-(votingQuota.spentByNominee?.[category.id]?.[nominee.id]||0)));
+  if(input){input.max=canVote;input.disabled=!canVote;input.value=canVote?'1':'0';}
+  if(!canVote){button.disabled=true;}$('[data-vote-remaining]',root).textContent=votingQuota.remaining.toLocaleString('es-CO');
  }catch(error){
   if(!dialog?.open||votingModal!==selection)return;
   $('[data-vote-message]',dialog).textContent=error.message;
@@ -220,6 +248,7 @@ document.addEventListener('click',event=>{
  if(!button)return;
  if(button.dataset.voteNominee){if(!votingSaving)openVotingNominee(button.dataset.voteNominee);return;}
  const action=button.dataset.vote;
+ if(action==='login'){openAuth('login');return;}
  if(action==='enter'){
   try{sessionStorage.setItem(votingIntroKey,'1');}catch{}
   go('votacion/'+button.dataset.chapter);
