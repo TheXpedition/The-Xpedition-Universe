@@ -863,6 +863,18 @@
               "name": "Heidi Cum",
               "details": "Project Runway DTI",
               "image": "/awards/vote-portraits/gala-heidi.webp"
+            },
+            {
+              "id": "alexandro-global-war",
+              "name": "Alexandro",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/41.webp"
+            },
+            {
+              "id": "chris-mclean-potenza-total-drama-second-chance",
+              "name": "Chris Mclean Potenza",
+              "details": "Total Drama Second Chance",
+              "image": "/awards/vote-portraits/gala-chris-mclean-potenza.webp"
             }
           ]
         },
@@ -906,6 +918,18 @@
               "name": "Coronel Sanders",
               "details": "Global War",
               "image": "/awards/vote-portraits/40.webp"
+            },
+            {
+              "id": "alyssa-miller-global-war",
+              "name": "Alyssa Miller",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/gala-alyssa-miller.webp"
+            },
+            {
+              "id": "brian-rm-turn-it-up",
+              "name": "Brian RM",
+              "details": "Turn It Up",
+              "image": "/awards/vote-portraits/gala-brian-rm.webp"
             }
           ]
         },
