@@ -936,7 +936,7 @@
               "id": "ivan-serrano-celebrity-nights",
               "name": "Ivan Serrano",
               "details": "Celebrity Nights",
-              "image": "/awards/vote-portraits/gala-social-ivan.webp"
+              "image": "/awards/vote-portraits/gala-ivan-serrano-princesa.webp"
             },
             {
               "id": "mary-hao-isla-de-naufragos",
@@ -1025,7 +1025,7 @@
         },
         {
           "id": "mejor-participante-de-survivors",
-          "name": "Mejor Participante de Survivors",
+          "name": "Mejor Participación en Survivor/Show Virtual",
           "description": "",
           "nominees": [
             {
@@ -1043,31 +1043,47 @@
             {
               "id": "eli-navarrete",
               "name": "Eli Navarrete",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-eli-navarrete.webp"
             },
             {
               "id": "montse-cruz",
               "name": "Montse Cruz",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-montse-cruz.webp"
             },
             {
               "id": "christian-galindo",
               "name": "Christian Galindo",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-christian-galindo.webp"
             },
             {
               "id": "alondra-salazar",
               "name": "Alondra Salazar",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-alondra-salazar.webp"
             },
             {
               "id": "christina-rg",
               "name": "Christina RG",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-christina-rg.webp"
             },
             {
               "id": "itzelth-hurtado",
               "name": "Itzelth Hurtado",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-survivor-itzelth-hurtado.webp"
+            },
+            {
+              "id": "amanda-cristina",
+              "name": "Amanda Cristina",
+              "details": ""
+            },
+            {
+              "id": "omar-toyo",
+              "name": "Omar Toyo",
               "details": ""
             }
           ]
