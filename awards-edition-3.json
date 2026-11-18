@@ -807,6 +807,13 @@
           "name": "Peor Competencia Virtual",
           "nominees": [
             {
+              "title": "Turn It Up 6: Timeline Wars",
+              "people": [
+                "Eduard Salerno"
+              ],
+              "description": "Eduard Salerno"
+            },
+            {
               "title": "Turn It Up 7: Jackpot!",
               "people": [
                 "Eduard"
@@ -848,6 +855,13 @@
                 "Marianito"
               ],
               "description": "Marianito Moya"
+            },
+            {
+              "title": "Alexandro Martin",
+              "people": [
+                "Alexandro Martin"
+              ],
+              "description": "Global War"
             }
           ],
           "production": false
@@ -897,6 +911,20 @@
                 "Okami"
               ],
               "description": "El Archipiélago"
+            },
+            {
+              "title": "Eduard Salerno",
+              "people": [
+                "Eduard Salerno"
+              ],
+              "description": "Juego de Villanos"
+            },
+            {
+              "title": "Andrómeda SC",
+              "people": [
+                "Andrómeda SC"
+              ],
+              "description": "Survivor Express No Tan Express"
             }
           ],
           "production": false
