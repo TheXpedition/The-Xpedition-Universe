@@ -1010,6 +1010,49 @@
           ]
         },
         {
+          "id": "mejor-presentacion-jurado",
+          "name": "Mejor Jurado",
+          "description": "",
+          "nominees": [
+            {
+              "id": "dua-lingo-showdown-ii",
+              "name": "Dua Lingo",
+              "details": "Showdown II",
+              "image": "/awards/vote-portraits/gala-dua-lingo.webp"
+            },
+            {
+              "id": "isabel-tos-all-stars-2",
+              "name": "Isabel",
+              "details": "TOS All Stars 2",
+              "image": "/awards/vote-portraits/gala-isabel-vilches.webp"
+            },
+            {
+              "id": "ian-esteban-global-war",
+              "name": "Ian San Martin",
+              "details": "Global War",
+              "image": "/awards/vote-portraits/gala-ian-san-martin.webp"
+            },
+            {
+              "id": "bryan-montalvo-celebrity-stars",
+              "name": "Bryan Montalvo",
+              "details": "Celebrity Stars",
+              "image": "/awards/vote-portraits/gala-bryan.webp"
+            },
+            {
+              "id": "marcos-turn-it-up",
+              "name": "Marcos",
+              "details": "Turn It Up",
+              "image": "/awards/vote-portraits/gala-marcos.webp"
+            },
+            {
+              "id": "heidi-cum-project-runway",
+              "name": "Heidi Cum",
+              "details": "Project Runway",
+              "image": "/awards/vote-portraits/gala-heidi.webp"
+            }
+          ]
+        },
+        {
           "id": "mejor-drag-virtual",
           "name": "Mejor Drag Virtual",
           "description": "",
@@ -1081,49 +1124,6 @@
               "id": "gleam-radianthe",
               "name": "Gleam Radianthe",
               "details": ""
-            }
-          ]
-        },
-        {
-          "id": "mejor-presentacion-jurado",
-          "name": "Mejor Presentación/Jurado",
-          "description": "",
-          "nominees": [
-            {
-              "id": "dua-lingo-showdown-ii",
-              "name": "Dua Lingo",
-              "details": "Showdown II",
-              "image": "/awards/vote-portraits/gala-dua-lingo.webp"
-            },
-            {
-              "id": "isabel-tos-all-stars-2",
-              "name": "Isabel",
-              "details": "TOS All Stars 2",
-              "image": "/awards/vote-portraits/gala-isabel-vilches.webp"
-            },
-            {
-              "id": "ian-esteban-global-war",
-              "name": "Ian San Martin",
-              "details": "Global War",
-              "image": "/awards/vote-portraits/gala-ian-san-martin.webp"
-            },
-            {
-              "id": "bryan-montalvo-celebrity-stars",
-              "name": "Bryan Montalvo",
-              "details": "Celebrity Stars",
-              "image": "/awards/vote-portraits/gala-bryan.webp"
-            },
-            {
-              "id": "marcos-turn-it-up",
-              "name": "Marcos",
-              "details": "Turn It Up",
-              "image": "/awards/vote-portraits/gala-marcos.webp"
-            },
-            {
-              "id": "heidi-cum-project-runway",
-              "name": "Heidi Cum",
-              "details": "Project Runway",
-              "image": "/awards/vote-portraits/gala-heidi.webp"
             }
           ]
         },
