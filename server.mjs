@@ -914,10 +914,10 @@ const server = http.createServer(async (req, res) => {
     const soloFile=/^showdown\/solo(?:\/|$)/i.test(path.relative(publicDir,filename).replace(/\\/g,'/'));if(soloFile){const player=await getSession(req);if(!player||!await progression.canPlay(player.id,'showdown'))fail(403,'Inicia sesión y compra Showdown para abrir la simulación.');res.setHeader('Cache-Control','private, no-store');res.setHeader('Vary','Cookie');}
     // Check the resolved filename, including encoded Windows separators and case aliases.
     const arcadePath=path.relative(publicDir,filename).replace(/\\/g,'/');
-    const privateVotingArt=/^awards\/(?:vote-portraits\/\d+|voting-(?:logo|stage|trophy))\.webp$/i.test(arcadePath);
+    const privateVotingArt=/^awards\/(?:vote-portraits\/(?:\d+|gala-[a-z0-9-]+)|voting-(?:logo|stage|trophy))\.webp$/i.test(arcadePath);
     const privateAwardsArt=/^awards\/edition-3-(?:logo|poster|stage|(?:poop-)?trophy)\.(?:webp|png)$/i.test(arcadePath);
     if(privateVotingArt||privateAwardsArt){
-      res.setHeader('Cache-Control','private, no-store');
+      res.setHeader('Cache-Control',privateVotingArt?'private, max-age=120, must-revalidate':'private, no-store');
       res.setHeader('Vary','Cookie');
       const viewer=await getSession(req);
       if(privateVotingArt&&!viewer)fail(401,'Inicia sesión para acceder a las nominaciones.');
@@ -945,7 +945,7 @@ const server = http.createServer(async (req, res) => {
     const fileStat = fs.statSync(filename), size = fileStat.size;
     const headers = {
       'Content-Type': mimeTypes[path.extname(filename).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': arcadeFile||soloFile||privateAwardsArt||privateVotingArt?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
+      'Cache-Control': privateVotingArt?'private, max-age=120, must-revalidate':arcadeFile||soloFile||privateAwardsArt?'private, no-store':(/\.(html|mjs|js|css|json|webmanifest)$/).test(filename) || path.basename(filename) === 'favicon.ico' ? 'no-cache' : 'public, max-age=86400',
       'Accept-Ranges': 'bytes',
       'Content-Length': size
     };
