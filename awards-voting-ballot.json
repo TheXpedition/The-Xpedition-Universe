@@ -380,6 +380,49 @@
           ]
         },
         {
+          "id": "mejor-evolucion",
+          "name": "Mejor Evolución",
+          "description": "",
+          "nominees": [
+            {
+              "id": "ivy-pierce-the-traitor-2",
+              "name": "Ivy Pierce",
+              "details": "The Traitor 2",
+              "image": "/awards/vote-portraits/27.webp"
+            },
+            {
+              "id": "vita-the-traitor-2",
+              "name": "Vita",
+              "details": "The Traitor 2",
+              "image": "/awards/vote-portraits/33.webp"
+            },
+            {
+              "id": "doppel-camper-the-traitor-2",
+              "name": "Doppel Camper",
+              "details": "The Traitor 2",
+              "image": "/awards/vote-portraits/gala-doppel.webp"
+            },
+            {
+              "id": "marianito-moya-showdown-2",
+              "name": "Marianito Moya",
+              "details": "Showdown 2",
+              "image": "/awards/vote-portraits/gala-marianito.webp"
+            },
+            {
+              "id": "marcos-jc-showdown-2",
+              "name": "Marcos JC",
+              "details": "Showdown 2",
+              "image": "/awards/vote-portraits/gala-marcos.webp"
+            },
+            {
+              "id": "christopher-gonzalez-showdown-2",
+              "name": "Christopher Gonzalez",
+              "details": "Showdown 2",
+              "image": "/awards/vote-portraits/gala-christopher.webp"
+            }
+          ]
+        },
+        {
           "id": "participante-mas-gracioso",
           "name": "Participante más Gracioso",
           "description": "",
@@ -423,45 +466,45 @@
           ]
         },
         {
-          "id": "mejor-evolucion",
-          "name": "Mejor Evolución",
+          "id": "participante-mas-colapsado",
+          "name": "Participante más Colapsado",
           "description": "",
           "nominees": [
             {
-              "id": "ivy-pierce-the-traitor-2",
-              "name": "Ivy Pierce",
-              "details": "The Traitor 2",
-              "image": "/awards/vote-portraits/27.webp"
+              "id": "lucas-mendez",
+              "name": "Lucas Mendez",
+              "details": "",
+              "image": "/awards/vote-portraits/37.webp"
             },
             {
-              "id": "vita-the-traitor-2",
-              "name": "Vita",
-              "details": "The Traitor 2",
-              "image": "/awards/vote-portraits/33.webp"
+              "id": "leandro-lynx",
+              "name": "Leandro Lynx",
+              "details": "",
+              "image": "/awards/vote-portraits/28.webp"
             },
             {
-              "id": "doppel-camper-the-traitor-2",
+              "id": "doppel-camper",
               "name": "Doppel Camper",
-              "details": "The Traitor 2",
+              "details": "",
               "image": "/awards/vote-portraits/gala-doppel.webp"
             },
             {
-              "id": "marianito-moya-showdown-2",
-              "name": "Marianito Moya",
-              "details": "Showdown 2",
-              "image": "/awards/vote-portraits/gala-marianito.webp"
+              "id": "luciano-funes",
+              "name": "Luciano Funes",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-luciano.webp"
             },
             {
-              "id": "marcos-jc-showdown-2",
-              "name": "Marcos JC",
-              "details": "Showdown 2",
-              "image": "/awards/vote-portraits/gala-marcos.webp"
+              "id": "catalina-diaz",
+              "name": "Catalina Diaz",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-colapsada-catalina-diaz.webp"
             },
             {
-              "id": "christopher-gonzalez-showdown-2",
-              "name": "Christopher Gonzalez",
-              "details": "Showdown 2",
-              "image": "/awards/vote-portraits/gala-christopher.webp"
+              "id": "oscar-barajas",
+              "name": "Oscar Barajas",
+              "details": "",
+              "image": "/awards/vote-portraits/gala-colapsado-oscar-barajas.webp"
             }
           ]
         },
@@ -890,10 +933,10 @@
               "image": "/awards/vote-portraits/27.webp"
             },
             {
-              "id": "luciano-funes-un-camp-ahi",
-              "name": "Luciano Funes",
-              "details": "Un Camp Ahí",
-              "image": "/awards/vote-portraits/gala-luciano.webp"
+              "id": "ivan-serrano-celebrity-nights",
+              "name": "Ivan Serrano",
+              "details": "Celebrity Nights",
+              "image": "/awards/vote-portraits/gala-social-ivan.webp"
             },
             {
               "id": "mary-hao-isla-de-naufragos",
