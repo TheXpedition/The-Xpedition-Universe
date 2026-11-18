@@ -170,10 +170,10 @@
               "image": "/awards/vote-portraits/gala-paula-garcia.webp"
             },
             {
-              "id": "doppel-camper",
-              "name": "Doppel Camper",
+              "id": "bodega-bodeguita",
+              "name": "Bodega Bodeguita",
               "details": "",
-              "image": "/awards/vote-portraits/gala-doppel.webp"
+              "image": "/awards/vote-portraits/gala-bodega-bodeguita.webp"
             }
           ]
         },
@@ -576,54 +576,6 @@
               ]
             }
           ]
-        },
-        {
-          "id": "mejor-momento",
-          "name": "Mejor Momento",
-          "description": "",
-          "nominees": [
-            {
-              "id": "andromeda-andromeda-traiciona-a-peggy-en-the-traitor-2",
-              "name": "Andromeda",
-              "details": "Andromeda traiciona a Peggy en The Traitor 2",
-              "image": "/awards/vote-portraits/24.webp"
-            },
-            {
-              "id": "alice-kim-camila-renzo-lalamila",
-              "name": "Alice, Kim Camila, Renzo, Lalamila",
-              "details": "Alice, Kim Camila, Renzo, Pier y Lalamila enloquecen pensando que hay un infiltrado entre los traidores y se empiezan a eliminar.",
-              "people": [
-                {
-                  "name": "Alice",
-                  "image": "/awards/vote-portraits/26.webp"
-                },
-                {
-                  "name": "Kim Camila",
-                  "image": "/awards/vote-portraits/36.webp"
-                },
-                {
-                  "name": "Renzo",
-                  "image": "/awards/vote-portraits/gala-renzo.webp"
-                },
-                {
-                  "name": "Lalamila",
-                  "image": "/awards/vote-portraits/4.webp"
-                }
-              ]
-            },
-            {
-              "id": "leandro",
-              "name": "Leandro",
-              "details": "Leandro logra pasar de los últimos lugares al segundo con más estrellas y clasifica a la final de Showdown 2.",
-              "image": "/awards/vote-portraits/28.webp"
-            },
-            {
-              "id": "ari-santana",
-              "name": "Ari Santana",
-              "details": "Ari Santana queda fuera de la Final del primer reto en Apocalypse II antes de haber comenzado.",
-              "image": "/awards/vote-portraits/25.webp"
-            }
-          ]
         }
       ]
     },
@@ -833,10 +785,10 @@
               "image": "/awards/vote-portraits/gala-social-ivan.webp"
             },
             {
-              "id": "dani-jara-grupo-final",
-              "name": "Dani Jara",
+              "id": "catalina-grupo-final",
+              "name": "Catalina",
               "details": "Grupo Final",
-              "image": "/awards/vote-portraits/gala-social-dani.webp"
+              "image": "/awards/vote-portraits/gala-catalina.webp"
             },
             {
               "id": "sal-lua-grupo-corazon",
@@ -861,12 +813,13 @@
               "id": "greg-rep-the-idol",
               "name": "Greg Rep",
               "details": "The Idol",
-              "image": "/awards/vote-portraits/15.webp"
+              "image": "/awards/vote-portraits/gala-greg-rep.webp"
             },
             {
               "id": "yeiner-mena-el-bucle",
               "name": "Yeiner Mena",
-              "details": "El Bucle"
+              "details": "El Bucle",
+              "image": "/awards/vote-portraits/gala-yeiner-mena.webp"
             },
             {
               "id": "renzo-rodriguez-isla-de-naufragos",
@@ -988,7 +941,8 @@
             {
               "id": "ian-san-martin",
               "name": "Ian San Martin",
-              "details": ""
+              "details": "",
+              "image": "/awards/vote-portraits/gala-ian-san-martin.webp"
             },
             {
               "id": "eli-navarrete",
@@ -1106,9 +1060,9 @@
             },
             {
               "id": "ian-esteban-global-war",
-              "name": "Ian Esteban",
+              "name": "Ian San Martin",
               "details": "Global War",
-              "image": "/personajes/ianesteban.png"
+              "image": "/awards/vote-portraits/gala-ian-san-martin.webp"
             },
             {
               "id": "bryan-montalvo-celebrity-stars",
@@ -1157,7 +1111,8 @@
                   "image": "/personajes/pier.png"
                 },
                 {
-                  "name": "Matías Aliaga"
+                  "name": "Matías Aliaga",
+                  "image": "/awards/vote-portraits/gala-matias-aliaga.webp"
                 }
               ]
             },
@@ -1170,19 +1125,20 @@
             {
               "id": "el-bucle",
               "name": "El Bucle",
-              "details": "Yeiner Mena"
+              "details": "Yeiner Mena",
+              "image": "/awards/vote-portraits/gala-yeiner-mena.webp"
             },
             {
               "id": "el-archipielago",
               "name": "El Archipiélago",
               "details": "Marianito Moya",
-              "image": "/personajes/marianito.png"
+              "image": "/awards/vote-portraits/gala-marianito.webp"
             }
           ]
         },
         {
           "id": "peor-participacion-en-competencia-externa",
-          "name": "Peor Participación en Competencia Externa",
+          "name": "Peor Participación Externa",
           "description": "",
           "nominees": [
             {
@@ -1213,7 +1169,7 @@
               "id": "isabel-vilches",
               "name": "Isabel Vilches",
               "details": "Subele Ya!",
-              "image": "/personajes/isabel.png"
+              "image": "/awards/vote-portraits/gala-isabel-vilches.webp"
             },
             {
               "id": "okami-yami",

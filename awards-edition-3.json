@@ -577,43 +577,6 @@
               "description": "Showdown 2"
             }
           ]
-        },
-        {
-          "id": "personalidad-6",
-          "name": "Mejor Momento",
-          "nominees": [
-            {
-              "title": "Andromeda",
-              "people": [
-                "Andromeda"
-              ],
-              "description": "Andromeda traiciona a Peggy en The Traitor 2"
-            },
-            {
-              "title": "Alice, Kim Camila, Renzo, Lalamila",
-              "people": [
-                "Alice",
-                "Kim Camila",
-                "Renzo",
-                "Lalamila"
-              ],
-              "description": "Alice, Kim Camila, Renzo, Pier y Lalamila enloquecen pensando que hay un infiltrado entre los traidores y se empiezan a eliminar."
-            },
-            {
-              "title": "Leandro",
-              "people": [
-                "Leandro"
-              ],
-              "description": "Leandro logra pasar de los últimos lugares al segundo con más estrellas y clasifica a la final de Showdown 2."
-            },
-            {
-              "title": "Ari Santana",
-              "people": [
-                "Ari Santana"
-              ],
-              "description": "Ari Santana queda fuera de la Final del primer reto en Apocalypse II antes de haber comenzado."
-            }
-          ]
         }
       ]
     },
@@ -738,9 +701,9 @@
               "description": "TOS All Stars 2"
             },
             {
-              "title": "Ian Esteban",
+              "title": "Ian San Martin",
               "people": [
-                "Ian Esteban"
+                "Ian San Martin"
               ],
               "description": "Global War"
             },
@@ -820,7 +783,7 @@
         },
         {
           "id": "peor-participacion-en-competencia-externa",
-          "name": "Peor Participación en Competencia Externa",
+          "name": "Peor Participación Externa",
           "nominees": [
             {
               "title": "Marianito Moya",
