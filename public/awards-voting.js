@@ -211,8 +211,6 @@ async function confirmAwardsVote(button){
 
 document.addEventListener('click',event=>{
  if(state.route!=='votacion')return;
- const summary=event.target.closest('.vote-group > summary');
- if(summary?.parentElement?.open){event.preventDefault();return;}
  const menu=$('.vote-menu-toggle');
  if(menu?.getAttribute('aria-expanded')==='true'&&!event.target.closest('.vote-sidebar,dialog'))toggleVotingMenu(menu,false);
  const button=event.target.closest('[data-vote],[data-vote-nominee]');
