@@ -967,6 +967,16 @@
               "id": "total-drama-second-chance-chris-mclean-potenza",
               "name": "Total Drama Second Chance",
               "details": "Chris Mclean Potenza"
+            },
+            {
+              "id": "survivor-epxress-no-tan-express-christian-galindo",
+              "name": "Survivor Epxress No Tan Express",
+              "details": "Christian Galindo"
+            },
+            {
+              "id": "juego-de-villanos-jonathan-pl",
+              "name": "Juego de Villanos",
+              "details": "Jonathan PL"
             }
           ]
         },
@@ -1005,6 +1015,16 @@
             {
               "id": "alondra-salazar",
               "name": "Alondra Salazar",
+              "details": ""
+            },
+            {
+              "id": "christina-rg",
+              "name": "Christina RG",
+              "details": ""
+            },
+            {
+              "id": "itzelth-hurtado",
+              "name": "Itzelth Hurtado",
               "details": ""
             }
           ]
