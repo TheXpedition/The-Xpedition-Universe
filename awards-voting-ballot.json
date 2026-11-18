@@ -72,10 +72,10 @@
               "image": "/awards/vote-portraits/28.webp"
             },
             {
-              "id": "ignacio-vila",
-              "name": "Ignacio Vila",
+              "id": "esteban-cooper",
+              "name": "Esteban Cooper",
               "details": "",
-              "image": "/awards/vote-portraits/gala-ignacio.webp"
+              "image": "/personajes/esteban.png"
             },
             {
               "id": "alexandro-martin",
@@ -174,6 +174,49 @@
               "name": "Bodega Bodeguita",
               "details": "",
               "image": "/awards/vote-portraits/gala-bodega-bodeguita.webp"
+            }
+          ]
+        },
+        {
+          "id": "mejor-host",
+          "name": "Mejor Host",
+          "description": "",
+          "nominees": [
+            {
+              "id": "maria-villegas",
+              "name": "Maria Villegas",
+              "image": "/personajes/maria.png",
+              "details": ""
+            },
+            {
+              "id": "ignacio-vila",
+              "name": "Ignacio Vila",
+              "image": "/awards/vote-portraits/gala-ignacio.webp",
+              "details": ""
+            },
+            {
+              "id": "sal-lua",
+              "name": "Sal Lua",
+              "image": "/awards/vote-portraits/34.webp",
+              "details": ""
+            },
+            {
+              "id": "renzo-rodriguez",
+              "name": "Renzo Rodriguez",
+              "image": "/awards/vote-portraits/gala-renzo.webp",
+              "details": ""
+            },
+            {
+              "id": "chris-mclean-potenza",
+              "name": "Chris Mclean Potenza",
+              "image": "/awards/vote-portraits/gala-chris-mclean-potenza.webp",
+              "details": ""
+            },
+            {
+              "id": "alejandro-lukini",
+              "name": "Alejandro Lukini",
+              "image": "/awards/vote-portraits/gala-alejandro-lukini.webp",
+              "details": ""
             }
           ]
         },
@@ -552,7 +595,7 @@
                 },
                 {
                   "name": "Pier",
-                  "image": "/personajes/pier.png"
+                  "image": "/awards/vote-portraits/gala-pier.webp"
                 }
               ]
             },
@@ -1050,13 +1093,13 @@
               "id": "dua-lingo-showdown-ii",
               "name": "Dua Lingo",
               "details": "Showdown II",
-              "image": "/personajes/dualingo.png"
+              "image": "/awards/vote-portraits/gala-dua-lingo.webp"
             },
             {
               "id": "isabel-tos-all-stars-2",
               "name": "Isabel",
               "details": "TOS All Stars 2",
-              "image": "/awards/vote-portraits/8.webp"
+              "image": "/awards/vote-portraits/gala-isabel-vilches.webp"
             },
             {
               "id": "ian-esteban-global-war",
@@ -1108,7 +1151,7 @@
               "people": [
                 {
                   "name": "Pier",
-                  "image": "/personajes/pier.png"
+                  "image": "/awards/vote-portraits/gala-pier.webp"
                 },
                 {
                   "name": "Matías Aliaga",

@@ -66,6 +66,13 @@
                 "Leandro"
               ],
               "description": "Showdown 2"
+            },
+            {
+              "title": "Esteban Cooper",
+              "people": [
+                "Esteban Cooper"
+              ],
+              "description": ""
             }
           ]
         },
@@ -100,6 +107,54 @@
                 "Ivy"
               ],
               "description": "Showdown 2"
+            }
+          ]
+        },
+        {
+          "id": "mejor-host",
+          "name": "Mejor Host",
+          "nominees": [
+            {
+              "title": "Maria Villegas",
+              "people": [
+                "Maria Villegas"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Ignacio Vila",
+              "people": [
+                "Ignacio Vila"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Sal Lua",
+              "people": [
+                "Sal Lua"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Renzo Rodriguez",
+              "people": [
+                "Renzo Rodriguez"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Chris Mclean Potenza",
+              "people": [
+                "Chris Mclean Potenza"
+              ],
+              "description": ""
+            },
+            {
+              "title": "Alejandro Lukini",
+              "people": [
+                "Alejandro Lukini"
+              ],
+              "description": ""
             }
           ]
         },
