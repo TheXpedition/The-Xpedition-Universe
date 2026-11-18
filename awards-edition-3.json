@@ -728,6 +728,13 @@
                 "Lucas Mendez"
               ],
               "description": "Music Chart II"
+            },
+            {
+              "title": "Chris Mclean Potenza",
+              "people": [
+                "Chris Mclean Potenza"
+              ],
+              "description": "Total Drama Second Chance"
             }
           ],
           "production": false
@@ -777,6 +784,20 @@
                 "Esteban"
               ],
               "description": "TOS All Stars 2"
+            },
+            {
+              "title": "Alyssa Miller",
+              "people": [
+                "Alyssa Miller"
+              ],
+              "description": "Global War"
+            },
+            {
+              "title": "Brian RM",
+              "people": [
+                "Brian RM"
+              ],
+              "description": "Turn It Up"
             }
           ],
           "production": false
