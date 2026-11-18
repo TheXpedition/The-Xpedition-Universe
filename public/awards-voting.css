@@ -649,3 +649,41 @@ body[data-view="votacion"]>.shell:has(.vote-page) .site-footer{display:none}
 @media (min-width:831px) and (min-height:801px){
  body[data-view="votacion"]>.shell:has(.vote-page) #main{padding-top:16px}
 }
+
+/* Ten nominees use a compact two-row ballot on wide desktop, keeping the
+   original voting cards and navigation within the existing viewport. */
+@media (min-width:1181px) and (min-height:601px){
+ .vote-page[data-nominee-count="10"] .vote-nominees{
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:clamp(8px,.85vw,14px);padding:clamp(8px,1vw,16px);
+ }
+ .vote-page[data-nominee-count="10"] .vote-card-text{
+  left:10px;top:22%;max-width:62%;
+ }
+ .vote-page[data-nominee-count="10"] .vote-card-text strong{
+  font-size:clamp(13px,1.05vw,18px);
+ }
+ .vote-page[data-nominee-count="10"] .vote-card-action{
+  left:10px;bottom:12%;height:31px;min-height:31px;
+  font-size:11px;padding:5px 10px;
+ }
+ .vote-page[data-nominee-count="10"] .vote-card:has(.vote-card-text small) .vote-card-text{
+  top:13%;max-width:63%;
+ }
+}
+@media (min-width:831px) and (max-width:1180px) and (min-height:601px){
+ .vote-page[data-nominee-count="10"] .vote-nominees{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  gap:8px;padding:9px;
+ }
+ .vote-page[data-nominee-count="10"] .vote-card-text{
+  top:20%;left:9px;max-width:62%;
+ }
+ .vote-page[data-nominee-count="10"] .vote-card-text strong{font-size:clamp(12px,1.32vw,17px)}
+ .vote-page[data-nominee-count="10"] .vote-card-action{
+  left:9px;bottom:8%;height:28px;min-height:28px;
+  font-size:10px;padding:5px 8px;
+ }
+}
