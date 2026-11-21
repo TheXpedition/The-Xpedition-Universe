@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS moderation_actions(id TEXT PRIMARY KEY,moderator TEXT
 CREATE INDEX IF NOT EXISTS moderation_actions_created ON moderation_actions(created);
 CREATE TABLE IF NOT EXISTS award_edition_access(edition TEXT PRIMARY KEY,public_enabled INTEGER NOT NULL CHECK(public_enabled IN (0,1)),updated_by TEXT NOT NULL REFERENCES users(id),updated INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS award_votes(edition INTEGER NOT NULL,category TEXT NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,nominee TEXT NOT NULL,updated INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,category));
-CREATE TABLE IF NOT EXISTS award_vote_entries(edition INTEGER NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,request_id TEXT NOT NULL,category TEXT NOT NULL,nominee TEXT NOT NULL,votes INTEGER NOT NULL DEFAULT 1 CHECK(votes BETWEEN 1 AND 10000 OR (voter_id IN (${staffVoterIdsSQL}) AND votes BETWEEN 1 AND 100000)),created INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,request_id));
+CREATE TABLE IF NOT EXISTS award_vote_entries(edition INTEGER NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,request_id TEXT NOT NULL,category TEXT NOT NULL,nominee TEXT NOT NULL,votes INTEGER NOT NULL DEFAULT 1 CHECK(votes BETWEEN 1 AND 10000 OR (voter_id IN (${staffVoterIdsSQL}) AND votes BETWEEN 1 AND 200000)),created INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,request_id));
 CREATE INDEX IF NOT EXISTS award_vote_tally ON award_vote_entries(edition,category,nominee);
 CREATE INDEX IF NOT EXISTS award_vote_person ON award_vote_entries(edition,voter_id,category,nominee);
-CREATE TABLE IF NOT EXISTS award_vote_user_days(edition INTEGER NOT NULL,day TEXT NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,count INTEGER NOT NULL DEFAULT 0 CHECK(count BETWEEN 0 AND 100000 OR (voter_id IN (${staffVoterIdsSQL}) AND count BETWEEN 0 AND 400000)),PRIMARY KEY(edition,day,voter_id));
+CREATE TABLE IF NOT EXISTS award_vote_user_days(edition INTEGER NOT NULL,day TEXT NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,count INTEGER NOT NULL DEFAULT 0 CHECK(count BETWEEN 0 AND 100000 OR (voter_id IN (${staffVoterIdsSQL}) AND count BETWEEN 0 AND 1000000)),PRIMARY KEY(edition,day,voter_id));
 CREATE TABLE IF NOT EXISTS award_vote_choices(edition INTEGER NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,category TEXT NOT NULL,nominee TEXT NOT NULL,created INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,category,nominee));
 CREATE INDEX IF NOT EXISTS award_vote_entries_daily ON award_vote_entries(edition,voter_id,created);
 CREATE TABLE IF NOT EXISTS award_vote_days(edition INTEGER NOT NULL,day TEXT NOT NULL,count INTEGER NOT NULL CHECK(count BETWEEN 0 AND 10000),PRIMARY KEY(edition,day));
@@ -134,15 +134,15 @@ export async function openDatabase(dataDir,{initialize=true}={}) {
     // One-time migration for existing local databases; preserve votes and daily history.
     const existingEntries=database.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='award_vote_entries'").get()?.sql||'';
     const existingDays=database.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='award_vote_user_days'").get()?.sql||'';
-    if(!existingEntries.includes('voter_id IN')||!existingDays.includes('voter_id IN')){
+    if(!existingEntries.includes('votes BETWEEN 1 AND 200000')||!existingDays.includes('count BETWEEN 0 AND 1000000')){
       database.exec('BEGIN IMMEDIATE');
       try{
-        if(!existingEntries.includes('voter_id IN')){
-          database.exec('CREATE TABLE award_vote_entries_new(edition INTEGER NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,request_id TEXT NOT NULL,category TEXT NOT NULL,nominee TEXT NOT NULL,votes INTEGER NOT NULL DEFAULT 1 CHECK(votes BETWEEN 1 AND 10000 OR (voter_id IN ('+staffVoterIdsSQL+') AND votes BETWEEN 1 AND 100000)),created INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,request_id))');
+        if(!existingEntries.includes('votes BETWEEN 1 AND 200000')){
+          database.exec('CREATE TABLE award_vote_entries_new(edition INTEGER NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,request_id TEXT NOT NULL,category TEXT NOT NULL,nominee TEXT NOT NULL,votes INTEGER NOT NULL DEFAULT 1 CHECK(votes BETWEEN 1 AND 10000 OR (voter_id IN ('+staffVoterIdsSQL+') AND votes BETWEEN 1 AND 200000)),created INTEGER NOT NULL,PRIMARY KEY(edition,voter_id,request_id))');
           database.exec('INSERT INTO award_vote_entries_new SELECT edition,voter_id,request_id,category,nominee,votes,created FROM award_vote_entries; DROP TABLE award_vote_entries; ALTER TABLE award_vote_entries_new RENAME TO award_vote_entries; CREATE INDEX award_vote_tally ON award_vote_entries(edition,category,nominee); CREATE INDEX award_vote_person ON award_vote_entries(edition,voter_id,category,nominee); CREATE INDEX award_vote_entries_daily ON award_vote_entries(edition,voter_id,created)');
         }
-        if(!existingDays.includes('voter_id IN')){
-          database.exec('CREATE TABLE award_vote_user_days_new(edition INTEGER NOT NULL,day TEXT NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,count INTEGER NOT NULL DEFAULT 0 CHECK(count BETWEEN 0 AND 100000 OR (voter_id IN ('+staffVoterIdsSQL+') AND count BETWEEN 0 AND 400000)),PRIMARY KEY(edition,day,voter_id))');
+        if(!existingDays.includes('count BETWEEN 0 AND 1000000')){
+          database.exec('CREATE TABLE award_vote_user_days_new(edition INTEGER NOT NULL,day TEXT NOT NULL,voter_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,count INTEGER NOT NULL DEFAULT 0 CHECK(count BETWEEN 0 AND 100000 OR (voter_id IN ('+staffVoterIdsSQL+') AND count BETWEEN 0 AND 1000000)),PRIMARY KEY(edition,day,voter_id))');
           database.exec('INSERT INTO award_vote_user_days_new SELECT edition,day,voter_id,count FROM award_vote_user_days; DROP TABLE award_vote_user_days; ALTER TABLE award_vote_user_days_new RENAME TO award_vote_user_days');
         }
         database.exec('COMMIT');

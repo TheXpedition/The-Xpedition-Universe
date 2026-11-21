@@ -38,7 +38,8 @@ test('voting: 100k daily per account, 10k per nominee and 2 choices per category
  }finally{await db.close();}
 });
 
-test('staff-only 400k/day; 100k/person across categories and shared nominees',async()=>{
+
+test('Staff alone: 1m per day, 200k per person and unlimited nominees per category',async()=>{
  const db=await openDatabase(await mkdtemp(path.join(tmpdir(),'xp-awards-staff-')));
  const staff=['4cc31ade-086c-48b2-b77e-27240358e425','92354719-8816-4e25-9199-0dc9a99f7da1'];
  const normal='623c6648-b88a-4eec-be92-09c6d9487442';
@@ -51,29 +52,46 @@ test('staff-only 400k/day; 100k/person across categories and shared nominees',as
  const quota=async id=>(await voting.vote({method:'GET'},{},{id})).quota;
  try{
   for(const [i,id] of [...staff,normal].entries())await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,'Test'+i,'quota-'+i,'quota-'+i+'@example.invalid','Dani',0);
-  for(const id of staff){assert.equal((await quota(id)).dailyLimit,400000);assert.equal((await quota(id)).nomineeDailyLimit,100000);}
+  for(const id of staff){
+   assert.equal((await quota(id)).dailyLimit,1000000);
+   assert.equal((await quota(id)).nomineeDailyLimit,200000);
+   assert.equal((await quota(id)).categoryChoiceLimit,null);
+   assert.equal((await quota(id)).remaining,1000000);
+  }
   assert.equal((await quota(normal)).dailyLimit,100000);
   assert.equal((await quota(normal)).nomineeDailyLimit,10000);
-  const fan=cat('fan-favorite'),comp=cat('mejor-competidor'),villain=cat('mejor-villano'),host=cat('mejor-host');
+  assert.equal((await quota(normal)).categoryChoiceLimit,2);
+
+  const fan=cat('fan-favorite'),comp=cat('mejor-competidor'),villain=cat('mejor-villano'),host=cat('mejor-host'),poop=cat('poop-of-the-year');
   const ivy=nom(fan,'Ivy Pierce'),requestId=randomUUID();
-  await send(staff[0],fan,ivy,100000,requestId);
-  await send(staff[0],fan,ivy,100000,requestId);
-  assert.equal((await quota(staff[0])).remaining,300000);
-  assert.equal((await quota(staff[0])).spentByNominee[comp.id][nom(comp,'Ivy Pierce').id],100000);
+  await send(staff[0],fan,ivy,200000,requestId);
+  await send(staff[0],fan,ivy,200000,requestId); // same request cannot double-charge
+  assert.equal((await quota(staff[0])).remaining,800000);
+  assert.equal((await quota(staff[0])).spentByNominee[comp.id][nom(comp,'Ivy Pierce').id],200000);
   await assert.rejects(send(staff[0],comp,nom(comp,'Ivy Pierce'),1),{status:409});
-  await send(staff[0],villain,nom(villain,'Lucas Mendez'),100000);
-  await send(staff[0],comp,nom(comp,'Alice Torrico'),100000);
-  await send(staff[0],host,nom(host,'Maria Villegas'),100000);
+  await send(staff[0],villain,nom(villain,'Lucas Mendez'),200000);
+  await send(staff[0],comp,nom(comp,'Alice Torrico'),200000);
+  await send(staff[0],host,nom(host,'Maria Villegas'),200000);
+  await send(staff[0],poop,nom(poop,'Eris Midnight'),200000);
   assert.equal((await quota(staff[0])).remaining,0);
-  await assert.rejects(send(staff[0],villain,nom(villain,'Carlos Harrington'),1),{status:429});
+  await assert.rejects(send(staff[0],host,nom(host,'Ignacio Vila'),1),{status:429});
+
+  // Staff can support every nominee in the same category.
+  for(const nominee of fan.nominees)await send(staff[1],fan,nominee,1);
+  assert.equal((await quota(staff[1])).selected[fan.id].length,fan.nominees.length);
+  const rivals=cat('rivalidad-de-la-temporada'),funny=cat('participante-mas-gracioso');
+  await send(staff[1],rivals,nom(rivals,'Guillermo vs Roger'),200000);
+  await assert.rejects(send(staff[1],funny,nom(funny,'Roger Lida'),1),{status:409});
+
+  // The regular verified account retains exactly the previous restrictions.
   await assert.rejects(send(normal,fan,ivy,10001),{status:400});
-  assert.equal((await quota(normal)).remaining,100000);
-  assert.equal((await quota(staff[1])).remaining,400000);
-  const rivals=cat('rivalidad-de-la-temporada');
-  await send(staff[1],rivals,nom(rivals,'Kim Camila vs Eduard'),100000);
-  await assert.rejects(send(staff[1],cat('participante-mas-gracioso'),nom(cat('participante-mas-gracioso'),'Eduard Salerno'),1),{status:409});
+  await send(normal,fan,fan.nominees[0],1);
+  await send(normal,fan,fan.nominees[1],1);
+  await assert.rejects(send(normal,fan,fan.nominees[2],1),{status:409});
+  assert.equal((await quota(normal)).remaining,99998);
+
   time+=86400000;
-  assert.equal((await quota(staff[0])).remaining,400000);
+  assert.equal((await quota(staff[0])).remaining,1000000);
   assert.equal((await quota(normal)).remaining,100000);
  }finally{await db.close();}
 });

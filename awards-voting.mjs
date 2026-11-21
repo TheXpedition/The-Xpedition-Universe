@@ -3,12 +3,12 @@ import {isStaff} from './account-roles.mjs';
 // The limits are independent for each signed-in account and reset at midnight in Colombia.
 const standardDailyLimit=100000;
 const standardNomineeLimit=10000;
-const staffDailyLimit=400000;
-const staffNomineeLimit=100000;
+const staffDailyLimit=1000000;
+const staffNomineeLimit=200000;
 const categoryChoiceLimit=2;
 const limitsFor=voterId=>isStaff(voterId)
- ?{dailyLimit:staffDailyLimit,nomineeDailyLimit:staffNomineeLimit}
- :{dailyLimit:standardDailyLimit,nomineeDailyLimit:standardNomineeLimit};
+ ?{dailyLimit:staffDailyLimit,nomineeDailyLimit:staffNomineeLimit,categoryChoiceLimit:null}
+ :{dailyLimit:standardDailyLimit,nomineeDailyLimit:standardNomineeLimit,categoryChoiceLimit};
 // Shared nominations count toward every person's daily Staff allowance.
 // Staff limits apply across categories; regular accounts retain per-category limits.
 const groupedNominees={
@@ -120,7 +120,7 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
   ) AS recorded_votes GROUP BY category,nominee`,...params);
  }
  async function quotaFor(voterId,timestamp=now()){
-  const {dailyLimit,nomineeDailyLimit}=limitsFor(voterId);
+  const {dailyLimit,nomineeDailyLimit,categoryChoiceLimit}=limitsFor(voterId);
   const day=dayOf(timestamp),[start,end]=bounds(day);
   const [ledger,history,nominees,selections]=await Promise.all([
    db.one('SELECT count FROM award_vote_user_days WHERE edition=? AND day=? AND voter_id=?',ballot.edition,day,voterId),
@@ -166,7 +166,7 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
    return json(res,{ballot,votes,quota});
   }
   if(req.method!=='POST')fail(405,'Actualiza la página para votar.');
-  const {dailyLimit,nomineeDailyLimit}=limitsFor(user.id);
+  const {dailyLimit,nomineeDailyLimit,categoryChoiceLimit}=limitsFor(user.id);
   const input=await body(req),category=categories.get(input?.category);
   if(!category?.nominees.some(nominee=>nominee.id===input?.nominee))fail(400,'Elige un nominado de esta categoría.');
   if(typeof input.requestId!=='string'||!/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(input.requestId))fail(400,'El identificador de voto es inválido.');
@@ -188,14 +188,14 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
      const entriesToday=await db.all('SELECT category,nominee,SUM(votes) AS votes FROM award_vote_entries WHERE edition=? AND voter_id=? AND created>=? AND created<? GROUP BY category,nominee',ballot.edition,user.id,start,end);
      const used=usageByPerson(entriesToday);
      const keys=personKeys.get(category.id+'/'+input.nominee)||[];
-     if(keys.some(key=>(used.get(key)||0)>nomineeDailyLimit))fail(409,'Como Staff puedes dar hasta 100.000 votos diarios a una misma persona, sumando todas las categorías.');
+     if(keys.some(key=>(used.get(key)||0)>nomineeDailyLimit))fail(409,'Como Staff puedes dar hasta 200.000 votos diarios a una misma persona, sumando todas las categorías.');
     }else{
      const nomineeToday=await db.one('SELECT COALESCE(SUM(votes),0) AS count FROM award_vote_entries WHERE edition=? AND voter_id=? AND category=? AND nominee=? AND created>=? AND created<?',ballot.edition,user.id,category.id,input.nominee,start,end);
     if(Number(nomineeToday.count)>nomineeDailyLimit)fail(409,'Solo puedes dar un máximo de 10.000 votos al día al mismo nominado.');
     }
     const selected=await db.all('SELECT nominee FROM award_vote_choices WHERE edition=? AND voter_id=? AND category=?',ballot.edition,user.id,category.id);
     if(!selected.some(row=>row.nominee===input.nominee)){
-     if(selected.length>=categoryChoiceLimit)fail(409,'Solo puedes votar por un máximo de 2 nominados en la misma categoría.');
+     if(categoryChoiceLimit!==null&&selected.length>=categoryChoiceLimit)fail(409,'Solo puedes votar por un máximo de 2 nominados en la misma categoría.');
      await db.run('INSERT INTO award_vote_choices(edition,voter_id,category,nominee,created) VALUES(?,?,?,?,?) ON CONFLICT(edition,voter_id,category,nominee) DO NOTHING',ballot.edition,user.id,category.id,input.nominee,timestamp);
     }
    }else{
