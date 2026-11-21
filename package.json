@@ -13,7 +13,8 @@
     "start:world": "node world-server.mjs",
     "test:world": "node --test --test-concurrency=2 tests/world-auth.test.mjs tests/world-publication.test.mjs tests/world-publication-network.test.mjs tests/world-intro-ui.test.mjs tests/world-server-store.test.mjs tests/world-servers-network.test.mjs tests/world-room-paths.test.mjs tests/x-protocol-network.test.mjs tests/last-grip-flow-network.test.mjs tests/world-shop-network.test.mjs tests/world-postgres.test.mjs tests/last-grip-users-network.test.mjs tests/protocol-lifecycle.test.mjs tests/protocol-cinema.test.mjs tests/protocol-entry.test.mjs tests/protocol-history-ui.test.mjs tests/last-grip-precision.test.mjs tests/world-landscape.test.mjs tests/world-server-archive.test.mjs tests/last-grip-clinic-network.test.mjs tests/last-grip-live.test.mjs tests/bonju-chef.test.mjs tests/bonju-chef-network.test.mjs tests/world-pose-updates.test.mjs tests/world-runtime-performance.test.mjs",
     "build:chef": "node games/bonju-chef/build.mjs",
-    "check:chef": "tsc -p games/bonju-chef/tsconfig.json"
+    "check:chef": "tsc -p games/bonju-chef/tsconfig.json",
+    "postinstall": "node scripts/optimize-campria-assets.mjs"
   },
   "dependencies": {
     "@andresaya/edge-tts": "1.9.1",

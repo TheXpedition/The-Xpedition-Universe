@@ -52,10 +52,46 @@ function renderChrome(){
 const contentArt = item => item.art?.background||(item.kind==='Campria'?`${item.season} Portada.png`:`backdrops/${({antarctica:'antarctica.jpg',safari:'safari.jpg',japan:'japan.png',showdown2:'showdown.png','safari-showdown':'showdown-season-1.png','traitor-showdown':'showdown-season-2.png'})[item.id]||item.id+'.png'}`);
 const logoFor = item => item.art?.logo?.src||(item.kind==='Simulador'||item.kind==='Campria'?null:({antarctica:'transparent/antarctica.png',safari:'transparent/safari.png',japan:'transparent/japan.png',traitor:'transparent/traitor.png',traitor2:'transparent/traitor2.png',traitor3:'transparent/traitor3.png','safari-showdown':'transparent/showdown.png','traitor-showdown':'transparent/showdown2.png'})[item.id]);
 const logoFrames={antarctica:[254,432,1341,694],safari:[328,431,1268,700],japan:[262,252,1333,1097],traitor:[139,299,1508,871],traitor2:[146,297,1497,1078],traitor3:[146,297,1497,1126],showdown:[165,433,1466,658],showdown2:[66,435,1711,665]};
+// Delay SVG image downloads until each visible (or near-visible) card is needed.
+function loadDeferredBrand(svg){
+  const image=svg.querySelector('image[data-brand-src]');
+  if(!image)return;
+  image.setAttribute('href',image.getAttribute('data-brand-src'));
+  image.removeAttribute('data-brand-src');
+}
+const deferredBrandObserver=typeof IntersectionObserver==='function'
+  ?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+      if(!entry.isIntersecting)continue;
+      loadDeferredBrand(entry.target);
+      deferredBrandObserver.unobserve(entry.target);
+    }
+  },{rootMargin:'500px 250px'}):null;
+function observeDeferredBrandNodes(node){
+  if(!node||node.nodeType!==1)return;
+  const register=svg=>{
+    if(!svg.hasAttribute('data-brand-pending'))return;
+    svg.removeAttribute('data-brand-pending');
+    if(deferredBrandObserver)deferredBrandObserver.observe(svg);
+    else loadDeferredBrand(svg);
+  };
+  if(node.matches?.('svg.brand-art[data-brand-pending]'))register(node);
+  node.querySelectorAll?.('svg.brand-art[data-brand-pending]').forEach(register);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const main=document.getElementById('main');
+  if(!main)return;
+  const mutations=new MutationObserver(records=>{
+    for(const record of records)for(const node of record.addedNodes)observeDeferredBrandNodes(node);
+  });
+  mutations.observe(main,{childList:true,subtree:true});
+  observeDeferredBrandNodes(main);
+});
+
 function brandArt(item,cls='season-logo'){
   const src=logoFor(item);if(!src)return '';
-  const key=src.split('/').pop().replace('.png',''),frame=item.art?.logo?.frame||logoFrames[key]||[0,0,1800,1600];
-  return `<svg class="brand-art ${cls}" data-brand="${key}" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(item.name)}"><image href="${esc(refreshedAsset(src))}" width="${item.art?.logo?.width||1800}" height="${item.art?.logo?.height||1600}"/></svg>`;
+  const key=src.split('/').pop().replace(/\.(?:png|webp)$/i,'').replace(/-fast-2026$/,''),frame=item.art?.logo?.frame||logoFrames[key]||[0,0,1800,1600];
+  return `<svg class="brand-art ${cls}" data-brand-pending="1" data-brand="${key}" viewBox="${frame.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(item.name)}"><image data-brand-src="${esc(refreshedAsset(src))}" width="${item.art?.logo?.width||1800}" height="${item.art?.logo?.height||1600}"/></svg>`;
 }
 function contentCard(item){
   const simulator=item.kind==='Simulador',lockedAward=item.kind==='Awards'&&awardEditionLocked(item);
