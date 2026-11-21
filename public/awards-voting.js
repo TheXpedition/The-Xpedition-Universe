@@ -144,6 +144,7 @@ function updateVotingProgress(root){
 
 function openVotingInfo(mode){
  const ballot=mode==='ballot',dialog=$('#votingInfo');
+ const staffLimits=votingQuota?.dailyLimit===400000&&votingQuota?.nomineeDailyLimit===100000;
  const summary=ballot?votingBallot.sections.map(section=>{
   const entries=section.categories.flatMap(category=>{
    const voted=category.nominees.filter(nominee=>votingChoices[category.id]?.[nominee.id]);
@@ -156,11 +157,11 @@ function openVotingInfo(mode){
   <header><h2 id="vote-info-name">${ballot?'Tu papeleta':'Reglas de votación'}</h2><button type="button" class="vote-dialog-close" data-vote="close" aria-label="Cerrar">${icon('close')}</button></header>
   <div class="vote-info-body">${ballot?(summary||'<p>Aún no has registrado votos. Elige una categoría y toca un nominado para votar.</p>'):`<ul class="vote-rules-list">
    <li>Para votar debes iniciar sesión con tu cuenta de The Xpedition.</li>
-   <li>Cada cuenta dispone de 100.000 votos diarios. El saldo se restablece a medianoche, hora de Colombia.</li>
+   <li>${staffLimits?'Tu cuenta Staff dispone de 400.000 votos diarios.':'Cada cuenta dispone de 100.000 votos diarios.'} El saldo se restablece a medianoche, hora de Colombia.</li>
    <li>En cada categoría puedes elegir un máximo de 2 nominados diferentes.</li>
-   <li>Puedes asignar hasta 10.000 votos por día al mismo nominado dentro de una categoría.</li>
+   <li>${staffLimits?'Solo el Staff puede asignar hasta 100.000 votos diarios a una misma persona, sumando todas las categorías y nominaciones compartidas.':'Puedes asignar hasta 10.000 votos por día al mismo nominado dentro de una categoría.'}</li>
    <li>Reparte los votos restantes entre otros nominados y categorías; no es obligatorio gastarlos todos.</li>
-   <li>Cuando agotes tus 100.000 votos aparecerá el mensaje «Ya no tienes más votos disponibles por hoy.»</li>
+   <li>Cuando agotes tus ${staffLimits?'400.000':'100.000'} votos aparecerá el mensaje «Ya no tienes más votos disponibles por hoy.»</li>
    <li>Solo el Staff puede consultar los resultados generales.</li>
   </ul>`}</div>
  </div>`;
@@ -179,10 +180,11 @@ function openVotingNominee(nomineeId){
  const dialog=$('#votingDialog'),votes=votingChoices[category.id]?.[nominee.id]||0;
  const used=votingQuota?.spentByNominee?.[category.id]?.[nominee.id]||0;
  const remaining=votingQuota?.remaining??100000;
+ const nomineeLimit=votingQuota?.nomineeDailyLimit??10000;
  const selected=votingQuota?.selected?.[category.id]||[];
  const choicesFull=selected.length>=2&&!selected.includes(nominee.id);
- const allowance=Math.max(0,Math.min(10000-used,remaining));
- const warning=choicesFull?'Solo puedes votar por un máximo de 2 nominados en la misma categoría.':!remaining?'Ya no tienes más votos disponibles por hoy.':!allowance?'Alcanzaste el máximo de 10.000 votos diarios para este nominado.':'Selecciona cuántos votos quieres otorgar.';
+ const allowance=Math.max(0,Math.min(nomineeLimit-used,remaining));
+ const warning=choicesFull?'Solo puedes votar por un máximo de 2 nominados en la misma categoría.':!remaining?'Ya no tienes más votos disponibles por hoy.':!allowance?`Alcanzaste el máximo de ${nomineeLimit.toLocaleString('es-CO')} votos diarios para ${nomineeLimit>10000?'esta persona':'este nominado'}.`:'Selecciona cuántos votos quieres otorgar.';
  votingModal={category,nominee,requestId:null};
  dialog.classList.remove('vote-confirmed');
  dialog.innerHTML=`<div class="vote-dialog-shell"><button class="vote-dialog-close" type="button" aria-label="Cerrar" data-vote="close">${icon('close')}</button>
@@ -200,7 +202,7 @@ async function confirmAwardsVote(button){
  if(!selection||button.disabled||!state.user||votingSaving)return;
  const {category,nominee}=selection,member=state.user.id;
  const quantity=Number($('#vote-quantity',dialog)?.value);
- const allowed=Math.max(0,Math.min(votingQuota?.remaining??0,10000-(votingQuota?.spentByNominee?.[category.id]?.[nominee.id]||0)));
+ const allowed=Math.max(0,Math.min(votingQuota?.remaining??0,(votingQuota?.nomineeDailyLimit??10000)-(votingQuota?.spentByNominee?.[category.id]?.[nominee.id]||0)));
  if(!Number.isSafeInteger(quantity)||quantity<1||quantity>allowed){
   $('[data-vote-message]',dialog).textContent=allowed?'Introduce entre 1 y '+allowed.toLocaleString('es-CO')+' votos.':'Ya no tienes más votos disponibles por hoy.';
   return;
