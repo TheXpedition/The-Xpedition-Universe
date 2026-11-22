@@ -52,6 +52,7 @@ async function loadModerationBody(){
  }catch(error){if(serial===moderationView.serial)root.innerHTML=`<div class="mod-panel"><p class="form-error">${esc(error.message)}</p><button class="btn secondary" data-mod="retry">Volver a intentar</button></div>`;}
 }
 const awardsVoteNumber=new Intl.NumberFormat('es-CO');
+const awardsVotePercent=new Intl.NumberFormat('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1});
 function moderationAwardTally(results){
  const groups=results.sections;
  const category=groups.flatMap(group=>group.categories).find(entry=>entry.id===moderationView.awardsCategory)||groups[0].categories[0];
@@ -62,8 +63,9 @@ function moderationAwardTally(results){
 function moderationAwardVotes(category){
  const nominees=[...category.nominees].sort((a,b)=>b.votes-a.votes);
  if(!nominees.length)return '<p>Esta categoría todavía no tiene nominados.</p>';
- const total=nominees.reduce((sum,nominee)=>sum+nominee.votes,0);
- return `<table class="mod-award-results"><thead><tr><th scope="col">Nominado</th><th scope="col">Votos</th></tr></thead><tbody>${nominees.map(nominee=>`<tr><th scope="row">${esc(nominee.name)}${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</th><td>${awardsVoteNumber.format(nominee.votes)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total de la categoría</th><td>${awardsVoteNumber.format(total)}</td></tr></tfoot></table>`;
+ const total=nominees.reduce((sum,nominee)=>sum+Number(nominee.votes||0),0);
+ const percentage=votes=>awardsVotePercent.format(total>0?Number(votes||0)/total*100:0)+' %';
+ return `<table class="mod-award-results"><thead><tr><th scope="col">Nominado</th><th scope="col">Votos</th><th scope="col">Porcentaje</th></tr></thead><tbody>${nominees.map(nominee=>`<tr><th scope="row">${esc(nominee.name)}${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</th><td>${awardsVoteNumber.format(nominee.votes)}</td><td>${percentage(nominee.votes)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total de la categoría</th><td>${awardsVoteNumber.format(total)}</td><td>${percentage(total)}</td></tr></tfoot></table>`;
 }
 document.addEventListener('change',event=>{
  if(event.target.id!=='moderationAwardCategory'||!state.user?.staff)return;
