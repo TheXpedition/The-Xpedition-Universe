@@ -64,8 +64,8 @@ function moderationAwardVotes(category){
  const nominees=[...category.nominees].sort((a,b)=>b.votes-a.votes);
  if(!nominees.length)return '<p>Esta categoría todavía no tiene nominados.</p>';
  const total=nominees.reduce((sum,nominee)=>sum+Number(nominee.votes||0),0);
- const percentage=votes=>awardsVotePercent.format(total>0?Number(votes||0)/total*100:0)+' %';
- return `<table class="mod-award-results"><thead><tr><th scope="col">Nominado</th><th scope="col">Votos</th><th scope="col">Porcentaje</th></tr></thead><tbody>${nominees.map(nominee=>`<tr><th scope="row">${esc(nominee.name)}${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</th><td>${awardsVoteNumber.format(nominee.votes)}</td><td>${percentage(nominee.votes)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total de la categoría</th><td>${awardsVoteNumber.format(total)}</td><td>${percentage(total)}</td></tr></tfoot></table>`;
+ const percentage=(votes,reported)=>awardsVotePercent.format(reported==null?(total>0?Number(votes||0)/total*100:0):Number(reported))+' %';
+ return `<table class="mod-award-results"><thead><tr><th scope="col">Nominado</th><th scope="col">Votos</th><th scope="col">Porcentaje</th></tr></thead><tbody>${nominees.map(nominee=>`<tr><th scope="row">${esc(nominee.name)}${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</th><td>${awardsVoteNumber.format(nominee.votes)}</td><td>${percentage(nominee.votes,nominee.percent)}</td></tr>`).join('')}</tbody><tfoot><tr><th scope="row">Total de la categoría</th><td>${awardsVoteNumber.format(total)}</td><td>${percentage(total)}</td></tr></tfoot></table>`;
 }
 document.addEventListener('change',event=>{
  if(event.target.id!=='moderationAwardCategory'||!state.user?.staff)return;
