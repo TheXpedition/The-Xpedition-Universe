@@ -8,9 +8,30 @@ const dialog=el('rules'),direction=el('direction');
 el('staff-toggle').onclick=()=>{if(game?.staff)direction.showModal();};
 el('staff-close').onclick=()=>direction.close();
 const audio=el('voice');
-audio.hidden=!('speechSynthesis' in window);
-audio.onclick=()=>{const line=new SpeechSynthesisUtterance(el('welcome').textContent);line.lang='es';speechSynthesis.cancel();speechSynthesis.speak(line);};
-el('help').onclick=()=>dialog.showModal();
+const speech=[
+ '¡Bienvenidos a Hot Potato!',
+ 'Cuando empiece el conteo, pásense la papa lo más rápido que puedan. ¡Puede explotar en cualquier momento!',
+ 'Tienen tres vidas. Si la papa explota en tus manos, pierdes una. Si pierdes las tres, quedas fuera.',
+ 'El último en pie gana inmunidad. ¿Listos?'
+];
+let line=-1,manualLine=0,introId;
+function displaySpeech(){
+ if(game?.phase!=='intro')return;
+ if(introId!==game.id){introId=game.id;manualLine=0;line=-1;}
+ const remaining=game.until-(Date.now()+offset);
+ const automatic=Math.max(0,Math.min(speech.length-1,speech.length-Math.ceil(remaining/5000)));
+ const current=Math.max(manualLine,automatic);
+ if(current===line)return;
+ line=current;
+ const message=el('welcome');
+ if(current===0){const title=document.createElement('em');title.textContent='Hot Potato';message.replaceChildren('¡Bienvenidos a ',title,'!');}
+ else message.textContent=speech[current];
+ el('next-line').hidden=current===speech.length-1;
+}
+el('next-line').onclick=()=>{manualLine=Math.min(line+1,speech.length-1);displaySpeech();};
+audio.onclick=()=>{const line=new SpeechSynthesisUtterance(speech.join(' '));line.lang='es';speechSynthesis.cancel();speechSynthesis.speak(line);};
+el('help').onclick=()=>{if(!dialog.open)dialog.showModal();};
+dialog.addEventListener('cancel',e=>{if(game?.phase==='tutorial')e.preventDefault();});
 el('close').onclick=()=>dialog.close();
 function act(action,target){
  if(!connected||pending||!game||ws.readyState!==WebSocket.OPEN)return;
@@ -46,13 +67,25 @@ function receivePass(m){
 }
 function render(){
  if(!game)return;const g=game,phase=g.phase,joined=g.players.some(p=>p.id===g.self),holding=g.holder===g.self;
- const labels={closed:'Lobby cerrado',cancelled:'Reto cancelado',lobby:'Esperando autorización de Dirección',intro:'Bonju presenta',countdown:'Prepárense',playing:holding?'¡Tienes la papa! Elige a quién pasarla':'La papa está en juego',blast:'Fin de ronda',finished:'Reto terminado'};
+ const labels={closed:'Lobby cerrado',cancelled:'Reto cancelado',lobby:'Esperando autorización de Dirección',intro:'Bonju presenta',tutorial:'Cómo jugar',countdown:'Prepárense',playing:holding?'¡Tienes la papa! Elige a quién pasarla':'La papa está en juego',blast:'Fin de ronda',finished:'Reto terminado'};
  const owner=g.players.find(p=>p.id===g.holder);
  el('phase').textContent=connected?(phase==='playing'&&!holding&&owner?owner.name+' tiene la papa':labels[phase]):'Reconectando…';
  el('mode').textContent=g.mode?(g.mode==='users'?'Solo usuarios':'Solo bots')+' · '+g.players.length+' participantes':'';
  el('game').dataset.phase=phase;
  el('round').textContent=['playing','blast'].includes(phase)?'RONDA '+g.round+' · '+g.players.filter(p=>p.lives>0).length+' EN PIE':'';
  el('bonju').hidden=phase!=='intro';
+ audio.hidden=phase!=='intro'||!('speechSynthesis' in window);
+ displaySpeech();
+ const tutorial=phase==='tutorial';
+ if(tutorial&&!dialog.dataset.automatic){
+  if(direction.open)direction.close();
+  if(!dialog.open)dialog.showModal();
+  dialog.dataset.automatic='true';dialog.scrollTop=0;
+ }else if(!tutorial&&dialog.dataset.automatic){delete dialog.dataset.automatic;dialog.close();}
+ if(phase==='countdown'&&direction.open)direction.close();
+ if(phase==='countdown'&&dialog.open)dialog.close();
+ el('help').disabled=phase==='countdown';
+ el('close').hidden=tutorial;el('rules-clock').hidden=!tutorial;
  for(const [id,c] of cards)if(!g.players.some(p=>p.id===id)){c.b.remove();cards.delete(id);}
  for(const p of g.players){
   if(!cards.has(p.id))cards.set(p.id,card(p));const {b,img,hearts,name}=cards.get(p.id);
@@ -90,7 +123,7 @@ function render(){
  if(g.staff&&['closed','finished','cancelled'].includes(phase))controls.push(['users','Abrir solo usuarios'],['bots','Llenar solo con bots']);
 
  if(g.staff&&phase==='lobby'&&g.players.length>=2)controls.push(['start','Autorizar inicio']);
- if(g.staff&&['lobby','intro','countdown','playing','blast'].includes(phase))controls.push(['cancel','Cancelar reto']);
+ if(g.staff&&['lobby','intro','tutorial','countdown','playing','blast'].includes(phase))controls.push(['cancel','Cancelar reto']);
  renderControls(el('staff-actions'),controls);
  const entry=phase==='lobby'&&g.mode==='users'&&!g.staff;
  renderControls(el('actions'),entry?[joined?['leave','Salir del reparto']:['join','Participar']]:[]);
@@ -100,9 +133,15 @@ function renderControls(actions,controls){
  if(actions.dataset.key!==key){actions.replaceChildren();for(const [action,label] of controls){const b=document.createElement('button');b.textContent=label;b.onclick=()=>act(action);actions.append(b);}actions.dataset.key=key;}
  for(const b of actions.children)b.disabled=pending||!connected;
 }
-function countdown(){if(game?.phase==='countdown')el('event').textContent=String(Math.max(1,Math.ceil((game.until-Date.now()-offset)/1000)));}
+function countdown(){
+ if(!game||!['tutorial','countdown'].includes(game.phase))return;
+ const seconds=Math.max(1,Math.ceil((game.until-Date.now()-offset)/1000));
+ const target=game.phase==='tutorial'?el('rules-clock'):el('event');
+ const value=game.phase==='tutorial'?'Empieza en '+Math.min(10,seconds)+' s':String(Math.min(5,seconds));
+ if(target.textContent!==value)target.textContent=value;
+}
 matchMedia('(max-width:600px)').addEventListener('change',render);
-setInterval(countdown,150);
+setInterval(()=>{countdown();displaySpeech();},150);
 async function connect(){
  try{
   const r=await fetch(worldApiPath('/world/bootstrap'),{cache:'no-store'});

@@ -369,3 +369,50 @@ header nav,#staff-actions {display:flex;align-items:center;gap:6px;flex-wrap:wra
 .guide li {padding-left:.2em;margin:0 0 18px;line-height:1.45}
 .guide strong {display:block;color:#ffcf83}
 .guide img {display:block;width:100%;height:auto;border-radius:9px;margin:8px 0}
+
+main[data-phase=intro] .stage {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+main[data-phase=intro] .banner,main[data-phase=intro] #cast {
+  display:none;
+}
+
+#bonju {
+  display:block;position:relative;left:auto;top:auto;transform:none;
+  width:min(100%,1500px,151svh);max-width:100%;padding:0;border:0;background:none;box-shadow:none;overflow:visible;
+}
+#bonju .intro-art {display:block;width:100%;height:auto;max-height:none;object-fit:contain;border-radius:8px}
+#bonju .dialogue {position:relative;margin:-3% 1% 0;display:flex;align-items:stretch;isolation:isolate;min-height:clamp(78px,10vw,132px)}
+.speaker-portrait {
+  width:clamp(60px,11vw,145px);flex:none;background:#d7287b;clip-path:polygon(13% 0,88% 0,100% 50%,87% 100%,13% 100%,0 50%);
+  position:relative;z-index:1;
+}
+.speaker-portrait::before {
+  content:'';position:absolute;inset:4px;clip-path:inherit;
+  background:#27141c url(art/bonju-presenta.webp) 48% 1%/490% auto no-repeat;
+}
+.speech-frame {position:relative;flex:1;align-self:stretch;background:linear-gradient(105deg,#25171b,#171215 75%,#49152b);border:3px solid #d7287b;border-radius:3px 19px 14px 3px;box-shadow:0 3px 0 #210d15;margin:12px 0 0 -14px;padding:18px clamp(32px,4vw,56px) 10px 23px}
+.speaker-name {position:absolute;top:-18px;left:12px;background:#ae115d;clip-path:polygon(0 0,93% 0,100% 50%,93% 100%,0 100%);padding:2px 32px 4px 16px;font-size:clamp(16px,2.2vw,26px);font-style:italic}
+#bonju #welcome {margin:0;color:#fff;font:italic 600 clamp(15px,1.8vw,26px)/1.25 system-ui}
+#next-line {position:absolute;bottom:0;right:2px;background:transparent;color:#fff;border:0;box-shadow:none;min-width:44px;min-height:44px;padding:4px}
+@media(max-width:600px){#bonju .dialogue{margin:6px 0 0;min-height:115px}.speech-frame{padding-right:32px}#next-line{min-width:32px}}
+
+.rules-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:-22px;background:#302017;padding:8px 0;z-index:1}
+.rules-heading h2 {margin:.3em 0}
+#rules-clock {color:#ffcf83;white-space:nowrap}
+main[data-phase=countdown] #event {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5}
+
+.briefing {display:none}
+#rules[data-automatic] {width:min(820px,94vw)}
+#rules[data-automatic] .guide,#rules[data-automatic]>p {display:none}
+#rules[data-automatic] .briefing {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.briefing figure {margin:0}
+.briefing img {width:100%;aspect-ratio:2/1;object-fit:contain;background:#1c1511;border-radius:8px}
+.briefing figcaption {line-height:1.28;font-size:.92rem}
+.briefing b {display:block;color:#ffcf83;margin:.3em 0}
+@media(max-width:600px) and (orientation:portrait) {
+ #rules[data-automatic] .briefing {grid-template-columns:1fr}
+ .briefing figure {display:grid;grid-template-columns:36% 1fr;align-items:center;gap:10px}
+}

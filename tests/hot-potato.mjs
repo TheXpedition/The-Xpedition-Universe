@@ -17,12 +17,17 @@ try{
  assert.equal(cast.length,16);assert(cast.includes('luciano')&&cast.includes('nacho'));clock+=600000;await act(one,'start');assert.equal(state().phase,'lobby');assert(one.messages.some(m=>m.type==='potato-error'&&m.message.includes('Solo Dirección')));
  losses.push({character_id:'bruno'});await act(staff,'start');assert(!state().players.some(p=>p.characterId==='bruno'));assert.equal(state().phase,'intro');
  const step=async when=>{clock=when;await act(staff,'pass','nobody',-1);};
- await step(state().deadline);await step(state().deadline);const firstBot=state().holder;assert.equal(state().deadline-clock,60000);
+ await step(state().deadline);assert.equal(state().phase,'tutorial');assert.equal(state().deadline-clock,10000);assert.equal(state().holder,null);await step(state().deadline);assert.equal(state().phase,'countdown');assert.equal(state().deadline-clock,5000);assert.equal(state().holder,null);await step(state().deadline);const firstBot=state().holder;assert.equal(state().deadline-clock,60000);
  await step(state().botAt);assert.notEqual(state().holder,firstBot);assert(state().holder.startsWith('bot-'));
  // Play through the 15-person cast and cross the half-field threshold.
  while(state().players.filter(p=>p.lives>0).length>2){
   await step(state().deadline);assert.equal(state().phase,'blast');assert.equal(state().deadline-clock,10000);
-  useMinimum=!useMinimum;await step(state().deadline);const remaining=state().players.filter(p=>p.lives>0).length;
+  const resumeAt=state().deadline,round=state().round;
+  await step(resumeAt-1);assert.equal(state().phase,'blast');assert.equal(state().holder,null);
+  useMinimum=!useMinimum;await step(resumeAt);
+  assert.equal(state().phase,'playing');assert.equal(state().round,round+1);
+  assert(state().players.some(p=>p.lives>0&&p.id===state().holder));
+  const remaining=state().players.filter(p=>p.lives>0).length;
   const limits=remaining*2<=state().players.length?[10000,30000]:[30000,50000];
   assert.equal(state().deadline-clock,limits[useMinimum?0:1]);
  }
@@ -31,7 +36,7 @@ try{
  assert.equal(state().players.length,2);await act(staff,'start');
  assert(await service.returnToArena('one'));assert.equal(await service.returnToArena('staff'),false);assert.deepEqual(state().players.map(p=>p.id),['one','two']);
  const tick=async()=>{clock=state().deadline;await act(staff,'pass','nobody',-1);};
- await tick();await tick();assert.equal(state().holder,'one');const rev=state().revision;await act(two,'pass','one');assert.equal(state().revision,rev);
+ await tick();await tick();await tick();assert.equal(state().holder,'one');const rev=state().revision;await act(two,'pass','one');assert.equal(state().revision,rev);
  await service.handle(one,{type:'potato',action:'subscribe',compactPass:true});
  const deadline=state().deadline;clock+=14000;await act(one,'pass','two');assert.equal(state().deadline,deadline);await act(one,'pass','two',rev);assert.equal(state().holder,'two');assert.equal(state().revision,rev+1);
  for(let i=0;i<30;i++){

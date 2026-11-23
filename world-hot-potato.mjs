@@ -13,7 +13,7 @@ export async function hotPotatoCast(db){
  return participants.filter(id=>!excluded.has(id));
 }
 const initial=()=>({id:null,phase:'closed',mode:null,players:[],holder:null,revision:0,round:0,deadline:0,botAt:0,lastHit:null,winner:null});
-const active=s=>['intro','countdown','playing','blast'].includes(s.phase);
+const active=s=>['intro','tutorial','countdown','playing','blast'].includes(s.phase);
 const reject=message=>{throw Error(message);};
 export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Date.now,rand=randomInt}){
  let state=initial(),tail=Promise.resolve(),timer,closed=false;
@@ -45,7 +45,8 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
   if(t<s.deadline){
    if(s.phase!=='playing'||!s.botAt||s.botAt>t)return;
    const others=live(s).filter(p=>p.id!==s.holder);give(s,others[rand(others.length)].id);
-  }else if(s.phase==='intro'){s.phase='countdown';s.deadline=t+3000;}
+  }else if(s.phase==='intro'){s.phase='tutorial';s.deadline=t+10000;}
+  else if(s.phase==='tutorial'){s.phase='countdown';s.deadline=t+5000;}
   else if(s.phase==='countdown'||s.phase==='blast'){
    const alive=live(s);if(alive.length===1){s.phase='finished';s.winner=alive[0].id;s.deadline=0;}
    else{
@@ -85,7 +86,7 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
      for(const p of s.players){if(!cast.includes(p.characterId))continue;
       if(s.mode==='users'){const peer=online(p.id);if(!peer||peer.characterId!==p.characterId||!await canPlay(peer.user))continue;}valid.push(p);}
      s.players=valid;if(valid.length<2){await save(s);reject('Se necesitan dos participantes habilitados.');}
-     s.phase='intro';s.deadline=now()+10000;
+     s.phase='intro';s.deadline=now()+20000;
     }else if(a==='pass'){
      if(s.phase!=='playing'||s.mode!=='users'||s.holder!==id)reject('Solo quien tiene la papa puede pasarla.');
      if(input.target===id||!live(s).some(p=>p.id===input.target))reject('Elige a otro jugador que tenga vidas.');

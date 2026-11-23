@@ -5,17 +5,22 @@
 <title>Hot Potato · The Xpedition World</title><link rel="stylesheet" href="arena.css">
 </head>
 <body><main id="game" data-phase="closed">
-<header><a href="../?view=challenges">‹ Desafíos</a><span id="mode"></span><nav aria-label="Controles del reto"><button id="sound" aria-pressed="true">Sonido</button><button id="help">Cómo jugar</button><button id="staff-toggle" aria-haspopup="dialog" hidden>Dirección</button></nav></header>
+<header><a href="../?view=challenges">‹ Desafíos</a><span id="mode"></span><nav aria-label="Controles del reto"><button id="voice" hidden>Escuchar a Bonju</button><button id="sound" aria-pressed="true">Sonido</button><button id="help">Cómo jugar</button><button id="staff-toggle" aria-haspopup="dialog" hidden>Dirección</button></nav></header>
 <section class="stage" aria-label="Campamento de Hot Potato">
 <div id="cover"><img src="art/logo.webp" alt="Hot Potato"></div>
 <div class="banner"><strong id="phase" role="status">Conectando…</strong><small id="round"></small></div>
 <div id="cast"></div>
-<aside id="bonju" hidden><img src="../hosts/bonju-apocalypse.png" alt="Bonju"><div><small>BONJU PRESENTA</small><p id="welcome">Bienvenidos a Hot Potato. Cuando el conteo empiece, deberán pasarse la papa lo más rápido que puedan porque explotará en cualquier momento. Si explota en ustedes, pierden una vida. El último en pie gana inmunidad.</p><button id="voice" hidden>Escuchar a Bonju</button></div></aside>
+<aside id="bonju" hidden><img class="intro-art" src="art/bonju-presenta.webp" width="1672" height="941" decoding="async" alt="Bonju presenta Hot Potato en el campamento al atardecer"><div class="dialogue"><span class="speaker-portrait" aria-hidden="true"></span><div class="speech-frame"><strong class="speaker-name">Bonju</strong><p id="welcome" aria-live="polite">¡Bienvenidos a <em>Hot Potato</em>!</p><button id="next-line" aria-label="Siguiente mensaje de Bonju">▼</button></div></div></aside>
 <div id="event" role="status" hidden></div>
 </section>
 <footer><span id="notice" role="status"></span><div id="actions"></div></footer></main>
 <dialog id="direction"><h2>Dirección</h2><p id="staff-status"></p><div id="staff-actions"></div><button id="staff-close">Cerrar</button></dialog>
-<dialog id="rules"><h2>Cómo jugar</h2>
+<dialog id="rules" aria-labelledby="rules-title"><div class="rules-heading"><h2 id="rules-title">Cómo jugar</h2><strong id="rules-clock" hidden></strong></div>
+<div class="briefing">
+<figure><img src="art/guide-holder.webp?v=sunset" alt=""><figcaption><b>Busca la papa</b>El brillo indica quién la tiene.</figcaption></figure>
+<figure><img src="art/guide-pass.webp?v=sunset" alt=""><figcaption><b>Pásala con un toque</b>Elige a otro participante. Puede devolverla enseguida.</figcaption></figure>
+<figure><img src="art/guide-blast.webp?v=sunset" alt=""><figcaption><b>Cuida tus tres vidas</b>Cada explosión te quita una. El último en pie gana inmunidad.</figcaption></figure>
+</div>
 <ol class="guide">
 <li><strong>Entra al lobby.</strong> En una sala de usuarios, pulsa Participar. El staff autoriza el inicio cuando los jugadores estén listos. Todos empiezan con tres vidas.</li>
 <li><strong>Encuentra la papa.</strong> El personaje que la tiene la sostiene en las manos y se ilumina. Si eres tú, aparece «¡Tienes la papa!».<img loading="lazy" src="art/guide-holder.webp?v=sunset" alt="Personaje iluminado con la papa en la mano, junto a los demás jugadores"></li>
