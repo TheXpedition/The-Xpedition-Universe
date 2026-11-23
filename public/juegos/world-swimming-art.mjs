@@ -21,10 +21,10 @@ function surface(context,b,height,above){
  context.lineTo(b.x+height,b.y+(above?-height:height*.05));context.closePath();context.clip();
 }
 
-export function paintSwimmingPose(context,player,height,image,time=0,reducedMotion=false){
+export function paintSwimmingPose(context,player,height,image,time=0,reducedMotion=false,swimwear=null){
  const b=swimmingPose(player,height,time,reducedMotion),fw=image.width/8,fh=image.height/5,scale=height/180;
  // Always use the intact neutral illustration (frame 8), never walking or sitting.
- const drawBody=()=>{context.translate(b.x,b.originY);context.rotate(b.roll);context.scale(spriteMirror(b.facing),1);context.drawImage(image,0,fh,fw,fh,-100*fw/fh*scale,-194*scale,200*fw/fh*scale,200*scale);};
+ const drawBody=()=>{context.translate(b.x,b.originY);context.rotate(b.roll);context.scale(spriteMirror(b.facing),1);if(swimwear){const w=height*swimwear.width/swimwear.height;context.drawImage(swimwear,-w/2,-height,w,height);}else context.drawImage(image,0,fh,fw,fh,-100*fw/fh*scale,-194*scale,200*fw/fh*scale,200*scale);};
  context.save();context.fillStyle='#173b3824';context.beginPath();context.ellipse(b.x,b.y+height*.015,b.radius,height*.025,0,0,Math.PI*2);context.fill();context.restore();
  // A narrow, faint glimpse below the water joins the drawing to the surface.
  context.save();surface(context,b,height,false);context.globalAlpha*=.12;drawBody();context.restore();

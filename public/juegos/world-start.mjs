@@ -1,4 +1,5 @@
 import {BootProgress,createBootDisplay,loadBootImage,showBootWallpaper,optionalBootResource} from './world-boot.mjs';
+import {worldAtlasUrl} from './world-avatar-url.mjs';
 let generation=0;
 export async function startWorld(){
  const turn=++generation,universe=window.XpeditionUniverseURL||'',gate=document.querySelector('#loading');document.body.classList.add('is-booting');
@@ -27,7 +28,7 @@ export async function startWorld(){
   const {WORLD_MAPS}=await import('./world-maps.mjs'),{preloadWorldArt}=await import('./cartoon-world.mjs'),{applyWorldBeds}=await import('./world-beds.mjs');if(data.beds)applyWorldBeds(WORLD_MAPS,data.beds);const {buildSurvivalProps}=await import('./world-survival-catalog.mjs');buildSurvivalProps(WORLD_MAPS,data.survival?.shared);const scene=WORLD_MAPS[data.profile.lastZone]||WORLD_MAPS.base;
   await Promise.all([
    progress.track('scene',optionalBootResource(()=>Promise.all([...new Set([WORLD_MAPS.base,scene])].map(preloadWorldArt)),{name:'map artwork',timeoutMs:6500})),
-   progress.track('character',optionalBootResource(()=>loadBootImage('/juegos/sprites/'+encodeURIComponent(data.profile.characterId)+(window.XpeditionPerformance?.lite?'-lite':'')+'.webp'),{name:'character artwork',timeoutMs:6500}))
+   progress.track('character',optionalBootResource(()=>loadBootImage(worldAtlasUrl(data.profile.characterId,window.XpeditionPerformance?.lite)),{name:'character artwork',timeoutMs:6500}))
   ]);
   const module=loaded.at(-1);
   let worldApp;await progress.track('interface',(async()=>{worldApp=await module.bootWorld({...data,deferNetwork:true});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})());

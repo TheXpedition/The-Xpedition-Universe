@@ -7,3 +7,9 @@ export function deliverWorldPacket(ws,data,encode=JSON.stringify){
  if(ws.bufferedAmount>2097152){console.warn('World socket backpressure',Math.ceil(ws.bufferedAmount/1024)+' KiB','packet='+data.type);ws.close(4008,'La conexión está atrasada. Vuelve a entrar.');return false;}
  ws.send(encode(data));return true;
 }
+
+export function deliverSharedWorldPacket(clients,data,encode=JSON.stringify){
+ let payload;
+ const encoded=()=>payload??=encode(data);
+ for(const client of clients)deliverWorldPacket(client.ws,data,encoded);
+}

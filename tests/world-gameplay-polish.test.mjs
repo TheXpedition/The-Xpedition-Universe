@@ -24,9 +24,9 @@ const next=()=>new Promise(r=>setImmediate(r));
 async function fixture(t){const dir=await fs.mkdtemp(path.join(os.tmpdir(),'xp-polish-')),db=await openDatabase(dir);t.after(async()=>{await db.close();await fs.rm(dir,{recursive:true,force:true});});let time=1800000000000;const user={id:'p'},ctx={staff:true,team:'Equipo 1',near:()=>true,body:createWellness({conditions:[{id:'depression',severity:35}]}),vitals:createVitals({stress:70,health:80})};await db.run('INSERT INTO users(id,name,name_key,email,avatar,bio,created) VALUES(?,?,?,?,?,?,?)','p','P','p','p@example.invalid','Dani','',time);const store=createSurvivalStore({db,now:()=>time,random:()=>.3});await store.ready;return {db,store,user,ctx,act:i=>store.act(user,i,ctx),advance:n=>time+=n};}
 
 test('sleeping figures keep character scale when the mattress grows, and waking never selects folded chair frames',()=>{
- assert.equal(Object.keys(SLEEP_WIDTH_RATIOS).length,22);
+ assert.equal(Object.keys(SLEEP_WIDTH_RATIOS).length,26);
  for(const id of Object.keys(SLEEP_WIDTH_RATIOS)){const p={characterId:id,x:500,y:700},image={width:371,height:171},a=sleepPoseBounds(p,220,image,{x:500,y:800,artWidth:300}),b=sleepPoseBounds(p,220,image,{x:500,y:800,artWidth:600});assert.equal(a.width,b.width);assert(a.width<=220*1.03);assert(a.width>=220*.85);}
- const id='maria-villegas',actor={state:'sleep',sleeping:true,seat:{stand:{x:500,y:850}},p:{x:500,y:650,path:[],z:0},input:{x:0,y:0}};standActor(actor,20000);assert.equal(actor.action,null);assert.equal(actor.actionFrom,null);assert.equal(actor.p.y,850);
+ const id='luciano',actor={state:'sleep',sleeping:true,seat:{stand:{x:500,y:850}},p:{x:500,y:650,path:[],z:0},input:{x:0,y:0}};standActor(actor,20000);assert.equal(actor.action,null);assert.equal(actor.actionFrom,null);assert.equal(actor.p.y,850);
  const bank=new AvatarBank(),atlas={width:2560,height:2000};bank.cache.set(id,atlas);bank.sleepCache.set(id,{width:371,height:171});const calls=[],ctx=new Proxy({drawImage:(...a)=>calls.push(a)},{get:(o,k)=>o[k]||(()=>{}),set:(o,k,v)=>(o[k]=v,true)});
  for(const t of [20,20.2,20.5]){bank.draw(ctx,{...actor.p,...actor,characterId:id,grounded:true,moving:false,facing:-1},220,t);assert.equal(calls.at(-1)[1],0);assert.equal(calls.at(-1)[2],400,'upright idle row, not a sit/stand mesh');}
 });
