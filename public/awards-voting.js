@@ -4,7 +4,7 @@ const votingBanner='/awards/edition-3-banner.webp';
 const votingBase='#votacion';
 const votingGroupIcons={principales:'compass',generales:'bookmark',especiales:'checks',otras:'more'};
 const votingIntroKey='xp:awards:3:intro';
-let votingBallot=null,votingChoices={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false,votingQuota=null;
+let votingBallot=null,votingChoices={},votingFrozen={},votingMember=null,votingRequest=0,votingModal=null,votingSaving=false,votingQuota=null;
 const votingLegacySpecialIds=new Set(['traidor','inocente','sobreviviente','detective']);
 const votingHref=(section,category)=>{const path=section==='especiales'&&votingLegacySpecialIds.has(category)?'generales':section;return votingBase+(path?'/'+path+(category?'/'+category:''):'');};
 const votingCategories=()=>votingBallot.sections.flatMap(section=>section.categories);
@@ -25,7 +25,7 @@ function renderVotingIntro(){
 async function renderAwardsVoting(sectionId,categoryId){
  const turn=++votingRequest,root=$('#main'),member=state.user?.id;
  if(!state.user){
-  votingBallot=null;votingMember=null;votingChoices={};votingQuota=null;
+  votingBallot=null;votingMember=null;votingChoices={};votingFrozen={};votingQuota=null;
   root.innerHTML=restrictedVoting();
   return;
  }
@@ -34,9 +34,9 @@ async function renderAwardsVoting(sectionId,categoryId){
  if(!reuse){
   root.innerHTML='<div class="loading-screen"><span class="spinner"></span> Preparando la papeleta…</div>';
   try{
-   const {ballot,votes,quota}=await api('/awards/voting');
+   const {ballot,votes,quota,frozen}=await api('/awards/voting');
    if(turn!==votingRequest||state.route!=='votacion'||state.user?.id!==member)return;
-   votingBallot=ballot;votingChoices=votes;votingQuota=quota;votingMember=member;
+   votingBallot=ballot;votingChoices=votes;votingFrozen=frozen||{};votingQuota=quota;votingMember=member;
   }catch(error){
    if(turn!==votingRequest||state.route!=='votacion')return;
    root.innerHTML=error.status===401||error.status===403?restrictedVoting():'<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
@@ -63,14 +63,26 @@ function votingPortrait(nominee){
 
 const votingCountLabel=votes=>votes+(votes===1?' voto':' votos');
 
+const votingFrozenPercent=value=>Number(value||0).toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
+const votingFrozenVotes=value=>Number(value||0).toLocaleString('es-CO')+' votos';
+
 function votingCard(nominee,category,index){
- const votes=votingChoices[category.id]?.[nominee.id]||0;
- const selected=(votingQuota?.selected[category.id]||[]).includes(nominee.id);
+ const frozen=votingFrozen[category.id]?.[nominee.id];
+ const content=`<span class="vote-portrait">${votingPortrait(nominee)}</span>
+    <span class="vote-card-text"><strong>${esc(nominee.name)}</strong>${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</span>`;
+ if(frozen){
+  const count=votingFrozenVotes(frozen.votes),percent=votingFrozenPercent(frozen.percent);
+  return `<article class="vote-nominee" style="--vote-card-index:${index}">
+   <div class="vote-card vote-frozen${nominee.isShow?' vote-show':''}" role="group" data-personal-votes="0" aria-label="${esc(nominee.name)}. Votación cerrada. ${count}, ${percent}">
+    ${content}
+    <span class="vote-card-action vote-frozen-result" aria-hidden="true"><span class="vote-frozen-bars"><i></i><i></i><i></i></span><span>${count}</span><span class="vote-frozen-divider"></span><strong>${percent}</strong></span>
+   </div>
+  </article>`;
+ }
  return `<article class="vote-nominee" style="--vote-card-index:${index}">
-   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" data-personal-votes="${selected?votes:0}"${votes?` aria-description="${votingCountLabel(votes)} registrado${votes===1?'':'s'} por ti"`:''}>
-    <span class="vote-portrait">${votingPortrait(nominee)}</span>
-    <span class="vote-card-text"><strong>${esc(nominee.name)}</strong>${nominee.details?`<small>${esc(nominee.details)}</small>`:''}</span>
-    <span class="vote-card-action" aria-hidden="true"><span>${votes?votingCountLabel(votes):'Votar'}</span>${icon(selected?'check':'arrow')}</span>
+   <button type="button" class="vote-card${nominee.isShow?' vote-show':''}" data-vote-nominee="${esc(nominee.id)}" aria-label="Votar por ${esc(nominee.name)}" data-personal-votes="0">
+    ${content}
+    <span class="vote-card-action" aria-hidden="true"><span>Votar</span>${icon('arrow')}</span>
    </button>
  </article>`;
 }
@@ -221,12 +233,7 @@ async function confirmAwardsVote(button){
   if(!root?.isConnected)return;
   updateVotingProgress(root);
   updateVotingQuota(root);
-  if(root.dataset.votingCategory===vote.category){
-   const card=$('[data-vote-nominee="'+vote.nominee+'"]',root);
-   card.dataset.personalVotes=vote.votes;
-   card.setAttribute('aria-description',votingCountLabel(vote.votes)+' registrado'+(vote.votes===1?'':'s')+' por ti');
-   $('.vote-card-action',card).innerHTML='<span>'+votingCountLabel(vote.votes)+'</span>'+icon('check');
-  }
+  // The nominee's card stays "Votar" without personal counters or checkmarks.
   if(!dialog.open||votingModal!==selection)return;
   dialog.classList.add('vote-confirmed');
   $('[data-vote-message]',dialog).textContent=quantity.toLocaleString('es-CO')+' votos guardados correctamente.';
