@@ -95,3 +95,46 @@ test('Staff alone: 1m per day, 200k per person and unlimited nominees per catego
   assert.equal((await quota(normal)).remaining,100000);
  }finally{await db.close();}
 });
+
+
+test('Awards: bottom-two freeze blocks all voters and reserves fixed percentages',async()=>{
+ const db=await openDatabase(await mkdtemp(path.join(tmpdir(),'xp-awards-frozen-')));
+ const voter='623c6648-b88a-4eec-be92-09c6d9487442';
+ const staff='4cc31ade-086c-48b2-b77e-27240358e425';
+ const now=Date.parse('2026-11-23T15:00:00Z');
+ const fail=(status,message)=>{throw Object.assign(Error(message),{status});};
+ const voting=createAwardsVoting({db,ballot,now:()=>now,fail,body:req=>req.payload,json:(_,value)=>value});
+ const send=(id,category,nominee,votes)=>voting.vote({method:'POST',payload:{category,nominee,votes,requestId:randomUUID()}},{},{id});
+ try{
+  for(const [i,id] of [voter,staff].entries()){
+   await db.run('INSERT INTO users(id,name,name_key,email,avatar,created) VALUES(?,?,?,?,?,?)',id,'Frozen Test '+i,'frozen-test-'+i,'frozen'+i+'@example.invalid','Dani',now);
+  }
+  for(const [nominee,votes] of [['renata',10],['elias',20],['kim-camila',70]]){
+   await db.run('INSERT INTO award_vote_entries(edition,voter_id,request_id,category,nominee,votes,created) VALUES(?,?,?,?,?,?,?)',3,voter,randomUUID(),'fan-favorite',nominee,votes,now);
+  }
+  for(const [nominee,votes,percent] of [['renata',10,10],['elias',20,20]]){
+   await db.run('INSERT INTO award_vote_frozen(edition,category,nominee,votes,percent_value,category_total,frozen_at) VALUES(?,?,?,?,?,?,?)',3,'fan-favorite',nominee,votes,percent,100,now);
+  }
+  const before=await voting.vote({method:'GET'},{},{id:voter});
+  assert.deepEqual(before.frozen['fan-favorite'].elias,{votes:20,percent:20});
+  assert.deepEqual(before.frozen['fan-favorite'].renata,{votes:10,percent:10});
+  assert.equal(before.quota.remaining,99900);
+  await assert.rejects(send(voter,'fan-favorite','elias',1),{status:409});
+  await assert.rejects(send(staff,'fan-favorite','renata',1),{status:409});
+  assert.equal((await voting.vote({method:'GET'},{},{id:voter})).quota.remaining,99900);
+  await send(voter,'fan-favorite','ivy-pierce',70);
+  const rows=(await voting.results({method:'GET'},{},{id:staff})).sections.flatMap(s=>s.categories);
+  const nominees=rows.find(c=>c.id==='fan-favorite').nominees;
+  const item=name=>nominees.find(n=>n.name===name);
+  assert.equal(item('Elias').votes,20);
+  assert.equal(item('Elias').percent,20);
+  assert.equal(item('Renata').votes,10);
+  assert.equal(item('Renata').percent,10);
+  assert.equal(item('Kim Camila').percent,35);
+  assert.equal(item('Ivy Pierce').percent,35);
+  assert.equal(nominees.reduce((total,n)=>total+n.percent,0),100);
+  assert.equal((await db.one('SELECT COUNT(*) AS count FROM award_vote_entries WHERE edition=? AND category=?',3,'fan-favorite')).count,4);
+  // This lock applies only to the specified category and nominee.
+  assert.equal((await send(staff,'mejor-villano','lucas-mendez',1)).votes,1);
+ }finally{await db.close();}
+});
