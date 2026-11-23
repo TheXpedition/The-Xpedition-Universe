@@ -14,7 +14,7 @@ export function serveWorldStatic(req,res,{relative,prefix,room,universeURL=''}){
   res.writeHead(200,{'Content-Type':mime['.js'],'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:text);return true;
  }
  const aliases={'/auth':'/juegos/auth.html','/juegos':'/juegos/index.html','/juegos/':'/juegos/index.html'};
- for(const name of ['x-protocol','last-grip','bonju-chef'])for(const suffix of ['', '/'])aliases['/juegos/'+name+suffix]='/juegos/'+name+'/index.html';
+ for(const name of ['x-protocol','last-grip','bonju-chef','hot-potato'])for(const suffix of ['', '/'])aliases['/juegos/'+name+suffix]='/juegos/'+name+'/index.html';
  pathname=aliases[pathname]||pathname;
  if(/\/(?:review[^/]*|recorrido-visual)(?:\/|\.|$)/.test(pathname)||pathname.startsWith('/juegos/reto-pelotas/'))return false;
  if(!/^\/(?:juegos\/|assets\/(?:maps|branding)\/apocalypse\/|brand\/|performance\.(?:js|mjs|css)$|world-(?:intro-player|landscape)\.(?:mjs|css)$)/.test(pathname))return false;
