@@ -10,6 +10,7 @@ import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 import {mountChatBubbles,isRecentChatMessage} from './chat-bubbles.mjs';
 import {duelLosers,duelWinners,DOUBLE_LOSS_TEXT,DOUBLE_SAVE_TEXT} from './outcomes.mjs';
 import {protocolAudience} from './audience.mjs';
+import {protocolPortrait} from './portrait-url.mjs';
 import {puzzleImage} from './puzzle-images.mjs';
 import {touchControls} from './input-mode.mjs';
 import {mountDuelPreparation} from './duel-preparation.mjs';
@@ -21,9 +22,9 @@ import {ProtocolRenderer} from './renderer-v2.mjs';
 import {arenaMode} from './scene-layout.mjs';
 import {DUELS,PHASES,PHASE_SPEECH} from './engine.mjs';
 import {WORLD_CHARACTERS} from '../world-characters.mjs';
-import {SHELTER_PARTICIPANTS} from '../world-shelters.mjs';
+import {PROTOCOL_PARTICIPANTS} from '../world-shelters.mjs';
 import {AnnouncementPlayer} from '../world-announcement-player.mjs';
-const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),portrait=p=>'art/portraits/'+p.characterId+'-face.webp';
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),portrait=p=>protocolPortrait(p.characterId);
 const setText=(node,text)=>{text=String(text??'');if(node.textContent!==text)node.textContent=text;};
 const renderer=new ProtocolRenderer($('#scene'),$('#foreground'),{mobile:globalThis.XpeditionPerformance?.mobile||touchControls()});const monitorMetrics=createProtocolMonitorMetrics();globalThis.XProtocolMonitorMetrics=()=>monitorMetrics.snapshot();let renderFrameInterval=1000/protocolMonitorFps(globalThis.XpeditionPerformance);window.addEventListener('xp:qualitychange',()=>{renderFrameInterval=1000/protocolMonitorFps(globalThis.XpeditionPerformance);});let state=null,boot=null,socket=null,connected=false,disposed=false,signature='',staffSignature='',castSignature='',loaded=false,results=[],lights=Array(6).fill(false),selectedPiece=null,lastFeedback='',noticeTimer,pending=null,frame=0,previousFrame=0,voiceCaption=null,lastCommunication=null,enabled=true,context=null,lastPhase=null,clipKey=null,clipEnded=null,clipFailed=null,retryTimer=0,chatHistory=[],weatherAudio=null,weatherKind=null,receivedAt=performance.now();
 let lobbyMediaPrefetch='';
@@ -143,7 +144,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||
 document.addEventListener('submit',e=>{const f=e.target;if(f.id==='type-form'){e.preventDefault();act({type:'duel',kind:'type',text:$('#typing-input').value});}if(f.id==='answer-form'){e.preventDefault();act({type:'answer',text:$('#last-words').value});}if(f.id==='bet-form'){e.preventDefault();if(f.dataset.readonly==='true')return;const data=new FormData(f),amount=Number(data.get('amount')),target=data.get('target');confirm('Confirmar apuesta',amount+' monedas por '+name(target)+'. La apuesta queda cerrada.',{type:'bet',target,amount});}});
 document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-pulse]');if(b&&!b.disabled){e.preventDefault();act({type:'duel',kind:b.dataset.pulse});}});document.addEventListener('keydown',e=>{if(e.code!=='Space'||e.repeat||e.target.closest('input,textarea,select')||document.querySelector('dialog[open]'))return;const b=$('[data-pulse="balance"]');if(b&&!b.disabled){e.preventDefault();act({type:'duel',kind:b.dataset.pulse});}});let dragFrom=null;document.addEventListener('dragstart',e=>{const b=e.target.closest('[data-piece]');if(b){dragFrom=Number(b.dataset.piece);e.dataTransfer.setData('text/plain',String(dragFrom));}});document.addEventListener('dragover',e=>{if(e.target.closest('[data-piece]'))e.preventDefault();});document.addEventListener('drop',e=>{const b=e.target.closest('[data-piece]');if(b&&dragFrom!==null){e.preventDefault();const to=Number(b.dataset.piece);if(to!==dragFrom)act({type:'duel',kind:'swap',from:dragFrom,to});dragFrom=null;}});
 $('#save-result').onclick=async()=>{try{const ids=$('#result-ranking').value.split(/[\n,]+/).map(x=>x.trim().toLowerCase()).filter(Boolean);if(ids.length!==state.capacity)throw Error('Incluye los '+state.capacity+' identificadores activos, uno por línea.');await api('/results',{name:$('#result-name').value,ranking:ids.map(characterId=>({characterId,name:WORLD_CHARACTERS.find(p=>p.id===characterId)?.name}))});await fetchResults();notice('Resultado guardado. Ya puedes seleccionarlo.');}catch(e){notice(e.message);}};
-$('#result-ranking').value=SHELTER_PARTICIPANTS.join('\n');
+$('#result-ranking').value=PROTOCOL_PARTICIPANTS.join('\n');
 document.addEventListener('click',e=>{const button=e.target.closest('#choose-results');if(!button||button.disabled)return;const sourceId=$('#results-select').value;if(!sourceId)return notice('Selecciona primero un reto terminado.');confirm('Revelar los resultados','Dirección mostrará el ranking del reto seleccionado a todos los participantes.',{type:'results',sourceId});});
 
 

@@ -1,4 +1,5 @@
 import {ActorMotion} from './motion.mjs';
+import {protocolPortrait} from './portrait-url.mjs';
 import {duelLosers,duelWinners} from './outcomes.mjs';
 import {puzzleImage} from './puzzle-images.mjs';
 import {nearSkull,skullLayout,usedSkulls} from './skull-layout.mjs';
@@ -20,7 +21,7 @@ export class ProtocolRenderer{
   const key=s.id+':'+s.roster.map(p=>p.characterId).sort().join(',');
   if(this.rankWarmKey===key)return this.rankWarmJob;
   this.rankWarmKey=key;
-  const urls=[...new Set(s.roster.map(p=>'/juegos/x-protocol/art/portraits/'+p.characterId+'-face.webp'))];
+  const urls=[...new Set(s.roster.map(p=>protocolPortrait(p.characterId)))];
   let next=0;
   this.rankWarmJob=Promise.all(Array.from({length:Math.min(3,urls.length)},async()=>{
    while(next<urls.length&&this.rankWarmKey===key)await this.image(urls[next++]);
