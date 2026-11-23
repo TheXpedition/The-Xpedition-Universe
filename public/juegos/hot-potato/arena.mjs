@@ -1,9 +1,12 @@
+import {playExplosion} from './explosion-audio.mjs';
 import {arrange,present,impactPoint} from './scene.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 const el=id=>document.getElementById(id);
 const cards=new Map(), warmed=new Set();
 let ws, game, pending=false, connected=false, offset=0, delay=500, retry;
-const dialog=document.querySelector('dialog');
+const dialog=el('rules'),direction=el('direction');
+el('staff-toggle').onclick=()=>{if(game?.staff)direction.showModal();};
+el('staff-close').onclick=()=>direction.close();
 const audio=el('voice');
 audio.hidden=!('speechSynthesis' in window);
 audio.onclick=()=>{const line=new SpeechSynthesisUtterance(el('welcome').textContent);line.lang='es';speechSynthesis.cancel();speechSynthesis.speak(line);};
@@ -14,11 +17,32 @@ function act(action,target){
  pending=true;el('notice').textContent='';
  ws.send(JSON.stringify({type:'potato',action,target,gameId:game.id,revision:game.revision}));
 }
+el('cast').addEventListener('contextmenu',event=>event.preventDefault());
 function card(p){
  const b=document.createElement('button');b.className='person';
  const hearts=document.createElement('b'),img=document.createElement('img'),name=document.createElement('span');
- b.style.setProperty('--beat',(-cards.size*.23)+'s');img.alt='';b.append(hearts,img,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
+ b.style.setProperty('--beat',(-cards.size*.23)+'s');img.alt='';img.draggable=false;b.append(hearts,img,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
  return {b,hearts,img,name};
+}
+function receivePass(m){
+ if(!game||game.id!==m.gameId||game.phase!=='playing'||m.revision!==game.revision+1){
+  ws.send(JSON.stringify({type:'potato',action:'subscribe',compactPass:true}));
+  return;
+ }
+ const previous=game;
+ game={...game,holder:m.holder,revision:m.revision};pending=false;
+ const mine=game.self===m.holder;
+ const receiver=game.players.find(p=>p.id===m.holder);
+ el('phase').textContent=mine?'¡Tienes la papa! Elige a quién pasarla':receiver.name+' tiene la papa';
+ for(const p of game.players){
+  const {b,img}=cards.get(p.id),holder=p.id===m.holder;
+  if(mine||previous.holder===game.self)b.disabled=!mine||holder||!p.lives;
+  if(!holder&&p.id!==previous.holder)continue;
+  b.classList.toggle('holder',holder);
+  b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
+  img.src='art/'+encodeURIComponent(p.characterId)+(holder?'-hold.webp':'-happy.webp');
+ }
+ present(previous,game,cards,null);
 }
 function render(){
  if(!game)return;const g=game,phase=g.phase,joined=g.players.some(p=>p.id===g.self),holding=g.holder===g.self;
@@ -59,12 +83,20 @@ function render(){
   }
  }
  countdown();
+ el('staff-toggle').hidden=!g.staff;
+ if(!g.staff&&direction.open)direction.close();
+ el('staff-status').textContent=labels[phase]+(g.mode?' · '+el('mode').textContent:'');
  const controls=[];
  if(g.staff&&['closed','finished','cancelled'].includes(phase))controls.push(['users','Abrir solo usuarios'],['bots','Llenar solo con bots']);
- if(phase==='lobby'&&g.mode==='users')controls.push(joined?['leave','Salir del reparto']:['join','Participar']);
+
  if(g.staff&&phase==='lobby'&&g.players.length>=2)controls.push(['start','Autorizar inicio']);
  if(g.staff&&['lobby','intro','countdown','playing','blast'].includes(phase))controls.push(['cancel','Cancelar reto']);
- const actions=el('actions'),key=JSON.stringify(controls);
+ renderControls(el('staff-actions'),controls);
+ const entry=phase==='lobby'&&g.mode==='users'&&!g.staff;
+ renderControls(el('actions'),entry?[joined?['leave','Salir del reparto']:['join','Participar']]:[]);
+}
+function renderControls(actions,controls){
+ const key=JSON.stringify(controls);
  if(actions.dataset.key!==key){actions.replaceChildren();for(const [action,label] of controls){const b=document.createElement('button');b.textContent=label;b.onclick=()=>act(action);actions.append(b);}actions.dataset.key=key;}
  for(const b of actions.children)b.disabled=pending||!connected;
 }
@@ -81,8 +113,11 @@ async function connect(){
   url.protocol=location.protocol==='https:'?'wss:':'ws:';url.searchParams.set('zone',boot.profile.lastZone);
   ws=new WebSocket(url);
   ws.onmessage=({data})=>{const m=JSON.parse(data);
-   if(m.type==='welcome')ws.send(JSON.stringify({type:'potato',action:'subscribe'}));
-   if(m.type==='potato-state'){const previous=game,point=impactPoint(m.game,cards);game=m.game;offset=game.serverTime-Date.now();connected=true;pending=false;delay=500;render();present(previous,game,cards,point);}
+   if(m.type==='welcome')ws.send(JSON.stringify({type:'potato',action:'subscribe',compactPass:true}));
+   if(m.type==='potato-pass')receivePass(m);
+   if(m.type==='potato-state'){const previous=game,point=impactPoint(m.game,cards);game=m.game;offset=game.serverTime-Date.now();connected=true;pending=false;delay=500;render();present(previous,game,cards,point);
+    if(direction.open&&previous?.phase==='lobby'&&game.phase==='intro')direction.close();
+    if(game.phase==='blast'&&game.lastHit?.id===game.self&&previous?.phase==='playing'&&previous.id===game.id)playExplosion();}
    if(m.type==='potato-error'){pending=false;el('notice').textContent=m.message;render();}
   };
   ws.onclose=e=>{

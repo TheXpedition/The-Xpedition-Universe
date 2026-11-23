@@ -21,7 +21,11 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
  const serial=fn=>{const job=tail.then(fn);tail=job.catch(()=>{});return job;};
  const ready=db.one('SELECT state FROM world_environment WHERE id=?','hot-potato').then(row=>{if(row)state=JSON.parse(row.state);schedule();});
  function packet(c){const {deadline,botAt,...publicState}=state;return {type:'potato-state',game:{...publicState,until:state.phase==='playing'?0:deadline,staff:!!c.potatoDirector,self:c.user.id,serverTime:now()}};}
- function publish(){for(const c of clients.values())if(c.potatoSubscribed)send(c,packet(c));}
+ function publish(previous){
+  const pass=previous.phase==='playing'&&state.phase==='playing'&&previous.id===state.id&&previous.holder!==state.holder;
+  const update=pass?{type:'potato-pass',gameId:state.id,revision:state.revision,holder:state.holder}:null;
+  for(const c of clients.values())if(c.potatoSubscribed)send(c,update&&c.compactPotato?update:packet(c));
+ }
  function schedule(){clearTimeout(timer);if(closed||!active(state))return;
   const due=state.phase==='playing'&&state.botAt?Math.min(state.botAt,state.deadline):state.deadline;
   timer=setTimeout(()=>serial(advance).catch(error=>{console.error('Hot Potato:',error.message);if(!closed)timer=setTimeout(schedule,1000);}),Math.max(1,due-now()));timer.unref?.();
@@ -31,7 +35,7 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
   const write=(id,value)=>db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',id,JSON.stringify(value),now());
   await db.transaction(async()=>{await write('hot-potato',s);if(s.phase==='finished'&&s.mode==='users')await write('hot-potato-immunity:'+s.winner,{game:s.id});});
   const opened=s.phase==='lobby'&&state.phase!=='lobby';
-  state=s;schedule();publish();
+  const previous=state;state=s;schedule();publish(previous);
   if(opened)for(const c of clients.values())if(!c.potatoSubscribed)send(c,{type:'potato-open',mode:s.mode});
  }
  const live=s=>s.players.filter(p=>p.lives>0);
@@ -44,15 +48,20 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
   }else if(s.phase==='intro'){s.phase='countdown';s.deadline=t+3000;}
   else if(s.phase==='countdown'||s.phase==='blast'){
    const alive=live(s);if(alive.length===1){s.phase='finished';s.winner=alive[0].id;s.deadline=0;}
-   else{s.phase='playing';s.round++;s.deadline=t+rand(15000,25001);give(s,alive[rand(alive.length)].id);}
-  }else{const hit=s.players.find(p=>p.id===s.holder);hit.lives--;s.lastHit={id:hit.id,lives:hit.lives};s.phase='blast';s.holder=null;s.botAt=0;s.deadline=t+2600;}
+   else{
+    s.phase='playing';s.round++;
+    let duration=60000;
+    if(s.round>1)duration=alive.length*2<=s.players.length?rand(10000,30001):rand(30000,50001);
+    s.deadline=t+duration;give(s,alive[rand(alive.length)].id);
+   }
+  }else{const hit=s.players.find(p=>p.id===s.holder);hit.lives--;s.lastHit={id:hit.id,lives:hit.lives};s.phase='blast';s.holder=null;s.botAt=0;s.deadline=t+10000;}
   await save(s);
  }
  async function handle(c,input){
   if(input.type!=='potato')return false;
   await ready;await serial(async()=>{
    const a=input.action;
-   if(a==='subscribe'){c.potatoDirector=await can(c.user,'direct');c.potatoSubscribed=true;send(c,packet(c));return;}
+   if(a==='subscribe'){c.compactPotato=input.compactPass===true;c.potatoDirector=await can(c.user,'direct');c.potatoSubscribed=true;send(c,packet(c));return;}
    if(!c.potatoSubscribed)return;
    try{
     await advance();const s=structuredClone(state),id=c.user.id;

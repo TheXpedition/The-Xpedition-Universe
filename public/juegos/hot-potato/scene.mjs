@@ -32,10 +32,10 @@ function launch(cards,from,to){
  if(!source||!target||reduced.matches)return;
  const a=hand(source),b=hand(target),dx=b.x-a.x,dy=b.y-a.y;
  flight?.remove();const ball=document.createElement('i');flight=ball;ball.className='potato-flight';ball.setAttribute('aria-hidden','true');
- document.body.append(ball);ball.style.left=(a.x-ball.offsetWidth/2)+'px';ball.style.top=(a.y-ball.offsetHeight/2)+'px';
+ ball.style.left=a.x+'px';ball.style.top=a.y+'px';document.body.append(ball);
  const sign=dx>=0?1:-1;
  animateActor(source,[[0,0],[-8*sign,-2],[15*sign,-5],[0,0]]);
- const translate=(x,y,angle)=>'translate('+x+'px,'+y+'px) rotate('+angle+'deg)';
+ const translate=(x,y,angle)=>'translate(-50%,-50%) translate('+x+'px,'+y+'px) rotate('+angle+'deg)';
  const motion=ball.animate([
   {transform:translate(0,0,0)},
   {transform:translate(dx*.5,dy*.5-Math.min(85,Math.max(28,Math.abs(dx)*.18)),sign*150)},
