@@ -8,7 +8,10 @@ export const SHELTER_ROSTERS=Object.freeze({
  right:Object.freeze(['arisantana','bayron','eduard','gabrielsab','kareli','leandro','alice','sallua','vitany'])
 });
 export const SHELTER_PARTICIPANTS=Object.freeze([...SHELTER_ROSTERS.left,...SHELTER_ROSTERS.right]);
-export const shelterForCharacter=characterId=>SHELTER_ROSTERS.left.includes(characterId)?'left':SHELTER_ROSTERS.right.includes(characterId)?'right':null;
+// Housing has its own lineup; challenge rosters keep their existing eligibility.
+export const HOUSING_ROSTERS=Object.freeze({...SHELTER_ROSTERS,right:Object.freeze([...SHELTER_ROSTERS.right.filter(id=>id!=='gabrielsab'),'luciano','nacho'])});
+export const HOUSING_PARTICIPANTS=Object.freeze([...HOUSING_ROSTERS.left,...HOUSING_ROSTERS.right]);
+export const shelterForCharacter=characterId=>HOUSING_ROSTERS.left.includes(characterId)?'left':HOUSING_ROSTERS.right.includes(characterId)?'right':null;
 export const shelterAt=zone=>SHELTERS.find(s=>s.outside===zone);
 export const mayVisitShelters=(characterId,staff)=>characterId==='maria-villegas'&&staff===true;
 export const SHELTER_MATERIALS=Object.freeze([
