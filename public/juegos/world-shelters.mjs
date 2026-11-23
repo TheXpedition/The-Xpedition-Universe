@@ -8,6 +8,8 @@ export const SHELTER_ROSTERS=Object.freeze({
  right:Object.freeze(['arisantana','bayron','eduard','gabrielsab','kareli','leandro','alice','sallua','vitany'])
 });
 export const SHELTER_PARTICIPANTS=Object.freeze([...SHELTER_ROSTERS.left,...SHELTER_ROSTERS.right]);
+// The X Protocol has its own 18-person cast, without changing shelters or other challenges.
+export const PROTOCOL_PARTICIPANTS=Object.freeze(SHELTER_PARTICIPANTS.map(id=>id==='bayron'?'luciano':id==='eduard'?'nacho':id));
 // Housing has its own lineup; challenge rosters keep their existing eligibility.
 export const HOUSING_ROSTERS=Object.freeze({...SHELTER_ROSTERS,right:Object.freeze([...SHELTER_ROSTERS.right.filter(id=>id!=='gabrielsab'),'luciano','nacho'])});
 export const HOUSING_PARTICIPANTS=Object.freeze([...HOUSING_ROSTERS.left,...HOUSING_ROSTERS.right]);
