@@ -50,6 +50,7 @@ export async function startProtocolDedicatedServer({
   const can=async(user,capability)=>{
    if(!user)return false;
    if(isStaff(user.id))return true;
+   if(capability==='direct')return false;
    const row=await db.one('SELECT permissions FROM world_permissions WHERE user_id=?',user.id);
    let values=[];try{values=JSON.parse(row?.permissions||'[]');}catch{}
    return Array.isArray(values)&&values.includes(capability);
