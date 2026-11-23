@@ -1,8 +1,17 @@
 <!doctype html>
-<html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hot Potato · The Xpedition World</title><link rel="stylesheet" href="arena.css">
-<main><header><a href="../" aria-label="Volver a World">‹ World</a><div><small>THE XPEDITION WORLD</small><h1>HOT POTATO</h1></div><button id="help">Cómo jugar</button></header>
-<section class="stage"><div class="banner"><strong id="phase" role="status">Conectando…</strong><span id="mode"></span></div><div id="cast"></div>
-<aside id="bonju"><img src="../hosts/bonju-apocalypse.png" alt="Bonju"><div><small>BONJU PRESENTA</small><p id="welcome">Bienvenidos a Hot Potato. Cuando el conteo empiece, deberán pasarse la papa lo más rápido que puedan porque explotará en cualquier momento. Si explota en ustedes, pierden una vida. El último en pie gana inmunidad.</p><button id="voice" hidden>Escuchar a Bonju</button></div></aside>
-<div id="event" role="status" hidden></div></section>
-<footer><div id="actions"></div><span id="notice" role="status"></span></footer></main>
-<dialog><h2>Cómo jugar</h2><p>Empiezas con tres vidas. Cuando tengas la papa, toca o haz clic en otro participante con vidas para pasársela al instante. Con teclado, selecciona con Tab y pasa con Enter.</p><p>La papa explota sin aviso. Quien la tenga pierde una vida y, al perder las tres, queda fuera. La última persona en pie gana inmunidad.</p><p>Dirección elige un lobby de usuarios o de bots y autoriza el inicio.</p><button id="close">Entendido</button></dialog><script type="module" src="arena.mjs"></script></html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hot Potato · The Xpedition World</title><link rel="stylesheet" href="arena.css">
+</head>
+<body><main id="game" data-phase="closed">
+<header><a href="../?view=challenges">‹ Desafíos</a><span id="mode"></span><button id="help">Cómo jugar</button></header>
+<section class="stage" aria-label="Campamento de Hot Potato">
+<div id="cover"><img src="art/logo.webp" alt="Hot Potato"></div>
+<div class="banner"><strong id="phase" role="status">Conectando…</strong><small id="round"></small></div>
+<div id="cast"></div>
+<aside id="bonju" hidden><img src="../hosts/bonju-apocalypse.png" alt="Bonju"><div><small>BONJU PRESENTA</small><p id="welcome">Bienvenidos a Hot Potato. Cuando el conteo empiece, deberán pasarse la papa lo más rápido que puedan porque explotará en cualquier momento. Si explota en ustedes, pierden una vida. El último en pie gana inmunidad.</p><button id="voice" hidden>Escuchar a Bonju</button></div></aside>
+<div id="event" role="status" hidden></div>
+</section>
+<footer><span id="notice" role="status"></span><div id="actions"></div></footer></main>
+<dialog><h2>Cómo jugar</h2><p>Tienes tres vidas. Cuando recibas la papa, toca o haz clic sobre otro concursante para lanzársela. Con teclado usa Tab y Enter.</p><p>Si te explota, pierdes una vida. Al perder las tres sales del campo. El último concursante en pie gana inmunidad.</p><p>Solo el staff puede abrir la sala e iniciar el reto. El reparto puede ser de usuarios o de bots.</p><button id="close">Entendido</button></dialog><script type="module" src="arena.mjs"></script></body></html>

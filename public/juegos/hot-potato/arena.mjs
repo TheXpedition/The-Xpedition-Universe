@@ -1,3 +1,4 @@
+import {arrange,present,impactPoint} from './scene.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 const el=id=>document.getElementById(id);
 const cards=new Map(), warmed=new Set();
@@ -11,20 +12,23 @@ el('close').onclick=()=>dialog.close();
 function act(action,target){
  if(!connected||pending||!game||ws.readyState!==WebSocket.OPEN)return;
  pending=true;el('notice').textContent='';
- ws.send(JSON.stringify({type:'potato',action,target,revision:game.revision}));render();
+ ws.send(JSON.stringify({type:'potato',action,target,gameId:game.id,revision:game.revision}));
 }
 function card(p){
  const b=document.createElement('button');b.className='person';
  const hearts=document.createElement('b'),img=document.createElement('img'),name=document.createElement('span');
- img.alt='';b.append(hearts,img,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
+ b.style.setProperty('--beat',(-cards.size*.23)+'s');img.alt='';b.append(hearts,img,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
  return {b,hearts,img,name};
 }
 function render(){
  if(!game)return;const g=game,phase=g.phase,joined=g.players.some(p=>p.id===g.self),holding=g.holder===g.self;
  const labels={closed:'Lobby cerrado',cancelled:'Reto cancelado',lobby:'Esperando autorización de Dirección',intro:'Bonju presenta',countdown:'Prepárense',playing:holding?'¡Tienes la papa! Elige a quién pasarla':'La papa está en juego',blast:'Fin de ronda',finished:'Reto terminado'};
- el('phase').textContent=connected?labels[phase]:'Reconectando…';
+ const owner=g.players.find(p=>p.id===g.holder);
+ el('phase').textContent=connected?(phase==='playing'&&!holding&&owner?owner.name+' tiene la papa':labels[phase]):'Reconectando…';
  el('mode').textContent=g.mode?(g.mode==='users'?'Solo usuarios':'Solo bots')+' · '+g.players.length+' participantes':'';
- el('bonju').hidden=!['closed','lobby','intro','cancelled'].includes(phase);
+ el('game').dataset.phase=phase;
+ el('round').textContent=['playing','blast'].includes(phase)?'RONDA '+g.round+' · '+g.players.filter(p=>p.lives>0).length+' EN PIE':'';
+ el('bonju').hidden=phase!=='intro';
  for(const [id,c] of cards)if(!g.players.some(p=>p.id===id)){c.b.remove();cards.delete(id);}
  for(const p of g.players){
   if(!cards.has(p.id))cards.set(p.id,card(p));const {b,img,hearts,name}=cards.get(p.id);
@@ -32,16 +36,28 @@ function render(){
   b.classList.toggle('holder',holder);b.classList.toggle('out',!p.lives);
   b.disabled=!connected||pending||phase!=='playing'||!holding||holder||!p.lives;
   b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
-  hearts.textContent='♥'.repeat(p.lives)+'♡'.repeat(3-p.lives);name.textContent=p.name;
+  if(hearts.dataset.lives!==String(p.lives)){hearts.dataset.lives=String(p.lives);hearts.textContent='♥'.repeat(p.lives)+'♡'.repeat(3-p.lives);}
+  if(name.textContent!==p.name)name.textContent=p.name;
   const prefix='art/'+encodeURIComponent(p.characterId);
   if(!warmed.has(prefix)){for(const pose of ['happy','hold'])new Image().src=prefix+'-'+pose+'.webp';warmed.add(prefix);}
   const src=prefix+(holder?'-hold.webp':'-happy.webp');if(img.getAttribute('src')!==src)img.src=src;
  }
+ arrange(cards,g.players);
  const event=el('event'),name=id=>g.players.find(p=>p.id===id)?.name||'';
  event.hidden=!['blast','countdown','finished'].includes(phase);
  event.classList.toggle('blast',phase==='blast');
- if(phase==='blast'){const h=g.lastHit;event.textContent='¡LA PAPA HA EXPLOTADO!\n'+name(h.id)+' · '+(h.lives?h.lives+' '+(h.lives===1?'vida':'vidas'):'Fuera del juego');}
- if(phase==='finished')event.textContent='🏆 '+name(g.winner)+' gana inmunidad';
+ if(phase==='blast'||phase==='finished'){
+  const winner=phase==='finished',id=winner?g.winner:g.lastHit.id,person=g.players.find(p=>p.id===id);
+  const stamp=[g.id,phase,g.round,id].join('/');
+  if(event.dataset.stamp!==stamp){
+   event.dataset.stamp=stamp;
+   const portrait=document.createElement('img'),body=document.createElement('div'),title=document.createElement('small'),who=document.createElement('strong'),detail=document.createElement('span');
+   portrait.src='art/'+person.characterId+(winner?'-happy.webp':'-hold.webp');portrait.alt='';
+   title.textContent=winner?'GANADOR DEL RETO':'¡LA PAPA HA EXPLOTADO!';
+   who.textContent=name(id);detail.textContent=winner?'Gana inmunidad':g.lastHit.lives?('♥ '.repeat(g.lastHit.lives)+' · '+g.lastHit.lives+(g.lastHit.lives===1?' vida':' vidas')):'Sin vidas · Fuera del juego';
+   body.append(title,who,detail);event.replaceChildren(portrait,body);
+  }
+ }
  countdown();
  const controls=[];
  if(g.staff&&['closed','finished','cancelled'].includes(phase))controls.push(['users','Abrir solo usuarios'],['bots','Llenar solo con bots']);
@@ -53,6 +69,7 @@ function render(){
  for(const b of actions.children)b.disabled=pending||!connected;
 }
 function countdown(){if(game?.phase==='countdown')el('event').textContent=String(Math.max(1,Math.ceil((game.until-Date.now()-offset)/1000)));}
+matchMedia('(max-width:600px)').addEventListener('change',render);
 setInterval(countdown,150);
 async function connect(){
  try{
@@ -65,7 +82,7 @@ async function connect(){
   ws=new WebSocket(url);
   ws.onmessage=({data})=>{const m=JSON.parse(data);
    if(m.type==='welcome')ws.send(JSON.stringify({type:'potato',action:'subscribe'}));
-   if(m.type==='potato-state'){game=m.game;offset=game.serverTime-Date.now();connected=true;pending=false;delay=500;render();}
+   if(m.type==='potato-state'){const previous=game,point=impactPoint(m.game,cards);game=m.game;offset=game.serverTime-Date.now();connected=true;pending=false;delay=500;render();present(previous,game,cards,point);}
    if(m.type==='potato-error'){pending=false;el('notice').textContent=m.message;render();}
   };
   ws.onclose=e=>{

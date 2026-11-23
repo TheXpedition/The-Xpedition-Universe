@@ -19,10 +19,13 @@ try{
  const step=async when=>{clock=when;await act(staff,'pass','nobody',-1);};
  await step(state().deadline);await step(state().deadline);const firstBot=state().holder;
  await step(state().botAt);assert.notEqual(state().holder,firstBot);assert(state().holder.startsWith('bot-'));
- await act(staff,'cancel');await act(staff,'users');await act(one,'join');await act(two,'join');await act(staff,'start');assert.deepEqual(state().players.map(p=>p.id),['one','two']);
+ await act(staff,'cancel');await act(staff,'users');const lobby=state();
+ await Promise.all([one,two].map(c=>service.handle(c,{type:'potato',action:'join',gameId:lobby.id,revision:lobby.revision})));
+ assert.equal(state().players.length,2);await act(staff,'start');
+ assert(await service.returnToArena('one'));assert.equal(await service.returnToArena('staff'),false);assert.deepEqual(state().players.map(p=>p.id),['one','two']);
  const tick=async()=>{clock=state().deadline;await act(staff,'pass','nobody',-1);};
  await tick();await tick();assert.equal(state().holder,'one');const rev=state().revision;await act(two,'pass','one');assert.equal(state().revision,rev);
  await act(one,'pass','two');await act(one,'pass','two',rev);assert.equal(state().holder,'two');assert.equal(state().revision,rev+1);
  for(let i=0;i<3;i++){if(state().holder==='one')await act(one,'pass','two');await tick();assert.equal(state().lastHit.lives,2-i);await tick();}
- assert.equal(state().winner,'one');assert(memory.has('hot-potato-immunity:one'));console.log('OK: exclusiones, autorización, modos, pases duplicados, tres vidas, eliminación e inmunidad.');
+ assert.equal(await service.returnToArena('two'),false);assert.equal(state().winner,'one');assert(memory.has('hot-potato-immunity:one'));console.log('OK: exclusiones, autorización, modos, pases duplicados, tres vidas, eliminación e inmunidad.');
 }finally{await service.close();}

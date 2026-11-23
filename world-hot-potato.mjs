@@ -30,7 +30,9 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
   s.revision=state.revision+1;
   const write=(id,value)=>db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET state=excluded.state,updated=excluded.updated',id,JSON.stringify(value),now());
   await db.transaction(async()=>{await write('hot-potato',s);if(s.phase==='finished'&&s.mode==='users')await write('hot-potato-immunity:'+s.winner,{game:s.id});});
+  const opened=s.phase==='lobby'&&state.phase!=='lobby';
   state=s;schedule();publish();
+  if(opened)for(const c of clients.values())if(!c.potatoSubscribed)send(c,{type:'potato-open',mode:s.mode});
  }
  const live=s=>s.players.filter(p=>p.lives>0);
  function give(s,id){s.holder=id;s.botAt=s.mode==='bots'?now()+rand(350,1100):0;}
@@ -54,7 +56,8 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
    if(!c.potatoSubscribed)return;
    try{
     await advance();const s=structuredClone(state),id=c.user.id;
-    if(input.revision!==s.revision)reject('La partida cambió. Mira quién tiene la papa.');
+    const joiningCurrentLobby=['join','leave'].includes(a)&&s.phase==='lobby'&&input.gameId===s.id;
+    if(input.revision!==s.revision&&!joiningCurrentLobby)reject('La partida cambió. Mira quién tiene la papa.');
     if(['users','bots','start','cancel'].includes(a)&&!await can(c.user,'direct'))reject('Solo Dirección puede autorizar esta acción.');
     if(a==='users'||a==='bots'){
      if(!['closed','finished','cancelled'].includes(s.phase))reject('Cierra el lobby anterior primero.');
@@ -83,5 +86,5 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
    }catch(e){send(c,{type:'potato-error',message:e.message});send(c,packet(c));}
   });return true;
  }
- return {handle,active:()=>active(state),engaged:id=>active(state)&&state.players.some(p=>p.id===id),async close(){closed=true;clearTimeout(timer);await ready;await tail;}};
+ return {handle,returnToArena:async id=>{await ready;return active(state)&&state.mode==='users'&&live(state).some(p=>p.id===id);},active:()=>active(state),engaged:id=>active(state)&&state.players.some(p=>p.id===id),async close(){closed=true;clearTimeout(timer);await ready;await tail;}};
 }
