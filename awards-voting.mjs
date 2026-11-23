@@ -143,27 +143,47 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
   for(const entry of selections)(selected[entry.category]??=[]).push(entry.nominee);
   return {day,dailyLimit,nomineeDailyLimit,categoryChoiceLimit,spent,remaining:Math.max(0,dailyLimit-spent),spentByNominee,selected};
  }
+ async function frozenRows(){
+  return db.all('SELECT category,nominee,votes,percent_value,category_total FROM award_vote_frozen WHERE edition=?',ballot.edition);
+ }
+ const frozenMap=rows=>new Map(rows.filter(row=>categories.has(row.category)).map(row=>[
+  row.category+'/'+row.nominee,
+  {votes:Number(row.votes),percent:Number(row.percent_value),categoryTotal:Number(row.category_total)}
+ ]));
  async function tally(){
   const day=dayOf(now()),[start,end]=bounds(day);
-  const [totals,daily]=await Promise.all([
+  const [totals,daily,frozen]=await Promise.all([
    voteCounts(),
-   db.one('SELECT COALESCE(SUM(votes),0) AS count FROM award_vote_entries WHERE edition=? AND created>=? AND created<?',ballot.edition,start,end)
+   db.one('SELECT COALESCE(SUM(votes),0) AS count FROM award_vote_entries WHERE edition=? AND created>=? AND created<?',ballot.edition,start,end),
+   frozenRows()
   ]);
   const counts=new Map(totals.map(row=>[row.category+'/'+row.nominee,Number(row.votes)]));
+  const frozenByNominee=frozenMap(frozen);
   return {today:day,dailyCount:Number(daily?.count||0),dailyLimit:standardDailyLimit,sections:ballot.sections.map(section=>({
-   name:section.name,categories:section.categories.map(category=>({
-    id:category.id,name:category.name,nominees:category.nominees.map(nominee=>({
-     name:nominee.name,details:nominee.details,votes:counts.get(category.id+'/'+nominee.id)||0
-    }))
-   }))
+   name:section.name,categories:section.categories.map(category=>{
+    // Keep the percentages recorded when the bottom two were frozen.
+    // Active nominees share only the remaining percentage (not a new 100%).
+    const locked=category.nominees.map(nominee=>frozenByNominee.get(category.id+'/'+nominee.id)).filter(Boolean);
+    const reserved=Math.min(100,locked.reduce((sum,row)=>sum+row.percent,0));
+    const activeTotal=category.nominees.reduce((sum,nominee)=>sum+(frozenByNominee.has(category.id+'/'+nominee.id)?0:(counts.get(category.id+'/'+nominee.id)||0)),0);
+    return {id:category.id,name:category.name,nominees:category.nominees.map(nominee=>{
+     const votes=counts.get(category.id+'/'+nominee.id)||0;
+     const frozenEntry=frozenByNominee.get(category.id+'/'+nominee.id);
+     const percent=frozenEntry?frozenEntry.percent:activeTotal>0?(100-reserved)*votes/activeTotal:0;
+     return {name:nominee.name,details:nominee.details,votes,percent,frozen:!!frozenEntry};
+    })};
+   })
   }))};
  }
  async function vote(req,res,user){
   if(!user)fail(401,'Inicia sesión para votar.');
   if(req.method==='GET'){
-   const [rows,quota]=await Promise.all([voteCounts(user.id),quotaFor(user.id)]),votes={};
+   const [rows,quota,frozenRowsResult]=await Promise.all([voteCounts(user.id),quotaFor(user.id),frozenRows()]),votes={},frozen={};
    for(const row of rows)if(categories.has(row.category))(votes[row.category]??={})[row.nominee]=Number(row.votes);
-   return json(res,{ballot,votes,quota});
+   for(const row of frozenRowsResult)if(categories.has(row.category)){
+    (frozen[row.category]??={})[row.nominee]={votes:Number(row.votes),percent:Number(row.percent_value)};
+   }
+   return json(res,{ballot,votes,quota,frozen});
   }
   if(req.method!=='POST')fail(405,'Actualiza la página para votar.');
   const {dailyLimit,nomineeDailyLimit,categoryChoiceLimit}=limitsFor(user.id);
@@ -174,6 +194,9 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
   if(!Number.isSafeInteger(amount)||amount<1||amount>nomineeDailyLimit)fail(400,`Elige entre 1 y ${nomineeDailyLimit.toLocaleString('es-CO')} votos.`);
   const timestamp=now(),day=dayOf(timestamp),[start,end]=bounds(day);
   const total=await db.transaction(async()=>{
+   // This is a server-side rule: changing a browser control cannot bypass it.
+   const frozenNominee=await db.one('SELECT nominee FROM award_vote_frozen WHERE edition=? AND category=? AND nominee=?',ballot.edition,category.id,input.nominee);
+   if(frozenNominee)fail(409,'Este nominado ya no acepta votos.');
    // The user-day row serializes competing requests from this account, including retries.
    const dayRow=await db.one('SELECT count FROM award_vote_user_days WHERE edition=? AND day=? AND voter_id=?',ballot.edition,day,user.id);
    if(!dayRow){
