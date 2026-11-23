@@ -3,7 +3,9 @@ import {arrange,present,impactPoint} from './scene.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 const el=id=>document.getElementById(id);
 const cards=new Map(), warmed=new Set();
-let ws, game, pending=false, connected=false, offset=0, delay=500, retry;
+let ws, game, pending=false, connected=false, offset=0, retry, outage, zone;
+let attempts=0, connecting=false, blocked=false;
+let watching=false,lobbyId;
 const dialog=el('rules'),direction=el('direction');
 el('staff-toggle').onclick=()=>{if(game?.staff)direction.showModal();};
 el('staff-close').onclick=()=>direction.close();
@@ -36,7 +38,7 @@ el('close').onclick=()=>dialog.close();
 function act(action,target){
  if(!connected||pending||!game||ws.readyState!==WebSocket.OPEN)return;
  pending=true;el('notice').textContent='';
- ws.send(JSON.stringify({type:'potato',action,target,gameId:game.id,revision:game.revision}));
+ ws.send(JSON.stringify({type:'potato',action,target,ready:action==='ready'?target:undefined,gameId:game.id,revision:game.revision}));
 }
 el('cast').addEventListener('contextmenu',event=>event.preventDefault());
 function card(p){
@@ -66,10 +68,10 @@ function receivePass(m){
  present(previous,game,cards,null);
 }
 function render(){
- if(!game)return;const g=game,phase=g.phase,joined=g.players.some(p=>p.id===g.self),holding=g.holder===g.self;
- const labels={closed:'Lobby cerrado',cancelled:'Reto cancelado',lobby:'Esperando autorización de Dirección',intro:'Bonju presenta',tutorial:'Cómo jugar',countdown:'Prepárense',playing:holding?'¡Tienes la papa! Elige a quién pasarla':'La papa está en juego',blast:'Fin de ronda',finished:'Reto terminado'};
+ if(!game)return;const g=game,phase=g.phase,self=g.players.find(p=>p.id===g.self),holding=g.holder===g.self;
+ const labels={closed:'Lobby cerrado',cancelled:'Reto cancelado',lobby:g.mode?'Esperando autorización de Dirección':'El staff está preparando el lobby',intro:'Bonju presenta',tutorial:'Cómo jugar',countdown:'Prepárense',playing:holding?'¡Tienes la papa! Elige a quién pasarla':'La papa está en juego',blast:'Fin de ronda',finished:'Reto terminado'};
  const owner=g.players.find(p=>p.id===g.holder);
- el('phase').textContent=connected?(phase==='playing'&&!holding&&owner?owner.name+' tiene la papa':labels[phase]):'Reconectando…';
+ el('phase').textContent=phase==='playing'&&!holding&&owner?owner.name+' tiene la papa':labels[phase];
  el('mode').textContent=g.mode?(g.mode==='users'?'Solo usuarios':'Solo bots')+' · '+g.players.length+' participantes':'';
  el('game').dataset.phase=phase;
  el('round').textContent=['playing','blast'].includes(phase)?'RONDA '+g.round+' · '+g.players.filter(p=>p.lives>0).length+' EN PIE':'';
@@ -120,18 +122,47 @@ function render(){
  if(!g.staff&&direction.open)direction.close();
  el('staff-status').textContent=labels[phase]+(g.mode?' · '+el('mode').textContent:'');
  const controls=[];
- if(g.staff&&['closed','finished','cancelled'].includes(phase))controls.push(['users','Abrir solo usuarios'],['bots','Llenar solo con bots']);
-
- if(g.staff&&phase==='lobby'&&g.players.length>=2)controls.push(['start','Autorizar inicio']);
- if(g.staff&&['lobby','intro','tutorial','countdown','playing','blast'].includes(phase))controls.push(['cancel','Cancelar reto']);
+ if(g.staff&&['closed','finished','cancelled'].includes(phase))controls.push(['open','Abrir lobby']);
+ if(g.staff&&phase==='lobby'&&!g.mode)controls.push(['users','Solo usuarios'],['bots','Solo bots']);
+ if(g.staff&&phase==='lobby'&&g.mode)controls.push(['start','Autorizar inicio',g.players.length<2||g.players.some(p=>!p.ready||p.connected===false)]);
+ if(g.staff&&['lobby','intro','tutorial','countdown','playing','blast'].includes(phase))controls.push(['cancel',phase==='lobby'?'Cerrar lobby':'Cancelar reto']);
  renderControls(el('staff-actions'),controls);
- const entry=phase==='lobby'&&g.mode==='users'&&!g.staff;
- renderControls(el('actions'),entry?[joined?['leave','Salir del reparto']:['join','Participar']]:[]);
+ renderLobby(g,self,labels[phase],controls);
+}
+function renderLobby(g,self,label,controls){
+ const lobby=['closed','lobby','cancelled'].includes(g.phase);
+ el('lobby').hidden=!lobby;
+ if(!lobby)return;
+ if(g.id!==lobbyId){lobbyId=g.id;watching=false;}
+ el('lobby-phase').textContent=label;
+ const actions=[];
+ if(g.phase==='lobby'&&g.mode==='users'&&!g.staff){
+  if(self)actions.push(['ready',self.ready?'Listo ✓ · Cambiar estado':'Estoy listo',false,!self.ready],['leave','Salir del lobby']);
+  else if(g.canJoin)actions.push(['join','Entrar al lobby']);
+ }
+ if(g.phase==='lobby'&&g.mode&&!self&&!g.staff&&!watching)actions.push(['watch','Ver como espectador']);
+ el('lobby-note').textContent=self?(self.ready?'Ya estás listo. El staff indicará el inicio.':'Confirma que estás listo cuando quieras comenzar.'):watching?'Estás como espectador. La arena se abrirá cuando el staff inicie.':g.mode==='users'?'La inscripción está abierta para los participantes activos.':g.mode==='bots'?'El staff eligió una partida de bots.':'El staff elige la modalidad y autoriza el inicio.';
+ renderControls(el('actions'),actions);
+ renderControls(el('lobby-controls'),controls);
+ const capacity=g.capacity??17;
+ el('seats').textContent=g.players.length+' / '+capacity;
+ const slots=el('slots'),key=JSON.stringify([capacity,g.players]);
+ if(slots.dataset.key===key)return;
+ slots.dataset.key=key;
+ const entries=Array.from({length:capacity},(_,i)=>{
+  const p=g.players[i],slot=document.createElement('li');
+  if(!p){slot.className='vacant';slot.textContent='Disponible';return slot;}
+  const img=document.createElement('img'),copy=document.createElement('span'),name=document.createElement('strong'),status=document.createElement('small');
+  img.src='art/'+encodeURIComponent(p.characterId)+'-happy.webp';img.alt='';
+  name.textContent=p.name;status.textContent=g.mode==='bots'?'Bot listo':p.connected===false?'Desconectado':p.ready?'Listo':'Preparándose';
+  copy.append(name,status);slot.append(img,copy);return slot;
+ });
+ slots.replaceChildren(...entries);
 }
 function renderControls(actions,controls){
  const key=JSON.stringify(controls);
- if(actions.dataset.key!==key){actions.replaceChildren();for(const [action,label] of controls){const b=document.createElement('button');b.textContent=label;b.onclick=()=>act(action);actions.append(b);}actions.dataset.key=key;}
- for(const b of actions.children)b.disabled=pending||!connected;
+ if(actions.dataset.key!==key){actions.replaceChildren();for(const [action,label,,target] of controls){const b=document.createElement('button');b.textContent=label;b.onclick=()=>{if(action==='watch'){watching=true;render();}else act(action,target);};actions.append(b);}actions.dataset.key=key;}
+ for(const [i,b] of Array.from(actions.children).entries())b.disabled=pending||!connected||!!controls[i][2];
 }
 function countdown(){
  if(!game||!['tutorial','countdown'].includes(game.phase))return;
@@ -143,27 +174,49 @@ function countdown(){
 matchMedia('(max-width:600px)').addEventListener('change',render);
 setInterval(()=>{countdown();displaySpeech();},150);
 async function connect(){
+ if(connecting||blocked||navigator.onLine===false||[WebSocket.CONNECTING,WebSocket.OPEN].includes(ws?.readyState))return;
+ clearTimeout(retry);connecting=true;
  try{
-  const r=await fetch(worldApiPath('/world/bootstrap'),{cache:'no-store'});
-  if(!r.ok){if([401,403].includes(r.status)){el('phase').textContent='Inicia sesión en World para entrar';return;}throw Error();}
+  if(attempts===3)zone=null;
+  if(!zone){
+  const r=await fetch(worldApiPath('/world/bootstrap'),{cache:'no-store',signal:AbortSignal.timeout(8000)});
+  if(!r.ok){if([401,403,404,410].includes(r.status)){blocked=true;el('phase').textContent='Inicia sesión en World para entrar';return;}throw Error();}
   const boot=await r.json();
-  if(boot.characterAvailability?.needsSelection){el('phase').textContent='Vuelve a World y selecciona tu personaje para entrar';return;}
+  if(boot.characterAvailability?.needsSelection){blocked=true;el('phase').textContent='Vuelve a World y selecciona tu personaje para entrar';return;}
+   zone=boot.profile.lastZone;
+  }
   const url=new URL(worldSocketPath('/world/live'),location.href);
-  url.protocol=location.protocol==='https:'?'wss:':'ws:';url.searchParams.set('zone',boot.profile.lastZone);
-  ws=new WebSocket(url);
-  ws.onmessage=({data})=>{const m=JSON.parse(data);
+  url.protocol=location.protocol==='https:'?'wss:':'ws:';url.searchParams.set('zone',zone);
+  if(game)url.searchParams.set('resume','1');
+  const socket=ws=new WebSocket(url);
+  const timeout=setTimeout(()=>socket.close(),12000);
+  socket.onmessage=({data})=>{if(socket!==ws)return;const m=JSON.parse(data);
    if(m.type==='welcome')ws.send(JSON.stringify({type:'potato',action:'subscribe',compactPass:true}));
    if(m.type==='potato-pass')receivePass(m);
-   if(m.type==='potato-state'){const previous=game,point=impactPoint(m.game,cards);game=m.game;offset=game.serverTime-Date.now();connected=true;pending=false;delay=500;render();present(previous,game,cards,point);
+   if(m.type==='potato-state'){const previous=game,point=impactPoint(m.game,cards);game=m.game;offset=game.serverTime-Date.now();if(!connected){clearTimeout(timeout);clearTimeout(outage);el('notice').textContent='';}
+    connected=true;pending=false;attempts=0;render();present(previous,game,cards,point);
     if(direction.open&&previous?.phase==='lobby'&&game.phase==='intro')direction.close();
     if(game.phase==='blast'&&game.lastHit?.id===game.self&&previous?.phase==='playing'&&previous.id===game.id)playExplosion();}
    if(m.type==='potato-error'){pending=false;el('notice').textContent=m.message;render();}
   };
-  ws.onclose=e=>{
-   if([4002,4003].includes(e.code)){connected=false;pending=false;render();el('phase').textContent=e.code===4002?'World está abierto en otra pestaña':'Sesión cerrada. Vuelve a World';return;}
+  socket.onclose=e=>{
+   clearTimeout(timeout);if(socket!==ws)return;
+   if([4002,4003].includes(e.code)){blocked=true;clearTimeout(outage);connected=false;pending=false;render();el('phase').textContent=e.code===4002?'World está abierto en otra pestaña':'Sesión cerrada. Vuelve a World';return;}
    reconnect();
   };
  }catch{reconnect();}
+ finally{connecting=false;}
 }
-function reconnect(){connected=false;pending=false;el('phase').textContent='Reconectando…';render();clearTimeout(retry);retry=setTimeout(connect,delay);delay=Math.min(10000,delay*2);}
+function reconnect(){
+ const wasConnected=connected;connected=false;pending=false;
+ if(wasConnected||!attempts){
+  render();
+  clearTimeout(outage);
+  outage=setTimeout(()=>{if(!connected&&!blocked)el('notice').textContent='Volviendo a conectar…';},1400);
+ }
+ clearTimeout(retry);
+ retry=setTimeout(connect,Math.min(8000,300*2**Math.min(5,attempts++))+Math.random()*150);
+}
+window.addEventListener('online',connect);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!connected)connect();});
 connect();

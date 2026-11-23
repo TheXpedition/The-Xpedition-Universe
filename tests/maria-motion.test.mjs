@@ -58,6 +58,18 @@ test('delayed 10 Hz snapshots do not reverse walking, restart stopped legs or re
  }
  assert.equal(landings,1);assert(maxError<75,'prediction must stay near the authoritative position: '+maxError);
 });
+test('a late server position more than 80 pixels behind a running avatar does not snap it back',()=>{
+ const p=actor(),local=new WorldLocalMotion();local.setInput({x:1,y:0,run:true});local.sample(p,0,1000,map);
+ let shown;
+ for(let frame=1;frame<=30;frame++)shown=local.sample(p,frame*16,1000+frame*16,map);
+ assert(shown.x>p.x+145);
+ const late={...p,x:p.x+12,moving:true,previous:{at:496}};
+ const reconciled=local.sample(late,496,1496,map);
+ assert(reconciled.x>=shown.x,'a late update should preserve the forward step');
+ local.reset();local.setInput({x:-1,y:0,run:true});local.sample(p,0,1000,map);
+ for(let frame=1;frame<=30;frame++)shown=local.sample(p,frame*16,1000+frame*16,map);
+ assert(local.sample({...p,x:p.x-12,moving:true,previous:{at:496}},496,1496,map).x<=shown.x);
+});
 test('Maria acknowledges a delayed jump without dropping in midair or replaying the landing',()=>{
  for(const clothing of ['heat','pajamas','cold']){
   const p={...actor(),clothing},local=new WorldLocalMotion(),visual=new CharacterMotion();

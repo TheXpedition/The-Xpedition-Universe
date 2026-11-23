@@ -7,13 +7,24 @@
 <body><main id="game" data-phase="closed">
 <header><a href="../?view=challenges">‹ Desafíos</a><span id="mode"></span><nav aria-label="Controles del reto"><button id="voice" hidden>Escuchar a Bonju</button><button id="sound" aria-pressed="true">Sonido</button><button id="help">Cómo jugar</button><button id="staff-toggle" aria-haspopup="dialog" hidden>Dirección</button></nav></header>
 <section class="stage" aria-label="Campamento de Hot Potato">
-<div id="cover"><img src="art/logo.webp" alt="Hot Potato"></div>
+<section id="lobby" aria-label="Lobby de Hot Potato">
+ <div class="lobby-entry">
+  <img class="lobby-logo" src="art/logo.webp" alt="Hot Potato">
+  <strong id="lobby-phase"></strong><p id="lobby-note"></p>
+  <div id="actions" class="lobby-actions"></div>
+ </div>
+ <div class="lobby-roster">
+  <div class="lobby-heading"><h2>Participantes</h2><strong id="seats"></strong></div>
+  <ul id="slots" aria-label="Reparto del lobby"></ul>
+  <div id="lobby-controls" class="lobby-actions"></div>
+ </div>
+</section>
 <div class="banner"><strong id="phase" role="status">Conectando…</strong><small id="round"></small></div>
 <div id="cast"></div>
 <aside id="bonju" hidden><img class="intro-art" src="art/bonju-presenta.webp" width="1672" height="941" decoding="async" alt="Bonju presenta Hot Potato en el campamento al atardecer"><div class="dialogue"><span class="speaker-portrait" aria-hidden="true"></span><div class="speech-frame"><strong class="speaker-name">Bonju</strong><p id="welcome" aria-live="polite">¡Bienvenidos a <em>Hot Potato</em>!</p><button id="next-line" aria-label="Siguiente mensaje de Bonju">▼</button></div></div></aside>
 <div id="event" role="status" hidden></div>
 </section>
-<footer><span id="notice" role="status"></span><div id="actions"></div></footer></main>
+<footer><span id="notice" role="status"></span></footer></main>
 <dialog id="direction"><h2>Dirección</h2><p id="staff-status"></p><div id="staff-actions"></div><button id="staff-close">Cerrar</button></dialog>
 <dialog id="rules" aria-labelledby="rules-title"><div class="rules-heading"><h2 id="rules-title">Cómo jugar</h2><strong id="rules-clock" hidden></strong></div>
 <div class="briefing">

@@ -29,5 +29,12 @@ try{
  const expected=JSON.stringify(movement);
  for(const received of frames)assert.equal(JSON.stringify(received.find(m=>m.serverTime===movement.serverTime)),expected);
  assert(peers.every(p=>p.socket.readyState===1));
+ const actor=actors[2],peer=peers[2];
+ const stopped=await f.until(()=>peer.messages.filter(m=>m.type==='move').flatMap(m=>m.players).findLast(p=>p.userId===actor.id&&!p.moving&&p.walk>0));
+ peer.socket.terminate();
+ const resumed=await f.connect(actor.id,{claim:false,compactMovement:true,resume:true});
+ const restored=resumed.messages.find(m=>m.type==='welcome').players.find(p=>p.userId===actor.id);
+ assert(Math.hypot(restored.x-stopped.x,restored.y-stopped.y)<1.5,'return at the last saved point without spawning elsewhere');
+
  console.log(JSON.stringify({connections:peers.length,playersInSharedFrame:movement.players.length,identical:true,packetsPerPeer:frames.map(r=>r.length)}));
 }finally{await f.close();}

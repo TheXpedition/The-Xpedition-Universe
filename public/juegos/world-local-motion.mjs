@@ -36,12 +36,15 @@ export class WorldLocalMotion {
    if(previous&&(preserveMaria||preserveOther))for(const key of ['z','vz','grounded','jumpAt','jumpGravity'])next[key]=previous[key];
    if(previous&&Math.hypot(previous.x-p.x,previous.y-p.y)<80)next.walk=previous.walk;
    this.pose=next;this.source=p;this.sourceAt=p.previous?.at;this.offset={x:shown.x-next.x,y:shown.y-next.y};
-   if(Math.hypot(this.offset.x,this.offset.y)>80)this.offset={x:0,y:0};
+   const distance=Math.hypot(this.offset.x,this.offset.y),{x,y}=this.intent;
+   // A delayed position behind a held direction is reconciled by easing.
+   // Larger position changes and corrections ahead can still snap.
+   if(distance>80&&(distance>220||this.offset.x*x+this.offset.y*y<=0))this.offset={x:0,y:0};
   }
   stepWorld(this.pose,{...this.intent,run:this.intent.run&&p.canRun!==false,speedFactor:p.speedFactor||1,now:worldTime},dt,zone);
   // Bound reconciliation speed so a delayed packet cannot pull a walking actor
   // backwards between two rendered frames. Idle legs never keep cycling.
-  if(this.pose.moving||!this.pose.grounded||!p.moving){const decay=1-Math.exp(-dt*18),limit=(this.pose.moving?205*(p.speedFactor||1)*.35:25)*dt;for(const key of ['x','y'])this.offset[key]-=Math.max(-limit,Math.min(limit,this.offset[key]*decay));}
+  if(this.pose.moving||!this.pose.grounded||!p.moving||this.intent.x||this.intent.y){const decay=1-Math.exp(-dt*18),limit=(this.pose.moving?205*(p.speedFactor||1)*.35:25)*dt;for(const key of ['x','y'])this.offset[key]-=Math.max(-limit,Math.min(limit,this.offset[key]*decay));}
   return {...p,...this.pose,x:this.pose.x+this.offset.x,y:this.pose.y+this.offset.y};
  }
 }

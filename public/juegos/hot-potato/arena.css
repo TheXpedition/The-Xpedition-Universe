@@ -78,25 +78,6 @@ small {
 .banner small:empty {
   display:none;
 }
-#cover {
-  display:none;
-}
-main:is([data-phase=closed],[data-phase=cancelled]) .stage {
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  gap:16px;
-}
-main:is([data-phase=closed],[data-phase=cancelled]) #cover {
-  display:block;
-}
-#cover img {
-  display:block;
-  max-height:53svh;
-  width:min(70vw,370px);
-  object-fit:contain;
-  filter:drop-shadow(0 8px 10px #30151280);
-}
 #cast {
   display:flex;
   flex-direction:column;
@@ -415,4 +396,31 @@ main[data-phase=countdown] #event {position:fixed;top:50%;left:50%;transform:tra
 @media(max-width:600px) and (orientation:portrait) {
  #rules[data-automatic] .briefing {grid-template-columns:1fr}
  .briefing figure {display:grid;grid-template-columns:36% 1fr;align-items:center;gap:10px}
+}
+
+main:is([data-phase=closed],[data-phase=lobby],[data-phase=cancelled]) .stage {display:grid;grid-template-rows:1fr}
+main:is([data-phase=closed],[data-phase=lobby],[data-phase=cancelled]) .banner,
+main:is([data-phase=closed],[data-phase=lobby],[data-phase=cancelled]) #cast {display:none}
+#lobby {width:min(100%,1060px);justify-self:center;display:grid;grid-template-columns:.85fr 1.15fr;gap:18px;align-items:stretch;padding:12px 0}
+.lobby-entry,.lobby-roster {background:#261712f5;border:2px solid #d59a56;border-radius:16px;padding:clamp(12px,2.5vw,26px);box-shadow:0 8px 22px #1d0b0875}
+.lobby-entry {display:flex;flex-direction:column;justify-content:center;text-align:center;align-items:center}
+.lobby-logo {width:min(75%,250px);max-height:32svh;object-fit:contain;margin-bottom:8px}
+#lobby-phase {color:#ffd08c}
+#lobby-note {font-size:.92rem;color:#f0dbc3;line-height:1.4}
+.lobby-heading,.lobby-actions {display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.lobby-heading {justify-content:space-between;border-bottom:1px solid #a06343;padding-bottom:8px}
+.lobby-heading h2 {font-size:1.05rem;margin:0}
+.lobby-actions {justify-content:center;margin-top:10px}
+#slots {list-style:none;padding:0;margin:12px 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+#slots li {display:flex;gap:6px;align-items:center;background:#40261a;border-radius:8px;min-height:48px;padding:4px;font-size:.78rem;min-width:0}
+#slots img {width:27px;height:38px;object-fit:contain}
+#slots span {min-width:0;overflow-wrap:anywhere}
+#slots small {display:block;font-size:.64rem;letter-spacing:normal}
+#slots .vacant {justify-content:center;border:1px dashed #94633d;background:transparent;color:#e0bc99;font-size:.7rem}
+.lobby-actions button:disabled,#staff-actions button:disabled {opacity:.55}
+#notice:empty {display:none}
+@media(max-width:690px) {
+ #lobby {grid-template-columns:1fr;gap:8px}
+ .lobby-logo {max-height:20svh}
+ #slots {grid-template-columns:repeat(3,minmax(0,1fr))}
 }

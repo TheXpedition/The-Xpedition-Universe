@@ -179,12 +179,33 @@ export function createWorld({db,json,fail,body,getSession,progression,arcade,now
  async function zones(user){await shelterReady;const pref=await preferences(user),map=await configuration(),n=counts(),staff=await can(user,'direct'),visitor=await canVisitShelters(user,pref.characterId);return WORLD_ZONES.map(z=>({...z,enabled:enabled(map,'zone:'+z.id),canEnter:(enabled(map,'zone:'+z.id)||staff)&&(visitor||shelters.canEnter(user,pref.characterId,z.id)),online:n[z.id]||0}));}
  async function challengeAccess(user,game='ice-breaker'){if(!user)return false;const characterPref=await preferences(user);try{await characterService.requireSelection(user,characterPref.characterId,await characterContext(user));}catch{return false;}if((clientFor(user)?.wellness||await healthStore.loadBody(user.id)).life.status==='dead')return false;const map=await configuration(),a=await access(user),r=await db.one('SELECT status FROM world_contestants WHERE season=? AND user_id=?','antarctica-1',user.id);return a.canPlay&&(await can(user,'direct')||enabled(map,'challenge:'+game)&&await participation.canCompete(user)&&!['spectator','eliminated'].includes(r?.status));}
  async function challenge(user){return {id:'ice-breaker',name:'Ice Breaker',enabled:enabled(await configuration(),'challenge:ice-breaker'),canPlay:await challengeAccess(user),url:'/simulator/ice-breaker/',dodgeball:{enabled:enabled(await configuration(),'challenge:dodgeball'),canPlay:await challengeAccess(user,'dodgeball'),url:'/juegos/reto-pelotas/'}};}
- async function persist(c){if(!clients.has(c.ws)&&c.replaced)return;if(c.eating||c.careBusy||c.tradeBusy)return;await db.transaction(async()=>{await db.run('UPDATE world_preferences SET last_zone=?,x=?,y=?,updated=? WHERE user_id=?',c.zone.id,Math.round(c.p.x),Math.round(c.p.y),now(),c.user.id);await db.run('INSERT INTO world_actors(user_id,state,updated) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET state=excluded.state,updated=excluded.updated',c.user.id,JSON.stringify({zone:c.zone.id,p:c.p,state:c.state,atSeat:c.atSeat,seat:c.seat,seatChoice:c.seatChoice,sceneId:c.sceneId,layout:'apocalypse-front-1',march:c.march,ceremony:ceremonyState?.id}),now());await vitalsStore.save(c.user.id,c.vitals);await healthStore.saveBody(c.user.id,c.wellness);});c.savedAt=now();}
+ async function persist(c){if(c.eating||c.careBusy||c.tradeBusy)return;await db.transaction(async()=>{await db.run('UPDATE world_preferences SET last_zone=?,x=?,y=?,updated=? WHERE user_id=?',c.zone.id,Math.round(c.p.x),Math.round(c.p.y),now(),c.user.id);await db.run('INSERT INTO world_actors(user_id,state,updated) VALUES(?,?,?) ON CONFLICT(user_id) DO UPDATE SET state=excluded.state,updated=excluded.updated',c.user.id,JSON.stringify({zone:c.zone.id,p:c.p,state:c.state,atSeat:c.atSeat,seat:c.seat,seatChoice:c.seatChoice,sceneId:c.sceneId,layout:'apocalypse-front-1',march:c.march,ceremony:ceremonyState?.id}),now());await vitalsStore.save(c.user.id,c.vitals);await healthStore.saveBody(c.user.id,c.wellness);});c.savedAt=now();}
+ function checkpoint(c,t){
+  if(c.saving)return;
+  c.savedAt=t;c.saving=persist(c).catch(()=>{}).finally(()=>c.saving=null);
+ }
  function scatter(zone,point,userId){const map=WORLD_MAPS[zone];for(const [dx,dy]of [[0,0],[60,0],[-60,0],[0,55],[60,55],[-60,55],[110,0],[-110,0],[0,-55],[60,-55],[-60,-55],[110,55],[-110,55],[160,0],[-160,0],[0,105]]){const x=point.x+dx,y=point.y+dy;if(hasFloor(map,x,y)&&clearPoint(map,x,y)&&![...clients.values()].some(c=>c.user.id!==userId&&c.zone.id===zone&&Math.hypot(c.p.x-x,c.p.y-y)<35))return {x,y};}return point;}
  async function history(c){if(c.zone.private)return [];return (await db.all('SELECT w.id,w.sender,w.text,w.created,u.name FROM world_chat w JOIN users u ON u.id=w.sender WHERE w.zone=? ORDER BY w.created DESC LIMIT 30',c.zone.id)).reverse().map(r=>({id:r.id,userId:r.sender,name:r.name,text:r.text,created:Number(r.created)}));}
  function publicSeasonRoster(){const rows=new Map(seasonRoster.map(p=>[p.userId,{...p,connected:false}]));for(const c of clients.values()){const previous=rows.get(c.user.id);rows.set(c.user.id,{...previous,userId:c.user.id,name:c.user.name,characterId:c.characterId,status:previous?.status||'active',connected:true});}return [...rows.values()];}
- function presence(c){broadcast({type:'roster',roster:publicSeasonRoster()});room(c,{type:'players',players:publicPlayers(c),serverTime:now()});broadcast({type:'counts',counts:counts()});for(const staff of clients.values())if(staff.direct)send(staff,{type:'directory',players:[...clients.values()].map(player)});}
- async function remove(c){if(!clients.has(c.ws))return;await family.disconnect(c.user.id);await clinic.disconnect(c.user.id,{preserveConsent:true});await sanitation.cancel(c.user.id);protocol.disconnect(c);grip.disconnect(c);chef.disconnect(c);cameras.close(c,false);intimacy.cancel(c.user.id);trades.disconnected(c.user.id);clients.delete(c.ws);presence(c);if(!c.replaced)await persist(c).catch(()=>{});}
+ function presence(c){
+  broadcast({type:'roster',roster:publicSeasonRoster()});room(c,{type:'players',players:publicPlayers(c),serverTime:now()});broadcast({type:'counts',counts:counts()});
+  let directory;
+  for(const staff of clients.values())if(staff.direct&&!staff.potatoSubscribed){directory??=[...clients.values()].map(player);send(staff,{type:'directory',players:directory});}
+ }
+ function remove(c){
+  if(!clients.has(c.ws))return;
+  c.disconnecting??=(async()=>{
+   try{
+    await family.disconnect(c.user.id);await clinic.disconnect(c.user.id,{preserveConsent:true});await sanitation.cancel(c.user.id);
+    potato.disconnect(c);protocol.disconnect(c);grip.disconnect(c);chef.disconnect(c);cameras.close(c,false);intimacy.cancel(c.user.id);trades.disconnected(c.user.id);
+   }finally{
+    await c.saving;
+    await persist(c).catch(()=>{});
+    clients.delete(c.ws);presence(c);
+   }
+  })().catch(error=>console.error('World disconnect cleanup:',error.message));
+  return c.disconnecting;
+ }
  async function audit(user,kind,details){await db.run('INSERT INTO moderation_actions(id,moderator,action,subject,details,created) VALUES(?,?,?,?,?,?)',randomUUID(),user.id,'world:'+kind,details.target||'world',JSON.stringify(details),now());}
  const objectStates=new Map();
  const beddingReady=(async()=>{const row=await db.one('SELECT state FROM world_environment WHERE id=?','bed-cleanliness');if(row)try{for(const [key,cleanliness]of Object.entries(JSON.parse(row.state)))if(Number.isFinite(cleanliness))objectStates.set(key,{cleanliness:Math.max(0,Math.min(100,cleanliness))});}catch{}})();
@@ -247,9 +268,26 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
   if(!publishing){publishing=true;try{const connected=[...clients.values()],views=await ceremonies.views(connected.map(c=>c.user));connected.forEach((c,i)=>send(c,{type:'ceremony',...views[i],serverTime:now()}));}finally{publishing=false;}}
  }});
  let ceremonyState=null;const refresh=async()=>{ceremonyState=await ceremonies.load();};
- async function message(c,raw){
-  if(now()-c.windowAt>1000){c.windowAt=now();c.messages=0;}if(++c.messages>35){c.ws.close(4008,'Demasiados mensajes.');return;}
-  let input;try{input=JSON.parse(raw.toString());}catch{return;}if(!input||typeof input!=='object'||!clients.has(c.ws))return;const t=now();
+ function queueMessage(c,raw){
+  const receivedAt=now();
+  if(receivedAt-c.windowAt>1000){c.windowAt=receivedAt;c.messages=0;}
+  if(++c.messages>35){c.ws.close(4008,'Demasiados mensajes.');return;}
+  let input;try{input=JSON.parse(raw.toString());}catch{return;}
+  if(!input||typeof input!=='object')return;
+  if(input.type==='input'&&c.queuedMotion){
+   c.queuedMotion.input=input;c.queuedMotion.receivedAt=receivedAt;return;
+  }
+  const packet={input,receivedAt};
+  c.queuedMotion=input.type==='input'?packet:null;
+  c.queue=c.queue.then(()=>{
+   if(c.queuedMotion===packet)c.queuedMotion=null;
+   return message(c,packet.input,packet.receivedAt);
+  }).catch(e=>send(c,{type:'error',message:e.status?e.message:'No se pudo completar la acción.'}));
+ }
+ async function message(c,input,receivedAt){
+  if(!clients.has(c.ws)||c.disconnecting)return;
+  const t=now();
+  if(input.type==='input'&&t-receivedAt>1000&&(Number(input.x)||Number(input.y)))return;
   if(input.type==='maria-voice-prepare'){if(c.characterId==='maria-villegas'&&t-(c.lastVoicePrepare||0)>2500&&await can(c.user,'direct')){c.lastVoicePrepare=t;mariaVoice.prepare();}return;}
   if(await potato.handle(c,input))return;
   if(potato.engaged(c.user.id)&&input.type!=='ping')return;
@@ -273,7 +311,7 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
   if(input.type==='stop'){stopActorMotion(c,t);return;}
   const isabelMedicalRest=c.characterId==='isabel'&&input.type==='interact'&&c.zone.id==='hospital-interior'&&WORLD_MAPS[c.zone.id].props.some(p=>p.id===input.objectId&&p.medicalBed);
   if(c.spectator&&!isabelMedicalRest&&!['input','stop','walk','enter','jump','chat','ping','reaction','stand','radio','radio-chat','maria-voice-prepare'].includes(input.type))fail(403,'Estás en modo espectador.');
-  if(input.type==='input'){const locked=c.zone.id==='eliminacion'&&ceremonyState&&!['preparation','summoning','finished','cancelled'].includes(ceremonyState.phase)&&ceremonyState.participants.includes(c.user.id);if(locked)return;c.input={x:Math.max(-1,Math.min(1,Number(input.x)||0)),y:Math.max(-1,Math.min(1,Number(input.y)||0)),run:input.run===true};if(c.input.x||c.input.y){c.p.path=[];if(c.seat||c.atSeat||c.sleeping){const intent=c.input;stand(c);c.input=intent;}c.pendingObject=null;c.state='idle';c.atSeat=false;}c.lastInput=t;return;}
+  if(input.type==='input'){const locked=c.zone.id==='eliminacion'&&ceremonyState&&!['preparation','summoning','finished','cancelled'].includes(ceremonyState.phase)&&ceremonyState.participants.includes(c.user.id);if(locked)return;c.input={x:Math.max(-1,Math.min(1,Number(input.x)||0)),y:Math.max(-1,Math.min(1,Number(input.y)||0)),run:input.run===true};if(c.input.x||c.input.y){c.p.path=[];if(c.seat||c.atSeat||c.sleeping){const intent=c.input;stand(c);c.input=intent;}c.pendingObject=null;c.state='idle';c.atSeat=false;}c.lastInput=receivedAt;return;}
   if(input.type==='walk'){if(c.swimming)return;if(t-c.lastPath<350)return;c.lastPath=t;if(c.zone.id==='eliminacion'&&ceremonyState&&!['preparation','summoning','finished','cancelled'].includes(ceremonyState.phase))return;if(!Number.isFinite(input.x)||!Number.isFinite(input.y))return;if(c.seat||c.atSeat||c.sleeping)stand(c);stopActorMotion(c,t);c.p.path=worldPath(c.zone.id,c.p,input);c.atSeat=false;c.state='idle';send(c,{type:'route',path:c.p.path});return;}
   if(input.type==='interact'){if(c.swimming)return;c.lastInteract=t;await interact(c,input.objectId,false,input.slot,input.bedActivity||'sleep');return;}
   if(input.type==='stand'){if(c.zone.id==='eliminacion'&&ceremonyState?.paused)return;c.seatChoice=true;c.sceneId=ceremonyState?.id;stand(c);presence(c);return;}
@@ -296,19 +334,21 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
  }
  async function connect(ws,user,zone,pref,req){
   const member=await participation.synchronize(user,{staff:await can(user,'direct')||await can(user,'moderate')});
+  const params=new URL(req.url,'http://localhost').searchParams;
   const map=WORLD_MAPS[zone.id],point=pref.lastZone===zone.id&&hasFloor(map,pref.x,pref.y)&&clearPoint(map,pref.x,pref.y)?{x:pref.x,y:pref.y}:undefined;
-  const c={compactMovement:new URL(req.url,'http://localhost').searchParams.get('movement')==='compact',spectator:member.role==='spectator',ws,user,zone,req,p:createWorldPlayer(zone.id,scatter(zone.id,point||{x:map.spawn[0],y:map.spawn[1]},user.id)),input:{x:0,y:0},characterId:pref.characterId,state:'idle',reaction:null,reactionAt:0,lastInput:0,lastPath:0,lastChat:0,savedAt:now(),missedPongs:0,windowAt:now(),messages:0,direct:await can(user,'direct'),moderate:await can(user,'moderate')};
+  const position=params.get('resume')==='1'&&point?point:scatter(zone.id,point||{x:map.spawn[0],y:map.spawn[1]},user.id);
+  const c={compactMovement:params.get('movement')==='compact',spectator:member.role==='spectator',ws,user,zone,req,p:createWorldPlayer(zone.id,position),input:{x:0,y:0},characterId:pref.characterId,state:'idle',reaction:null,reactionAt:0,lastInput:0,lastPath:0,lastChat:0,savedAt:now()-randomInt(5000),missedPongs:0,windowAt:now(),messages:0,direct:await can(user,'direct'),moderate:await can(user,'moderate')};
   c.vitals=await vitalsStore.load(user.id);c.wellness=applyCharacterHealthProfile(await healthStore.loadBody(user.id),c.characterId);await healthStore.saveBody(user.id,c.wellness);await refreshCorpses(zone.id);c.wellnessSpeed=wellnessSnapshot(c.wellness).speedFactor;c.hasPerishable=perishable((await foodStore.snapshot(user.id)).inventory.items);await environmentReady;await refreshGear(c);
   const actor=await db.one('SELECT state FROM world_actors WHERE user_id=?',user.id);if(actor){const saved=JSON.parse(actor.state);if(saved.layout==='apocalypse-front-1'&&saved.zone===zone.id&&saved.ceremony===ceremonyState?.id&&ceremonyState&&!['finished','cancelled'].includes(ceremonyState.phase)){c.p=saved.p;c.state=saved.state;c.atSeat=saved.atSeat;c.march=saved.march;c.seat=saved.seat;c.seatChoice=saved.seatChoice;c.sceneId=saved.sceneId;}}
   stopActorMotion(c,now());
   if(c.seat&&[...clients.values()].some(o=>o.zone.id===c.zone.id&&o.seat?.propId===c.seat.propId&&o.seat.slot===c.seat.slot))stand(c);
-  ws.on('close',(code,reason)=>{if(code!==1000&&code!==1001)console.warn('World socket closed:',code,String(reason||'').slice(0,100),'connected='+clients.size,'pending='+Math.ceil(ws.bufferedAmount/1024)+'KiB');void remove(c);});ws.on('pong',()=>c.missedPongs=0);ws.on('error',()=>{});ws.on('message',raw=>{c.queue=c.queue.then(()=>message(c,raw)).catch(e=>send(c,{type:'error',message:e.status?e.message:'No se pudo completar la acción.'}));});c.queue=Promise.resolve();clients.set(ws,c);c.petId=(await shop.equipment(user))?.pet||null;
+  ws.on('close',(code,reason)=>{if(code!==1000&&code!==1001)console.warn('World socket closed:',code,String(reason||'').slice(0,100),'connected='+clients.size,'pending='+Math.ceil(ws.bufferedAmount/1024)+'KiB');void remove(c);});ws.on('pong',()=>c.missedPongs=0);ws.on('error',()=>{});ws.on('message',raw=>queueMessage(c,raw));c.queue=Promise.resolve();clients.set(ws,c);c.petId=(await shop.equipment(user))?.pet||null;
   await db.run('UPDATE world_preferences SET visited=?,updated=? WHERE user_id=?',JSON.stringify([...new Set([...pref.visited,zone.id])]),now(),user.id);if(ws.readyState!==WebSocket.OPEN){await remove(c);return;}
   send(c,{type:'welcome',potatoJoined:await potato.returnToArena(user.id),shelters:await shelterView(user),mariaVoice:[...mariaVoice.live(),...(privateVoices.get(user.id)?.live()||[])],memorials:await memorials.list(),mapVersion:worldMapVersion(WORLD_MAPS),selfId:user.id,zone:zone.id,survival:await survival.snapshot(user,{staff:c.direct}),environment:survival.environment(environmentSnapshot(environmentState,now())),body:wellnessSnapshot(c.wellness),vitals:vitalView(c.vitals),objects:objectsFor(zone.id),players:publicPlayers(c),history:await history(c),...await ceremonies.view(user),serverTime:now()});try{mariaVoice.prepare();}catch{}await family.connect(c);await chef.attach(c);await protocol.attach(c);if(!protocol.engaged(c.user.id)&&!chef.engaged(c.user.id))await grip.attach(c);presence(c);
  }
  let upgrading=Promise.resolve();
  async function upgradeInner(req,socket,head){try{await family.ready;await sanitation.ready;await bedsReady;await beddingReady;await survivalReady;await shelterReady;await memorialReady;const url=new URL(req.url,'http://localhost');if(url.pathname!=='/api/world/live')return false;if(!req.headers.origin||new URL(req.headers.origin).host!==req.headers.host)fail(403,'Origen no autorizado.');const user=await getSession(req);await requireWorld(user);let zone=zoneById(url.searchParams.get('zone')||'base');if(!zone)fail(404,'Zona desconocida.');if(!enabled(await configuration(),'zone:'+zone.id)&&!await can(user,'direct'))fail(403,'Zona cerrada.');if(stopping||clients.size>=128)fail(503,'World está lleno.');
-   for(const c of clients.values())if(c.user.id===user.id){await persist(c);c.replaced=true;c.ws.close(4002,'Tu cuenta abrió World en otra pestaña.');await remove(c);}
+   for(const c of clients.values())if(c.user.id===user.id){c.ws.close(4002,'Tu cuenta abrió World en otra pestaña.');await remove(c);}
    if([...clients.values()].filter(c=>c.zone.id===zone.id&&(!zone.private||c.user.id===user.id)).length>=20)fail(409,'La zona está llena.');const pref=await preferences(user);const home=shelterForZone(zone.id);if(home&&!await can(user,'direct')&&!await canVisitShelters(user,pref.characterId)&&(!shelters.canEnter(user,pref.characterId,zone.id)||!(await shelters.identity(user)).active)){if(zone.id!==pref.lastZone)fail(403,'Solo puedes reanudar en un refugio construido que te corresponda.');zone=zoneById(home.outside);pref.lastZone=zone.id;[pref.x,pref.y]=WORLD_MAPS[zone.id].spawn;await db.run('UPDATE world_preferences SET last_zone=?,x=?,y=?,updated=? WHERE user_id=?',zone.id,Math.round(pref.x),Math.round(pref.y),now(),user.id);}await characterService.requireSelection(user,pref.characterId,await characterContext(user));if(zone.id!==pref.lastZone&&zone.id!=='base')fail(409,'Reanuda desde tu zona guardada o desde la base.');await refresh();seasonRoster=await ceremonies.contestants();await new Promise(resolve=>wss.handleUpgrade(req,socket,head,ws=>{
     // A browser can send protocol-subscribe as soon as it receives the 101.
     // Keep those frames buffered until connect installs the message handler.
@@ -325,9 +365,10 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
  const physics=setInterval(()=>{
   const t=now(),elapsed=Math.max(0,Math.min(.15,(t-lastTick)/1000)),dt=Math.min(.05,elapsed);lastTick=t;tickCount++;intimacy.tick();cameras.tick();const environment=environmentState&&survival.environment(environmentSnapshot(environmentState,t));if(tickCount%20===0)trades.prune();if(environment&&tickCount%20===0)broadcast({type:'environment',environment});
   for(const c of clients.values()){
-   if(protocol.engaged(c.user.id)){stopActorMotion(c,t);if(!c.eating&&!c.careBusy&&!c.tradeBusy&&!(c.direct&&c.user.id===reviewStaffId)){c.vitals=stepVitals(c.vitals,{seconds:dt,seated:true});if(tickCount%20===0&&environment){const next=stepWellness(c.wellness,c.vitals,{seconds:1,environment,zone:'desafios',moving:false,hasPerishable:c.hasPerishable,now:t});c.wellness=next.body;c.vitals=next.vitals;sendWellness(c);void observeLife(c).catch(()=>{});}}if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){c.savedAt=t;void persist(c).catch(()=>{});}continue;}
-   if(potato.engaged(c.user.id)||chef.engaged(c.user.id)){stopActorMotion(c,t);if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){c.savedAt=t;void persist(c).catch(()=>{});}continue;}
-   if(grip.engaged(c.user.id)){stopActorMotion(c,t);if(!(c.direct&&c.user.id===reviewStaffId))c.vitals=stepVitals(c.vitals,{seconds:dt});if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){c.savedAt=t;void persist(c).catch(()=>{});}continue;}
+   if(c.disconnecting)continue;
+   if(protocol.engaged(c.user.id)){stopActorMotion(c,t);if(!c.eating&&!c.careBusy&&!c.tradeBusy&&!(c.direct&&c.user.id===reviewStaffId)){c.vitals=stepVitals(c.vitals,{seconds:dt,seated:true});if(tickCount%20===0&&environment){const next=stepWellness(c.wellness,c.vitals,{seconds:1,environment,zone:'desafios',moving:false,hasPerishable:c.hasPerishable,now:t});c.wellness=next.body;c.vitals=next.vitals;sendWellness(c);void observeLife(c).catch(()=>{});}}if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){checkpoint(c,t);}continue;}
+   if(potato.engaged(c.user.id)||chef.engaged(c.user.id)){stopActorMotion(c,t);if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){checkpoint(c,t);}continue;}
+   if(grip.engaged(c.user.id)){stopActorMotion(c,t);if(!(c.direct&&c.user.id===reviewStaffId))c.vitals=stepVitals(c.vitals,{seconds:dt});if(tickCount%20===0)sendVitals(c);if(t-c.savedAt>5000){checkpoint(c,t);}continue;}
    if(c.wellness.life.status==='dead'){void observeLife(c).catch(()=>{});continue;}
    const movement=mobility(c.wellness,c.vitals);c.wellnessSpeed=movement.speedFactor*survival.effect(c.zone.id,c.p).slow;c.input.run=c.input.run===true&&movement.canRun;
    const s=ceremonyState,r=rosterFor(c.user.id),inScene=c.zone.id==='eliminacion'&&s?.participants.includes(c.user.id)&&!['preparation','summoning','finished','cancelled'].includes(s.phase);
@@ -358,7 +399,7 @@ if(p.type==='medical-counter'||!(await clinicalAccess(c.user)).canUseSupplies){s
    if(tickCount%20===0){if(environment&&!c.eating&&!c.careBusy&&!c.tradeBusy&&!(c.direct&&c.user.id===reviewStaffId)){const map=WORLD_MAPS[c.zone.id],bed=c.seat&&map.props.find(p=>p.id===c.seat.propId),next=stepWellness(c.wellness,c.vitals,{seconds:1,environment,zone:c.zone.id,moving:c.p.moving,running:c.input.run===true,hazard:environmentalHazard(c.zone.id,c.p,map),hospitalRest:bed?.medicalBed===true,hasPerishable:c.hasPerishable,sleeping:c.sleeping===true,napping:c.bedRestMode==='nap',bedCleanliness:objectStates.get(c.zone.id+':'+bed?.id)?.cleanliness??100,now:t});const effect=survival.effect(c.zone.id,c.p);if(effect.fire||map.shelterRoom==='patio'&&map.props.some(p=>p.survival?.fixed&&p.survival.kind==='fire'&&Math.hypot(c.p.x-p.x,c.p.y-p.y)<260)){next.body.wetness=Math.max(0,next.body.wetness-.8);next.body.exposure.cold=Math.max(0,next.body.exposure.cold-2);for(const d of next.body.conditions)if(['chill','wet-chill'].includes(d.id))d.severity=Math.max(0,d.severity-.1);}if(effect.shelter&&['refugio-1','dormitorio-2'].includes(c.zone.id)){next.vitals.stress=Math.max(0,next.vitals.stress-.01);if(c.sleeping)next.vitals.sleep=Math.min(100,next.vitals.sleep+(.03+(effect.furniture?.025:0))*sleepClothingFactor(c.wellness));}if(!effect.power&&c.hasPerishable)next.body.foodWarmth=Math.min(1800,next.body.foodWarmth+.8);if(c.p.moving&&effect.slow<1)next.vitals.energy=Math.max(0,next.vitals.energy-.015);c.wellness=next.body;c.vitals=next.vitals;c.wellnessSpeed=wellnessSnapshot(next.body).speedFactor;sendWellness(c);void observeLife(c).catch(()=>{});}sendVitals(c);}
    if(c.pendingObject&&!c.p.path.length&&!c.interacting){const requested=c.pendingObject;c.interacting=true;c.queue=c.queue.then(()=>c.pendingObject===requested?interact(c,requested,true,c.pendingSeatSlot,c.pendingBedMode||'sleep'):null).catch(e=>{c.pendingObject=null;c.pendingSeatSlot=undefined;send(c,{type:'error',message:e.status?e.message:'No se pudo examinar el objeto.'});}).finally(()=>c.interacting=false);}
    const crossing=c.wellness.life.status==='alive'&&!c.swimming&&!inScene&&!c.atSeat&&!c.transitioning&&t-(c.transitionAt||0)>1000?nearestPortal(c.p,c.zone.id):null;if(crossing?.auto&&crossing.distance<1){c.transitioning=true;c.transitionAt=t;c.queue=c.queue.then(()=>changeZone(c,crossing.zone)).catch(e=>{c.p.path=[];c.input={x:0,y:0};if(crossing.trigger){const [l,,r]=crossing.trigger;c.p.x=l<c.zone.width/2?r+24:l-24;}send(c,{type:'error',message:e.status?e.message:'El acceso no está disponible.'});}).finally(()=>c.transitioning=false);}
-   if(t-c.savedAt>5000){c.savedAt=t;void persist(c).catch(()=>{});}
+   if(t-c.savedAt>5000){checkpoint(c,t);}
   }
   if(tickCount%2===0){const rooms=new Map();for(const c of clients.values()){if(potato.engaged(c.user.id)||protocol.engaged(c.user.id)||grip.engaged(c.user.id)||chef.engaged(c.user.id))continue;const p=player(c),signature=JSON.stringify(p);if(c.lastWire===signature&&(!c.needsFullMovement||t-(c.fullMovementAt||0)<2500))continue;c.lastWire=signature;
    const {x,y,z,walk,vz,facing,moving,grounded,...details}=p;
