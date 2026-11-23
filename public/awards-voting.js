@@ -64,7 +64,7 @@ function votingPortrait(nominee){
 const votingCountLabel=votes=>votes+(votes===1?' voto':' votos');
 
 const votingFrozenPercent=value=>Number(value||0).toLocaleString('es-CO',{minimumFractionDigits:1,maximumFractionDigits:1})+' %';
-const votingFrozenVotes=value=>Number(value||0).toLocaleString('es-CO')+' votos';
+const votingFrozenVotes=value=>Number(value||0).toLocaleString('es-CO')+(Number(value)===1?' voto':' votos');
 
 function votingCard(nominee,category,index){
  const frozen=votingFrozen[category.id]?.[nominee.id];
