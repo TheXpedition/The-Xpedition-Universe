@@ -13,7 +13,7 @@ main {
   min-height:100svh;
   display:grid;
   grid-template-rows:auto 1fr auto;
-  background:linear-gradient(180deg,#24130ae0,transparent 22%,transparent 80%,#24130ae0),url(art/arena.webp) center/cover;
+  background:linear-gradient(180deg,#24130ae0,transparent 22%,transparent 80%,#24130ae0),url(art/arena.webp?v=sunset) center/cover;
 }
 header,footer {
   display:flex;
