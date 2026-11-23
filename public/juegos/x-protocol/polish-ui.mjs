@@ -1,5 +1,6 @@
 const setText=(node,text)=>{text=String(text??'');if(node.textContent!==text)node.textContent=text;};
 import {duelLosers} from './outcomes.mjs';
+import {protocolPortrait} from './portrait-url.mjs';
 import {nomineeLabel} from './labels.mjs';
 import {skullLayout,skullPicks} from './skull-layout.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -7,7 +8,7 @@ export function mountProtocolPolish({act,fx=()=>{},notice=()=>{}}){
  const $=s=>document.querySelector(s),wrap=$('.scene-wrap'),monitor=$('#monitor');let state,key='',rankKey='',advKey='',selected=null,targets=[],moving=new Set(),lastMove=0,lastNear=null,lastReveal=-1,monitorKey='',monitorFitDirty=true,monitorFitState='';
  const add=(tag,id,parent=wrap)=>{let node=document.getElementById(id);if(!node){node=document.createElement(tag);node.id=id;parent.append(node);}node.hidden=true;return node;};
  const rank=add('div','monitor-ranking',monitor),votes=add('aside','maria-live-votes'),prompt=add('div','skull-prompt'),advantages=add('div','advantage-choice'),interview=add('div','interview-choice'),resultsControl=add('section','maria-results-controls');const transcript=document.createElement('dialog');transcript.className='protocol-transcript';document.body.append(transcript);monitor.tabIndex=0;monitor.setAttribute('role','button');monitor.setAttribute('aria-label','Leer el anuncio completo del monitor');const invalidateMonitorFit=()=>{monitorFitDirty=true;};window.addEventListener('resize',invalidateMonitorFit,{passive:true});
- const who=id=>state?.roster.find(p=>p.id===id),name=id=>who(id)?.name||'Participante',face=id=>'/juegos/x-protocol/art/portraits/'+who(id)?.characterId+'-face.webp';
+ const who=id=>state?.roster.find(p=>p.id===id),name=id=>who(id)?.name||'Participante',face=id=>protocolPortrait(who(id)?.characterId);
  function update(s){const fitState=[s.phase,s.speech?.text,s.mariaAnnouncement?.text,s.interview?.reply?.text].join('|');if(fitState!==monitorFitState){monitorFitState=fitState;monitorFitDirty=true;}state=s;resultsControl.hidden=!(s.maria&&s.phase==='RESULTS_SELECTION');const source=$('#results-controls');if(!resultsControl.hidden){if(!resultsControl.children.length){resultsControl.innerHTML='<small>MARÍA · RESULTADOS DEL RETO</small><p>Solo retos de las últimas 24 horas</p>';resultsControl.append($('#results-select'),$('#choose-results'));}$('#choose-results').disabled=s.paused;$('#choose-results').title=s.paused?'Reanuda la ceremonia para revelar los resultados.':'Revelar resultados en el monitor';}else if(!s.maria&&resultsControl.querySelector('#results-select'))source.prepend($('#results-select'),$('#choose-results'));const phase=s.phase,skulls=['LUCKY_SKULLS_ORDER','LUCKY_SKULLS_PICKING','LUCKY_SKULLS_REVEAL','SAFE_PLAYER_REVEAL'].includes(phase),turn=s.skulls.order[s.skulls.turn],own=phase==='LUCKY_SKULLS_PICKING'&&turn===s.selfId;
   const stage=$('#skull-stage');stage.hidden=!skulls;
   const skey=skulls?s.id+':'+wrap.clientWidth+':'+wrap.clientHeight+':'+s.skulls.count:null;
