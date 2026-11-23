@@ -44,7 +44,7 @@ export function createHotPotato({db,clients,send,can,canPlay,beforeStart,now=Dat
   }else if(s.phase==='intro'){s.phase='countdown';s.deadline=t+3000;}
   else if(s.phase==='countdown'||s.phase==='blast'){
    const alive=live(s);if(alive.length===1){s.phase='finished';s.winner=alive[0].id;s.deadline=0;}
-   else{s.phase='playing';s.round++;s.deadline=t+rand(4500,11501);give(s,alive[rand(alive.length)].id);}
+   else{s.phase='playing';s.round++;s.deadline=t+rand(15000,25001);give(s,alive[rand(alive.length)].id);}
   }else{const hit=s.players.find(p=>p.id===s.holder);hit.lives--;s.lastHit={id:hit.id,lives:hit.lives};s.phase='blast';s.holder=null;s.botAt=0;s.deadline=t+2600;}
   await save(s);
  }
