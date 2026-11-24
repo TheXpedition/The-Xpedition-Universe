@@ -1338,7 +1338,8 @@ body.season-japan .challenge-choice-card{ --challenge-card-bg:url('assets/japanf
 
 /* Carga e inicio */
 .loading-stage{background:#08172f;color:#fff;z-index:80}
-.loading-stage .full-bg{background:url('/simulator/assets/start-hd-20261019.webp') center/cover;filter:brightness(.28) saturate(.7) blur(2px);transform:scale(1.04)}
+.loading-stage .full-bg{background:url('/simulator/assets/start-desktop.webp') center/cover;filter:brightness(.28) saturate(.7) blur(2px);transform:scale(1.04)}
+@media(max-width:700px){.loading-stage .full-bg{background-image:url('/simulator/assets/start-mobile.webp')}}
 .loading-shell{position:relative;z-index:1;min-height:100vh;display:grid;place-content:center;gap:22px;text-align:center;padding:24px}
 .loading-shell h1{margin:0;font-family:'Komika Axis',Impact,sans-serif;font-size:clamp(34px,6vw,76px);letter-spacing:2px;text-transform:uppercase;text-shadow:0 4px 0 #111827}
 .loading-dots{display:inline-block;width:2.1em;text-align:left}.loading-dots i{display:inline-block;opacity:.15;animation:loadingDot 1.15s infinite}.loading-dots i:nth-child(2){animation-delay:.18s}.loading-dots i:nth-child(3){animation-delay:.36s}@keyframes loadingDot{0%,20%{opacity:.15;transform:translateY(0)}35%,60%{opacity:1;transform:translateY(-5px)}100%{opacity:.15;transform:translateY(0)}}

@@ -1,5 +1,4 @@
 import {BootProgress,createBootDisplay,loadBootImage,showBootWallpaper,optionalBootResource} from './world-boot.mjs';
-import {worldAtlasUrl} from './world-avatar-url.mjs';
 let generation=0;
 export async function startWorld(){
  const turn=++generation,universe=window.XpeditionUniverseURL||'',gate=document.querySelector('#loading');document.body.classList.add('is-booting');
@@ -19,20 +18,14 @@ export async function startWorld(){
    return showBootWallpaper(gate,wallpaper,{isCurrent});
   };
   void optionalBootResource(showEquippedCover,{name:'equipped wallpaper'});
-  const work=[
-   progress.track('logo',optionalBootResource(()=>loadBootImage('/assets/branding/apocalypse/apocalypse-ii-logo.webp'),{name:'logo',timeoutMs:5000})),
-   progress.track('fonts',optionalBootResource(()=>document.fonts?.ready||Promise.resolve(),{name:'fonts',timeoutMs:4000})),
-   progress.track('module',import('./world-ui.mjs'))
-  ];
-  const [data,...loaded]=await Promise.all([bootstrap,...work]);if(turn!==generation)return;
-  const {WORLD_MAPS}=await import('./world-maps.mjs'),{preloadWorldArt}=await import('./cartoon-world.mjs'),{applyWorldBeds}=await import('./world-beds.mjs');if(data.beds)applyWorldBeds(WORLD_MAPS,data.beds);const {buildSurvivalProps}=await import('./world-survival-catalog.mjs');buildSurvivalProps(WORLD_MAPS,data.survival?.shared);const scene=WORLD_MAPS[data.profile.lastZone]||WORLD_MAPS.base;
-  await Promise.all([
-   progress.track('scene',optionalBootResource(()=>Promise.all([...new Set([WORLD_MAPS.base,scene])].map(preloadWorldArt)),{name:'map artwork',timeoutMs:6500})),
-   progress.track('character',optionalBootResource(()=>loadBootImage(worldAtlasUrl(data.profile.characterId,window.XpeditionPerformance?.lite)),{name:'character artwork',timeoutMs:6500}))
-  ]);
-  const module=loaded.at(-1);
-  let worldApp;await progress.track('interface',(async()=>{worldApp=await module.bootWorld({...data,deferNetwork:true});await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})());
-  document.querySelector('#world-main').setAttribute('aria-busy','false');await display.finish();if(data.protocolInvite){location.replace(data.protocolInvite);return;}worldApp?.startNetwork();
+  const module=progress.track('module',import('./world-ui.mjs'));
+  const [data,worldUI]=await Promise.all([bootstrap,module]);if(turn!==generation)return;
+  if(data.protocolInvite){location.replace(data.protocolInvite);return;}
+  const worldApp=await progress.track('interface',worldUI.bootWorld({...data,deferNetwork:true}));
+  if(turn!==generation)return;
+  document.querySelector('#world-main').setAttribute('aria-busy','false');
+  worldApp?.startNetwork();
+  await display.finish();
  }catch(error){
   if(turn!==generation)return;
   const message=error.status===401?'Entra con tu cuenta de The Xpedition para continuar.':error.status===403?'World sigue en pruebas privadas. Tu cuenta necesita acceso autorizado.':error.message||'No se pudo preparar el mundo.';

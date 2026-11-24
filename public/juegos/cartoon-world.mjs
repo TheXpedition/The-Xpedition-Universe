@@ -121,5 +121,3 @@ export class CartoonWorldArt{
  }
  get(){return null;}
 }
-
-export async function preloadWorldArt(map){const resources=[[map.illustration.id,map.illustration.url+'?v='+map.illustration.revision],...map.props.filter(p=>p.imageUrl).map(p=>[p.imageUrl,p.imageUrl])];await Promise.all(resources.map(async([id,url])=>{sceneImage(id,url);const im=images.get(id);if(im?.decode)await im.decode();}));}

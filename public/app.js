@@ -28,7 +28,18 @@ const toast = (message,error=false) => {
   const el=document.createElement('div');el.className='toast'+(error?' error':'');el.textContent=text;
   root.append(el);setTimeout(()=>el.remove(),5500);
 };
-async function api(url, options={}) {
+const sharedReads=new Set(['/config','/me','/profiles','/world/access','/arcade/games']);
+const pendingReads=new Map();
+function api(url,options={}){
+  if(options.method&&options.method!=='GET')pendingReads.clear();
+  if(Object.keys(options).length||!sharedReads.has(url))return requestApi(url,options);
+  if(!pendingReads.has(url)){
+    const pending=requestApi(url,options).finally(()=>{if(pendingReads.get(url)===pending)pendingReads.delete(url);});
+    pendingReads.set(url,pending);
+  }
+  return pendingReads.get(url);
+}
+async function requestApi(url,options) {
   if(state.publicOnly)throw new Error('La comunidad todavía no está disponible. Puedes seguir explorando las temporadas, los personajes y los simuladores.');
   let response;
   try {response=await fetch('/api'+url,{...options,headers:{'Content-Type':'application/json',...options.headers},body:options.body===undefined?undefined:JSON.stringify(options.body)});}catch{setConnection(false);throw new Error('No hay conexión con el servidor. Tu borrador sigue aquí; vuelve a intentar.');}
@@ -133,6 +144,29 @@ function renderProfile(id){
 }
 function renderSearch(){ $('#main').innerHTML=heading('Todo empieza con una búsqueda.','Encuentra temporadas, juegos, personajes y miembros de la comunidad.')+`<label class="search-field">${icon('search')}<input id="globalSearch" placeholder="¿Qué quieres encontrar?" aria-label="Buscar en todo el universo" autofocus></label><div id="globalResults"></div>`;setTimeout(()=>$('#globalSearch')?.focus(),20); }
 function searchResults(q){const profiles=state.profiles.filter(p=>norm(p.name).includes(norm(q))),content=allContent().filter((c,i,a)=>norm(c.name).includes(norm(q))&&a.findIndex(x=>x.id===c.id)===i);$('#globalResults').innerHTML=q.length<2?'<p class="form-hint">Escribe al menos dos letras para comenzar.</p>':`<div class="section-head"><h2>Temporadas y juegos</h2><span class="pill">${content.length}</span></div><div class="content-grid">${content.map(contentCard).join('')}</div><div class="section-head"><h2>Perfiles</h2><span class="pill">${profiles.length}</span></div><div class="members-grid">${profiles.map(memberCard).join('')}</div>`;}
+const showdownResources=new Map();
+let showdownNavigation=0;
+function loadShowdownResource(name){
+  if(showdownResources.has(name))return showdownResources.get(name);
+  const style=name.endsWith('.css');
+  const asset=document.createElement(style?'link':'script');
+  if(style){asset.rel='stylesheet';asset.href='/showdown/'+name;}
+  else{asset.async=false;asset.src='/showdown/'+name;}
+  const pending=new Promise((resolve,reject)=>{
+    asset.onload=resolve;
+    asset.onerror=()=>{asset.remove();showdownResources.delete(name);reject(new Error('No se pudo cargar Showdown.'));};
+  });
+  showdownResources.set(name,pending);document.head.append(asset);
+  return pending;
+}
+async function openShowdown(){
+  const current=++showdownNavigation;
+  if(typeof renderShowdownSimulator!=='function')$('#main').innerHTML='<p class="form-hint" role="status">Cargando Showdown…</p>';
+  try{
+    await Promise.all(['simulator.css','evolution.css','refinements.css','experience.css','track-export.js','stage.js','simulator.js','experience.js'].map(loadShowdownResource));
+    if(state.route==='showdown'&&current===showdownNavigation)await renderShowdownSimulator();
+  }catch(error){if(state.route==='showdown'&&current===showdownNavigation)errorView(error);}
+}
 function route(){
   if(!state.catalog)return;cancelRecording();
   if(location.hash==='#noticias')history.replaceState(history.state,'',state.user?.staff?'#x-critics':'#inicio');
@@ -142,7 +176,7 @@ function route(){
   const keepCriticsScroll=view==='x-critics'&&id&&$('#main .critics-detail-page')?.dataset.criticsSeason===id;
   state.route=view||'inicio';state.messageSearch='';state.query='';$('.account-menu')?.remove();document.body.classList.toggle('messaging',state.route==='mensajes');renderChrome();
   if(state.route==='explorar'&&['tops','todos','xpedition','campria','traitor','showdown','diamond-rush','awards','spinoffs'].includes(id))state.filter=id==='spinoffs'?'showdown':id;
-  const routes={inicio:renderHome,votacion:()=>renderAwardsVoting(id,entry),world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),showdown:()=>renderShowdownSimulator(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
+  const routes={inicio:renderHome,votacion:()=>renderAwardsVoting(id,entry),world:()=>renderWorldEntry(),explorar:renderExplore,temporada:()=>renderSeasonPage(decodeURIComponent(id||'')),showdown:()=>openShowdown(),premios:()=>renderAwardsPage(decodeURIComponent(id||'')),comunidad:renderCommunity,'x-critics':()=>renderXCritics(id,entry,episode),simuladores:renderSimulators,guardados:renderSaved,universo:renderAbout,privacidad:()=>renderPrivacy(),moderacion:()=>renderModeration(),buscar:renderSearch,mensajes:renderMessenger,perfil:()=>renderProfile(decodeURIComponent(id||''))};
   if(state.route==='mensajes'&&id)state.active=decodeURIComponent(id);
   (routes[state.route]||renderHome)();if(!keepCriticsScroll)window.scrollTo({top:0,behavior:'instant'});
 }
@@ -288,6 +322,7 @@ function stopStream(){state.stream?.close();state.stream=null;}
 function startStream(){
   stopStream();if(!state.user)return;window.dispatchEvent(new CustomEvent('xp:session',{detail:{id:state.user.id}}));const stream=new EventSource('/api/events');state.stream=stream;
   stream.addEventListener('ready',()=>{setConnection(true);refreshConversations().catch(()=>{});refreshProfiles().catch(()=>{});if(state.active&&state.route==='mensajes')refreshActiveMessages().catch(()=>{});});
+  stream.addEventListener('showdown-invite',event=>{const invitation=JSON.parse(event.data),el=document.createElement('aside');el.className='sd-invitation-banner';el.innerHTML=`<span>SHOWDOWN · UNA INVITACIÓN PARA TI</span><strong>${esc(invitation.inviter.name)} te invita a jugar.</strong><div><a href="#showdown/${esc(invitation.room)}/${esc(invitation.token)}">Aceptar invitación →</a><button aria-label="Cerrar invitación">×</button></div>`;el.querySelector('button').onclick=()=>el.remove();el.querySelector('a').onclick=()=>el.remove();$('.sd-invitation-banner')?.remove();document.body.append(el);});
   stream.onerror=()=>setConnection(false);stream.onopen=()=>setConnection(true);
   stream.addEventListener('profiles',async()=>{try{const own=await api('/me');state.user=own.user;await refreshProfiles();renderChrome();if(state.route==='comunidad')communityResults();if(state.route==='perfil'&&!$('#postForm'))renderProfile(decodeURIComponent(location.hash.split('/')[1]||''));}catch{}});
   stream.addEventListener('presence',event=>{const p=JSON.parse(event.data);const profile=getProfile(p.id);if(profile)profile.online=p.online;for(const c of state.conversations)for(const m of c.members)if(m.id===p.id)m.online=p.online;renderConversationList();updateChatStatus();});
@@ -381,8 +416,11 @@ async function init(){
     // account's /api/me request is slow or stuck. World access is verified by
     // the server endpoint itself, so the visible entry never grants privileges.
     if(location.hash==='#world'||location.hash.startsWith('#world/'))route();
-    try{state.config=await api('/config');}catch(error){if(error.status===404){openPublicCatalog();return;}throw error;}
-    const me=await api('/me');state.user=me.user;
+    const [config,me]=await Promise.allSettled([api('/config'),api('/me')]);
+    if(config.status==='rejected'){if(config.reason.status===404){openPublicCatalog();return;}throw config.reason;}
+    state.config=config.value;
+    if(me.status==='rejected')throw me.reason;
+    state.user=me.value.user;
     // The World page must not wait for chat or profile queries. On
     // busy or slow accounts those optional queries can stall indefinitely.
     setConnection(true);route();loadFirebase();if(state.user)startStream();

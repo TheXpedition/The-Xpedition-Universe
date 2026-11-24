@@ -53,7 +53,7 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #d86
 }
 /* Loading and landing share proportional artwork. */
 #stage-start,#stage-loading{background:#ffcf94}
-#stage-start .full-bg,#stage-loading .full-bg{background-image:url('/simulator/assets/start-hd-20261019.webp');background-size:cover;background-position:center;transform:none}
+#stage-start .full-bg,#stage-loading .full-bg{background-image:url('/simulator/assets/start-desktop.webp');background-size:cover;background-position:center;transform:none}
 #stage-start .full-bg{filter:none}
 #stage-loading .full-bg{filter:brightness(.32) saturate(.8)}
 #stage-loading .loading-shell{min-height:100dvh}
@@ -138,3 +138,5 @@ button:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #d86
 }
 @media(max-height:480px) and (min-width:621px){#stage-start .start-content{gap:18px;padding-block:24px}#stage-start .start-logo{max-width:390px}#stage-start .start-play{width:80px}.start-caption{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+@media(max-width:700px){#stage-start .full-bg,#stage-loading .full-bg{background-image:url("/simulator/assets/start-mobile.webp")}}

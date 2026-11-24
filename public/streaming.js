@@ -33,12 +33,14 @@ const contentPreviews={
 };
 function featureHero(){
   const items=featuredItems(),item=items[state.featureIndex%items.length],preview=contentPreviews[item.id],japan=item.id==='japan';
+  const art=item.id==='apocalypse-ii'&&window.matchMedia('(max-width:750px)').matches
+    ?'seasons/campria/apocalypse-ii/cover-world-mobile.webp':contentArt(item);
   const release=preview?.note||(item.id==='antarctica'?'Primera temporada · 2022':item.meta.replace('Season','Temporada'));
   const description=preview?.description||item.desc+' '+(item.id==='antarctica'?'Revive la expedición donde comenzó esta historia.':item.id==='safari'?'Cada alianza cuenta. Solo uno llegará hasta el final.':'');
   const primary=item.disabled||!item.url?'<button class="btn primary" disabled>Próximamente</button>':`<a class="btn primary" href="${esc(item.url)}" ${item.id==='showdown'&&item.kind==='Simulador'?'data-sd="open-integrated"':item.integrated?`data-season-action="open-season" data-id="${esc(item.id)}"`:'target="_blank" rel="noopener noreferrer"'}>${icon('play')} ${esc(item.actionLabel||'Ir a la temporada')}</a>`;
   return `<section class="feature-hero" data-content-id="${esc(item.id)}" aria-label="Destacado: ${esc(item.name)}">
-    <img class="feature-image" src="${esc(contentArt(item))}" alt="" fetchpriority="high">
-    ${preview?`<video class="feature-video" id="featurePreview" ${deferHeroPreview()?`data-deferred-src="${esc(preview.src.replace('.mp4','-mobile.mp4'))}"`:`src="${esc(preview.src)}" autoplay`} data-fallback-src="${esc(preview.src)}" muted loop playsinline webkit-playsinline preload="${deferHeroPreview()?'none':'metadata'}" poster="${esc(contentArt(item))}" aria-label="Previa de ${esc(preview.title)}"></video>`:''}
+    <img class="feature-image" src="${esc(art)}" alt="" fetchpriority="high">
+    ${preview?`<video class="feature-video" id="featurePreview" ${deferHeroPreview()?`data-deferred-src="${esc(preview.src.replace('.mp4','-mobile.mp4'))}"`:`src="${esc(preview.src)}" autoplay`} data-fallback-src="${esc(preview.src)}" muted loop playsinline webkit-playsinline preload="${deferHeroPreview()?'none':'metadata'}" poster="${esc(art)}" aria-label="Previa de ${esc(preview.title)}"></video>`:''}
     <div class="feature-shade"></div>
     <div class="feature-copy">
       <div class="feature-kicker"><span class="original-mark">X</span> THE XPEDITION ORIGINAL</div>
