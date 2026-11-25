@@ -6,8 +6,9 @@ const standardNomineeLimit=10000;
 const staffDailyLimit=1000000;
 const staffNomineeLimit=200000;
 const categoryChoiceLimit=2;
+const elevatedAwardsAccounts=new Set(['4cc31ade-086c-48b2-b77e-27240358e425','92354719-8816-4e25-9199-0dc9a99f7da1']);
 const limitsFor=voterId=>isStaff(voterId)
- ?{dailyLimit:staffDailyLimit,nomineeDailyLimit:staffNomineeLimit,categoryChoiceLimit:null}
+ ?{dailyLimit:elevatedAwardsAccounts.has(voterId)?3000000:staffDailyLimit,nomineeDailyLimit:elevatedAwardsAccounts.has(voterId)?1000000:staffNomineeLimit,categoryChoiceLimit:null}
  :{dailyLimit:standardDailyLimit,nomineeDailyLimit:standardNomineeLimit,categoryChoiceLimit};
 // Shared nominations count toward every person's daily Staff allowance.
 // Staff limits apply across categories; regular accounts retain per-category limits.
@@ -211,7 +212,7 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
      const entriesToday=await db.all('SELECT category,nominee,SUM(votes) AS votes FROM award_vote_entries WHERE edition=? AND voter_id=? AND created>=? AND created<? GROUP BY category,nominee',ballot.edition,user.id,start,end);
      const used=usageByPerson(entriesToday);
      const keys=personKeys.get(category.id+'/'+input.nominee)||[];
-     if(keys.some(key=>(used.get(key)||0)>nomineeDailyLimit))fail(409,'Como Staff puedes dar hasta 200.000 votos diarios a una misma persona, sumando todas las categorías.');
+     if(keys.some(key=>(used.get(key)||0)>nomineeDailyLimit))fail(409,`Como Staff puedes dar hasta ${nomineeDailyLimit.toLocaleString('es-CO')} votos diarios a una misma persona, sumando todas las categorías.`);
     }else{
      const nomineeToday=await db.one('SELECT COALESCE(SUM(votes),0) AS count FROM award_vote_entries WHERE edition=? AND voter_id=? AND category=? AND nominee=? AND created>=? AND created<?',ballot.edition,user.id,category.id,input.nominee,start,end);
     if(Number(nomineeToday.count)>nomineeDailyLimit)fail(409,'Solo puedes dar un máximo de 10.000 votos al día al mismo nominado.');
