@@ -1,6 +1,7 @@
 import {isStaff} from './account-roles.mjs';
 
 // The limits are independent for each signed-in account and reset at midnight in Colombia.
+const awardsVotingClosed=true;
 const standardDailyLimit=100000;
 const standardNomineeLimit=10000;
 const staffDailyLimit=1000000;
@@ -177,6 +178,11 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
   }))};
  }
  async function vote(req,res,user){
+  if(awardsVotingClosed){
+   if(req.method==='GET')return json(res,{ballot,closed:true,votes:{},quota:null,frozen:{}});
+   if(req.method==='POST')return fail(409,'Esta votación ya terminó.');
+   return fail(405,'Esta votación ya terminó.');
+  }
   if(!user)fail(401,'Inicia sesión para votar.');
   if(req.method==='GET'){
    const [rows,quota,frozenRowsResult]=await Promise.all([voteCounts(user.id),quotaFor(user.id),frozenRows()]),votes={},frozen={};
