@@ -179,6 +179,7 @@ export function createAwardsVoting({db,json,fail,body,ballot,now=Date.now}){
  }
  async function vote(req,res,user){
   if(awardsVotingClosed){
+   if(!isStaff(user?.id))return fail(403,'Sección reservada al Staff.');
    if(req.method==='GET')return json(res,{ballot,closed:true,votes:{},quota:null,frozen:{}});
    if(req.method==='POST')return fail(409,'Esta votación ya terminó.');
    return fail(405,'Esta votación ya terminó.');
