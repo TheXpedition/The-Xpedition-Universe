@@ -24,17 +24,19 @@ function renderVotingIntro(){
 
 async function renderAwardsVoting(sectionId,categoryId){
  const turn=++votingRequest,root=$('#main'),member=state.user?.id;
+ if(state.user?.staff!==true){votingBallot=null;votingChoices={};votingFrozen={};votingQuota=null;votingMember=null;go('inicio');return;}
  document.title='Votación · The Xpedition Awards';
  const reuse=votingBallot&&votingMember===member&&root.querySelector('.vote-page,.vote-intro');
  if(!reuse){
   root.innerHTML='<div class="loading-screen"><span class="spinner"></span> Preparando la papeleta…</div>';
   try{
    const {ballot,votes,quota,frozen,closed}=await api('/awards/voting');
-   if(turn!==votingRequest||state.route!=='votacion'||state.user?.id!==member)return;
+   if(turn!==votingRequest||state.route!=='votacion'||state.user?.staff!==true||state.user?.id!==member)return;
    votingClosed=closed===true;votingBallot=ballot;votingChoices=votingClosed?{}:votes||{};votingFrozen=votingClosed?{}:frozen||{};votingQuota=votingClosed?null:quota;votingMember=member;
   }catch(error){
    if(turn!==votingRequest||state.route!=='votacion')return;
-   root.innerHTML=error.status===401||error.status===403?restrictedVoting():'<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
+   if(error.status===401||error.status===403){votingBallot=null;votingChoices={};votingFrozen={};votingQuota=null;go('inicio');return;}
+   root.innerHTML='<div class="empty-state"><h1>No pudimos abrir la votación.</h1><button class="btn secondary" type="button" data-vote="retry">Volver a intentar</button></div>';
    return;
   }
  }
