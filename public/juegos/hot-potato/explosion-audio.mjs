@@ -21,7 +21,12 @@ button.onclick=()=>{
  if(enabled)unlock();
  label();
 };
-document.addEventListener('click',unlock,{capture:true});
+// Let a pass button send its WebSocket action before initializing audio.
+document.addEventListener('click',event=>{
+ if(context?.state==='running')return;
+ if(event.target.closest('#cast'))setTimeout(unlock,0);
+ else unlock();
+});
 label();
 
 export function playExplosion(){

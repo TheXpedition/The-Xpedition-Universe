@@ -1,4 +1,4 @@
-import {playExplosion} from './explosion-audio.mjs';
+import {playExplosion} from './explosion-audio.mjs?v=20261127-audio';
 import {arrange,present,impactPoint} from './scene.mjs';
 import {worldIcon} from '../world-icons.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
