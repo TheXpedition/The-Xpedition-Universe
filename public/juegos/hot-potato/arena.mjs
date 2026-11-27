@@ -91,7 +91,9 @@ function render(){
  el('mode').textContent=mode||'';el('mode').hidden=!mode;
  el('return-home').hidden=!g.canReturn;el('return-home').disabled=!connected||pending;
  el('game').dataset.phase=phase;
- el('round').textContent=['playing','blast'].includes(phase)?'RONDA '+g.round+' · '+g.players.filter(p=>p.lives>0).length+' EN PIE':'';
+ const showRound=['playing','blast'].includes(phase);
+ el('round-banner').hidden=!showRound;
+ el('round').textContent=showRound?'RONDA '+g.round+' · '+g.players.filter(p=>p.lives>0).length+' EN PIE':'';
  el('bonju').hidden=phase!=='intro';
  audio.hidden=phase!=='intro'||!('speechSynthesis' in window);
  displaySpeech();

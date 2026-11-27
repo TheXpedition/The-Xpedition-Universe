@@ -362,7 +362,7 @@ main[data-phase=intro] .banner,main[data-phase=intro] #cast {
 
 #bonju {
   display:block;position:relative;left:auto;top:auto;transform:none;
-  width:min(100%,1500px,151svh);max-width:100%;padding:0;border:0;background:none;box-shadow:none;overflow:visible;
+  width:min(100%,1500px,max(260px,calc(177.68svh - 462px)));max-width:100%;padding:0;border:0;background:none;box-shadow:none;overflow:visible;
 }
 #bonju .intro-art {display:block;width:100%;height:auto;max-height:none;object-fit:contain;border-radius:8px}
 #bonju .dialogue {position:relative;margin:-3% 1% 0;display:flex;align-items:stretch;isolation:isolate;min-height:clamp(78px,10vw,132px)}
@@ -479,3 +479,14 @@ body:has(#rules[data-automatic]) #pause-status{inset:2% auto auto 50%}
  .grip-welcome h1{font-size:26px}
 }
 @media(max-width:600px) and (orientation:portrait){#lobby .slot strong{font-size:11px}#lobby .slot small{font-size:9px}}
+
+main:is([data-phase=tutorial],[data-phase=countdown],[data-phase=finished]) .stage{
+ grid-template-rows:1fr;
+}
+@media(max-height:550px) and (orientation:landscape){
+ #bonju{width:min(100%,1040px);display:grid;grid-template-columns:58% minmax(0,1fr);align-items:center;gap:8px}
+ #bonju .intro-art{max-height:calc(100svh - 112px)}
+ #bonju .dialogue{margin:0}
+ #bonju .speaker-portrait{width:60px}
+ #bonju #welcome{font-size:clamp(14px,2.2vw,21px)}
+}
