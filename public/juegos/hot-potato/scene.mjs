@@ -1,7 +1,10 @@
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const narrow=matchMedia('(max-width:600px)');
 let layout='';
-const flights=new Set(),actorMotions=new WeakMap();
+const actorMotions=new WeakMap();
+const passes=[];
+const catchTime=64;
+let carrier,flight,catchUntil=0,catchTimer,lastPassAt;
 export function arrange(cards,players){
  const living=players.filter(p=>p.lives>0);
  const columns=narrow.matches?4:7;
@@ -31,30 +34,78 @@ function animateActor(card,angles){
  actorMotions.set(card,motion);
  motion.onfinish=()=>{if(actorMotions.get(card)===motion)actorMotions.delete(card);};
 }
-function launch(cards,from,to){
- const source=cards.get(from),target=cards.get(to);
- if(!source||!target||reduced.matches)return;
+function carry(card){
+ if(carrier===card)return;
+ carrier?.b.classList.remove('carrying');
+ carrier=card;
+ carrier?.b.classList.add('carrying');
+}
+function clearFlight(){
+ if(!flight)return;
+ const {ball,motion}=flight;
+ flight=null;
+ motion.onfinish=null;
+ motion.cancel();
+ ball.remove();
+}
+function syncCarrier(card){
+ passes.length=0;
+ clearTimeout(catchTimer);
+ catchTimer=null;
+ catchUntil=0;
+ lastPassAt=undefined;
+ clearFlight();
+ carry(card);
+}
+function playNextPass(){
+ if(flight||catchTimer||!passes.length)return;
+ const remaining=catchUntil-performance.now();
+ if(remaining>0){
+  catchTimer=setTimeout(()=>{catchTimer=null;playNextPass();},Math.ceil(remaining));
+  return;
+ }
+ const {target,interval}=passes.shift(),source=carrier;
+ if(source===target||!source?.b.isConnected||!target.b.isConnected){
+  carry(target);
+  playNextPass();
+  return;
+ }
  const a=hand(source),b=hand(target),dx=b.x-a.x,dy=b.y-a.y;
  // Anchor to the slot, so another throw cannot move either endpoint.
  const distance=Math.hypot(dx,dy);
  const arc=Math.min(96,Math.max(34,distance*.19));
- if(flights.size>=3){const first=flights.values().next().value;flights.delete(first);first.cancel();}
+ const duration=Math.max(54,Math.min(distance>300?300:240,interval-catchTime));
  const ball=document.createElement('i');ball.className='potato-flight';ball.setAttribute('aria-hidden','true');
+ carry(null);
  ball.style.left=a.x+'px';ball.style.top=a.y+'px';document.body.append(ball);
  const sign=dx>=0?1:-1;
  animateActor(source,[[0,0],[-9*sign,-3],[16*sign,-6],[0,0]]);
- animateActor(target,[[0,0],[-7*sign,-7],[3*sign,-3],[0,0]]);
  const frames=Array.from({length:9},(_,i)=>{
   const progress=i/8,x=dx*progress,y=dy*progress-4*arc*progress*(1-progress);
   return {transform:'translate(-50%,-50%) translate3d('+x+'px,'+y+'px,0) rotate('+(progress*360*sign)+'deg)'};
  });
- const motion=ball.animate(frames,{duration:distance>300?480:420,easing:'linear'});
- flights.add(motion);
- const clear=()=>{
-  ball.remove();flights.delete(motion);
+ const motion=ball.animate(frames,{duration,easing:'linear',fill:'both'});
+ flight={ball,motion,duration};
+ motion.onfinish=()=>{
+  clearFlight();
+  carry(target);
+  catchUntil=performance.now()+catchTime;
+  animateActor(target,[[0,0],[-7*sign,-7],[3*sign,-3],[0,0]]);
+  playNextPass();
  };
- motion.oncancel=clear;
- motion.onfinish=clear;
+}
+function showPass(target){
+ const now=performance.now(),interval=lastPassAt===undefined?Infinity:now-lastPassAt;
+ lastPassAt=now;
+ // Bound the visual backlog if passes arrive faster than the display can show them.
+ if(passes.length>=3)passes.length=0;
+ passes.push({target,interval});
+ if(flight&&flight.motion.playState!=='finished'){
+  const {motion,duration}=flight;
+  const rate=(duration-(motion.currentTime??0))/44;
+  if(rate>motion.playbackRate)motion.updatePlaybackRate(rate);
+ }
+ playNextPass();
 }
 function burst(point){
  if(!point||reduced.matches)return;
@@ -67,10 +118,14 @@ function burst(point){
  }
 }
 export function present(previous,next,cards,hitPoint){
- if(next.phase!=='playing'||next.pausedAt!=null)for(const motion of flights)motion.cancel();
- if(!previous||previous.id!==next.id||previous.revision===next.revision)return;
- if(previous.phase==='playing'&&next.phase==='playing'&&previous.holder!==next.holder)launch(cards,previous.holder,next.holder);
- if(previous.phase!==next.phase&&next.phase==='blast'){
+ const owner=next.phase==='playing'?cards.get(next.holder):null;
+ const sameRound=previous?.phase==='playing'&&previous.id===next.id&&previous.round===next.round&&previous.pausedAt==null;
+ if(!owner||!sameRound||next.pausedAt!=null||reduced.matches||next.revision>previous.revision+1){
+  syncCarrier(owner);
+ }else if(previous.holder!==next.holder){
+  showPass(owner);
+ }
+ if(previous?.id===next.id&&previous.phase!=='blast'&&next.phase==='blast'){
   burst(hitPoint);animateActor(cards.get(next.lastHit.id),[[0,0],[-14,-8],[12,0],[-5,-2],[0,0]]);
  }
 }

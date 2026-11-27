@@ -132,7 +132,7 @@ small {
   object-fit:contain;
   object-position:center bottom;
 }
-.person:not(.holder) .pose-hold,.person.releasing .pose-hold,.person.holder:not(.releasing) .pose-idle {
+.person:not(.carrying) .pose-hold,.person.carrying .pose-idle {
   visibility:hidden;
 }
 .person span,.person b {
@@ -150,7 +150,7 @@ small {
   color:#ff7390;
   border:1px solid #f7c47f;
 }
-.person.holder .pose-hold {
+.person.carrying .pose-hold {
   filter:drop-shadow(0 0 5px #ff9e19);
 }
 .person.holder span {
