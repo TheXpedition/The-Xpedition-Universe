@@ -118,14 +118,22 @@ small {
   border-radius:50%;
   background:#38190655;
 }
-.person img {
+.person .sprite {
+  position:relative;
   width:100%;
   height:clamp(70px,19svh,178px);
+  transform-origin:50% 100%;
+}
+.person .sprite img {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
   object-fit:contain;
   object-position:center bottom;
-  transform-origin:50% 100%;
-  animation:breathe 2.2s ease-in-out infinite alternate;
-  animation-delay:var(--beat);
+}
+.person:not(.holder) .pose-hold,.person.holder:not(.receiving) .pose-idle,.person.holder.receiving .pose-hold {
+  visibility:hidden;
 }
 .person span,.person b {
   font:bold clamp(10px,1.45vw,15px)/1.2 system-ui;
@@ -142,8 +150,8 @@ small {
   color:#ff7390;
   border:1px solid #f7c47f;
 }
-.person.holder img {
-  filter:drop-shadow(0 0 4px #ffb519) drop-shadow(0 0 9px #ff6400);
+.person.holder .pose-hold,.person.holder.receiving .pose-idle {
+  filter:drop-shadow(0 0 5px #ff9e19);
 }
 .person.holder span {
   background:#813506;
@@ -157,13 +165,8 @@ small {
 main[data-small=true] .person {
   width:min(29%,260px);
 }
-main[data-small=true] .person img {
+main[data-small=true] .person .sprite {
   height:clamp(135px,42svh,340px);
-}
-@keyframes breathe {
-  to {
-    transform:translateY(-2px) rotate(.8deg);
-  }
 }
 aside,#event {
   position:absolute;
@@ -206,12 +209,13 @@ aside p,dialog p {
   pointer-events:none;
 }
 .potato-flight {
-  width:clamp(27px,4vw,55px);
+  width:clamp(29px,4vw,56px);
+  will-change:transform,opacity;
   aspect-ratio:1.44;
   border-radius:56% 42% 49% 44%;
   border:3px solid #703819;
   background:radial-gradient(circle at 22% 48%,#a96224 4%,transparent 5%),radial-gradient(circle at 70% 30%,#a7612b 5%,transparent 6%),radial-gradient(ellipse at 40% 35%,#ffdc84,#c27832 80%);
-  box-shadow:0 0 16px #ff8b1e;
+  box-shadow:0 0 0 2px #ffe495,0 0 17px 4px #ff911a;
 }
 .ember {
   width:9px;
@@ -259,7 +263,7 @@ dialog::backdrop {
   .person {
     width:24%;
   }
-  .person img {
+  .person .sprite {
     height:clamp(54px,10.8svh,105px);
   }
   .person b,.person span {
@@ -285,7 +289,7 @@ dialog::backdrop {
   footer {
     min-height:30px;
   }
-  .person img {
+  .person .sprite {
     height:13svh;
   }
   .person span,.person b {
@@ -441,7 +445,6 @@ main:is([data-phase=closed],[data-phase=lobby],[data-phase=cancelled]) #cast{dis
 #staff-actions{display:grid;margin:12px 0;grid-template-columns:1fr}
 #staff-note,#notice{color:#ffd08c}
 #pause-status{position:absolute;z-index:6;top:6%;left:50%;transform:translateX(-50%);padding:9px 22px;background:#251816;border:2px solid #f3a657;border-radius:8px;white-space:nowrap}
-main[data-paused=true] .person img{animation-play-state:paused}
 #rules[data-automatic]{position:fixed;inset:0;margin:auto;z-index:10}
 body:has(#rules[data-automatic]) .stage{filter:brightness(.5)}
 body:has(#rules[data-automatic]) #pause-status{inset:2% auto auto 50%}
@@ -489,4 +492,15 @@ main:is([data-phase=tutorial],[data-phase=countdown],[data-phase=finished]) .sta
  #bonju .dialogue{margin:0}
  #bonju .speaker-portrait{width:60px}
  #bonju #welcome{font-size:clamp(14px,2.2vw,21px)}
+}
+
+@media(max-width:600px) and (orientation:portrait){
+ main[data-phase=intro] .stage{align-items:stretch}
+ main[data-phase=intro] footer{min-height:0;padding-block:0}
+ #bonju{
+  display:grid;width:100%;grid-template-rows:minmax(0,1fr) auto;
+  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
+ }
+ #bonju .intro-art{align-self:center;max-height:100%}
+ #bonju .dialogue{align-self:end;margin:8px 4px 0}
 }

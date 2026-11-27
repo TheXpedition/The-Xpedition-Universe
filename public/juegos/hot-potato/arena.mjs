@@ -1,9 +1,9 @@
 import {playExplosion} from './explosion-audio.mjs?v=20261127-audio';
-import {arrange,present,impactPoint} from './scene.mjs';
+import {arrange,present,impactPoint} from './scene.mjs?v=20261127-throw';
 import {worldIcon} from '../world-icons.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 const el=id=>document.getElementById(id);
-const cards=new Map(), warmed=new Set();
+const cards=new Map();
 let ws, game, pending=false, connected=false, offset=0, retry, outage, zone, acknowledgement;
 let attempts=0, connecting=false, blocked=false;
 const dialog=el('rules'),direction=el('direction'),confirm=el('staff-confirm');
@@ -57,9 +57,18 @@ function acknowledge(){clearTimeout(acknowledgement);pending=false;}
 el('cast').addEventListener('contextmenu',event=>event.preventDefault());
 function card(p){
  const b=document.createElement('button');b.className='person';
- const hearts=document.createElement('b'),img=document.createElement('img'),name=document.createElement('span');
- b.style.setProperty('--beat',(-cards.size*.23)+'s');img.alt='';img.draggable=false;b.append(hearts,img,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
- return {b,hearts,img,name};
+ const hearts=document.createElement('b'),sprite=document.createElement('div'),name=document.createElement('span');
+ sprite.className='sprite';
+ const images=['happy','hold'].map(pose=>{
+  const im=document.createElement('img');
+  im.className=pose==='happy'?'pose-idle':'pose-hold';im.alt='';im.draggable=false;
+  im.src='art/'+encodeURIComponent(p.characterId)+'-'+pose+'.webp';
+  return im;
+ });
+ sprite.append(...images);
+ for(const im of images)void im.decode().catch(()=>{});
+ b.append(hearts,sprite,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
+ return {b,hearts,sprite,name};
 }
 function receivePass(m){
  if(!game||game.id!==m.gameId||game.phase!=='playing'||m.revision!==game.revision+1){
@@ -72,12 +81,11 @@ function receivePass(m){
  const receiver=game.players.find(p=>p.id===m.holder);
  el('phase').textContent=mine?'¡Tienes la papa! Elige a quién pasarla':receiver.name+' tiene la papa';
  for(const p of game.players){
-  const {b,img}=cards.get(p.id),holder=p.id===m.holder;
+  const {b}=cards.get(p.id),holder=p.id===m.holder;
   if(mine||previous.holder===game.self)b.disabled=!mine||holder||!p.lives;
   if(!holder&&p.id!==previous.holder)continue;
   b.classList.toggle('holder',holder);
   b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
-  img.src='art/'+encodeURIComponent(p.characterId)+(holder?'-hold.webp':'-happy.webp');
  }
  present(previous,game,cards,null);
 }
@@ -107,16 +115,14 @@ function render(){
  el('close').hidden=tutorial;el('rules-clock').hidden=!tutorial;
  for(const [id,c] of cards)if(!g.players.some(p=>p.id===id)){c.b.remove();cards.delete(id);}
  for(const p of g.players){
-  if(!cards.has(p.id))cards.set(p.id,card(p));const {b,img,hearts,name}=cards.get(p.id);
+  if(!cards.has(p.id))cards.set(p.id,card(p));const {b,hearts,name}=cards.get(p.id);
   const holder=p.id===g.holder;
   b.classList.toggle('holder',holder);b.classList.toggle('out',!p.lives);
   b.disabled=paused||!connected||pending||phase!=='playing'||!holding||holder||!p.lives;
   b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
   if(hearts.dataset.lives!==String(p.lives)){hearts.dataset.lives=String(p.lives);hearts.textContent='♥'.repeat(p.lives)+'♡'.repeat(3-p.lives);}
   if(name.textContent!==p.name)name.textContent=p.name;
-  const prefix='art/'+encodeURIComponent(p.characterId);
-  if(!warmed.has(prefix)){for(const pose of ['happy','hold'])new Image().src=prefix+'-'+pose+'.webp';warmed.add(prefix);}
-  const src=prefix+(holder?'-hold.webp':'-happy.webp');if(img.getAttribute('src')!==src)img.src=src;
+
  }
  arrange(cards,g.players);
  const event=el('event'),name=id=>g.players.find(p=>p.id===id)?.name||'';

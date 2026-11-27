@@ -1,6 +1,7 @@
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const narrow=matchMedia('(max-width:600px)');
-let layout='', flight=null;
+let layout='';
+const flights=new Set(),actorMotions=new WeakMap(),arrivals=new WeakMap();
 export function arrange(cards,players){
  const living=players.filter(p=>p.lives>0);
  const columns=narrow.matches?4:7;
@@ -20,28 +21,47 @@ export function arrange(cards,players){
  document.getElementById('game').dataset.small=String(living.length<=4);
 }
 function hand(card){
- const rect=card.img.getBoundingClientRect();
- return {x:rect.left+rect.width*.52,y:rect.top+rect.height*.54};
+ const rect=card.b.getBoundingClientRect(),sprite=card.sprite;
+ return {x:rect.left+sprite.offsetLeft+sprite.offsetWidth*.52,y:rect.top+sprite.offsetTop+sprite.offsetHeight*.54};
 }
 function animateActor(card,angles){
  if(!card||reduced.matches)return;
- return card.img.animate(angles.map(([angle,y])=>({transform:'translateY('+y+'px) rotate('+angle+'deg)'})),{duration:290,easing:'ease-out'});
+ actorMotions.get(card)?.cancel();
+ const motion=card.sprite.animate(angles.map(([angle,y])=>({transform:'translate3d(0,'+y+'px,0) rotate('+angle+'deg)'})),{duration:300,easing:'ease-out'});
+ actorMotions.set(card,motion);
+ motion.onfinish=()=>{if(actorMotions.get(card)===motion)actorMotions.delete(card);};
 }
 function launch(cards,from,to){
  const source=cards.get(from),target=cards.get(to);
  if(!source||!target||reduced.matches)return;
  const a=hand(source),b=hand(target),dx=b.x-a.x,dy=b.y-a.y;
- flight?.remove();const ball=document.createElement('i');flight=ball;ball.className='potato-flight';ball.setAttribute('aria-hidden','true');
+ // Anchor to the slot, so another throw cannot move either endpoint.
+ const distance=Math.hypot(dx,dy);
+ const arc=Math.min(96,Math.max(34,distance*.19));
+ if(flights.size>=3){const first=flights.values().next().value;flights.delete(first);first.cancel();}
+ const ball=document.createElement('i');ball.className='potato-flight';ball.setAttribute('aria-hidden','true');
  ball.style.left=a.x+'px';ball.style.top=a.y+'px';document.body.append(ball);
  const sign=dx>=0?1:-1;
- animateActor(source,[[0,0],[-8*sign,-2],[15*sign,-5],[0,0]]);
- const translate=(x,y,angle)=>'translate(-50%,-50%) translate('+x+'px,'+y+'px) rotate('+angle+'deg)';
- const motion=ball.animate([
-  {transform:translate(0,0,0)},
-  {transform:translate(dx*.5,dy*.5-Math.min(85,Math.max(28,Math.abs(dx)*.18)),sign*150)},
-  {transform:translate(dx,dy,sign*300)}
- ],{duration:210,easing:'linear'});
- motion.onfinish=()=>{ball.remove();if(flight!==ball)return;flight=null;animateActor(target,[[0,0],[8*sign,-8],[-3*sign,0],[0,0]]);};
+ animateActor(source,[[0,0],[-9*sign,-3],[16*sign,-6],[0,0]]);
+ const frames=Array.from({length:9},(_,i)=>{
+  const progress=i/8,x=dx*progress,y=dy*progress-4*arc*progress*(1-progress);
+  return {transform:'translate(-50%,-50%) translate3d('+x+'px,'+y+'px,0) rotate('+(progress*360*sign)+'deg)'};
+ });
+ const motion=ball.animate(frames,{duration:distance>300?480:420,easing:'linear'});
+ flights.add(motion);
+ arrivals.set(target,motion);
+ target.b.classList.add('receiving');
+ const clear=()=>{
+  ball.remove();flights.delete(motion);
+  if(arrivals.get(target)===motion){
+   target.b.classList.remove('receiving');
+   arrivals.delete(target);
+   return true;
+  }
+  return false;
+ };
+ motion.oncancel=clear;
+ motion.onfinish=()=>{if(clear()&&target.b.classList.contains('holder'))animateActor(target,[[0,0],[-7*sign,-7],[3*sign,-3],[0,0]]);};
 }
 function burst(point){
  if(!point||reduced.matches)return;
@@ -54,6 +74,7 @@ function burst(point){
  }
 }
 export function present(previous,next,cards,hitPoint){
+ if(next.phase!=='playing'||next.pausedAt!=null)for(const motion of flights)motion.cancel();
  if(!previous||previous.id!==next.id||previous.revision===next.revision)return;
  if(previous.phase==='playing'&&next.phase==='playing'&&previous.holder!==next.holder)launch(cards,previous.holder,next.holder);
  if(previous.phase!==next.phase&&next.phase==='blast'){
@@ -62,5 +83,5 @@ export function present(previous,next,cards,hitPoint){
 }
 export function impactPoint(next,cards){
  const hit=next.phase==='blast'&&cards.get(next.lastHit?.id);
- return hit?.img?.isConnected?hand(hit):null;
+ return hit?.sprite?.isConnected?hand(hit):null;
 }
