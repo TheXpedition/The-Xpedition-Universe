@@ -156,8 +156,12 @@ small {
 .person.holder span {
   background:#813506;
 }
-.person:enabled:is(:hover,:focus-visible) img {
+.person[aria-disabled=true] {cursor:default}
+.person[aria-disabled=false]:focus-visible img {
   filter:drop-shadow(0 0 5px #a5ff54);
+}
+@media (hover:hover) {
+  .person[aria-disabled=false]:hover img {filter:drop-shadow(0 0 5px #a5ff54)}
 }
 .person.out {
   display:none;
@@ -347,8 +351,14 @@ header nav,#staff-actions {display:flex;align-items:center;gap:6px;flex-wrap:wra
 #sound[aria-pressed=false] {opacity:.7}
 @media(max-width:600px){header{flex-wrap:wrap}header nav{margin-left:auto}header nav button{padding:6px}}
 
-#cast,.person,.person img {user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none}
-.person {min-height:44px;touch-action:manipulation}
+main[data-phase=playing] .stage,main[data-phase=playing] .stage * {
+  user-select:none;
+  -webkit-user-select:none;
+  -webkit-touch-callout:none;
+  -webkit-user-drag:none;
+}
+main[data-phase=playing] #cast {touch-action:none}
+.person {min-height:44px}
 #rules {width:min(540px,94vw);max-width:94vw;max-height:88svh;overflow-y:auto}
 .guide {padding-left:1.5em}
 .guide li {padding-left:.2em;margin:0 0 18px;line-height:1.45}
@@ -499,7 +509,7 @@ main:is([data-phase=tutorial],[data-phase=countdown],[data-phase=finished]) .sta
  main[data-phase=intro] footer{min-height:0;padding-block:0}
  #bonju{
   display:grid;width:100%;grid-template-rows:minmax(0,1fr) auto;
-  padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));
+  padding-bottom:calc(clamp(32px,5svh,48px) + env(safe-area-inset-bottom,0px));
  }
  #bonju .intro-art{align-self:center;max-height:100%}
  #bonju .dialogue{align-self:end;margin:8px 4px 0}

@@ -54,9 +54,33 @@ function act(action,target){
  },3500);
 }
 function acknowledge(){clearTimeout(acknowledgement);pending=false;}
-el('cast').addEventListener('contextmenu',event=>event.preventDefault());
+function canPassTo(p){
+ return connected&&!pending&&game.phase==='playing'&&game.pausedAt==null&&game.holder===game.self&&p.id!==game.self&&p.lives>0;
+}
+function updatePassTarget(button,p){
+ const enabled=canPassTo(p);
+ button.setAttribute('aria-disabled',String(!enabled));
+ button.tabIndex=enabled?0:-1;
+}
+function passTo(id){
+ const target=game?.players.find(p=>p.id===id);
+ if(target&&canPassTo(target))act('pass',id);
+}
+const cast=el('cast'),stage=cast.closest('.stage');
+for(const type of ['contextmenu','selectstart','dragstart']){
+ stage.addEventListener(type,event=>{if(game?.phase==='playing')event.preventDefault();});
+}
+cast.addEventListener('touchend',event=>{
+ const button=event.target.closest('.person');
+ if(!button||game?.phase!=='playing'||!event.cancelable)return;
+ // Handle the release directly and suppress the browser's follow-up click.
+ event.preventDefault();
+ if(event.touches.length||event.changedTouches.length!==1)return;
+ const {clientX,clientY}=event.changedTouches[0];
+ if(document.elementFromPoint(clientX,clientY)?.closest('.person')===button)passTo(button.dataset.player);
+},{passive:false});
 function card(p){
- const b=document.createElement('button');b.className='person';
+ const b=document.createElement('button');b.type='button';b.className='person';b.dataset.player=p.id;
  const hearts=document.createElement('b'),sprite=document.createElement('div'),name=document.createElement('span');
  sprite.className='sprite';
  const images=['happy','hold'].map(pose=>{
@@ -67,7 +91,7 @@ function card(p){
  });
  sprite.append(...images);
  for(const im of images)void im.decode().catch(()=>{});
- b.append(hearts,sprite,name);b.onclick=()=>act('pass',p.id);el('cast').append(b);
+ b.append(hearts,sprite,name);b.onclick=()=>passTo(p.id);
  return {b,hearts,sprite,name};
 }
 function receivePass(m){
@@ -82,7 +106,7 @@ function receivePass(m){
  el('phase').textContent=mine?'¡Tienes la papa! Elige a quién pasarla':receiver.name+' tiene la papa';
  for(const p of game.players){
   const {b}=cards.get(p.id),holder=p.id===m.holder;
-  if(mine||previous.holder===game.self)b.disabled=!mine||holder||!p.lives;
+  if(mine||previous.holder===game.self)updatePassTarget(b,p);
   if(!holder&&p.id!==previous.holder)continue;
   b.classList.toggle('holder',holder);
   b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
@@ -118,7 +142,7 @@ function render(){
   if(!cards.has(p.id))cards.set(p.id,card(p));const {b,hearts,name}=cards.get(p.id);
   const holder=p.id===g.holder;
   b.classList.toggle('holder',holder);b.classList.toggle('out',!p.lives);
-  b.disabled=paused||!connected||pending||phase!=='playing'||!holding||holder||!p.lives;
+  updatePassTarget(b,p);
   b.setAttribute('aria-label',p.name+', '+p.lives+' vidas'+(holder?', tiene la papa':''));
   if(hearts.dataset.lives!==String(p.lives)){hearts.dataset.lives=String(p.lives);hearts.textContent='♥'.repeat(p.lives)+'♡'.repeat(3-p.lives);}
   if(name.textContent!==p.name)name.textContent=p.name;
