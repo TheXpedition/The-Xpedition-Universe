@@ -1,10 +1,10 @@
 import {playExplosion} from './explosion-audio.mjs?v=20261127-audio';
-import {arrange,present,impactPoint} from './scene.mjs?v=20261127-throw';
+import {arrange,present,impactPoint} from './scene.mjs?v=20261127-hold';
 import {worldIcon} from '../world-icons.mjs';
 import {worldApiPath,worldSocketPath} from '../world-api-path.mjs';
 const el=id=>document.getElementById(id);
 const cards=new Map();
-let ws, game, pending=false, connected=false, offset=0, retry, outage, zone, acknowledgement;
+let ws, game, pending=false, connected=false, offset=0, retry, outage, zone, acknowledgement, releasing;
 let attempts=0, connecting=false, blocked=false;
 const dialog=el('rules'),direction=el('direction'),confirm=el('staff-confirm');
 function toggleDirection(open){
@@ -48,12 +48,21 @@ function act(action,target){
  if(!connected||pending||!game||ws.readyState!==WebSocket.OPEN)return;
  pending=true;el('notice').textContent='';el('staff-note').textContent='';
  ws.send(JSON.stringify({type:'potato',action,target,ready:action==='ready'?target:undefined,gameId:game.id,revision:game.revision}));
+ if(action==='pass'){
+  releasing=cards.get(game.self)?.b;
+  releasing?.classList.add('releasing');
+ }
  clearTimeout(acknowledgement);
  acknowledgement=setTimeout(()=>{
   if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'potato',action:'subscribe',compactPass:true}));
  },3500);
 }
-function acknowledge(){clearTimeout(acknowledgement);pending=false;}
+function acknowledge(){
+ clearTimeout(acknowledgement);
+ releasing?.classList.remove('releasing');
+ releasing=null;
+ pending=false;
+}
 function canPassTo(p){
  return connected&&!pending&&game.phase==='playing'&&game.pausedAt==null&&game.holder===game.self&&p.id!==game.self&&p.lives>0;
 }

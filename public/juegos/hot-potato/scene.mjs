@@ -1,7 +1,7 @@
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const narrow=matchMedia('(max-width:600px)');
 let layout='';
-const flights=new Set(),actorMotions=new WeakMap(),arrivals=new WeakMap();
+const flights=new Set(),actorMotions=new WeakMap();
 export function arrange(cards,players){
  const living=players.filter(p=>p.lives>0);
  const columns=narrow.matches?4:7;
@@ -43,25 +43,18 @@ function launch(cards,from,to){
  ball.style.left=a.x+'px';ball.style.top=a.y+'px';document.body.append(ball);
  const sign=dx>=0?1:-1;
  animateActor(source,[[0,0],[-9*sign,-3],[16*sign,-6],[0,0]]);
+ animateActor(target,[[0,0],[-7*sign,-7],[3*sign,-3],[0,0]]);
  const frames=Array.from({length:9},(_,i)=>{
   const progress=i/8,x=dx*progress,y=dy*progress-4*arc*progress*(1-progress);
   return {transform:'translate(-50%,-50%) translate3d('+x+'px,'+y+'px,0) rotate('+(progress*360*sign)+'deg)'};
  });
  const motion=ball.animate(frames,{duration:distance>300?480:420,easing:'linear'});
  flights.add(motion);
- arrivals.set(target,motion);
- target.b.classList.add('receiving');
  const clear=()=>{
   ball.remove();flights.delete(motion);
-  if(arrivals.get(target)===motion){
-   target.b.classList.remove('receiving');
-   arrivals.delete(target);
-   return true;
-  }
-  return false;
  };
  motion.oncancel=clear;
- motion.onfinish=()=>{if(clear()&&target.b.classList.contains('holder'))animateActor(target,[[0,0],[-7*sign,-7],[3*sign,-3],[0,0]]);};
+ motion.onfinish=clear;
 }
 function burst(point){
  if(!point||reduced.matches)return;
