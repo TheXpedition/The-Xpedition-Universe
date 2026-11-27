@@ -2,30 +2,45 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Hot Potato · The Xpedition World</title><link rel="stylesheet" href="arena.css">
+<title>Hot Potato · The Xpedition World</title><link rel="stylesheet" href="../last-grip/lobby.css"><link rel="stylesheet" href="arena.css?v=20261127">
 </head>
 <body><main id="game" data-phase="closed">
-<header><a href="../?view=challenges">‹ Desafíos</a><span id="mode"></span><nav aria-label="Controles del reto"><button id="voice" hidden>Escuchar a Bonju</button><button id="sound" aria-pressed="true">Sonido</button><button id="help">Cómo jugar</button><button id="staff-toggle" aria-haspopup="dialog" hidden>Dirección</button></nav></header>
+<header>
+ <a href="../?view=play" class="brand">THE <b>XPEDITION</b><small>APOCALYPSE II</small></a>
+ <div class="episode-title"><small>HOT POTATO</small><strong id="phase" role="status">Conectando al episodio…</strong></div>
+ <span id="mode" hidden></span>
+ <button id="voice" hidden>Escuchar a Bonju</button>
+ <button id="sound" class="header-icon" aria-label="Silenciar sonido" aria-pressed="true"></button>
+ <button id="help" class="header-icon" aria-label="Cómo jugar" title="Cómo jugar">?</button>
+ <button id="staff-toggle" class="header-icon" aria-label="Dirección" aria-controls="direction" aria-expanded="false" title="Dirección" hidden></button>
+</header>
 <section class="stage" aria-label="Campamento de Hot Potato">
-<section id="lobby" aria-label="Lobby de Hot Potato">
- <div class="lobby-entry">
-  <img class="lobby-logo" src="art/logo.webp" alt="Hot Potato">
-  <strong id="lobby-phase"></strong><p id="lobby-note"></p>
-  <div id="actions" class="lobby-actions"></div>
- </div>
- <div class="lobby-roster">
-  <div class="lobby-heading"><h2>Participantes</h2><strong id="seats"></strong></div>
-  <ul id="slots" aria-label="Reparto del lobby"></ul>
-  <div id="lobby-controls" class="lobby-actions"></div>
- </div>
+<section id="lobby" class="grip-lobby" aria-label="Lobby de Hot Potato">
+ <section class="grip-welcome">
+  <img class="grip-lobby-logo" src="art/logo.webp" alt="Hot Potato">
+  <span class="eyebrow">REFLEJOS Y SUPERVIVENCIA</span>
+  <h1>PASA LA PAPA.<br>CONSERVA TUS VIDAS.</h1>
+  <p>Tres vidas por participante.<br>El último en pie gana inmunidad.</p>
+  <div id="actions" class="grip-entry"></div>
+  <small id="lobby-note"></small>
+  <a class="grip-world-link" href="../?view=play">← Volver a World</a>
+ </section>
+ <section class="grip-roster">
+  <div class="grip-roster-heading"><div><span class="eyebrow">EL RECINTO</span><h2>PARTICIPANTES</h2></div><strong id="seats"></strong></div>
+  <div id="slots" aria-label="Reparto del lobby"></div>
+  <div id="lobby-controls" class="grip-lobby-controls"></div>
+  <small class="grip-lobby-note">Dirección puede llenar el reparto con usuarios, bots o ambos.</small>
+ </section>
 </section>
-<div class="banner"><strong id="phase" role="status">Conectando…</strong><small id="round"></small></div>
+<div class="banner" id="round-banner"><strong id="round"></strong></div>
+<div id="pause-status" hidden role="status">RETO EN PAUSA</div>
 <div id="cast"></div>
 <aside id="bonju" hidden><img class="intro-art" src="art/bonju-presenta.webp" width="1672" height="941" decoding="async" alt="Bonju presenta Hot Potato en el campamento al atardecer"><div class="dialogue"><span class="speaker-portrait" aria-hidden="true"></span><div class="speech-frame"><strong class="speaker-name">Bonju</strong><p id="welcome" aria-live="polite">¡Bienvenidos a <em>Hot Potato</em>!</p><button id="next-line" aria-label="Siguiente mensaje de Bonju">▼</button></div></div></aside>
 <div id="event" role="status" hidden></div>
 </section>
-<footer><span id="notice" role="status"></span></footer></main>
-<dialog id="direction"><h2>Dirección</h2><p id="staff-status"></p><div id="staff-actions"></div><button id="staff-close">Cerrar</button></dialog>
+<footer><span id="notice" role="status"></span><button id="return-home" class="primary" hidden>Regresar al refugio</button></footer></main>
+<aside id="direction" aria-label="Dirección" hidden><div class="section-heading"><h2>DIRECCIÓN</h2><button id="staff-close" aria-label="Cerrar Dirección">×</button></div><p id="staff-status"></p><div id="staff-actions"></div><p id="staff-note" role="status"></p></aside>
+<dialog id="staff-confirm"><h2>Cancelar Hot Potato</h2><p>La partida terminará y los participantes podrán regresar a sus refugios.</p><button id="cancel-no">Seguir jugando</button> <button id="cancel-yes" class="primary">Cancelar reto</button></dialog>
 <dialog id="rules" aria-labelledby="rules-title"><div class="rules-heading"><h2 id="rules-title">Cómo jugar</h2><strong id="rules-clock" hidden></strong></div>
 <div class="briefing">
 <figure><img src="art/guide-holder.webp?v=sunset" alt=""><figcaption><b>Busca la papa</b>El brillo indica quién la tiene.</figcaption></figure>
@@ -33,8 +48,8 @@
 <figure><img src="art/guide-blast.webp?v=sunset" alt=""><figcaption><b>Cuida tus tres vidas</b>Cada explosión te quita una. El último en pie gana inmunidad.</figcaption></figure>
 </div>
 <ol class="guide">
-<li><strong>Entra al lobby.</strong> En una sala de usuarios, pulsa Participar. El staff autoriza el inicio cuando los jugadores estén listos. Todos empiezan con tres vidas.</li>
+<li><strong>Entra al lobby.</strong> Pulsa Entrar al lobby y confirma que estás listo. El staff autoriza el inicio cuando los jugadores estén listos. Todos empiezan con tres vidas.</li>
 <li><strong>Encuentra la papa.</strong> El personaje que la tiene la sostiene en las manos y se ilumina. Si eres tú, aparece «¡Tienes la papa!».<img loading="lazy" src="art/guide-holder.webp?v=sunset" alt="Personaje iluminado con la papa en la mano, junto a los demás jugadores"></li>
 <li><strong>Toca una vez para pasar.</strong> Toca o haz clic en otro concursante que siga en pie. Con teclado, usa Tab y Enter. Quien la recibe puede devolverla de inmediato, incluso mientras se ve el lanzamiento.<img loading="lazy" src="art/guide-pass.webp?v=sunset" alt="Una papa cruza el campo entre dos personajes durante un pase"></li>
 <li><strong>Sobrevive a la explosión.</strong> Si tienes la papa cuando explota, pierdes una vida. Durante la pausa de 10 segundos se muestra a quién le explotó. Al perder las tres, sales del campo. El último en pie gana inmunidad.<img loading="lazy" src="art/guide-blast.webp?v=sunset" alt="Aviso de explosión con el retrato y las vidas restantes del participante"></li>
-</ol><p>La primera ronda dura 60 segundos. Después, cada ronda dura entre 30 y 50 segundos. Con la mitad del reparto inicial o menos, dura entre 10 y 30. Los pases mantienen el mismo reloj.</p><button id="close">Entendido</button></dialog><script type="module" src="arena.mjs"></script></body></html>
+</ol><p>La primera ronda dura 60 segundos. Después, cada ronda dura entre 30 y 50 segundos. Con la mitad del reparto inicial o menos, dura entre 10 y 30. Los pases mantienen el mismo reloj.</p><button id="close">Entendido</button></dialog><script type="module" src="arena.mjs?v=20261127"></script></body></html>

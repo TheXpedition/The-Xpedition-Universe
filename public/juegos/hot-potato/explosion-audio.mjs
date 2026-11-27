@@ -1,3 +1,4 @@
+import {worldIcon} from '../world-icons.mjs';
 const button=document.getElementById('sound');
 const AudioEngine=window.AudioContext||window.webkitAudioContext;
 let context,noise;
@@ -5,7 +6,8 @@ let enabled=true;
 try{enabled=localStorage.getItem('hot-potato-muted')!=='1';}catch{}
 function label(){
  button.setAttribute('aria-pressed',String(enabled));
- button.textContent=enabled?'Sonido activo':'Sin sonido';
+ const name=enabled?'Silenciar sonido':'Activar sonido';
+ button.setAttribute('aria-label',name);button.title=name;button.innerHTML=worldIcon(enabled?'volume':'muted');
 }
 function unlock(){
  if(!enabled||!AudioEngine)return;
