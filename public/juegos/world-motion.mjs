@@ -17,8 +17,8 @@ export function stepWorld(player,input,dt,zone){
  const wasGrounded=player.grounded;
  if(!player.grounded){const gravity=player.jumpGravity||900;if(gravity===1600){player.z+=player.vz*dt-gravity*dt*dt*.5;player.vz-=gravity*dt;}else{player.vz-=gravity*dt;player.z+=player.vz*dt;}}
  const beforeX=player.x,beforeY=player.y;
- if(clearPoint(map,player.x+x*speed*dt,player.y,player.z)&&(!map.boundedFloor||hasFloor(map,player.x+x*speed*dt,player.y)))player.x+=x*speed*dt;
- if(clearPoint(map,player.x,player.y+y*speed*dt,player.z)&&(!map.boundedFloor||hasFloor(map,player.x,player.y+y*speed*dt)))player.y+=y*speed*dt;
+ if(x&&clearPoint(map,player.x+x*speed*dt,player.y,player.z)&&(!map.boundedFloor||hasFloor(map,player.x+x*speed*dt,player.y)))player.x+=x*speed*dt;
+ if(y&&clearPoint(map,player.x,player.y+y*speed*dt,player.z)&&(!map.boundedFloor||hasFloor(map,player.x,player.y+y*speed*dt)))player.y+=y*speed*dt;
  player.moving=Math.hypot(player.x-beforeX,player.y-beforeY)>.01;if(Math.abs(x)>.01)player.facing=x>0?1:-1;if(player.moving)player.walk+=dt*8*(speed/205);
  const ground=support(map,player,previousZ);
  if(player.vz<=0&&player.z<=ground){player.z=ground;player.vz=0;player.grounded=true;if(!wasGrounded)player.landAt=Number(input.now)||0;}
@@ -26,7 +26,17 @@ export function stepWorld(player,input,dt,zone){
  if(ground===-Infinity&&player.z<=-5){player.falling=.001;player.grounded=false;player.path=[];}
  if(!player.moving&&player.path.length){const next=player.path[0];if(Math.hypot(next.x-player.x,next.y-player.y)>15)player.path=[];}
 }
-export function nearestPortal(player,zone){const map=typeof zone==='string'?WORLD_MAPS[zone]:zone;return map.props.filter(p=>p.portal&&!p.portal.eventBlocked).map(p=>({...p.portal,id:p.id,distance:portalDistance(player,p.portal)})).filter(p=>p.distance<(p.range||115)).sort((a,b)=>a.distance-b.distance)[0]||null;}
+export function nearestPortal(player,zone){
+ const map=typeof zone==='string'?WORLD_MAPS[zone]:zone;
+ let nearest,closest=Infinity;
+ for(const prop of map.props){
+  const portal=prop.portal;
+  if(!portal||portal.eventBlocked)continue;
+  const distance=portalDistance(player,portal);
+  if(distance<(portal.range||115)&&distance<closest){nearest=prop;closest=distance;}
+ }
+ return nearest?{...nearest.portal,id:nearest.id,distance:closest}:null;
+}
 const grids=new WeakMap(),CELL=34;
 class MinHeap{constructor(){this.a=[];}push(id,f){const a=this.a;let i=a.length;a.push({id,f});while(i){const p=(i-1)>>1;if(a[p].f<=f)break;a[i]=a[p];i=p;}a[i]={id,f};}pop(){const a=this.a,first=a[0],last=a.pop();if(a.length){let i=0;while(i*2+1<a.length){let j=i*2+1;if(j+1<a.length&&a[j+1].f<a[j].f)j++;if(a[j].f>=last.f)break;a[i]=a[j];i=j;}a[i]=last;}return first.id;}get length(){return this.a.length;}}
 function grid(map){const cached=grids.get(map);if(cached&&cached.revision===(map.interactionRevision||0)&&cached.props===map.props)return cached;const width=Math.ceil(map.width/CELL),height=Math.ceil(map.height/CELL),cells=new Uint8Array(width*height);for(let y=0;y<height;y++)for(let x=0;x<width;x++){const px=x*CELL+CELL/2,py=y*CELL+CELL/2;cells[y*width+x]=hasFloor(map,px,py)&&clearPoint(map,px,py,0,17)?1:0;}const result={width,height,cells,revision:map.interactionRevision||0,props:map.props};grids.set(map,result);return result;}

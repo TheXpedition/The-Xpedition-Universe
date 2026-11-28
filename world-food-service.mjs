@@ -1,5 +1,5 @@
 import {REFRIGERATED_RATE,freshnessFor} from './public/juegos/world-food-freshness.mjs';
-import {normalizeFoodUnits,takeOldestUnits,readFoodRows,inventoryUnits,saveInventoryUnits,addInventoryUnits,unitAge} from './world-food-inventory.mjs';
+import {normalizeFoodUnits,takeOldestUnits,readFoodRows,foodItems,inventoryUnits,saveInventoryUnits,addInventoryUnits,unitAge} from './world-food-inventory.mjs';
 import {FOOD_CATALOG,FOOD_BY_ID} from './public/juegos/world-foods.mjs';
 
 export const FOOD_INVENTORY_CAPACITY=48;
@@ -29,9 +29,9 @@ export function createFoodStore({db,now=Date.now,fail=(status,message)=>{throw O
   return stores[teamId]??={};
  }
  const canTake=(team,context)=>(!context.roomTeam||context.roomTeam===team.id)&&(context.staff===true||(context.teamId!==undefined?context.teamId===team.id:!!normalizeTeam(context.team)&&normalizeTeam(context.team)===normalizeTeam(team.name)));
- async function view(userId,context,frame){
+ async function view(userId,context,frame,items){
   const supplies=context.roomTeam?frame.state.shelterStock:frame.state.stock;
-  const items=await readFoodRows(db,userId,now());
+  items??=await readFoodRows(db,userId,now());
   return {revision:frame.revision,teams:frame.state.teams.filter(team=>!context.roomTeam||team.id===context.roomTeam).map(team=>({...team,name:context.roomTeam?(team.id==='left'?'Refugio 1':'Refugio 2'):team.name,canTake:canTake(team,context),slots:FOOD_CATALOG.map(food=>({foodId:food.id,quantity:supplies?.[team.id]?.[food.id]||0}))})),inventory:{capacity:FOOD_INVENTORY_CAPACITY,items},staff:context.staff===true&&!context.roomTeam,roomTeam:context.roomTeam||undefined};
  }
  return {
@@ -44,7 +44,13 @@ export function createFoodStore({db,now=Date.now,fail=(status,message)=>{throw O
     await save(frame);return view(userId,{},frame);
    });
   },
-  async snapshot(userId,context={}){validUser(userId);return serial(async()=>view(userId,context,await lockedState()));},
+  async snapshot(userId,context={}){
+   validUser(userId);
+   const rows=await db.all('SELECT f.state,f.revision,i.food_id,i.quantity,i.updated,i.freshness FROM world_food_state f LEFT JOIN world_food_inventory i ON i.user_id=? AND i.quantity>0 WHERE f.id=? ORDER BY i.food_id',userId,STATE_ID);
+   const row=rows[0];
+   if(!row)return serial(async()=>view(userId,context,await lockedState()));
+   return view(userId,context,{state:JSON.parse(row.state),revision:Number(row.revision)},foodItems(rows,now()));
+  },
   async transfer(fromId,toId,foodId,quantity=1){
    validUser(fromId);validUser(toId);const food=foodFor(foodId);
    if(fromId===toId||!Number.isInteger(quantity)||quantity<1||quantity>FOOD_INVENTORY_CAPACITY)reject(400,'Selecciona una cantidad válida para otra persona.');

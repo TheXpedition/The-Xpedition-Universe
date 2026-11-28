@@ -47,5 +47,6 @@ export function shelterPortalContext(context,portal,view,visitor=false,zone){
  if(!context||!s)return context;
  if(zone&&zone!==definition.outside)return context;
  if(visitor)return {...context,key:context.key+':shelter',label:'Entrar',detail:s.name,icon:'door'};
- return {...context,key:context.key+':shelter',label:s.built?'Entrar':'Construir',detail:s.name+(s.built?' · '+(view.home===s.id?'Tu refugio':'Solo integrantes'):' · '+s.percent+' %'),icon:s.built?'door':'build'};
+ const open=s.built||s.canEnter;
+ return {...context,key:context.key+':shelter',label:open?'Entrar':'Construir',detail:s.name+(open?' · '+(view.home===s.id?'Tu refugio':'Solo integrantes'):' · '+s.percent+' %'),icon:open?'door':'build'};
 }

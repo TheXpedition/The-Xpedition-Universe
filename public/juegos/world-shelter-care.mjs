@@ -8,6 +8,7 @@ export const CROPS=Object.freeze({
 });
 
 const minute=60_000;
+const careRate=1/24;
 export const GARDEN_PHASES=Object.freeze({
  empty:'Lista para plantar',sown:'Sembrado',sprouts:'Brotes',growing:'Creciendo',ripe:'Listo para cosechar'
 });
@@ -72,7 +73,7 @@ export function resizeFlock(flock,count){
  return {...flock,count,birds};
 }
 export function startFlock(now){
- return resizeFlock({at:now,water:1,clean:96,fence:76,birds:{}},COOP_DEFAULT);
+ return resizeFlock({at:now,water:80,clean:96,fence:76,birds:{}},COOP_DEFAULT);
 }
 
 // Existing eggs remain collectable. Only future laying uses the new care requirements.
@@ -81,23 +82,24 @@ export function flockAt(previous,now){
   Object.entries(previous.birds).map(([id,bird])=>[id,{...bird}])
  )}:startFlock(now);
  if(previous&&!previous.birds){
+  flock.water=previous.water??1;
   flock.clean=previous.clean;flock.fence=previous.fence;flock.guardedAt=previous.guardedAt;
   flock.birds.canela.eggs=Math.max(0,Math.ceil((previous.eggs||0)/2));
   flock.birds.pepita.eggs=Math.max(0,Math.floor((previous.eggs||0)/2));
  }
- const elapsed=Math.min(180,Math.max(0,Math.floor((now-flock.at)/minute)));
+ const elapsed=Math.min(3*24*60,Math.max(0,Math.floor((now-flock.at)/minute)));
  const living=COOP_BIRDS.filter(b=>flock.birds[b.id]?.health>0);
  let alive=living.length;
- for(let i=0;i<elapsed;i++){
-  flock.water=clamp(flock.water-alive*.25);
-  flock.clean=clamp(flock.clean-alive*.09);
-  flock.fence=clamp(flock.fence-.16);
+ for(let i=0;i<elapsed&&alive>0;i++){
+  flock.water=clamp(flock.water-alive*.25*careRate);
+  flock.clean=clamp(flock.clean-alive*.09*careRate);
+  flock.fence=clamp(flock.fence-.16*careRate);
   for(const bird of living){
    const state=flock.birds[bird.id];
    if(state.health<=0)continue;
-   state.food=clamp(state.food-.38);
+   state.food=clamp(state.food-.38*careRate);
    const penalty=(state.food<50?.25:0)+(flock.water<38?.4:0)+(flock.clean<55?.2:0)+(flock.fence<45?.18:0);
-   state.health=clamp(state.health+(penalty?-penalty:.5));
+   state.health=clamp(state.health+(penalty?-penalty*careRate:.5));
    if(state.health<=0){state.eggs=0;state.laying=0;alive--;continue;}
    const ready=state.fed&&state.health>=85&&state.food>=75&&flock.water>=55&&flock.clean>=72&&flock.fence>=60;
    if(bird.rooster||state.eggs>=2)continue;

@@ -2,7 +2,7 @@ import {test} from 'node:test';import assert from 'node:assert/strict';
 import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';
 import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';import {interactionPoint,nearestInteraction} from '../public/juegos/world-interactions.mjs';
 test('six real players use the three independent water entries in each waterfall zone and return to their own banks',async()=>{
- const people=[],cast=['maria-villegas','bruno','leandro','peggy','sallua','guillermo'];
+ const people=[],cast=['maria-villegas','bruno','leandro','ivy','sallua','guillermo'];
  for(const zone of ['cascada-ribera','poza-cascada'])for(const prop of WORLD_MAPS[zone].props.filter(p=>p.activity==='swim')){const n=people.length,id=n===0?STAFF_ID:'water-'+n,point=interactionPoint(WORLD_MAPS[zone],prop);assert.equal(nearestInteraction(point,zone)?.prop.id,prop.id,'swim entry does not overlap the water collection prompt');people.push({id,character:cast[n],zone,...point,prop,point});}
  const f=await liveFixture('waterways-network',people);
  try{const peers=await Promise.all(people.map(p=>f.connect(p.id)));const latest=(peer,id)=>peer.messages.findLast(m=>m.type==='players')?.players?.find(p=>p.userId===id);

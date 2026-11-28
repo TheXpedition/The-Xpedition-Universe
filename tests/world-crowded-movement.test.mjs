@@ -35,6 +35,25 @@ try{
  const resumed=await f.connect(actor.id,{claim:false,compactMovement:true,resume:true});
  const restored=resumed.messages.find(m=>m.type==='welcome').players.find(p=>p.userId===actor.id);
  assert(Math.hypot(restored.x-stopped.x,restored.y-stopped.y)<1.5,'return at the last saved point without spawning elsewhere');
+ peers[2]=resumed;
+ const interval=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+ let checkedFrames=0;
+ for(let turn=0;turn<24;turn++){
+  const direction=turn%2?1:-1,start=Date.now();
+  for(let press=0;press<5;press++){
+   for(const p of peers)f.send(p,{type:'input',x:direction,y:0});
+   await interval(100);
+  }
+  const positions=peers[0].messages.filter(m=>m.type==='move'&&m.serverTime>=start+180&&m.serverTime<Date.now())
+   .map(m=>m.players.find(p=>p.userId===actor.id)).filter(Boolean);
+  for(let n=1;n<positions.length;n++){
+   assert((positions[n].x-positions[n-1].x)*direction>=0,'movement must not reverse against held input');
+   checkedFrames++;
+  }
+ }
+ for(const p of peers)f.send(p,{type:'input',x:0,y:0});
+ assert(checkedFrames>=30);
+ assert(peers.every(p=>p.socket.readyState===1));
 
- console.log(JSON.stringify({connections:peers.length,playersInSharedFrame:movement.players.length,identical:true,packetsPerPeer:frames.map(r=>r.length)}));
+ console.log(JSON.stringify({connections:peers.length,playersInSharedFrame:movement.players.length,identical:true,packetsPerPeer:frames.map(r=>r.length),checkedFrames}));
 }finally{await f.close();}

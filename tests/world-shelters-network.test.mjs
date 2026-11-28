@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {liveFixture,STAFF_ID} from './helpers/world-live-fixture.mjs';import {openDatabase} from '../database.mjs';import {createShelterService} from '../world-shelter-service.mjs';
-import {SHELTER_MATERIALS,shelterSupplyProp} from '../public/juegos/world-shelters.mjs';import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';
+import {HOUSING_PARTICIPANTS,HOUSING_ROSTERS,SHELTER_MATERIALS,shelterSupplyProp} from '../public/juegos/world-shelters.mjs';import {WORLD_MAPS} from '../public/juegos/world-maps.mjs';
 import {seedConstructedShelters} from './helpers/world-shelter-fixtures.mjs';import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
 import {SHELTERS} from '../public/juegos/world-shelter-layout.mjs';
 import {nearestPortal} from '../public/juegos/world-motion.mjs';
@@ -50,13 +50,34 @@ test('Staff playing María can enter through either shelter door without unlocki
    f.send(maria,{type:'enter',zone:inside});
    await f.until(()=>latest(maria)===inside);
    f.send(builder,{type:'enter',zone:inside});
-   await f.until(()=>builder.messages.some(m=>m.type==='error'&&m.message.includes(built?'no tiene acceso':'construir')));
+   await f.until(()=>builder.messages.some(m=>m.type==='error'&&m.message.includes(built?'no tiene acceso':'Entrega todos tus materiales')));
    assert.equal(latest(builder),outside);
    const fresh=await f.call('/api/world/bootstrap',STAFF_ID);
    assert.equal(fresh.profile.lastZone,inside);
    assert.equal(fresh.shelters.shelters.find(s=>s.entry===inside).built,built);
   }finally{await f.close();}
  }
+});
+
+test('Refugio 2 admits a resident with ten deliveries while a resident with nine stays outside',async()=>{
+ const home=SHELTERS[1],door=WORLD_MAPS[home.outside].props.find(p=>p.portal?.zone===home.entry).portal;
+ const actors=[{id:'finished',character:'sallua'},{id:'pending',character:'leandro'}].map(a=>({...a,zone:home.outside,x:door.x,y:door.y}));
+ const f=await liveFixture('shelter-early-entry',[...actors,{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700}],{setup:async db=>{
+  const delivered=Object.fromEntries(actors.map((a,i)=>[a.character,Object.fromEntries(SHELTER_MATERIALS.slice(0,10-i).map(m=>[m.id,{at:100,home:home.id}]))]));
+  const state={version:1,revision:0,owners:{sallua:'finished',leandro:'pending'},assignments:{},collected:{},delivered,completed:{},audit:[]};
+  await db.run('INSERT INTO world_environment(id,state,updated) VALUES(?,?,?)','shelters',JSON.stringify(state),100);
+ }});
+ try{
+  const complete=await f.connect('finished'),pending=await f.connect('pending');
+  const before=await f.call('/api/world/bootstrap','finished');
+  assert.equal(before.shelters.shelters[1].built,false);
+  assert(before.zones.find(z=>z.id===home.entry).canEnter);
+  f.send(complete,{type:'enter',zone:home.entry});
+  await f.until(()=>complete.messages.some(m=>m.type==='zone'&&m.zone===home.entry));
+  f.send(pending,{type:'enter',zone:home.entry});
+  await f.until(()=>pending.messages.some(m=>m.type==='error'&&m.message.includes('Entrega todos')));
+  assert(!pending.messages.some(m=>m.type==='zone'&&m.zone===home.entry));
+ }finally{await f.close();}
 });
 
 test('refuge fridges start empty and only hold food their own team deposits',async()=>{
@@ -111,11 +132,11 @@ test('completed refuge permits its member to use the chest, rejects the other gr
 test('real World enforces personal supplies, fixed character assignment, contribution proximity and locked interior/chest; saved material survives process closure',async()=>{
  const f=await liveFixture('shelter-network',[{id:STAFF_ID,character:'maria-villegas',zone:'base',x:1000,y:700},{id:'builder-a',character:'bruno',zone:material.zone,x:point.x,y:point.y},{id:'builder-b',character:'alice',zone:material.zone,x:point.x+60,y:point.y}]);let stopped=false;
  try{const staff=await f.connect(STAFF_ID),a=await f.connect('builder-a'),b=await f.connect('builder-b'),view=p=>p.messages.filter(m=>m.shelters).at(-1)?.shelters,latest=p=>p.messages.filter(m=>m.type==='welcome'||m.type==='zone').at(-1);
-  assert.equal(view(a).shelters[0].built,false);assert.equal(view(a).stock.nails,18);assert.equal(view(staff).available.length,0);assert(view(staff).race);assert.equal(view(a).race,undefined);
+  assert.equal(view(a).shelters[0].built,false);assert.equal(view(a).stock.nails,HOUSING_PARTICIPANTS.length);assert.equal(view(staff).available.length,0);assert(view(staff).race);assert.equal(view(a).race,undefined);
   assert.equal((await f.call('/api/world/shelters/assign','builder-a','POST',{characterId:'bruno',home:'left'})).status,403);
   assert.equal((await f.call('/api/world/shelters/assign',STAFF_ID,'POST',{characterId:'bruno',home:'right'})).status,409);
-  assert.equal(view(a).home,'left');assert.equal(view(b).home,'right');assert.equal(view(a).shelters[0].members.length,9);assert.equal(view(b).shelters[1].members.length,9);
-  f.send(a,{type:'interact',objectId:point.id});await f.until(()=>view(a)?.inventory.includes('nails'));assert.equal(view(a).stock.nails,17);assert(!view(a).available.includes('nails'));assert(view(b).available.includes('nails'));
+  assert.equal(view(a).home,'left');assert.equal(view(b).home,'right');assert.equal(view(a).shelters[0].members.length,HOUSING_ROSTERS.left.length);assert.equal(view(b).shelters[1].members.length,HOUSING_ROSTERS.right.length);
+  f.send(a,{type:'interact',objectId:point.id});await f.until(()=>view(a)?.inventory.includes('nails'));assert.equal(view(a).stock.nails,HOUSING_PARTICIPANTS.length-1);assert(!view(a).available.includes('nails'));assert(view(b).available.includes('nails'));
   const revision=view(a).revision;f.send(a,{type:'interact',objectId:point.id});await f.until(()=>a.messages.some(m=>m.type==='error'&&m.message.includes('Ya recogiste')));assert.equal(view(a).revision,revision);
   assert.equal((await f.call('/api/world/shelters/contribute','builder-a','POST',{home:'left'})).status,409);
   assert.equal((await f.call('/api/world/survival/storage?teamId=left',STAFF_ID)).status,403);assert.equal((await f.call('/api/world/survival/storage?teamId=left','builder-b')).status,403);
@@ -123,7 +144,7 @@ test('real World enforces personal supplies, fixed character assignment, contrib
   f.send(a,{type:'walk',x:door.x,y:door.y});await f.until(()=>a.messages.some(m=>m.type==='move'&&m.players.some(p=>p.zone==='base'&&p.userId==='builder-a'&&Math.hypot(p.x-door.x,p.y-door.y)<140)),20000);
   const donate=await f.call('/api/world/shelters/contribute','builder-a','POST',{home:'left'});assert.equal(donate.status,200,JSON.stringify(donate));assert.equal(donate.added,1);assert.equal(donate.shelters.shelters[0].counts.nails,1);assert.equal(donate.shelters.inventory.length,0);
   f.send(a,{type:'enter',zone:'patio-refugio-1'});await f.until(()=>a.messages.some(m=>m.type==='error'&&m.message.includes('construir este refugio')));assert.equal(latest(a).zone,'base');
-  await f.close();stopped=true;const db=await openDatabase(f.dataDir),s=createShelterService({db});try{await s.ready;const saved=await s.snapshot({id:'builder-a'});assert.equal(saved.home,'left');assert.equal(saved.stock.nails,17);assert(saved.delivered.includes('nails'));assert.equal(saved.shelters[0].counts.nails,1);assert(!saved.shelters[0].built);}finally{await s.close();await db.close();}
+  await f.close();stopped=true;const db=await openDatabase(f.dataDir),s=createShelterService({db});try{await s.ready;const saved=await s.snapshot({id:'builder-a'});assert.equal(saved.home,'left');assert.equal(saved.stock.nails,HOUSING_PARTICIPANTS.length-1);assert(saved.delivered.includes('nails'));assert.equal(saved.shelters[0].counts.nails,1);assert(!saved.shelters[0].built);}finally{await s.close();await db.close();}
  }finally{if(!stopped)await f.close();}
 });
 test('Direction can move a participant out of their old shelter or leave them without one',async()=>{

@@ -57,11 +57,21 @@ test('each configured total has the requested species split and neglected birds 
   assert.equal(active.filter(bird=>bird.rooster).length,Math.floor(count/2));
  }
  const flock=startFlock(time),bird=flock.birds.canela;
- Object.assign(bird,{health:.5,food:0,eggs:1});flock.clean=5;flock.fence=5;
+ Object.assign(bird,{health:.5,food:0,eggs:1});flock.clean=5;flock.fence=5;flock.water=0;
  const later=flockAt(flock,time+60_000);
- assert.equal(later.birds.canela.health,0);
- assert.equal(later.birds.canela.eggs,0);
- assert.equal(flockAt(later,time+120_000).birds.canela.health,0);
+ assert(later.birds.canela.health>0);
+ const neglected=flockAt(later,time+20*60_000);
+ assert.equal(neglected.birds.canela.health,0);
+ assert.equal(neglected.birds.canela.eggs,0);
+});
+
+test('a healthy flock survives its first 24 real hours, with the same wear on frequent visits',()=>{
+ const hour=3_600_000,start=20_000,flock=resizeFlock(startFlock(start),12);
+ const afterDay=flockAt(flock,start+24*hour);
+ assert(Object.values(afterDay.birds).every(bird=>bird.health>0));
+ let hourly=flock;
+ for(let n=1;n<=24;n++)hourly=flockAt(hourly,start+n*hour);
+ assert.deepEqual(hourly,afterDay);
 });
 
 test('each refuge uses the nominated names and puts its principal birds in the first slots',()=>{

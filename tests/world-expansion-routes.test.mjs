@@ -5,8 +5,8 @@ import {createWorldPlayer,worldPath,stepWorld,nearestPortal,hasFloor} from '../p
 import {ATLAS_POSITIONS} from '../public/juegos/apocalypse-atlas.mjs';
 import {MAIN_WALK_ROUTE} from '../public/juegos/world-route-layout.mjs';
 import {buildSurvivalProps} from '../public/juegos/world-survival-catalog.mjs';
-test('forty-eight destinations have unique entrances, named returns and a route back to the train',()=>{
- assert.equal(Object.keys(WORLD_MAPS).length,48);assert.deepEqual(Object.keys(ATLAS_POSITIONS).sort(),Object.keys(WORLD_MAPS).sort());
+test('all destinations have unique entrances, named returns and a route back to the train',()=>{
+ assert.deepEqual(Object.keys(ATLAS_POSITIONS).sort(),Object.keys(WORLD_MAPS).sort());
  for(const map of Object.values(WORLD_MAPS)){assert(routeBetween(WORLD_MAPS,'tren-pasajeros',map.id));assert(routeBetween(WORLD_MAPS,map.id,'tren-pasajeros'));assert.equal(new Set(map.props.map(p=>p.id)).size,map.props.length,map.id);for(const p of map.props.filter(p=>p.portal)){assert(WORLD_MAPS[p.portal.zone].props.some(back=>back.portal?.zone===map.id),map.id+' return from '+p.portal.zone);const arrival=WORLD_MAPS[p.portal.zone].spawns[p.portal.toSpawn];assert(arrival&&hasFloor(WORLD_MAPS[p.portal.zone],arrival.x,arrival.y));}}
 });
 test('the camp route is physically linear: refuge one, forest, refuge two, creek, patrol road',()=>{

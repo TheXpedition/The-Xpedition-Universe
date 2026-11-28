@@ -37,9 +37,9 @@ export class WorldLocalMotion {
    if(previous&&Math.hypot(previous.x-p.x,previous.y-p.y)<80)next.walk=previous.walk;
    this.pose=next;this.source=p;this.sourceAt=p.previous?.at;this.offset={x:shown.x-next.x,y:shown.y-next.y};
    const distance=Math.hypot(this.offset.x,this.offset.y),{x,y}=this.intent;
-   // A delayed position behind a held direction is reconciled by easing.
-   // Larger position changes and corrections ahead can still snap.
-   if(distance>80&&(distance>220||this.offset.x*x+this.offset.y*y<=0))this.offset={x:0,y:0};
+   const behind=this.offset.x*x+this.offset.y*y>0;
+   // Catch up smoothly when the server is behind a held direction, even after a burst of lag.
+   if(distance>800||distance>220&&!behind)this.offset={x:0,y:0};
   }
   stepWorld(this.pose,{...this.intent,run:this.intent.run&&p.canRun!==false,speedFactor:p.speedFactor||1,now:worldTime},dt,zone);
   // Bound reconciliation speed so a delayed packet cannot pull a walking actor

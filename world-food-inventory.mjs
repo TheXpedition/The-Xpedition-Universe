@@ -16,6 +16,10 @@ export function takeOldestUnits(units,quantity,time,rate=1){
 
 export async function readFoodRows(db,userId,time){
  const rows=await db.all('SELECT food_id,quantity,updated,freshness FROM world_food_inventory WHERE user_id=? AND quantity>0 ORDER BY food_id',userId);
+ return foodItems(rows,time);
+}
+
+export function foodItems(rows,time){
  return rows.filter(row=>Object.hasOwn(FOOD_BY_ID,row.food_id)).map(row=>{
   const quantity=Number(row.quantity),age=Math.max(...normalizeFoodUnits(row.freshness,quantity,row.updated).map(unit=>unitAge(unit,time)));
   const freshness=freshnessFor(row.food_id,age);

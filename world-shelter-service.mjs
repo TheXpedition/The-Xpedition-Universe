@@ -26,13 +26,15 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  const members=(s,home)=>HOUSING_PARTICIPANTS.filter(id=>homeFor(s,id)===home);
  const characterName=id=>WORLD_CHARACTERS.find(c=>c.id===id)?.name||id;
  const deliveryHome=(id,delivery)=>typeof delivery==='number'?shelterForCharacter(id):delivery.home;
- function deliveries(s,home,material){
-  return HOUSING_PARTICIPANTS.filter(id=>{
-   if(s.removedContributionHomes?.[home]?.includes(id))return false;
-   const delivery=s.delivered[id]?.[material];
-   return delivery&&(deliveryHome(id,delivery)===home||delivery.restoredCredit?.home===home);
-  });
+ function deliveredTo(s,id,home,material){
+  if(s.removedContributionHomes?.[home]?.includes(id))return false;
+  const delivery=s.delivered[id]?.[material];
+  return !!delivery&&(deliveryHome(id,delivery)===home||delivery.restoredCredit?.home===home);
  }
+ function deliveries(s,home,material){
+  return HOUSING_PARTICIPANTS.filter(id=>deliveredTo(s,id,home,material));
+ }
+ const memberAccess=(s,user,id,home)=>homeFor(s,id)===home&&(!!s.completed[home]||home==='right'&&owned(s,user,id)&&SHELTER_MATERIALS.every(m=>deliveredTo(s,id,home,m.id)));
  function progress(s,id){const required=HOUSING_ROSTERS[id].length,done=s.completed[id],counts=Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,done?required:Math.min(required,deliveries(s,id,m.id).length)])),total=Object.values(counts).reduce((a,b)=>a+b,0);return {counts,percent:done?100:Math.floor(total/(required*SHELTER_MATERIALS.length)*100),built:!!done,completedAt:done?.at||null};}
  function restoreCastContributions(s){
   let changed=false;
@@ -65,7 +67,7 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
    const roster=members(s,def.id).map(characterId=>({characterId,name:characterName(characterId),active:!excluded.has(characterId),occupied:!!s.owners[characterId]}));
    const gabriel='gabrielsab';
    const formerPortrait=def.id==='right'?{characterId:gabriel,name:characterName(gabriel)}:null;
-   return {...def,...progress(s,def.id),required:HOUSING_ROSTERS[def.id].length,members:roster,formerPortrait};
+   return {...def,...progress(s,def.id),canEnter:eligible&&memberAccess(s,user,id,def.id),required:HOUSING_ROSTERS[def.id].length,members:roster,formerPortrait};
   });
   return {revision:s.revision,eligible,home,stock:Object.fromEntries(SHELTER_MATERIALS.map(m=>[m.id,HOUSING_PARTICIPANTS.length-HOUSING_PARTICIPANTS.filter(c=>s.collected[c]?.[m.id]).length])),available:eligible?SHELTER_MATERIALS.filter(m=>!s.collected[id]?.[m.id]).map(m=>m.id):[],inventory:bound?SHELTER_MATERIALS.filter(m=>s.collected[id]?.[m.id]&&!s.delivered[id]?.[m.id]).map(m=>m.id):[],delivered:bound?Object.keys(s.delivered[id]||{}):[],shelters,...(staff?{housing:HOUSING_PARTICIPANTS.map(characterId=>({characterId,name:characterName(characterId),home:homeFor(s,characterId)})),race:shelters[0].percent===shelters[1].percent?'Empate':shelters.find(s=>s.percent===Math.max(...shelters.map(t=>t.percent))).name+' va adelante'}:{})};
  }
@@ -76,8 +78,8 @@ export function createShelterService({db,now=Date.now,onChange=async()=>{},fail=
  return {ready,identity,
   async snapshot(user,{staff=false}={}){await ready;await tail;state=decode(await db.one('SELECT state FROM world_environment WHERE id=?','shelters'));return view(state,user,await identity(user),staff,await excludedMembers());},
   teamFor(_user,id){return homeFor(state,id);},
-  canEnter(user,id,zone){const home=shelterForZone(zone);return !home||homeFor(state,id)===home.id&&!!state.completed[home.id];},
-  async assertAccess(user,zone){await ready;if(!shelterForZone(zone))return;const person=await identity(user);if(!person.active||!this.canEnter(user,person.characterId,zone))fail(403,!!state.completed[shelterForZone(zone).id]?'Este personaje no tiene acceso a este refugio.':'Primero deben construir este refugio.');},
+  canEnter(user,id,zone){const home=shelterForZone(zone);return !home||memberAccess(state,user,id,home.id);},
+  async assertAccess(user,zone){await ready;const home=shelterForZone(zone);if(!home)return;const person=await identity(user);if(!person.active||!this.canEnter(user,person.characterId,zone))fail(403,state.completed[home.id]?'Este personaje no tiene acceso a este refugio.':home.id==='right'?'Entrega todos tus materiales para entrar al Refugio 2.':'Primero deben construir este refugio.');},
   async assign({characterId,home}={}){
    if(!HOUSING_PARTICIPANTS.includes(characterId))fail(400,'Selecciona un participante.');
    const destination=home===null?null:validHome(home);

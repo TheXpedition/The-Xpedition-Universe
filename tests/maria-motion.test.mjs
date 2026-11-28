@@ -70,6 +70,16 @@ test('a late server position more than 80 pixels behind a running avatar does no
  for(let frame=1;frame<=30;frame++)shown=local.sample(p,frame*16,1000+frame*16,map);
  assert(local.sample({...p,x:p.x-12,moving:true,previous:{at:496}},496,1496,map).x<=shown.x);
 });
+test('a delayed correction beyond 220 pixels reconciles without reversing the held run',()=>{
+ const p=actor(),local=new WorldLocalMotion();
+ local.setInput({x:1,y:0,run:true});
+ local.sample(p,0,1000,map);
+ let shown;
+ for(let frame=1;frame<=50;frame++)shown=local.sample(p,frame*16,1000+frame*16,map);
+ assert(shown.x-p.x>250);
+ const server={...p,x:p.x+15,moving:true,previous:{at:816}};
+ assert(local.sample(server,816,1816,map).x>=shown.x);
+});
 test('Maria acknowledges a delayed jump without dropping in midair or replaying the landing',()=>{
  for(const clothing of ['heat','pajamas','cold']){
   const p={...actor(),clothing},local=new WorldLocalMotion(),visual=new CharacterMotion();
